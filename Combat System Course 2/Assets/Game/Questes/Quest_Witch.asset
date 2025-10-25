@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3258a6a9b8d308540a484a70e0b84ed0, type: 3}
+  m_Name: Quest_Witch
+  m_EditorClassIdentifier: 
+  questName: "\u8BA8\u4F10\u5973\u5DEB"
+  description: "\u524D\u5F80\u9ED1\u68EE\u6797\uFF0C\u6740\u6B7B\u90AA\u6076\u5973\u5DEB"
+  rewardGold: 100
+  questType: 0
+  isRepeatable: 0

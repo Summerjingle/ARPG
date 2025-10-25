@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d70b432a2f265408c22e06e5d63b01, type: 3}
+  m_Name: Armor_Helmet_Rome
+  m_EditorClassIdentifier: 
+  nameOfItem: "\u53E4\u5E0C\u814A\u7FFC\u76D4"
+  itemType: 2
+  armorType: 0
+  description: "\u672A\u77E5"
+  propertyList:
+  - propertyType: 3
+    value: 100
+  icon: {fileID: 21300000, guid: 88a0257a6ebbd644797e26293a1f10e7, type: 3}
+  interactablePrefab: {fileID: 1310276454112625770, guid: 5ec562043169b6c49944c30fa9585a4c,
+    type: 3}
+  weaponPrefab: {fileID: 4903560041895241647, guid: 18b30a8cdd39da24f9ae452c270377d3,
+    type: 3}
+  canDrop: 0

@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3258a6a9b8d308540a484a70e0b84ed0, type: 3}
+  m_Name: Quest_UnderWorld
+  m_EditorClassIdentifier: 
+  questName: "\u5730\u5E95\u7684\u6B66\u5668"
+  description: "\u4ECE\u5730\u7CBE\u624B\u4E2D\u53D6\u5F97\u6740\u6B7B\u5973\u5DEB\u7684\u6B66\u5668"
+  rewardGold: 0
+  questType: 1
+  isRepeatable: 0
