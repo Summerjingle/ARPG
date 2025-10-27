@@ -14,7 +14,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/RPG/01Scene_Cave.unity
     guid: 84e973c5129773f4d801bca538e641a7
-  - enabled: 1
+  - enabled: 0
     path: Assets/Scenes/RPG/02Scene_Mountain.unity
     guid: 1c07ca5180343cf4794b6f12c9ee60f7
   - enabled: 1
