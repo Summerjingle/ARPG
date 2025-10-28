@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3258a6a9b8d308540a484a70e0b84ed0, type: 3}
   m_Name: Quest_KillWolf
   m_EditorClassIdentifier: 
-  questName: "\u6751\u5B50\u7684\u91CE\u72FC"
-  description: "\u6740\u6389\u4FB5\u6270\u6751\u5B50\u7684\u91CE\u72FC"
+  questName: "\u98CE\u8F66\u4E0B\u7684\u6076\u9B54"
+  description: "\u6740\u6389\u5728\u98CE\u8F66\u4E0B\u5F98\u5F8A\u7684\u91CE\u72FC"
   rewardGold: 0
   questType: 0
   isRepeatable: 0

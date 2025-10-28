@@ -106,7 +106,7 @@ public class MenuSceneController : MonoBehaviour
 
     IEnumerator StartWalkingAfterStandUp()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(0.01f);
         playerAnimator.SetBool("IsWalking", true);
     }
 
