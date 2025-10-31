@@ -23,7 +23,7 @@ public class WolfIdleState : State<WolfController>
         // Set random idle time
         wolf.StateTimer = Random.Range(wolf.MinIdleTime, wolf.MaxIdleTime);
 
-        Debug.Log("Wolf entering Idle state");
+       
     }
 
     public override void Execute()
@@ -53,7 +53,7 @@ public class WolfIdleState : State<WolfController>
 
     public override void Exit()
     {
-        Debug.Log("Wolf exiting Idle state");
+        
     }
 
     void HandleCombatMode()

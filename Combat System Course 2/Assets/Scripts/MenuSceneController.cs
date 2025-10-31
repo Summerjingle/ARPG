@@ -15,6 +15,7 @@ public class MenuSceneController : MonoBehaviour
     public Button QuitButton;
     public string gameSceneName = "00Scene_Village";
     public string loadingSceneName = "LoadingScene";
+    public GameObject archivePanel;
 
     private bool isStartingGame = false;
     private bool hasReachedPortal = false;
@@ -84,16 +85,13 @@ public class MenuSceneController : MonoBehaviour
     {
         if (!isStartingGame)
         {
-            // 设置加载游戏标志
-            if (SaveManager.Instance != null)
+            if (archivePanel != null)
             {
-                SaveManager.Instance.LoadGame();
-                SaveManager.shouldLoadFromSave = true;
+                archivePanel.SetActive(true);
+                Animator panelAnimator = archivePanel.GetComponent<Animator>();
+                panelAnimator.SetBool("IsOpen", true);
+                
             }
-
-            isStartingGame = true;
-            HideAllUI();
-            StandUp();
         }
     }
 

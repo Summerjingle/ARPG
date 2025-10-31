@@ -100,3 +100,4 @@ InitTestScene*.unity*
 
 # Unity generated files
 Library/
+echo "Temp/" >> .gitignore

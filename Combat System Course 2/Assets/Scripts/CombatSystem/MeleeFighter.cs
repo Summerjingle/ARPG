@@ -149,11 +149,17 @@ public class MeleeFighter : MonoBehaviour
             {
                 float percTime = (normalizedTime - attack.MoveStartTime) / (attack.MoveEndTime - attack.MoveStartTime);
                 Vector3 desiredPosition = Vector3.Lerp(startPos, targetPos, percTime);
+                Vector3 moveDelta = desiredPosition - transform.position;
 
-                // 添加距离检查，防止与目标重叠
-                float currentDistance = Vector3.Distance(transform.position, target.transform.position);
-                if (currentDistance > 1.0f) // 保持最小距离
+                // 使用CharacterController进行移动（有碰撞检测）
+                CharacterController controller = GetComponent<CharacterController>();
+                if (controller != null)
                 {
+                    controller.Move(moveDelta);
+                }
+                else
+                {
+                    // 备用方案
                     transform.position = desiredPosition;
                 }
             }

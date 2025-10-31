@@ -56,6 +56,7 @@ public class PlayerController : MonoBehaviour
     
     private void Update()
     {
+        
         // 如果在对话中，禁用移动和旋转
         if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
         {
