@@ -26,9 +26,20 @@ public class InventoryManager : MonoBehaviour
         InventoryUI.Instance.AddItem(item);
         MessageUI.Instance.Show( item.nameOfItem+" 被放入了背包" );
     }
+    public void ReAddItem(ItemSO item)//不带提示消息的物品增加
+    {
+        itemList.Add(item);
+        InventoryUI.Instance.AddItem(item);
+    }
     public void RemoveItem(ItemSO itemSO) 
     { 
         itemList.Remove(itemSO);
-        
+        InventoryUI.Instance.UpdateInventoryUI();
+    }
+
+    public bool HasItem(ItemSO targetItem)
+    {
+        //检查背包内是否有指定道具（任务道具）
+        return itemList.Contains(targetItem);
     }
 }

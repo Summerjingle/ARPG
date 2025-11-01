@@ -53,13 +53,12 @@ public class DoubleClickButton : MonoBehaviour
 
     private void UnequipArmor()
     {
-        if (armorEquipmentManager != null)
+        if (ArmorEquipmentManager.Instance != null)
         {
-            // 获取对应部位的Socket
-            var socket = armorEquipmentManager.GetSocketByType(armorType);
+            var socket = ArmorEquipmentManager.Instance.GetSocketByType(armorType);
             if (socket != null)
             {
-                armorEquipmentManager.UnequipArmor(socket);
+                ArmorEquipmentManager.Instance.UnequipArmor(socket);
             }
             else
             {

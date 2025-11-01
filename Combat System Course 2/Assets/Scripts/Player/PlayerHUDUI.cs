@@ -19,6 +19,7 @@ public class PlayerHUDUI : MonoBehaviour
     [SerializeField] private float expFillSpeed = 1f;
     //护甲值相关
     public TextMeshProUGUI armorText;
+    
 
     void Start()
     {
@@ -195,11 +196,13 @@ public class PlayerHUDUI : MonoBehaviour
         }
     }
 
-    private void UpdateArmorDisplay()
+    public void UpdateArmorDisplay()
     {
         if (playerProperty != null && armorText != null)
         {
             armorText.text = playerProperty.armorValue.ToString();
+            
+           
         }
     }
     public void RefreshUI()

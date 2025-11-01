@@ -93,12 +93,12 @@ public class EventNPC : NPC
 
     private void CompleteQuest()
     {
-        if (questToComplete != null && GameManager.Instance != null)
+        if (questToComplete != null && QuestManager.Instance != null)
         {
-            QuestState currentState = GameManager.Instance.GetQuestState(questToComplete);
+            QuestState currentState = QuestManager.Instance.GetQuestState(questToComplete);
             if (currentState != QuestState.Completed)
             {
-                GameManager.Instance.SetQuestState(questToComplete, QuestState.Completed);
+                QuestManager.Instance.SetQuestState(questToComplete, QuestState.Completed);
                 Debug.Log($"通过对话完成任务: {questToComplete.questName}");
 
                 // 更新任务面板

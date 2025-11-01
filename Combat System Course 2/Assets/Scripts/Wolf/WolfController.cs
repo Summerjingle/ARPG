@@ -12,8 +12,7 @@ public class WolfController : MonoBehaviour
     [SerializeField] private float impactStunTime = 2f; // 眩晕时间
     public float ImpactStunTime => impactStunTime;
 
-    public Quest relatedQuest;//与狼关联的任务
-    public GameObject WolfPointer;//标记狼位置的黄箭头
+    public string wolfTypeID = "Wolf";
 
     private bool isStunned = false;
     public bool IsStunned => isStunned;
@@ -149,7 +148,6 @@ public class WolfController : MonoBehaviour
     {
         ChangeState(WolfStates.Idle);
         CurrentMode = WolfMode.Patrol;
-        StartCoroutine(UpdateWolfPointerRoutine());//每0.2秒检测一次是否接取杀狼任务
         // Ensure head collider is disabled initially
         if (headCollider != null)
         {
@@ -250,6 +248,7 @@ public class WolfController : MonoBehaviour
             isDead = true;
             ChangeState(WolfStates.Dead);
 
+            QuestManager.Instance.OnEnemyKilled("Wolf", wolfTypeID);
             // 从EnemyManager中移除
             if (enemyController != null)
             {
@@ -371,28 +370,6 @@ public class WolfController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    //检测杀狼任务是否接取
-    private IEnumerator UpdateWolfPointerRoutine()
-    {
-        while (true)
-        {
-            UpdateWolfPointer();
-            yield return new WaitForSeconds(0.2f); // 每0.2秒检测一次，减少性能消耗
-        }
-    }
-    private void UpdateWolfPointer()
-    {
-        if (WolfPointer == null || relatedQuest == null || GameManager.Instance == null)
-            return;
-
-        QuestState state = GameManager.Instance.GetQuestState(relatedQuest);
-
-        // 只有当任务进行中且狼还活着时才显示指针
-        bool shouldShowPointer = (state == QuestState.InProgress);
-
-        if (WolfPointer.activeSelf != shouldShowPointer)
-        {
-            WolfPointer.SetActive(shouldShowPointer);
-        }
-    }
+    
+   
 }

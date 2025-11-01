@@ -10,6 +10,6 @@ public class JOLLEN : MonoBehaviour
     public void CompleteCaveMission()
     {
         InventoryManager.Instance.AddItem(witchKiller);
-        GameManager.Instance.SetQuestState(caveQuestToComplete, QuestState.Completed);
+        QuestManager.Instance.SetQuestState(caveQuestToComplete, QuestState.Completed);
     }
 }

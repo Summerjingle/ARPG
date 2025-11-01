@@ -181,20 +181,42 @@ public class SaveManager : MonoBehaviour
 
     private void SaveQuests()
     {
-        if (GameManager.Instance == null || GameManager.Instance.allQuests == null)
+        if (QuestManager.Instance == null || QuestDBManager.Instance == null)
         {
-            Debug.LogWarning("游戏管理器未初始化，无法保存任务");
+            Debug.LogWarning("任务管理器未初始化，无法保存任务");
             return;
         }
 
-        foreach (Quest quest in GameManager.Instance.allQuests)
+        currentSaveData.questProgress = new List<QuestSaveData>();
+
+        // 保存所有任务的状态和进度
+        foreach (Quest quest in QuestDBManager.Instance.questDatabase.allQuests)
         {
             if (quest != null)
             {
-                QuestState state = GameManager.Instance.GetQuestState(quest);
-                currentSaveData.questProgress.Add(new QuestSaveData(quest.questName, state));
+                QuestState state = QuestManager.Instance.GetQuestState(quest);
+                QuestSaveData questSaveData = new QuestSaveData(quest.questID, state);
+
+                // 保存任务目标进度
+                if (quest.objectives != null)
+                {
+                    for (int i = 0; i < quest.objectives.Count; i++)
+                    {
+                        var objective = quest.objectives[i];
+                        questSaveData.objectiveProgress.Add(new ObjectiveProgress
+                        {
+                            objectiveIndex = i,
+                            currentAmount = objective.currentAmount,
+                            isCompleted = objective.isCompleted
+                        });
+                    }
+                }
+
+                currentSaveData.questProgress.Add(questSaveData);
             }
         }
+
+        Debug.Log($"已保存 {currentSaveData.questProgress.Count} 个任务进度");
     }
     #endregion
 
@@ -306,7 +328,7 @@ public class SaveManager : MonoBehaviour
         foreach (string itemName in currentSaveData.inventoryItems)
         {
             ItemSO item = ItemDBManager.Instance?.itemDB?.itemList?.Find(i => i != null && i.name == itemName);
-            if (item != null) InventoryManager.Instance.AddItem(item);
+            if (item != null) InventoryManager.Instance.ReAddItem(item);
         }
 
         InventoryUI.Instance?.UpdateInventoryUI();
@@ -314,15 +336,43 @@ public class SaveManager : MonoBehaviour
 
     private void ApplyQuests()
     {
-        if (GameManager.Instance == null) return;
+        if (QuestManager.Instance == null || QuestDBManager.Instance == null) return;
+
+        // 重置所有任务状态
+        QuestManager.Instance.ResetAllQuests();
 
         foreach (QuestSaveData questData in currentSaveData.questProgress)
         {
-            Quest quest = GameManager.Instance.allQuests.Find(q => q != null && q.questName == questData.questName);
-            if (quest != null) GameManager.Instance.SetQuestState(quest, questData.questState);
+            // 通过ID查找任务
+            Quest quest = QuestDBManager.Instance.questDatabase.GetQuestByID(questData.questID);
+            if (quest != null)
+            {
+                // 恢复任务状态
+                QuestManager.Instance.SetQuestState(quest, questData.questState);
+
+                // 恢复任务目标进度
+                if (questData.objectiveProgress != null && quest.objectives != null)
+                {
+                    foreach (var objectiveProgress in questData.objectiveProgress)
+                    {
+                        if (objectiveProgress.objectiveIndex < quest.objectives.Count)
+                        {
+                            var objective = quest.objectives[objectiveProgress.objectiveIndex];
+                            objective.currentAmount = objectiveProgress.currentAmount;
+                            objective.isCompleted = objectiveProgress.isCompleted;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"找不到ID为 {questData.questID} 的任务");
+            }
         }
 
+        // 更新任务UI
         QuestPanelController.Instance?.UpdateAllPanels();
+        Debug.Log($"已加载 {currentSaveData.questProgress.Count} 个任务进度");
     }
 
     private void ApplyEquipment()

@@ -11,13 +11,13 @@ public class QuestNPC : NPC
 
     public override void Interact()
     {
-        if (GameManager.Instance == null || DialogueManager.Instance == null)
+        if (QuestManager.Instance == null || DialogueManager.Instance == null)
         {
             Debug.LogError("GameManager 或 DialogueManager 未初始化");
             return;
         }
 
-        QuestState state = GameManager.Instance.GetQuestState(quest);
+        QuestState state = QuestManager.Instance.GetQuestState(quest);
 
         switch (state)
         {
@@ -48,9 +48,9 @@ public class QuestNPC : NPC
 
     private void AcceptQuest()
     {
-        if (GameManager.Instance != null)
+        if (QuestManager.Instance != null)
         {
-            GameManager.Instance.SetQuestState(quest, QuestState.InProgress);
+            QuestManager.Instance.SetQuestState(quest, QuestState.InProgress);
             Debug.Log($"已接受任务: {quest.questName}");
 
             // 更新任务面板 - 使用双面板控制器
@@ -75,13 +75,13 @@ public class QuestNPC : NPC
 
     private void CompleteQuest()
     {
-        if (GameManager.Instance != null)
+        if (QuestManager.Instance != null)
         {
             // 给予奖励
             
             }
 
-        GameManager.Instance.SetQuestState(quest, QuestState.Completed);
+        QuestManager.Instance.SetQuestState(quest, QuestState.Completed);
         Debug.Log($"任务完成: {quest.questName}");
 
         // 更新任务面板 - 使用现有的UpdateQuestDisplay方法

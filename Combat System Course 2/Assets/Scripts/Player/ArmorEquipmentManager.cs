@@ -6,6 +6,7 @@ public class ArmorEquipmentManager : MonoBehaviour
     [System.Serializable]
     public class EquipmentSocket
     {
+
         public ArmorType armorType; // 护甲类型
 
         [Header("单部位装备配置")]
@@ -22,9 +23,21 @@ public class ArmorEquipmentManager : MonoBehaviour
     }
 
     [SerializeField] private EquipmentSocket[] equipmentSockets;
+    public static ArmorEquipmentManager Instance { get; private set; }
+
     private PlayerProperty playerProperty;
 
-    private void Awake() => playerProperty = GetComponent<PlayerProperty>();
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
+
+        playerProperty = GetComponent<PlayerProperty>();
+    }
 
     // 装备护甲（暴露给外部调用的唯一接口）
     public void EquipArmor(ItemSO armorItem)
@@ -81,7 +94,7 @@ public class ArmorEquipmentManager : MonoBehaviour
         // 只有确实有装备时才添加回背包
         if (equippedItem != null && InventoryManager.Instance != null)
         {
-            InventoryManager.Instance.AddItem(equippedItem);
+            InventoryManager.Instance.ReAddItem(equippedItem);
         }
     }
 

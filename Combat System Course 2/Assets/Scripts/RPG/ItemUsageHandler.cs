@@ -41,6 +41,10 @@ public class ItemUsageHandler : MonoBehaviour
             case ItemType.Armor:
                 armorManager.EquipArmor(itemSO);
                 break;
+            case ItemType.QuestRelated:
+                Debug.Log("任务道具无法直接使用");
+                
+                break;
             default:
                 Debug.LogWarning($"未知的物品类型: {itemSO.itemType}");
                 break;
@@ -107,7 +111,7 @@ public class ItemUsageHandler : MonoBehaviour
             if (weapon != null && weapon.itemSO != null && InventoryManager.Instance != null)
             {
                 // 将武器添加回背包
-                InventoryManager.Instance.AddItem(weapon.itemSO);
+                InventoryManager.Instance.ReAddItem(weapon.itemSO);
             }
         }
 

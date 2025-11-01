@@ -38,6 +38,9 @@ public class ItemDetailUI : MonoBehaviour
             case ItemType.Armor:
                 type = "防具";
                 break;
+            case ItemType.QuestRelated:
+                type = "任务道具";
+                break;
             
         }
         iconImage.sprite=itemSO.icon;
@@ -86,6 +89,15 @@ public class ItemDetailUI : MonoBehaviour
 
     public void OnUseButtonClick()
     {
+        // 先检查是否为任务道具
+        if (itemSO.itemType == ItemType.QuestRelated)
+        {
+            MessageUI.Instance.Show("任务道具无法直接使用");
+            this.gameObject.SetActive(false);
+            return;
+        }
+
+        // 只有非任务道具才执行使用逻辑
         InventoryUI.Instance.OnItemUse(itemSO, itemUI);
         this.gameObject.SetActive(false);
     }

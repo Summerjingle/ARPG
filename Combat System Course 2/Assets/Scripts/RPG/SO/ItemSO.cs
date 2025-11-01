@@ -22,7 +22,9 @@ public enum ItemType
 {
     Weapon,
     Consumable,
-    Armor
+    Armor,
+    QuestRelated
+
 }
 public enum ArmorType
 {

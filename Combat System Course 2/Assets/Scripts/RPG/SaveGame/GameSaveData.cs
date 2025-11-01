@@ -31,6 +31,9 @@ public class GameSaveData
 
     // 任务进度
     public List<QuestSaveData> questProgress;
+    public bool showCompletedQuests = false;
+    public bool autoTrackNewQuests = true;
+    public string currentlyTrackedQuestID;
 
     // 保存时间
     public DateTime saveTime;
@@ -39,14 +42,24 @@ public class GameSaveData
 [System.Serializable]
 public class QuestSaveData
 {
-    public string questName;
+    public string questID;        // 改为使用ID而不是名称
     public QuestState questState;
+    public List<ObjectiveProgress> objectiveProgress; // 新增：保存目标进度
 
-    public QuestSaveData(string name, QuestState state)
+    public QuestSaveData(string id, QuestState state)
     {
-        questName = name;
+        questID = id;
         questState = state;
+        objectiveProgress = new List<ObjectiveProgress>();
     }
+}
+
+[System.Serializable]
+public class ObjectiveProgress
+{
+    public int objectiveIndex;    // 目标索引
+    public int currentAmount;     // 当前进度
+    public bool isCompleted;      // 是否完成
 }
 
 // 可序列化的Vector3替代结构

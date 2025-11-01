@@ -16,14 +16,14 @@ public class DualQuestNPC : NPC
 
     public override void Interact()
     {
-        if (GameManager.Instance == null || DialogueManager.Instance == null)
+        if (QuestManager.Instance == null || DialogueManager.Instance == null)
         {
             Debug.LogError("GameManager 或 DialogueManager 未初始化");
             return;
         }
 
         // 首先检查主线任务状态
-        QuestState mainState = GameManager.Instance.GetQuestState(mainQuest);
+        QuestState mainState = QuestManager.Instance.GetQuestState(mainQuest);
 
         // 根据主线任务状态决定交互内容
         switch (mainState)
@@ -63,7 +63,7 @@ public class DualQuestNPC : NPC
     {
         // 检查是否需要接取支线任务
         if (sideQuest != null && !hasIntroducedSideQuest &&
-            GameManager.Instance.GetQuestState(sideQuest) == QuestState.NotAccepted)
+            QuestManager.Instance.GetQuestState(sideQuest) == QuestState.NotAccepted)
         {
             // 首次进行主线任务进行中对话，内容相同但结束后自动接取支线任务
             DialogueManager.Instance.StartDialogue(
@@ -81,9 +81,9 @@ public class DualQuestNPC : NPC
     // 接受主线任务
     private void AcceptMainQuest()
     {
-        if (GameManager.Instance != null)
+        if (QuestManager.Instance != null)
         {
-            GameManager.Instance.SetQuestState(mainQuest, QuestState.InProgress);
+            QuestManager.Instance.SetQuestState(mainQuest, QuestState.InProgress);
             Debug.Log($"已接受主线任务: {mainQuest.questName}");
 
             // 更新任务面板
@@ -97,9 +97,9 @@ public class DualQuestNPC : NPC
     // 完成主线任务
     private void CompleteMainQuest()
     {
-        if (GameManager.Instance != null)
+        if (QuestManager.Instance != null)
         {
-            GameManager.Instance.SetQuestState(mainQuest, QuestState.Completed);
+            QuestManager.Instance.SetQuestState(mainQuest, QuestState.Completed);
             Debug.Log($"完成主线任务: {mainQuest.questName}，获得奖励: {mainQuest.rewardGold}金币");
 
             // 更新任务面板
@@ -113,9 +113,9 @@ public class DualQuestNPC : NPC
     // 自动接受支线任务（在主线任务进行中对话结束后调用）
     private void AutoAcceptSideQuest()
     {
-        if (sideQuest != null && GameManager.Instance != null)
+        if (sideQuest != null && QuestManager.Instance != null)
         {
-            GameManager.Instance.SetQuestState(sideQuest, QuestState.InProgress);
+            QuestManager.Instance.SetQuestState(sideQuest, QuestState.InProgress);
             hasIntroducedSideQuest = true;
             Debug.Log($"已自动接受支线任务: {sideQuest.questName}");
 

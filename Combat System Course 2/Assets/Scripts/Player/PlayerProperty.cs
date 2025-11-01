@@ -105,6 +105,7 @@ public class PlayerProperty : MonoBehaviour
             leveledUp = true;
             levelsGained++;
             baseArmorValue += 5;
+            PlayerHUDUI.Instance.UpdateArmorDisplay();
 
             Debug.Log($"升级了！当前等级: {level}，剩余经验: {currEXP}");
         }

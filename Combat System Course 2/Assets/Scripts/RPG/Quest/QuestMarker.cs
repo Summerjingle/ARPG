@@ -36,13 +36,13 @@ public class QuestMarker : MonoBehaviour
 
     public void UpdateVisibility()
     {
-        if (GameManager.Instance == null || quest == null)
+        if (QuestManager.Instance == null || quest == null)
         {
             HideAllMarkers();
             return;
         }
 
-        QuestState state = GameManager.Instance.GetQuestState(quest);
+        QuestState state = QuestManager.Instance.GetQuestState(quest);
 
         switch (state)
         {

@@ -45,9 +45,6 @@ public class QuestPanelController : MonoBehaviour
         if (mainMissionPanel != null) mainMissionPanel.SetActive(false);
         if (sideMissionPanel != null) sideMissionPanel.SetActive(false);
 
-        // 可选：禁用或隐藏状态文本
-        // if (mainMissionStateText != null) mainMissionStateText.gameObject.SetActive(false);
-        // if (sideMissionStateText != null) sideMissionStateText.gameObject.SetActive(false);
     }
 
     private void Update()
@@ -129,7 +126,7 @@ public class QuestPanelController : MonoBehaviour
             return;
         }
 
-        QuestState state = GameManager.Instance.GetQuestState(currentMainQuest);
+        QuestState state = QuestManager.Instance.GetQuestState(currentMainQuest);
         mainMissionNameText.text = $"{currentMainQuest.questName} [主线] [{GetStateText(state)}]";
         mainMissionDetailText.text = currentMainQuest.description;
 
@@ -151,7 +148,7 @@ public class QuestPanelController : MonoBehaviour
             return;
         }
 
-        QuestState state = GameManager.Instance.GetQuestState(currentSideQuest);
+        QuestState state = QuestManager.Instance.GetQuestState(currentSideQuest);
         sideMissionNameText.text = $"{currentSideQuest.questName} [支线] [{GetStateText(state)}]";
         sideMissionDetailText.text = currentSideQuest.description;
 
@@ -192,6 +189,6 @@ public class QuestPanelController : MonoBehaviour
     public bool HasActiveSideQuest()
     {
         return currentSideQuest != null &&
-               GameManager.Instance.GetQuestState(currentSideQuest) != QuestState.Completed;
+               QuestManager.Instance.GetQuestState(currentSideQuest) != QuestState.Completed;
     }
 }
