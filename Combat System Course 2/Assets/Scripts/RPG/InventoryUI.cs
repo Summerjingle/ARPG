@@ -4,7 +4,7 @@ using UnityEngine.UI;
 public class InventoryUI : MonoBehaviour
 {
     public static InventoryUI Instance { get; private set; }
-    public GameObject map;
+    public GameObject PausePanel;
     public GameObject content;
     public GameObject itemPrefab;
     public ItemDetailUI itemDetail;
@@ -53,10 +53,10 @@ public class InventoryUI : MonoBehaviour
         {
             ToggleInventory();
         }
-        //切换地图打开/关闭（快捷键M键）
-        if (Input.GetKeyDown(KeyCode.M))
+        //切换地图打开/关闭（快捷键esc键）
+        if (Input.GetKeyDown(KeyCode.Escape))
         {
-            ToggleMap();
+            TogglePausePanel();
         }
         // 检测攻击按键来关闭攻击提示
         if (attackHintUI != null && attackHintUI.activeSelf && Input.GetKeyDown(attackKey))
@@ -65,10 +65,12 @@ public class InventoryUI : MonoBehaviour
             hasShownAttackHint = true;
         }
     }
-    private void ToggleMap()
+    private void TogglePausePanel()
     {
         isMapOpen = !isMapOpen;
-        map.SetActive(isMapOpen);
+        PausePanel.SetActive(isMapOpen);
+        Time.timeScale = isMapOpen ? 0f : 1f;
+
     }
 
     public void ToggleInventory()

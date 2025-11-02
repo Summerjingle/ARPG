@@ -2,9 +2,14 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 [System.Serializable]
 public class GameSaveData
 {
+    public string saveId; // 新增：存档唯一标识
+    public string saveName; // 新增：存档名称
+    public int saveSlot; // 新增：存档槽位
+
     // 场景信息
     public string currentScene;
     public SerializableVector3 playerPosition;
@@ -37,6 +42,21 @@ public class GameSaveData
 
     // 保存时间
     public DateTime saveTime;
+
+    // 新增：构造函数
+    public GameSaveData()
+    {
+        saveId = Guid.NewGuid().ToString();
+        saveTime = DateTime.Now;
+        inventoryItems = new List<string>();
+        questProgress = new List<QuestSaveData>();
+    }
+
+    public GameSaveData(int slot) : this()
+    {
+        saveSlot = slot;
+        saveName = $"存档 {slot + 1}";
+    }
 }
 
 [System.Serializable]

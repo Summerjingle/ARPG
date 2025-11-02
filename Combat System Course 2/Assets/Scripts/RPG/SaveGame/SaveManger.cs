@@ -2,6 +2,7 @@ using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,8 +11,11 @@ public class SaveManager : MonoBehaviour
     public static SaveManager Instance { get; private set; }
     public static bool shouldLoadFromSave = false;
     public static bool isNewGame = true;
+    public static string currentSaveId;
 
     private string savePath;
+    private string savesDirectory;
+    private const int MAX_SAVE_SLOTS = 10;
 
     private GameObject registeredPlayer;
     private GameSaveData currentSaveData;
@@ -28,8 +32,12 @@ public class SaveManager : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
 
-        savePath = Path.Combine(Application.persistentDataPath, "savegame.json");
-        LoadGameData();
+        savesDirectory = Path.Combine(Application.persistentDataPath, "saves");
+        if (!Directory.Exists(savesDirectory))
+        {
+            Directory.CreateDirectory(savesDirectory);
+        }
+
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
@@ -85,9 +93,151 @@ public class SaveManager : MonoBehaviour
     }
     #endregion
 
+    #region 存档管理
+    public void CreateNewGame(int slot)
+    {
+        isNewGame = true;
+        shouldLoadFromSave = false;
+
+        // 查找可用的空槽位（不覆盖现有存档）
+        int availableSlot = FindEmptySaveSlot();
+
+        // 创建全新的存档（不覆盖现有存档）
+        currentSaveData = new GameSaveData(availableSlot);
+        currentSaveId = currentSaveData.saveId;
+
+        Debug.Log($"创建新游戏，使用空槽位: {availableSlot}, 存档ID: {currentSaveId}");
+    }
+
+    // 新增方法：查找空槽位
+    private int FindEmptySaveSlot()
+    {
+        var existingSaves = GetAllSaves();
+
+        // 查找第一个空槽位（0-9）
+        for (int i = 0; i < MAX_SAVE_SLOTS; i++)
+        {
+            if (!existingSaves.Any(save => save.saveSlot == i))
+            {
+                return i; // 找到空槽位
+            }
+        }
+
+        // 如果没有空槽位，使用新的槽位编号（不覆盖现有存档）
+        return existingSaves.Count;
+    }
+
+    public void LoadGame(string saveId)
+    {
+        isNewGame = false;
+        shouldLoadFromSave = true;
+        currentSaveId = saveId;
+        LoadGameData(saveId);
+        Debug.Log($"准备加载存档: {saveId}");
+    }
+
+    public void DeleteSave(string saveId)
+    {
+        string savePath = GetSavePath(saveId);
+        if (File.Exists(savePath))
+        {
+            File.Delete(savePath);
+            Debug.Log($"已删除存档: {saveId}");
+        }
+
+        // 如果删除的是当前存档，重置状态
+        if (currentSaveId == saveId)
+        {
+            currentSaveId = null;
+            currentSaveData = null;
+        }
+    }
+
+    public List<GameSaveData> GetAllSaves()
+    {
+        List<GameSaveData> saves = new List<GameSaveData>();
+
+        if (!Directory.Exists(savesDirectory))
+            return saves;
+
+        string[] saveFiles = Directory.GetFiles(savesDirectory, "*.json");
+        foreach (string filePath in saveFiles)
+        {
+            try
+            {
+                string jsonData = File.ReadAllText(filePath);
+                GameSaveData saveData = JsonConvert.DeserializeObject<GameSaveData>(jsonData);
+                if (saveData != null)
+                {
+                    saves.Add(saveData);
+                }
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"加载存档文件失败 {filePath}: {e.Message}");
+            }
+        }
+
+        // 按保存时间排序，最新的在前
+        return saves.OrderByDescending(s => s.saveTime).ToList();
+    }
+
+    public GameSaveData GetSaveData(string saveId)
+    {
+        string savePath = GetSavePath(saveId);
+        if (File.Exists(savePath))
+        {
+            try
+            {
+                string jsonData = File.ReadAllText(savePath);
+                return JsonConvert.DeserializeObject<GameSaveData>(jsonData);
+            }
+            catch (System.Exception e)
+            {
+                Debug.LogError($"加载存档失败: {e.Message}");
+            }
+        }
+        return null;
+    }
+
+    private void LoadGameData(string saveId)
+    {
+        currentSaveData = GetSaveData(saveId);
+        if (currentSaveData == null)
+        {
+            Debug.LogWarning($"存档不存在: {saveId}");
+            currentSaveData = new GameSaveData();
+        }
+        else
+        {
+            Debug.Log("游戏数据已加载");
+        }
+    }
+
+    private string GetSavePath(string saveId)
+    {
+        return Path.Combine(savesDirectory, $"{saveId}.json");
+    }
+    #endregion
+
     #region 保存游戏
     public void SaveGame()
     {
+        if (currentSaveData == null)
+        {
+            Debug.LogWarning("没有当前存档数据，无法保存");
+            return;
+        }
+        // 检查是否为新游戏且还没有保存过
+        if (isNewGame && !HasBeenSavedBefore())
+        {
+            // 新游戏第一次保存，使用空槽位
+            int availableSlot = FindEmptySaveSlot();
+            currentSaveData.saveSlot = availableSlot;
+            currentSaveData.saveName = $"存档 {availableSlot + 1}";
+            Debug.Log($"新游戏第一次保存，使用槽位: {availableSlot}");
+        }
+
         GameObject player = registeredPlayer ?? GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
@@ -107,19 +257,19 @@ public class SaveManager : MonoBehaviour
 
         Debug.Log($"保存玩家属性 - 等级: {playerProperty.level}, 经验: {playerProperty.currEXP}, 血量: {playerProperty.hpValue}");
 
-        currentSaveData = new GameSaveData
-        {
-            currentScene = SceneManager.GetActiveScene().name,
-            level = playerProperty.level,
-            currEXP = playerProperty.currEXP,
-            hpValue = playerProperty.hpValue,
-            maxHealth = Mathf.RoundToInt(meleeFighter.MaxHealth),
-            energyValue = playerProperty.energyValue,
-            armorValue = playerProperty.GetBaseArmor(),
-            inventoryItems = new List<string>(),
-            questProgress = new List<QuestSaveData>(),
-            saveTime = System.DateTime.Now
-        };
+        // 更新存档数据
+        currentSaveData.currentScene = SceneManager.GetActiveScene().name;
+        currentSaveData.level = playerProperty.level;
+        currentSaveData.currEXP = playerProperty.currEXP;
+        currentSaveData.hpValue = playerProperty.hpValue;
+        currentSaveData.maxHealth = Mathf.RoundToInt(meleeFighter.MaxHealth);
+        currentSaveData.energyValue = playerProperty.energyValue;
+        currentSaveData.armorValue = playerProperty.GetBaseArmor();
+        currentSaveData.saveTime = System.DateTime.Now;
+
+        // 清空旧数据
+        currentSaveData.inventoryItems.Clear();
+        currentSaveData.questProgress.Clear();
 
         SaveEquipment(equipmentManager, meleeFighter);
         SaveInventory();
@@ -127,14 +277,20 @@ public class SaveManager : MonoBehaviour
 
         try
         {
+            string savePath = GetSavePath(currentSaveData.saveId);
             string jsonData = JsonConvert.SerializeObject(currentSaveData, Newtonsoft.Json.Formatting.Indented);
             File.WriteAllText(savePath, jsonData);
-            Debug.Log("游戏已保存");
+            Debug.Log($"游戏已保存到槽位: {currentSaveData.saveSlot}");
         }
         catch (System.Exception e)
         {
             Debug.LogError($"保存游戏失败: {e.Message}");
         }
+    }
+    private bool HasBeenSavedBefore()
+    {
+        string savePath = GetSavePath(currentSaveData.saveId);
+        return File.Exists(savePath);
     }
 
     private void SaveEquipment(ArmorEquipmentManager equipmentManager, MeleeFighter meleeFighter)
@@ -443,7 +599,7 @@ public class SaveManager : MonoBehaviour
     #region 场景和UI管理
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        if (shouldLoadFromSave)
+        if (shouldLoadFromSave && !string.IsNullOrEmpty(currentSaveId))
             StartCoroutine(ApplySaveDataAfterFrame());
     }
 
