@@ -32,7 +32,7 @@ public class GameSaveData
     public string equippedBoots;
 
     // 背包内容
-    public List<string> inventoryItems;
+    public List<InventoryItemData> inventoryItems;
 
     // 任务进度
     public List<QuestSaveData> questProgress;
@@ -48,7 +48,7 @@ public class GameSaveData
     {
         saveId = Guid.NewGuid().ToString();
         saveTime = DateTime.Now;
-        inventoryItems = new List<string>();
+        inventoryItems = new List<InventoryItemData>();
         questProgress = new List<QuestSaveData>();
     }
 
@@ -57,6 +57,23 @@ public class GameSaveData
         saveSlot = slot;
         saveName = $"存档 {slot + 1}";
     }
+}
+[System.Serializable]
+public class InventoryItemData
+{
+    public string itemId;        // 物品ID或名称
+    public int quantity;         // 数量
+    public int maxStack;         // 最大堆叠数
+
+    public InventoryItemData(string id, int count, int max = 1)
+    {
+        itemId = id;
+        quantity = count;
+        maxStack = max;
+    }
+
+    // 默认构造函数用于序列化
+    public InventoryItemData() { }
 }
 
 [System.Serializable]

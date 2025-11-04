@@ -19,7 +19,21 @@ public class LoadingScreen : MonoBehaviour
 
     private IEnumerator LoadSceneAsync()
     {
-        string targetScene = PlayerPrefs.GetString("TargetScene", "00Scene_Village");
+        // 确定目标场景：如果是从存档加载且有场景数据，则使用存档场景
+        string targetScene;
+        if (SaveManager.shouldLoadFromSave && SaveManager.Instance != null &&
+            SaveManager.Instance.currentSaveData != null &&
+            !string.IsNullOrEmpty(SaveManager.Instance.currentSaveData.currentScene))
+        {
+            targetScene = SaveManager.Instance.currentSaveData.currentScene;
+            Debug.Log($"从存档加载场景: {targetScene}");
+        }
+        else
+        {
+            targetScene = PlayerPrefs.GetString("TargetScene", "00Scene_Village");
+            Debug.Log($"从PlayerPrefs加载场景: {targetScene}");
+        }
+
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetScene);
         asyncLoad.allowSceneActivation = false;
 

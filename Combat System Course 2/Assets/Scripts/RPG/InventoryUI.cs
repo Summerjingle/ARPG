@@ -31,11 +31,15 @@ public class InventoryUI : MonoBehaviour
 
     private void Awake()
     {
-        if (Instance != null && Instance != this)
+        if (Instance == null)
         {
-            Destroy(this.gameObject);
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
         }
-        Instance = this;
+        else
+        {
+            Destroy(gameObject);
+        }
         // 初始化时关闭背包
         if (inventoryPanel != null)
             inventoryPanel.SetActive(false);
@@ -84,6 +88,7 @@ public class InventoryUI : MonoBehaviour
         if (cameraController != null)
         {
             cameraController.SetUIActive(IsInventoryOpen);
+           
         }
         else
         {
@@ -162,10 +167,58 @@ public class InventoryUI : MonoBehaviour
 
     public void AddItem(ItemSO itemSO)
     {
+        // 检查是否已存在该物品的UI（堆叠物品）
+        if (itemSO.IsStackable())
+        {
+            ItemUI existingUI = FindItemUI(itemSO);
+            if (existingUI != null)
+            {
+                existingUI.UpdateAmountDisplay();
+                return;
+            }
+        }
+
+        // 不存在或非堆叠物品，创建新UI
         GameObject itemGo = GameObject.Instantiate(itemPrefab);
         itemGo.transform.SetParent(content.transform);
         ItemUI itemUI = itemGo.GetComponent<ItemUI>();
         itemUI.InitItem(itemSO);
+    }
+
+    // 查找物品的UI元素
+    private ItemUI FindItemUI(ItemSO targetItem)
+    {
+        if (targetItem == null) return null;
+
+        foreach (Transform child in content.transform)
+        {
+            if (child == null) continue;
+
+            ItemUI itemUI = child.GetComponent<ItemUI>();
+            if (itemUI != null && itemUI.itemSO != null)
+            {
+                // 更严格的匹配条件
+                if (itemUI.itemSO.nameOfItem == targetItem.nameOfItem &&
+                    itemUI.itemSO.itemType == targetItem.itemType)
+                {
+                    return itemUI;
+                }
+            }
+        }
+        return null;
+    }
+    public void UpdateItemAmountDisplay(ItemSO targetItem)
+    {
+        ItemUI existingUI = FindItemUI(targetItem);
+        if (existingUI != null)
+        {
+            existingUI.UpdateAmountDisplay();
+        }
+        else
+        {
+            // 如果找不到UI，说明需要创建新的
+            AddItem(targetItem);
+        }
     }
 
     public void OnItemClick(ItemSO itemSO, ItemUI itemUI)
@@ -175,11 +228,27 @@ public class InventoryUI : MonoBehaviour
 
     public void OnItemUse(ItemSO itemSO, ItemUI itemUI)
     {
-        Destroy(itemUI.gameObject);
-        InventoryManager.Instance.RemoveItem(itemSO);
-        // 使用物品
-        ItemUsageHandler.Instance.UseItem(itemSO);
+        // 先处理背包逻辑（减少数量）
+        if (itemSO.IsStackable() && itemSO.amount > 1)
+        {
+            // 直接减少数量
+            itemSO.amount -= 1;
+            itemUI.UpdateAmountDisplay(); // 更新UI显示
+
+            // 再使用物品效果
+            ItemUsageHandler.Instance.UseItem(itemSO);
+        }
+        else
+        {
+            // 最后一个物品或非堆叠物品
+            Destroy(itemUI.gameObject);
+            InventoryManager.Instance.itemList.Remove(itemSO);
+
+            // 再使用物品效果
+            ItemUsageHandler.Instance.UseItem(itemSO);
+        }
     }
+
 
     // 更新装备图标的方法
     public void UpdateEquipmentIcon(ItemSO item)
@@ -277,11 +346,30 @@ public class InventoryUI : MonoBehaviour
             Destroy(child.gameObject);
         }
 
-        // 重新生成所有物品
+        // 直接为每个物品创建UI，不进行堆叠检查
         foreach (ItemSO item in InventoryManager.Instance.itemList)
         {
-            AddItem(item);
+            if (item == null) continue;
+
+            // 直接实例化UI预制体
+            GameObject itemGo = Instantiate(itemPrefab);
+            itemGo.transform.SetParent(content.transform);
+            itemGo.transform.localScale = Vector3.one;
+            itemGo.SetActive(true);
+
+            ItemUI itemUI = itemGo.GetComponent<ItemUI>();
+            if (itemUI != null)
+            {
+                itemUI.InitItem(item);
+            }
+            else
+            {
+                Debug.LogError("物品预制体缺少ItemUI组件");
+            }
         }
+
+        // 强制刷新布局
+        LayoutRebuilder.ForceRebuildLayoutImmediate(content.GetComponent<RectTransform>());
     }
 
     public void RegisterCameraController(CameraController controller)

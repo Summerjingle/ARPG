@@ -12,13 +12,14 @@ public class SaveManager : MonoBehaviour
     public static bool shouldLoadFromSave = false;
     public static bool isNewGame = true;
     public static string currentSaveId;
+    public static bool shouldLoadPosition = false; // 新增：控制是否加载位置
 
     private string savePath;
     private string savesDirectory;
     private const int MAX_SAVE_SLOTS = 10;
 
     private GameObject registeredPlayer;
-    private GameSaveData currentSaveData;
+    public GameSaveData currentSaveData;
     private bool isApplyingSaveData = false;
 
     private void Awake()
@@ -46,58 +47,12 @@ public class SaveManager : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-
-    #region 游戏数据管理
-    public void StartNewGame()
-    {
-        isNewGame = true;
-        shouldLoadFromSave = false;
-        currentSaveData = new GameSaveData();
-
-        if (File.Exists(savePath))
-        {
-            File.Delete(savePath);
-            Debug.Log("已清除旧存档，开始新游戏");
-        }
-    }
-
-    public void LoadGame()
-    {
-        isNewGame = false;
-        shouldLoadFromSave = true;
-        LoadGameData();
-        Debug.Log("准备加载存档");
-    }
-
-    private void LoadGameData()
-    {
-        if (File.Exists(savePath))
-        {
-            try
-            {
-                string jsonData = File.ReadAllText(savePath);
-                currentSaveData = JsonConvert.DeserializeObject<GameSaveData>(jsonData);
-                Debug.Log("游戏数据已加载");
-            }
-            catch (System.Exception e)
-            {
-                Debug.LogError($"加载存档失败: {e.Message}");
-                currentSaveData = new GameSaveData();
-            }
-        }
-        else
-        {
-            currentSaveData = new GameSaveData();
-            Debug.Log("创建新的存档数据");
-        }
-    }
-    #endregion
-
     #region 存档管理
     public void CreateNewGame(int slot)
     {
         isNewGame = true;
         shouldLoadFromSave = false;
+        shouldLoadPosition = false; // 新游戏不加载位置
 
         // 查找可用的空槽位（不覆盖现有存档）
         int availableSlot = FindEmptySaveSlot();
@@ -131,6 +86,7 @@ public class SaveManager : MonoBehaviour
     {
         isNewGame = false;
         shouldLoadFromSave = true;
+        shouldLoadPosition = true; // 从主菜单加载存档时需要加载位置
         currentSaveId = saveId;
         LoadGameData(saveId);
         Debug.Log($"准备加载存档: {saveId}");
@@ -228,6 +184,7 @@ public class SaveManager : MonoBehaviour
             Debug.LogWarning("没有当前存档数据，无法保存");
             return;
         }
+
         // 检查是否为新游戏且还没有保存过
         if (isNewGame && !HasBeenSavedBefore())
         {
@@ -257,8 +214,11 @@ public class SaveManager : MonoBehaviour
 
         Debug.Log($"保存玩家属性 - 等级: {playerProperty.level}, 经验: {playerProperty.currEXP}, 血量: {playerProperty.hpValue}");
 
-        // 更新存档数据
+        // 更新存档数据 - 保存位置和场景
         currentSaveData.currentScene = SceneManager.GetActiveScene().name;
+        currentSaveData.playerPosition = player.transform.position;
+        currentSaveData.playerRotation = player.transform.rotation;
+
         currentSaveData.level = playerProperty.level;
         currentSaveData.currEXP = playerProperty.currEXP;
         currentSaveData.hpValue = playerProperty.hpValue;
@@ -287,6 +247,7 @@ public class SaveManager : MonoBehaviour
             Debug.LogError($"保存游戏失败: {e.Message}");
         }
     }
+
     private bool HasBeenSavedBefore()
     {
         string savePath = GetSavePath(currentSaveData.saveId);
@@ -323,16 +284,19 @@ public class SaveManager : MonoBehaviour
 
     private void SaveInventory()
     {
-        if (InventoryManager.Instance == null || InventoryManager.Instance.itemList == null)
+        if (InventoryManager.Instance == null)
         {
             Debug.LogWarning("库存管理器未初始化，无法保存库存");
             return;
         }
 
-        foreach (ItemSO item in InventoryManager.Instance.itemList)
-        {
-            if (item != null) currentSaveData.inventoryItems.Add(item.name);
-        }
+        currentSaveData.inventoryItems.Clear();
+
+       
+        var itemStacks = InventoryManager.Instance.GetAllItemStacks();
+        currentSaveData.inventoryItems.AddRange(itemStacks);
+
+        Debug.Log($"已保存 {currentSaveData.inventoryItems.Count} 个物品堆叠");
     }
 
     private void SaveQuests()
@@ -423,7 +387,7 @@ public class SaveManager : MonoBehaviour
                 }
             }
 
-            Debug.Log($"第 {i + 1} 次尝试查找玩家对象...");
+            Debug.Log($"第 {i + 1} 次尝试寻找玩家对象...");
             yield return new WaitForSeconds(retryInterval);
         }
 
@@ -433,6 +397,12 @@ public class SaveManager : MonoBehaviour
 
     private void ApplySaveDataToPlayer(GameObject player)
     {
+        // 只有在需要时才应用位置数据
+        if (shouldLoadPosition)
+        {
+            ApplyPlayerPosition(player);
+        }
+
         ApplyPlayerProperties(player);
         ApplyInventory();
         ApplyQuests();
@@ -440,6 +410,21 @@ public class SaveManager : MonoBehaviour
 
         Debug.Log($"应用存档完成 - 等级: {currentSaveData.level}, 经验: {currentSaveData.currEXP}, 血量: {currentSaveData.hpValue}");
         RefreshHUDUI();
+    }
+
+    // 新增方法：应用玩家位置
+    private void ApplyPlayerPosition(GameObject player)
+    {
+        if (currentSaveData.playerPosition.ToVector3() != Vector3.zero)
+        {
+            player.transform.position = currentSaveData.playerPosition.ToVector3();
+            player.transform.rotation = currentSaveData.playerRotation.ToQuaternion();
+            Debug.Log($"应用玩家位置: {player.transform.position}, 旋转: {player.transform.rotation}");
+        }
+        else
+        {
+            Debug.Log("存档中没有位置数据，使用默认出生点");
+        }
     }
 
     private void ApplyPlayerProperties(GameObject player)
@@ -476,20 +461,29 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
-        if (InventoryManager.Instance.itemList == null)
-            InventoryManager.Instance.itemList = new List<ItemSO>();
-        else
-            InventoryManager.Instance.itemList.Clear();
+        // 使用清空方法
+        InventoryManager.Instance.ClearInventory();
 
-        foreach (string itemName in currentSaveData.inventoryItems)
+        foreach (InventoryItemData itemData in currentSaveData.inventoryItems)
         {
-            ItemSO item = ItemDBManager.Instance?.itemDB?.itemList?.Find(i => i != null && i.name == itemName);
-            if (item != null) InventoryManager.Instance.ReAddItem(item);
+            ItemSO itemTemplate = ItemDBManager.Instance?.itemDB?.itemList?.Find(i => i != null && i.nameOfItem == itemData.itemId);
+            if (itemTemplate != null)
+            {
+                ItemSO newItem = Instantiate(itemTemplate);
+                newItem.amount = itemData.quantity;
+                InventoryManager.Instance.ReAddItem(newItem);
+            }
         }
 
         InventoryUI.Instance?.UpdateInventoryUI();
+        Debug.Log($"内存中物品数量: {InventoryManager.Instance.itemList.Count}");
+        foreach (var item in InventoryManager.Instance.itemList)
+        {
+            Debug.Log($"物品: {item.nameOfItem}, 数量: {item.amount}");
+        }
+        Debug.Log($"已加载 {currentSaveData.inventoryItems.Count} 个物品堆叠");
+        
     }
-
     private void ApplyQuests()
     {
         if (QuestManager.Instance == null || QuestDBManager.Instance == null) return;
@@ -607,7 +601,7 @@ public class SaveManager : MonoBehaviour
     {
         yield return new WaitForSeconds(3f); // 3秒
         ApplySaveData();
-        shouldLoadFromSave = false;
+        
     }
 
     private void RefreshHUDUI()

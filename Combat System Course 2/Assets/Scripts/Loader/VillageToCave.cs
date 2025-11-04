@@ -10,16 +10,19 @@ public class VillageToCave : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // 保存游戏状态
+            
             if (SaveManager.Instance != null)
             {
+
                 SaveManager.Instance.SaveGame();
+                SaveManager.Instance.currentSaveData.currentScene = gameSceneName;
                 SaveManager.isNewGame = false;
             }
 
             // 设置目标场景并加载
             PlayerPrefs.SetString("TargetScene", gameSceneName);
             SaveManager.shouldLoadFromSave = true;
+            SaveManager.shouldLoadPosition = false; 
             SceneManager.LoadScene(loadingSceneName);
         }
     }

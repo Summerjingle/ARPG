@@ -17,6 +17,20 @@ public class ItemSO :ScriptableObject
     public GameObject weaponPrefab;
     public bool canDrop = true;
 
+    public int maxStackSize = 1; // 最大堆叠数量
+    public int amount = 1;       // 当前数量
+    public bool IsStackable()
+    {
+        return itemType == ItemType.Consumable && maxStackSize > 1;
+    }
+
+    // 新增方法：检查是否可以堆叠
+    public bool CanStackWith(ItemSO otherItem)
+    {
+        return this.nameOfItem == otherItem.nameOfItem &&
+               this.itemType == otherItem.itemType &&
+               this.IsStackable() && otherItem.IsStackable();
+    }
 }
 public enum ItemType
 {
@@ -58,3 +72,4 @@ public enum PropertyType
     AttackValue,
     DefenseValue
 }
+

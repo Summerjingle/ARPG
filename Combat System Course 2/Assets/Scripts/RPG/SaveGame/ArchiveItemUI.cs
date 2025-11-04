@@ -12,12 +12,19 @@ public class ArchiveItemUI : MonoBehaviour
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI expText;
     public Button button;
+    public Button deleteButton; // 新增删除按钮字段
 
     [HideInInspector] public UnityEvent onClick = new UnityEvent();
 
     private void Start()
     {
         button.onClick.AddListener(() => onClick.Invoke());
+
+        // 如果有删除按钮，也为其添加监听
+        if (deleteButton != null)
+        {
+            deleteButton.onClick.AddListener(() => OnDeleteButtonClicked());
+        }
     }
 
     public void SetArchiveData(GameSaveData saveData)
@@ -42,5 +49,20 @@ public class ArchiveItemUI : MonoBehaviour
 
         // 设置按钮为空槽位状态的颜色
         button.image.color = Color.gray;
+
+        // 空槽位禁用删除按钮
+        if (deleteButton != null)
+        {
+            deleteButton.interactable = false;
+        }
+    }
+
+    // 新增：删除按钮点击事件
+    private void OnDeleteButtonClicked()
+    {
+        // 这里可以添加删除逻辑
+        // 由于我们直接在 MenuSceneController 中绑定了事件，这个方法可以留空
+        // 或者您可以在这里添加一些视觉效果
+        Debug.Log("删除按钮被点击");
     }
 }

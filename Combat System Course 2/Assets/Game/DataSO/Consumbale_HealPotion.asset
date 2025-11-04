@@ -24,3 +24,5 @@ MonoBehaviour:
     type: 3}
   weaponPrefab: {fileID: 0}
   canDrop: 1
+  maxStackSize: 200
+  amount: 1

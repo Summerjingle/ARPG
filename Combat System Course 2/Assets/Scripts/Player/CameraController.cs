@@ -16,6 +16,10 @@ public class CameraController : MonoBehaviour
     [SerializeField] float cameraRadius = 0.2f;
     [SerializeField] int collisionCheckFrequency = 3; // 每3帧检测一次
 
+    [Header("Anti-Jitter Settings")]
+    [SerializeField] float distanceChangeThreshold = 0.1f; // 距离变化阈值
+    [SerializeField] float stableTimeThreshold = 0.2f; // 稳定时间阈值
+
     private float rotationY;
     private float rotationX;
     private float currentDistance;
@@ -24,6 +28,11 @@ public class CameraController : MonoBehaviour
     private float lastCheckTime;
     private Vector3 lastAdjustedPosition;
 
+    // 防抖动变量声明
+    private float lastStableDistance;
+    private float distanceStableTimer;
+    private bool isDistanceLocked = false;
+
     public static bool IsAnyUIActive { get; private set; }
     private static int uiActiveCount = 0;
 
@@ -31,9 +40,12 @@ public class CameraController : MonoBehaviour
     {
         RegisterToManagers();
     }
+
     private void Start()
     {
         currentDistance = distance;
+        lastStableDistance = distance; // 初始化
+        distanceStableTimer = 0f; // 初始化
         UpdateCursorState();
         PrecalculateClipPoints();
     }
@@ -109,22 +121,25 @@ public class CameraController : MonoBehaviour
         float nearestDistance = distance;
         bool collisionDetected = false;
 
-        // 只检测中心点和两个对角点（减少到3个检测点）
-        for (int i = 0; i < 3; i++)
+        // 使用更稳定的碰撞检测方法
+        Vector3[] checkDirections = new Vector3[]
         {
-            int index = i == 2 ? 4 : i; // 检测中心(0)、左下(1)、右上(4)
-            Vector3 clipPoint = transform.TransformPoint(clipPoints[index]);
-            Vector3 rayDirection = clipPoint - focusPosition;
+            rotation * Vector3.forward * -1, // 主方向
+            rotation * (Vector3.forward * -1 + Vector3.up * 0.3f), // 稍微向上偏移
+            rotation * (Vector3.forward * -1 + Vector3.down * 0.3f) // 稍微向下偏移
+        };
 
+        foreach (Vector3 direction in checkDirections)
+        {
             if (Physics.SphereCast(
                 focusPosition,
                 cameraRadius,
-                rayDirection.normalized,
+                direction.normalized,
                 out RaycastHit hit,
-                rayDirection.magnitude + collisionOffset,
+                distance + collisionOffset,
                 collisionMask))
             {
-                float hitDistance = hit.distance - collisionOffset;
+                float hitDistance = Mathf.Max(hit.distance - collisionOffset, minCameraDistance);
                 if (hitDistance < nearestDistance)
                 {
                     nearestDistance = hitDistance;
@@ -133,9 +148,34 @@ public class CameraController : MonoBehaviour
             }
         }
 
-        // 使用更平滑的距离过渡
-        float targetDistance = collisionDetected ? Mathf.Max(nearestDistance, minCameraDistance) : distance;
-        currentDistance = Mathf.Lerp(currentDistance, targetDistance, Time.deltaTime * 5f);
+        float targetDistance = collisionDetected ? nearestDistance : distance;
+
+        // 防抖动处理
+        if (Mathf.Abs(targetDistance - lastStableDistance) < distanceChangeThreshold)
+        {
+            distanceStableTimer += Time.deltaTime;
+            if (distanceStableTimer >= stableTimeThreshold && !isDistanceLocked)
+            {
+                isDistanceLocked = true;
+                currentDistance = lastStableDistance;
+            }
+        }
+        else
+        {
+            distanceStableTimer = 0f;
+            isDistanceLocked = false;
+            lastStableDistance = targetDistance;
+        }
+
+        if (!isDistanceLocked)
+        {
+            // 自适应平滑过渡
+            float distanceDiff = Mathf.Abs(currentDistance - targetDistance);
+            float smoothSpeed = distanceDiff > 0.5f ? 8f : 4f;
+
+            currentDistance = Mathf.Lerp(currentDistance, targetDistance, Time.deltaTime * smoothSpeed);
+            lastStableDistance = currentDistance;
+        }
 
         return focusPosition - rotation * new Vector3(0, 0, currentDistance);
     }
@@ -156,6 +196,7 @@ public class CameraController : MonoBehaviour
     }
 
     public Quaternion PlanarRotation => Quaternion.Euler(0, rotationY, 0);
+
     private void RegisterToManagers()
     {
         // 注册到InventoryUI
