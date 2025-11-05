@@ -41,7 +41,7 @@ public class QuestObjective
         {
             case ObjectiveType.Kill: return $"击败 {targetID} ({currentAmount}/{requiredAmount})";
             case ObjectiveType.Collect: return $"收集 {targetID} ({currentAmount}/{requiredAmount})";
-            case ObjectiveType.Talk: return $"与 {targetID} 对话";
+            case ObjectiveType.Talk: return isCompleted ? $"已与 {targetID} 对话" : $"与 {targetID} 对话";
             case ObjectiveType.Explore: return $"探索 {targetID}";
             default: return "未知目标";
         }

@@ -50,12 +50,35 @@ public class GameSaveData
         saveTime = DateTime.Now;
         inventoryItems = new List<InventoryItemData>();
         questProgress = new List<QuestSaveData>();
+        scenePickedItems = new Dictionary<string, HashSet<string>>();
     }
 
     public GameSaveData(int slot) : this()
     {
         saveSlot = slot;
         saveName = $"存档 {slot + 1}";
+    }
+
+    public Dictionary<string, HashSet<string>> scenePickedItems = new Dictionary<string, HashSet<string>>();
+
+    // 新增：检查场景中的物品是否已被拾取
+    public bool IsSceneItemPicked(string sceneName, string itemId)
+    {
+        if (scenePickedItems.TryGetValue(sceneName, out HashSet<string> pickedItems))
+        {
+            return pickedItems.Contains(itemId);
+        }
+        return false;
+    }
+
+    // 新增：标记场景中的物品为已拾取
+    public void MarkSceneItemAsPicked(string sceneName, string itemId)
+    {
+        if (!scenePickedItems.ContainsKey(sceneName))
+        {
+            scenePickedItems[sceneName] = new HashSet<string>();
+        }
+        scenePickedItems[sceneName].Add(itemId);
     }
 }
 [System.Serializable]

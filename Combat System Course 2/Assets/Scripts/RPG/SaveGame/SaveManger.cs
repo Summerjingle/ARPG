@@ -21,11 +21,26 @@ public class SaveManager : MonoBehaviour
     private GameObject registeredPlayer;
     public GameSaveData currentSaveData;
     private bool isApplyingSaveData = false;
+    
+    private bool isApplySaveDataAfterFrameRunning = false;
+      private bool hasSaveDataBeenAppliedInCurrentScene = false;
 
     private void Awake()
     {
+        Debug.Log($"SaveManager Awake 被调用，当前实例: {GetInstanceID()}");
+
+        // 检查是否有其他实例
+        var allInstances = FindObjectsOfType<SaveManager>();
+        Debug.Log($"当前场景中 SaveManager 实例数量: {allInstances.Length}");
+
+        foreach (var instance in allInstances)
+        {
+            Debug.Log($"实例ID: {instance.GetInstanceID()}, 游戏对象: {instance.gameObject.name}");
+        }
         if (Instance != null && Instance != this)
         {
+            // 先取消事件注册再销毁
+            SceneManager.sceneLoaded -= OnSceneLoaded;
             Destroy(gameObject);
             return;
         }
@@ -39,11 +54,14 @@ public class SaveManager : MonoBehaviour
             Directory.CreateDirectory(savesDirectory);
         }
 
+        // 确保只注册一次
+        SceneManager.sceneLoaded -= OnSceneLoaded; // 先移除可能存在的重复注册
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDestroy()
     {
+        // 确保彻底取消注册
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
@@ -316,7 +334,7 @@ public class SaveManager : MonoBehaviour
             {
                 QuestState state = QuestManager.Instance.GetQuestState(quest);
                 QuestSaveData questSaveData = new QuestSaveData(quest.questID, state);
-
+                Debug.Log($"保存任务: {quest.questName}, 状态: {state}");
                 // 保存任务目标进度
                 if (quest.objectives != null)
                 {
@@ -329,6 +347,7 @@ public class SaveManager : MonoBehaviour
                             currentAmount = objective.currentAmount,
                             isCompleted = objective.isCompleted
                         });
+                        Debug.Log($"保存目标{i}: 类型={objective.objectiveType}, 目标ID={objective.targetID}, 完成={objective.isCompleted}");
                     }
                 }
 
@@ -343,6 +362,16 @@ public class SaveManager : MonoBehaviour
     #region 加载存档
     public void ApplySaveData()
     {
+        Debug.Log($"ApplySaveData 被调用，调用堆栈: {System.Environment.StackTrace}");
+        // 防止重复应用
+        if (hasSaveDataBeenAppliedInCurrentScene)
+        {
+            Debug.LogWarning("存档数据已经在当前场景应用过，跳过");
+            return;
+        }
+
+        // 设置标志
+        hasSaveDataBeenAppliedInCurrentScene = true;
         if (isApplyingSaveData) return;
         StartCoroutine(ApplySaveDataWithRetry());
     }
@@ -362,9 +391,10 @@ public class SaveManager : MonoBehaviour
             isApplyingSaveData = false;
             yield break;
         }
+        isApplyingSaveData = true;
 
-        int maxRetries = 15;
-        float retryInterval = 0.2f;
+        int maxRetries = 8;
+        float retryInterval = 0.1f;
 
         for (int i = 0; i < maxRetries; i++)
         {
@@ -497,6 +527,7 @@ public class SaveManager : MonoBehaviour
             Quest quest = QuestDBManager.Instance.questDatabase.GetQuestByID(questData.questID);
             if (quest != null)
             {
+                Debug.Log($"加载任务: {quest.questName}, 状态: {questData.questState}");
                 // 恢复任务状态
                 QuestManager.Instance.SetQuestState(quest, questData.questState);
 
@@ -508,8 +539,25 @@ public class SaveManager : MonoBehaviour
                         if (objectiveProgress.objectiveIndex < quest.objectives.Count)
                         {
                             var objective = quest.objectives[objectiveProgress.objectiveIndex];
+                            Debug.Log($"加载目标{objectiveProgress.objectiveIndex}: 完成状态={objectiveProgress.isCompleted}");
                             objective.currentAmount = objectiveProgress.currentAmount;
                             objective.isCompleted = objectiveProgress.isCompleted;
+                        }
+                    }
+                }
+
+                //若为“进行中”或“可完成”的任务，重新显示在界面上
+                if (questData.questState == QuestState.InProgress || questData.questState == QuestState.CanComplete)
+                {
+                    if (QuestPanelController.Instance != null)
+                    {
+                        if (quest.questType == QuestType.Main)
+                        {
+                            QuestPanelController.Instance.SetMainQuest(quest);
+                        }
+                        else if (quest.questType == QuestType.Side)
+                        {
+                            QuestPanelController.Instance.SetSideQuest(quest);
                         }
                     }
                 }
@@ -593,16 +641,56 @@ public class SaveManager : MonoBehaviour
     #region 场景和UI管理
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
+        hasSaveDataBeenAppliedInCurrentScene = false;
+
+        // 关键修复：停止所有正在运行的协程
+        StopAllCoroutines();
+        isApplySaveDataAfterFrameRunning = false;
+        isApplyingSaveData = false;
+
+        Debug.Log($"=== OnSceneLoaded 被调用 === Scene: {scene.name}, Mode: {mode}");
+
+        // 只有在特定条件下才处理场景加载
         if (shouldLoadFromSave && !string.IsNullOrEmpty(currentSaveId))
-            StartCoroutine(ApplySaveDataAfterFrame());
+        {
+            // 防止重复启动协程
+            if (!isApplySaveDataAfterFrameRunning && !hasSaveDataBeenAppliedInCurrentScene)
+            {
+                Debug.Log("开始 ApplySaveDataAfterFrame 协程");
+                StartCoroutine(ApplySaveDataAfterFrame());
+            }
+            else
+            {
+                Debug.LogWarning($"跳过存档应用：isApplySaveDataAfterFrameRunning={isApplySaveDataAfterFrameRunning}, hasSaveDataBeenAppliedInCurrentScene={hasSaveDataBeenAppliedInCurrentScene}");
+            }
+        }
+        else
+        {
+            Debug.Log($"跳过存档应用：shouldLoadFromSave={shouldLoadFromSave}, currentSaveId={currentSaveId}");
+        }
     }
 
     private IEnumerator ApplySaveDataAfterFrame()
     {
-        yield return new WaitForSeconds(3f); // 3秒
+        // 设置运行标志
+        if (isApplySaveDataAfterFrameRunning)
+        {
+            Debug.LogWarning("ApplySaveDataAfterFrame 已经在运行中，跳过");
+            yield break;
+        }
+
+        isApplySaveDataAfterFrameRunning = true;
+        Debug.Log("ApplySaveDataAfterFrame 协程开始");
+
+        yield return new WaitForSeconds(0.5f);
+
+        Debug.Log("ApplySaveDataAfterFrame 协程结束，调用 ApplySaveData");
         ApplySaveData();
-        
+
+        // 重置标志
+        isApplySaveDataAfterFrameRunning = false;
     }
+
 
     private void RefreshHUDUI()
     {

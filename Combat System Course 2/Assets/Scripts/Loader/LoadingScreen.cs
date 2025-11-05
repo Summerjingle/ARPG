@@ -61,12 +61,8 @@ public class LoadingScreen : MonoBehaviour
             yield return null;
         }
 
-        // 场景加载完成后，如果需要加载存档，则应用存档数据
-        if (SaveManager.shouldLoadFromSave && SaveManager.Instance != null)
+        if (SaveManager.shouldLoadFromSave)
         {
-            // 等待一帧确保所有对象都已初始化
-            yield return null;
-            SaveManager.Instance.ApplySaveData();
             SaveManager.shouldLoadFromSave = false;
         }
     }

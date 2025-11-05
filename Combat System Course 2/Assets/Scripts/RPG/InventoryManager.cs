@@ -75,31 +75,44 @@ public class InventoryManager : MonoBehaviour
     }
 
 
-
-    // 移除指定数量的物品
-    public void RemoveItem(ItemSO itemSO, int amountToRemove = 1)
+    //从背包中移除指定物品
+    public void RemoveItem(ItemSO targetItem, int amountToRemove = 1)
     {
-        if (itemSO.IsStackable())
+        // 在背包中找到对应的物品（通过名称匹配）
+        ItemSO inventoryItem = null;
+        foreach (ItemSO item in itemList)
         {
-            // 堆叠物品：减少数量
-            itemSO.amount -= amountToRemove;
-
-            if (itemSO.amount <= 0)
+            if (item != null && item.nameOfItem == targetItem.nameOfItem)
             {
-                // 数量为0或负数时完全移除
-                itemList.Remove(itemSO);
-                MessageUI.Instance.Show($"{itemSO.nameOfItem} 已从背包移除");
+                inventoryItem = item;
+                break;
+            }
+        }
+
+        if (inventoryItem == null)
+        {
+            Debug.LogWarning($"尝试移除不存在的物品: {targetItem.nameOfItem}");
+            return;
+        }
+
+        // 原有的移除逻辑保持不变
+        if (inventoryItem.IsStackable())
+        {
+            inventoryItem.amount -= amountToRemove;
+            if (inventoryItem.amount <= 0)
+            {
+                itemList.Remove(inventoryItem);
+                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} 已从背包移除");
             }
             else
             {
-                MessageUI.Instance.Show($"{itemSO.nameOfItem} 数量减少至 {itemSO.amount}");
+                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} 数量减少至 {inventoryItem.amount}");
             }
         }
         else
         {
-            // 非堆叠物品：直接移除
-            itemList.Remove(itemSO);
-            MessageUI.Instance.Show($"{itemSO.nameOfItem} 已从背包移除");
+            itemList.Remove(inventoryItem);
+            MessageUI.Instance.Show($"{inventoryItem.nameOfItem} 已从背包移除");
         }
 
         InventoryUI.Instance.UpdateInventoryUI();
@@ -169,8 +182,19 @@ public class InventoryManager : MonoBehaviour
 
     public bool HasItem(ItemSO targetItem)
     {
-        return itemList.Contains(targetItem);
+        if (targetItem == null) return false;
+
+        
+        foreach (ItemSO item in itemList)
+        {
+            if (item != null && item.nameOfItem == targetItem.nameOfItem)
+            {
+                return true;
+            }
+        }
+        return false;
     }
+
 
     // 新增：检查是否有指定数量的物品
     public bool HasEnoughItems(ItemSO targetItem, int requiredAmount)

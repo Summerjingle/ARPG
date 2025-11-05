@@ -12,8 +12,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3258a6a9b8d308540a484a70e0b84ed0, type: 3}
   m_Name: Quest_UnderWorld
   m_EditorClassIdentifier: 
-  questName: "\u5730\u5E95\u7684\u6B66\u5668"
-  description: "\u4ECE\u5730\u7CBE\u624B\u4E2D\u53D6\u5F97\u6740\u6B7B\u5973\u5DEB\u7684\u6B66\u5668"
+  questID: 03_Cave_beneathTheCave
+  questName: "\u5730\u5E95\u7684\u7CBE\u7075"
+  description: "\u627E\u5230\u6D1E\u7A74\u91CC\u7684\u7CBE\u7075"
+  questType: 0
+  requiredLevel: 1
+  requiredQuests: []
+  objectives:
+  - objectiveType: 2
+    targetID: Jollen
+    requiredAmount: 1
+    currentAmount: 0
+    isCompleted: 0
   rewardGold: 0
-  questType: 1
+  rewardExp: 0
+  rewardItems:
+  - {fileID: 11400000, guid: 7e6b9d89d5471bc418e33022d24d7a10, type: 2}
   isRepeatable: 0
+  autoComplete: 1

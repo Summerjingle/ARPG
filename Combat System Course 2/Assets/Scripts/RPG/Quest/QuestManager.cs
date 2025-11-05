@@ -14,6 +14,16 @@ public class QuestManager : MonoBehaviour
     // 任务状态字典
     private Dictionary<Quest, QuestState> questProgress = new Dictionary<Quest, QuestState>();
 
+    // 新增：任务目标运行时状态字典
+    private Dictionary<Quest, List<ObjectiveRuntimeData>> objectiveRuntimeData = new Dictionary<Quest, List<ObjectiveRuntimeData>>();
+
+    [System.Serializable]
+    public class ObjectiveRuntimeData
+    {
+        public int currentAmount;
+        public bool isCompleted;
+    }
+
     private void Awake()
     {
         InitializeSingleton();
@@ -34,6 +44,104 @@ public class QuestManager : MonoBehaviour
     }
     #endregion
 
+    #region 运行时状态管理
+    /// <summary>
+    /// 获取目标运行时状态
+    /// </summary>
+    public bool IsObjectiveCompleted(Quest quest, int objectiveIndex)
+    {
+        if (objectiveRuntimeData.ContainsKey(quest) && objectiveIndex < objectiveRuntimeData[quest].Count)
+        {
+            return objectiveRuntimeData[quest][objectiveIndex].isCompleted;
+        }
+
+        // 如果运行时数据不存在，使用ScriptableObject的默认值（但应该避免）
+        return quest.objectives != null && objectiveIndex < quest.objectives.Count ?
+               quest.objectives[objectiveIndex].isCompleted : false;
+    }
+
+    /// <summary>
+    /// 设置目标完成状态
+    /// </summary>
+    public void SetObjectiveCompleted(Quest quest, int objectiveIndex, bool completed)
+    {
+        // 确保运行时数据存在
+        if (!objectiveRuntimeData.ContainsKey(quest))
+        {
+            InitializeObjectiveRuntimeData(quest);
+        }
+
+        if (objectiveIndex < objectiveRuntimeData[quest].Count)
+        {
+            objectiveRuntimeData[quest][objectiveIndex].isCompleted = completed;
+            Debug.Log($"设置目标完成状态: {quest.questName} 目标{objectiveIndex} -> {completed}");
+        }
+    }
+
+    /// <summary>
+    /// 设置目标当前数量
+    /// </summary>
+    public void SetObjectiveCurrentAmount(Quest quest, int objectiveIndex, int amount)
+    {
+        if (!objectiveRuntimeData.ContainsKey(quest))
+        {
+            InitializeObjectiveRuntimeData(quest);
+        }
+
+        if (objectiveIndex < objectiveRuntimeData[quest].Count)
+        {
+            objectiveRuntimeData[quest][objectiveIndex].currentAmount = amount;
+        }
+    }
+
+    /// <summary>
+    /// 增加目标进度
+    /// </summary>
+    public void AddObjectiveProgress(Quest quest, int objectiveIndex, int amount)
+    {
+        if (!objectiveRuntimeData.ContainsKey(quest))
+        {
+            InitializeObjectiveRuntimeData(quest);
+        }
+
+        if (objectiveIndex < objectiveRuntimeData[quest].Count)
+        {
+            var objective = quest.objectives[objectiveIndex];
+            var runtimeData = objectiveRuntimeData[quest][objectiveIndex];
+
+            runtimeData.currentAmount = Mathf.Min(runtimeData.currentAmount + amount, objective.requiredAmount);
+
+            // 检查目标是否完成
+            if (runtimeData.currentAmount >= objective.requiredAmount)
+            {
+                runtimeData.isCompleted = true;
+                Debug.Log($"目标自动完成: {quest.questName} 目标{objectiveIndex}");
+                CheckQuestCompletion(quest);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 初始化运行时数据
+    /// </summary>
+    private void InitializeObjectiveRuntimeData(Quest quest)
+    {
+        objectiveRuntimeData[quest] = new List<ObjectiveRuntimeData>();
+
+        if (quest.objectives != null)
+        {
+            foreach (var objective in quest.objectives)
+            {
+                objectiveRuntimeData[quest].Add(new ObjectiveRuntimeData
+                {
+                    currentAmount = objective.currentAmount,
+                    isCompleted = objective.isCompleted
+                });
+            }
+        }
+    }
+    #endregion
+
     #region 杀敌任务支持
     /// <summary>
     /// 敌人被杀死时调用
@@ -41,13 +149,6 @@ public class QuestManager : MonoBehaviour
     public void OnEnemyKilled(string targetID, string enemyTypeID)
     {
         Debug.Log($"OnEnemyKilled 被调用: targetID='{targetID}', enemyTypeID='{enemyTypeID}'");
-
-        if (string.IsNullOrEmpty(targetID))
-        {
-            Debug.LogWarning("OnEnemyKilled: targetID 为空");
-            return;
-        }
-
         UpdateKillQuests(targetID, enemyTypeID);
     }
 
@@ -56,81 +157,31 @@ public class QuestManager : MonoBehaviour
     /// </summary>
     private void UpdateKillQuests(string targetID, string enemyTypeID)
     {
-        Debug.Log("=== 开始查找匹配的杀敌任务 ===");
-        Debug.Log($"查找条件: targetID='{targetID}', enemyTypeID='{enemyTypeID}'");
-
-        if (QuestDBManager.Instance == null)
+        if (QuestDBManager.Instance == null || QuestDBManager.Instance.questDatabase == null)
         {
-            Debug.LogError("QuestDBManager.Instance 为 null!");
+            Debug.LogError("任务数据库未初始化");
             return;
         }
-
-        if (QuestDBManager.Instance.questDatabase == null)
-        {
-            Debug.LogError("questDatabase 为 null!");
-            return;
-        }
-
-        Debug.Log($"任务数据库中共有 {QuestDBManager.Instance.questDatabase.allQuests.Count} 个任务");
 
         bool foundMatchingQuest = false;
-        int questCount = 0;
 
-        // 遍历所有任务
         foreach (var quest in QuestDBManager.Instance.questDatabase.allQuests)
         {
-            questCount++;
-            Debug.Log($"检查任务 #{questCount}: {quest?.questName}");
-
-            if (quest == null)
-            {
-                Debug.LogWarning("发现空任务，跳过");
-                continue;
-            }
-
-            Debug.Log($"任务: {quest.questName} (ID: {quest.questID}, 类型: {quest.questType})");
-
-            // 检查任务状态
             var questState = GetQuestState(quest);
-            Debug.Log($"任务状态: {questState}");
+            if (questState != QuestState.InProgress) continue;
+            if (quest.objectives == null) continue;
 
-            if (questState != QuestState.InProgress)
-            {
-                Debug.Log($"任务状态不是进行中，跳过");
-                continue;
-            }
-
-            if (quest.objectives == null || quest.objectives.Count == 0)
-            {
-                Debug.Log($"任务没有目标，跳过");
-                continue;
-            }
-
-            Debug.Log($"任务有 {quest.objectives.Count} 个目标");
-
-            // 更新匹配的目标
             for (int i = 0; i < quest.objectives.Count; i++)
             {
                 var objective = quest.objectives[i];
-                Debug.Log($"目标 {i}: 类型={objective.objectiveType}, 目标ID='{objective.targetID}', 所需={objective.requiredAmount}, 当前={objective.currentAmount}");
 
-                bool typeMatches = objective.objectiveType == ObjectiveType.Kill;
-                bool targetIDMatches = objective.targetID == targetID;
-                bool enemyTypeMatches = objective.targetID == enemyTypeID;
-
-                Debug.Log($"匹配检查: 类型匹配={typeMatches}, 目标ID匹配={targetIDMatches} ('{objective.targetID}' == '{targetID}'), 敌人类型匹配={enemyTypeMatches} ('{objective.targetID}' == '{enemyTypeID}')");
-
-                if (typeMatches && (targetIDMatches || enemyTypeMatches))
+                if (objective.objectiveType == ObjectiveType.Kill &&
+                    (objective.targetID == targetID || objective.targetID == enemyTypeID) &&
+                    !IsObjectiveCompleted(quest, i))  // 使用运行时状态检查
                 {
-                    Debug.Log($"找到匹配的杀敌目标!");
-                    // 更新任务目标进度
-                    UpdateQuestObjective(quest, i, 1);
+                    AddObjectiveProgress(quest, i, 1);
                     foundMatchingQuest = true;
-                    Debug.Log($"更新杀敌任务进度: {quest.questName} - {objective.targetID} ({objective.currentAmount}/{objective.requiredAmount})");
-                }
-                else
-                {
-                    Debug.Log($"目标不匹配，跳过");
+                    Debug.Log($"杀敌任务进度更新: {quest.questName} - {objective.targetID}");
                 }
             }
         }
@@ -138,18 +189,92 @@ public class QuestManager : MonoBehaviour
         if (!foundMatchingQuest)
         {
             Debug.LogWarning($"没有找到匹配的杀敌任务: targetID='{targetID}', enemyTypeID='{enemyTypeID}'");
-            Debug.Log($"可能的原因:");
-            Debug.Log($"   - 任务状态不是 InProgress");
-            Debug.Log($"   - 任务目标类型不是 Kill");
-            Debug.Log($"   - 任务目标ID不匹配 ('Wolf' vs 实际目标ID)");
-            Debug.Log($"   - 任务数据库中没有任何任务");
         }
-        else
+    }
+    #endregion
+
+    #region 谈话任务支持
+    /// <summary>
+    /// NPC对话时调用 - 用于所有NPC
+    /// </summary>
+    public void OnNPCTalked(string npcID)
+    {
+        Debug.Log($"OnNPCTalked 被调用: npcID='{npcID}'");
+        UpdateTalkQuests(npcID);
+    }
+
+    /// <summary>
+    /// 更新所有相关的谈话任务
+    /// </summary>
+    private void UpdateTalkQuests(string npcID)
+    {
+        if (QuestDBManager.Instance == null || QuestDBManager.Instance.questDatabase == null)
         {
-            Debug.Log($"成功找到并更新了匹配的杀敌任务!");
+            Debug.LogError("任务数据库未初始化");
+            return;
         }
 
-        Debug.Log($"=== 结束查找匹配的杀敌任务 === (检查了 {questCount} 个任务)");
+        bool foundMatchingQuest = false;
+
+        foreach (var quest in QuestDBManager.Instance.questDatabase.allQuests)
+        {
+            var questState = GetQuestState(quest);
+            if (questState != QuestState.InProgress) continue;
+            if (quest.objectives == null) continue;
+
+            for (int i = 0; i < quest.objectives.Count; i++)
+            {
+                var objective = quest.objectives[i];
+
+                if (objective.objectiveType == ObjectiveType.Talk &&
+                    objective.targetID == npcID &&
+                    !IsObjectiveCompleted(quest, i))  // 使用运行时状态检查
+                {
+                    // 使用运行时状态，而不是直接修改ScriptableObject
+                    SetObjectiveCompleted(quest, i, true);
+                    SetObjectiveCurrentAmount(quest, i, objective.requiredAmount);
+
+                    foundMatchingQuest = true;
+                    Debug.Log($"谈话任务完成: {quest.questName} - 与 {npcID} 对话完成");
+
+                    // 检查整个任务是否可完成
+                    CheckQuestCompletion(quest);
+                }
+            }
+        }
+
+        if (!foundMatchingQuest)
+        {
+            Debug.Log($"没有找到与NPC {npcID} 相关的进行中谈话任务");
+        }
+    }
+
+    /// <summary>
+    /// 检查是否有以此NPC为目标的进行中谈话任务
+    /// </summary>
+    public bool HasActiveTalkQuestForNPC(string npcID)
+    {
+        if (QuestDBManager.Instance == null || QuestDBManager.Instance.questDatabase == null)
+            return false;
+
+        foreach (var quest in QuestDBManager.Instance.questDatabase.allQuests)
+        {
+            var questState = GetQuestState(quest);
+            if (questState != QuestState.InProgress) continue;
+            if (quest.objectives == null) continue;
+
+            for (int i = 0; i < quest.objectives.Count; i++)
+            {
+                var objective = quest.objectives[i];
+                if (objective.objectiveType == ObjectiveType.Talk &&
+                    objective.targetID == npcID &&
+                    !IsObjectiveCompleted(quest, i))  // 使用运行时状态检查
+                {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
     #endregion
 
@@ -171,7 +296,16 @@ public class QuestManager : MonoBehaviour
         }
 
         Debug.Log($"任务状态更新: {quest.questName} -> {newState}");
-        HandleQuestStateChange(quest, newState);
+
+        if (newState == QuestState.CanComplete && quest.autoComplete)
+        {
+            Debug.Log($"检测到自动完成任务: {quest.questName}，立即完成");
+            CompleteQuest(quest);
+        }
+        else
+        {
+            HandleQuestStateChange(quest, newState);
+        }
     }
 
     /// <summary>
@@ -184,90 +318,85 @@ public class QuestManager : MonoBehaviour
     #endregion
 
     #region 任务状态检查
-    /// <summary>
-    /// 检查任务是否已接受
-    /// </summary>
-    public bool IsQuestAccepted(Quest quest)
-    {
-        return questProgress.ContainsKey(quest) &&
-               questProgress[quest] != QuestState.NotAccepted;
-    }
-
-    /// <summary>
-    /// 检查任务是否进行中
-    /// </summary>
-    public bool IsQuestInProgress(Quest quest)
-    {
-        return questProgress.ContainsKey(quest) &&
-               questProgress[quest] == QuestState.InProgress;
-    }
-
-    /// <summary>
-    /// 检查任务是否可完成
-    /// </summary>
-    public bool IsQuestCanComplete(Quest quest)
-    {
-        return questProgress.ContainsKey(quest) &&
-               questProgress[quest] == QuestState.CanComplete;
-    }
-
-    /// <summary>
-    /// 检查任务是否已完成
-    /// </summary>
-    public bool IsQuestCompleted(Quest quest)
-    {
-        return questProgress.ContainsKey(quest) &&
-               questProgress[quest] == QuestState.Completed;
-    }
+    public bool IsQuestAccepted(Quest quest) => GetQuestState(quest) != QuestState.NotAccepted;
+    public bool IsQuestInProgress(Quest quest) => GetQuestState(quest) == QuestState.InProgress;
+    public bool IsQuestCanComplete(Quest quest) => GetQuestState(quest) == QuestState.CanComplete;
+    public bool IsQuestCompleted(Quest quest) => GetQuestState(quest) == QuestState.Completed;
     #endregion
 
-    #region 任务目标进度管理
-    /// <summary>
-    /// 更新任务目标进度
-    /// </summary>
-    public void UpdateQuestObjective(Quest quest, int objectiveIndex, int amount)
-    {
-        if (quest == null || quest.objectives == null || objectiveIndex >= quest.objectives.Count)
-        {
-            Debug.LogWarning("更新任务目标失败：参数无效");
-            return;
-        }
-
-        var objective = quest.objectives[objectiveIndex];
-        objective.currentAmount = Mathf.Min(objective.currentAmount + amount, objective.requiredAmount);
-
-        // 检查目标是否完成
-        if (objective.currentAmount >= objective.requiredAmount)
-        {
-            objective.isCompleted = true;
-            CheckQuestCompletion(quest);
-        }
-
-        // 自动保存进度
-        SaveManager.Instance?.SaveGame();
-    }
-
-    /// <summary>
-    /// 获取任务目标进度
-    /// </summary>
-    public (int current, int required) GetObjectiveProgress(Quest quest, int objectiveIndex)
-    {
-        if (quest == null || quest.objectives == null || objectiveIndex >= quest.objectives.Count)
-            return (0, 0);
-
-        var objective = quest.objectives[objectiveIndex];
-        return (objective.currentAmount, objective.requiredAmount);
-    }
-
+    #region 任务完成检查
     /// <summary>
     /// 检查任务是否可完成
     /// </summary>
     private void CheckQuestCompletion(Quest quest)
     {
-        if (quest.objectives.All(obj => obj.isCompleted))
+        if (quest.objectives == null) return;
+
+        bool allCompleted = true;
+        for (int i = 0; i < quest.objectives.Count; i++)
+        {
+            if (!IsObjectiveCompleted(quest, i))
+            {
+                allCompleted = false;
+                break;
+            }
+        }
+
+        if (allCompleted)
         {
             SetQuestState(quest, QuestState.CanComplete);
         }
+    }
+
+   
+    #endregion
+
+    #region 任务完成与奖励
+    /// <summary>
+    /// 完成任务并给予奖励
+    /// </summary>
+    public void CompleteQuest(Quest quest)
+    {
+        if (quest == null) return;
+
+        // 给予奖励
+        GiveQuestRewards(quest);
+
+        // 设置任务状态为已完成
+        SetQuestState(quest, QuestState.Completed);
+
+        Debug.Log($"任务完成: {quest.questName}");
+    }
+
+    /// <summary>
+    /// 给予任务奖励
+    /// </summary>
+    private void GiveQuestRewards(Quest quest)
+    {
+        if (quest.rewardGold > 0)
+        {
+            Debug.Log($"获得金币奖励: {quest.rewardGold}");
+        }
+
+        if (quest.rewardExp > 0)
+        {
+            Debug.Log($"获得经验奖励: {quest.rewardExp}");
+        }
+
+        if (quest.rewardItems != null)
+        {
+            foreach (var item in quest.rewardItems)
+            {
+                if (item != null)
+                {
+                    InventoryManager.Instance?.AddItem(item);
+                    Debug.Log($"获得物品奖励: {item.nameOfItem}");
+                }
+            }
+        }
+
+        // 自动保存游戏
+        SaveManager.Instance?.SaveGame();
     }
     #endregion
 
@@ -277,14 +406,9 @@ public class QuestManager : MonoBehaviour
     /// </summary>
     private void HandleQuestStateChange(Quest quest, QuestState newState)
     {
-        switch (newState)
+        if (newState == QuestState.CanComplete)
         {
-            case QuestState.CanComplete:
-                ShowCompletionMark(quest);
-                break;
-            case QuestState.Completed:
-                // 可以在这里添加任务完成的其他UI效果
-                break;
+            ShowCompletionMark(quest);
         }
     }
 
@@ -293,28 +417,23 @@ public class QuestManager : MonoBehaviour
     /// </summary>
     private void ShowCompletionMark(Quest quest)
     {
+        Animator markAnimator = null;
+
         if (quest.questType == QuestType.Main && mainQuestCompletedMark != null)
         {
+            markAnimator = mainQuestCompletedMark.GetComponent<Animator>();
             mainQuestCompletedMark.SetActive(true);
         }
         else if (quest.questType == QuestType.Side && sideQuestCompletedMark != null)
         {
+            markAnimator = sideQuestCompletedMark.GetComponent<Animator>();
             sideQuestCompletedMark.SetActive(true);
         }
-    }
 
-    /// <summary>
-    /// 隐藏任务完成标记（如果需要的话）
-    /// </summary>
-    private void HideCompletionMark(Quest quest)
-    {
-        if (quest.questType == QuestType.Main && mainQuestCompletedMark != null)
+        if (markAnimator != null)
         {
-            mainQuestCompletedMark.SetActive(false);
-        }
-        else if (quest.questType == QuestType.Side && sideQuestCompletedMark != null)
-        {
-            sideQuestCompletedMark.SetActive(false);
+            markAnimator.SetTrigger("IsCompleted");
+            Debug.Log($"触发完成标记动画: {quest.questName}");
         }
     }
     #endregion
@@ -326,11 +445,13 @@ public class QuestManager : MonoBehaviour
     public void ResetAllQuests()
     {
         questProgress.Clear();
+        objectiveRuntimeData.Clear();
         ResetAllQuestObjectives();
 
-        // 重置UI标记
         if (mainQuestCompletedMark != null) mainQuestCompletedMark.SetActive(false);
         if (sideQuestCompletedMark != null) sideQuestCompletedMark.SetActive(false);
+
+        Debug.Log("所有任务状态已重置");
     }
 
     /// <summary>
@@ -340,6 +461,7 @@ public class QuestManager : MonoBehaviour
     {
         if (QuestDBManager.Instance == null) return;
 
+        // 重置ScriptableObject状态（确保编辑器状态正确）
         foreach (var quest in QuestDBManager.Instance.questDatabase.allQuests)
         {
             if (quest.objectives != null)

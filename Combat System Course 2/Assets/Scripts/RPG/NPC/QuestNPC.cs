@@ -52,6 +52,15 @@ public class QuestNPC : NPC
         {
             QuestManager.Instance.SetQuestState(quest, QuestState.InProgress);
             Debug.Log($"已接受任务: {quest.questName}");
+            if (quest.objectives != null)
+            {
+                foreach (var objective in quest.objectives)
+                {
+                    Debug.Log($"接取任务时目标状态: 类型={objective.objectiveType}, 目标ID={objective.targetID}, 完成={objective.isCompleted}");
+
+                 
+                }
+            }
 
             // 更新任务面板 - 使用双面板控制器
             if (QuestPanelController.Instance != null)

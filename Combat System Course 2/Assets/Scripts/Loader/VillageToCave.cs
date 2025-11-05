@@ -5,6 +5,7 @@ public class VillageToCave : MonoBehaviour
 {
     public string gameSceneName = "01Scene_Cave";
     public string loadingSceneName = "LoadingScene";
+    private bool hasTriggered=false;
 
     private void OnTriggerEnter(Collider other)
     {
@@ -13,6 +14,8 @@ public class VillageToCave : MonoBehaviour
             
             if (SaveManager.Instance != null)
             {
+                if (hasTriggered) return;
+                hasTriggered = true;
 
                 SaveManager.Instance.SaveGame();
                 SaveManager.Instance.currentSaveData.currentScene = gameSceneName;

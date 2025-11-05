@@ -6,15 +6,15 @@ public class QuestPanelController : MonoBehaviour
 {
     [Header("主线任务面板")]
     [SerializeField] private GameObject mainMissionPanel;
-    [SerializeField] private TMP_Text mainMissionNameText; // 现在将显示"任务名（状态）"
+    [SerializeField] private TMP_Text mainMissionNameText;
     [SerializeField] private TMP_Text mainMissionDetailText;
-    
+    [SerializeField] private Animator mainMissionAnimator; 
 
     [Header("支线任务面板")]
     [SerializeField] private GameObject sideMissionPanel;
-    [SerializeField] private TMP_Text sideMissionNameText; // 现在将显示"任务名（状态）"
+    [SerializeField] private TMP_Text sideMissionNameText;
     [SerializeField] private TMP_Text sideMissionDetailText;
-  
+    [SerializeField] private Animator sideMissionAnimator; 
 
     [Header("设置")]
     [SerializeField] private bool autoUpdate = true;
@@ -23,6 +23,8 @@ public class QuestPanelController : MonoBehaviour
     private Quest currentMainQuest;
     private Quest currentSideQuest;
     private float updateTimer;
+    private bool isMainQuestCompleting = false;
+    private bool isSideQuestCompleting = false;
 
     // 单例模式
     public static QuestPanelController Instance { get; private set; }
@@ -45,6 +47,11 @@ public class QuestPanelController : MonoBehaviour
         if (mainMissionPanel != null) mainMissionPanel.SetActive(false);
         if (sideMissionPanel != null) sideMissionPanel.SetActive(false);
 
+        // 自动获取Animator
+        if (mainMissionAnimator == null && mainMissionPanel != null)
+            mainMissionAnimator = mainMissionPanel.GetComponent<Animator>();
+        if (sideMissionAnimator == null && sideMissionPanel != null)
+            sideMissionAnimator = sideMissionPanel.GetComponent<Animator>();
     }
 
     private void Update()
@@ -66,11 +73,18 @@ public class QuestPanelController : MonoBehaviour
         if (quest == null || quest.questType != QuestType.Main) return;
 
         currentMainQuest = quest;
+        isMainQuestCompleting = false;
         UpdateMainQuestDisplay();
 
         if (mainMissionPanel != null)
         {
             mainMissionPanel.SetActive(true);
+            // 重置动画状态
+            if (mainMissionAnimator != null)
+            {
+                mainMissionAnimator.ResetTrigger("MissionCompleted");
+                mainMissionAnimator.Play("MissionActive");
+            }
         }
     }
 
@@ -80,11 +94,18 @@ public class QuestPanelController : MonoBehaviour
         if (quest == null || quest.questType != QuestType.Side) return;
 
         currentSideQuest = quest;
+        isSideQuestCompleting = false;
         UpdateSideQuestDisplay();
 
         if (sideMissionPanel != null)
         {
             sideMissionPanel.SetActive(true);
+            // 重置动画状态
+            if (sideMissionAnimator != null)
+            {
+                sideMissionAnimator.ResetTrigger("MissionCompleted");
+                sideMissionAnimator.Play("MissionActive");
+            }
         }
     }
 
@@ -96,6 +117,7 @@ public class QuestPanelController : MonoBehaviour
         {
             mainMissionPanel.SetActive(false);
         }
+        isMainQuestCompleting = false;
     }
 
     // 移除支线任务
@@ -106,6 +128,7 @@ public class QuestPanelController : MonoBehaviour
         {
             sideMissionPanel.SetActive(false);
         }
+        isSideQuestCompleting = false;
     }
 
     // 更新所有面板
@@ -122,18 +145,19 @@ public class QuestPanelController : MonoBehaviour
             mainMissionNameText == null ||
             mainMissionDetailText == null)
         {
-            if (mainMissionPanel != null) mainMissionPanel.SetActive(false);
+            if (mainMissionPanel != null && !isMainQuestCompleting)
+                mainMissionPanel.SetActive(false);
             return;
         }
 
         QuestState state = QuestManager.Instance.GetQuestState(currentMainQuest);
-        mainMissionNameText.text = $"{currentMainQuest.questName} [主线] [{GetStateText(state)}]";
+        mainMissionNameText.text = $"{currentMainQuest.questName}[主线][{GetStateText(state)}]";
         mainMissionDetailText.text = currentMainQuest.description;
 
-        // 如果主线任务已完成，延迟一段时间后移除
-        if (state == QuestState.Completed)
+        // 如果主线任务已完成且还没开始完成动画
+        if (state == QuestState.Completed && !isMainQuestCompleting)
         {
-            StartCoroutine(RemoveMainQuestAfterDelay(2f));
+            StartCoroutine(CompleteMainQuestWithAnimation());
         }
     }
 
@@ -144,37 +168,63 @@ public class QuestPanelController : MonoBehaviour
             sideMissionNameText == null ||
             sideMissionDetailText == null)
         {
-            if (sideMissionPanel != null) sideMissionPanel.SetActive(false);
+            if (sideMissionPanel != null && !isSideQuestCompleting)
+                sideMissionPanel.SetActive(false);
             return;
         }
 
         QuestState state = QuestManager.Instance.GetQuestState(currentSideQuest);
-        sideMissionNameText.text = $"{currentSideQuest.questName} [支线] [{GetStateText(state)}]";
+        sideMissionNameText.text = $"{currentSideQuest.questName}[支线][{GetStateText(state)}]";
         sideMissionDetailText.text = currentSideQuest.description;
 
-        // 如果支线任务已完成，延迟一段时间后移除
-        if (state == QuestState.Completed)
+        // 如果支线任务已完成且还没开始完成动画
+        if (state == QuestState.Completed && !isSideQuestCompleting)
         {
-            StartCoroutine(RemoveSideQuestAfterDelay(2f));
+            StartCoroutine(CompleteSideQuestWithAnimation());
         }
     }
 
-    // 延迟移除主线任务
-    private IEnumerator RemoveMainQuestAfterDelay(float delay)
+    // 主线任务完成动画流程
+    private IEnumerator CompleteMainQuestWithAnimation()
     {
-        yield return new WaitForSeconds(delay);
+        isMainQuestCompleting = true;
+
+        // 触发完成动画
+        if (mainMissionAnimator != null)
+        {
+            mainMissionAnimator.SetTrigger("MissionCompleted");
+            Debug.Log("触发主线任务完成动画");
+        }
+
+        // 等待动画播放完成（你可以根据动画长度调整时间）
+        yield return new WaitForSeconds(1.5f); // 假设动画长度1.5秒
+
+        // 动画播放完成后移除面板
         RemoveMainQuest();
     }
 
-    // 延迟移除支线任务
-    private IEnumerator RemoveSideQuestAfterDelay(float delay)
+    // 支线任务完成动画流程
+    private IEnumerator CompleteSideQuestWithAnimation()
     {
-        yield return new WaitForSeconds(delay);
+        isSideQuestCompleting = true;
+
+        // 触发完成动画
+        if (sideMissionAnimator != null)
+        {
+            sideMissionAnimator.SetTrigger("MissionCompleted");
+            Debug.Log("触发支线任务完成动画");
+        }
+
+        // 等待动画播放完成
+        yield return new WaitForSeconds(1.5f); // 假设动画长度1.5秒
+
+        // 动画播放完成后移除面板
         RemoveSideQuest();
     }
 
     // 获取状态文本
-    private string GetStateText(QuestState state)    {
+    private string GetStateText(QuestState state)
+    {
         switch (state)
         {
             case QuestState.NotAccepted: return "未接受";
@@ -190,5 +240,24 @@ public class QuestPanelController : MonoBehaviour
     {
         return currentSideQuest != null &&
                QuestManager.Instance.GetQuestState(currentSideQuest) != QuestState.Completed;
+    }
+
+    // 强制停止所有动画（在场景切换等情况下使用）
+    public void StopAllAnimations()
+    {
+        StopAllCoroutines();
+
+        if (mainMissionAnimator != null)
+        {
+            mainMissionAnimator.ResetTrigger("MissionCompleted");
+        }
+
+        if (sideMissionAnimator != null)
+        {
+            sideMissionAnimator.ResetTrigger("MissionCompleted");
+        }
+
+        isMainQuestCompleting = false;
+        isSideQuestCompleting = false;
     }
 }

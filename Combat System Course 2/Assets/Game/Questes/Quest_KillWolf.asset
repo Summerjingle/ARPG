@@ -15,7 +15,7 @@ MonoBehaviour:
   questID: 01_Village_KillWolf
   questName: "\u98CE\u8F66\u4E0B\u7684\u6076\u9B54"
   description: "\u6740\u6389\u5728\u98CE\u8F66\u4E0B\u5F98\u5F8A\u7684\u91CE\u72FC"
-  questType: 0
+  questType: 1
   requiredLevel: 1
   requiredQuests: []
   objectives:

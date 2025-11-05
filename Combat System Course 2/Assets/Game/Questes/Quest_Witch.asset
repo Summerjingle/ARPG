@@ -12,8 +12,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3258a6a9b8d308540a484a70e0b84ed0, type: 3}
   m_Name: Quest_Witch
   m_EditorClassIdentifier: 
+  questID: 
   questName: "\u8BA8\u4F10\u5973\u5DEB"
   description: "\u524D\u5F80\u9ED1\u68EE\u6797\uFF0C\u6740\u6B7B\u90AA\u6076\u5973\u5DEB"
-  rewardGold: 100
   questType: 0
+  requiredLevel: 1
+  requiredQuests: []
+  objectives:
+  - objectiveType: 0
+    targetID: Witch
+    requiredAmount: 1
+    currentAmount: 0
+    isCompleted: 0
+  rewardGold: 100
+  rewardExp: 0
+  rewardItems: []
   isRepeatable: 0
+  autoComplete: 0

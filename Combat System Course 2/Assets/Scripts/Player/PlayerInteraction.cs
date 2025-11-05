@@ -15,11 +15,20 @@ public class PlayerInteraction : MonoBehaviour
             {
                 currentNPC.OnPlayerEnterRange();
             }
-        }
+        }//碰到NPC
         else if (other.CompareTag("Interactable"))
         {
             Debug.Log($"检测到Interactable物体: {other.gameObject.name}");
 
+            // 优先处理静态场景物品
+            StaticSceneItem staticItem = other.GetComponent<StaticSceneItem>();
+            if (staticItem != null)
+            {
+                staticItem.PickUp();
+                return;
+            }
+
+            // 然后是普通可拾取物品（敌人掉落等）
             PickableObject po = other.GetComponent<PickableObject>();
             if (po != null)
             {
@@ -29,9 +38,9 @@ public class PlayerInteraction : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning("有Interactable标签但没有PickableObject组件");
+                Debug.LogWarning("有Interactable标签但没有可拾取组件");
             }
-        }
+        }//碰到物品
     }
 
     void OnTriggerExit(Collider other)
