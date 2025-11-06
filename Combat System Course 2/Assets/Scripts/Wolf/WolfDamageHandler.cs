@@ -41,10 +41,8 @@ public class WolfDamageHandler : MonoBehaviour
 
         if (other.CompareTag("Hitbox") && other.gameObject.layer == LayerMask.NameToLayer("PlayerHitbox"))
         {
-            var weapon = other.GetComponentInParent<Weapon>();
-            if (weapon == null) return;
-
-            var attacker = weapon.GetComponentInParent<MeleeFighter>();
+            // 不再直接获取Weapon组件，而是通过攻击者获取伤害
+            var attacker = other.GetComponentInParent<MeleeFighter>();
             if (attacker == null) return;
 
             if (attacker.Attackstate != AttackStates.Windup && attacker.Attackstate != AttackStates.Impact)
@@ -60,7 +58,8 @@ public class WolfDamageHandler : MonoBehaviour
                 return;
             }
 
-            float damage = weapon.GetDamage();
+            //  通过攻击者获取伤害值
+            float damage = attacker.GetWeaponDamage();
             Debug.Log($"WolfDamageHandler: 有效伤害 {damage}, 攻击状态: {attacker.Attackstate}, 帧: {Time.frameCount}");
 
             // 更新防重复标记

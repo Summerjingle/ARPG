@@ -15,7 +15,7 @@ public class ItemSO :ScriptableObject
     public Sprite icon;
     public GameObject interactablePrefab; // 用于掉落和拾取的预制体（所有物品）
     public GameObject weaponPrefab;
-    public bool canDrop = true;
+    
 
     public int maxStackSize = 1; // 最大堆叠数量
     public int amount = 1;       // 当前数量

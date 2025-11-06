@@ -66,8 +66,39 @@ public class SaveManager : MonoBehaviour
     }
 
     #region 存档管理
+    
+    public void ResetSaveManagerState()
+    {
+        // 重置所有静态状态
+        shouldLoadFromSave = false;
+        isNewGame = true;
+        currentSaveId = null;
+        shouldLoadPosition = false;
+
+        // 重置实例数据
+        currentSaveData = null;
+        registeredPlayer = null;
+        isApplyingSaveData = false;
+        isApplySaveDataAfterFrameRunning = false;
+        hasSaveDataBeenAppliedInCurrentScene = false;
+
+        // 关键：也清空其他单例的数据
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.ClearInventory();
+        }
+
+        if (QuestManager.Instance != null)
+        {
+            QuestManager.Instance.ResetAllQuests();
+        }
+
+        Debug.Log("SaveManager 状态和所有单例数据已重置");
+        Debug.Log("SaveManager 状态已重置");
+    }
     public void CreateNewGame(int slot)
     {
+        ResetSaveManagerState();
         isNewGame = true;
         shouldLoadFromSave = false;
         shouldLoadPosition = false; // 新游戏不加载位置
@@ -282,10 +313,10 @@ public class SaveManager : MonoBehaviour
             currentSaveData.equippedLeggings = GetEquippedItemName(equipmentManager, ArmorType.Leggings);
             currentSaveData.equippedBoots = GetEquippedItemName(equipmentManager, ArmorType.Boots);
         }
-
-        if (meleeFighter != null && meleeFighter.currentWeapon != null)
+        var currentWeapon = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
+        if (meleeFighter != null && currentWeapon != null)
         {
-            PickableObject weaponPickable = meleeFighter.currentWeapon.GetComponent<PickableObject>();
+            PickableObject weaponPickable = currentWeapon.GetComponent<PickableObject>();
             if (weaponPickable != null && weaponPickable.itemSO != null)
             {
                 currentSaveData.equippedWeapon = weaponPickable.itemSO.name;
@@ -491,8 +522,22 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
+        // 清空前先记录当前状态
+        Debug.Log($"应用存档前 - 内存中物品数量: {InventoryManager.Instance.itemList.Count}");
+        foreach (var item in InventoryManager.Instance.itemList)
+        {
+            Debug.Log($"应用前存在的物品: {item.nameOfItem}, 数量: {item.amount}");
+        }
+
         // 使用清空方法
         InventoryManager.Instance.ClearInventory();
+
+        // 记录存档中的数据
+        Debug.Log($"存档中的物品数量: {currentSaveData.inventoryItems.Count}");
+        foreach (var itemData in currentSaveData.inventoryItems)
+        {
+            Debug.Log($"存档物品: {itemData.itemId}, 数量: {itemData.quantity}");
+        }
 
         foreach (InventoryItemData itemData in currentSaveData.inventoryItems)
         {
@@ -502,17 +547,12 @@ public class SaveManager : MonoBehaviour
                 ItemSO newItem = Instantiate(itemTemplate);
                 newItem.amount = itemData.quantity;
                 InventoryManager.Instance.ReAddItem(newItem);
+                Debug.Log($"从存档加载物品: {newItem.nameOfItem}, 数量: {newItem.amount}");
             }
         }
 
         InventoryUI.Instance?.UpdateInventoryUI();
-        Debug.Log($"内存中物品数量: {InventoryManager.Instance.itemList.Count}");
-        foreach (var item in InventoryManager.Instance.itemList)
-        {
-            Debug.Log($"物品: {item.nameOfItem}, 数量: {item.amount}");
-        }
-        Debug.Log($"已加载 {currentSaveData.inventoryItems.Count} 个物品堆叠");
-        
+        Debug.Log($"应用存档后 - 内存中物品数量: {InventoryManager.Instance.itemList.Count}");
     }
     private void ApplyQuests()
     {

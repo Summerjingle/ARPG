@@ -36,9 +36,9 @@ public class EnemyHeathBar : MonoBehaviour
 
         if (fighter != null)
         {
-            // 修改1：订阅事件时使用带参数的方法
+           
             fighter.OnGotHit += UpdateHealthBar;
-            fighter.OnDeath += OnFighterDeath; // 这里会报错，需要修改方法签名
+            fighter.OnDeath += OnFighterDeath; 
             fighter.OnDeathComplete += OnFighterDeathComplete;
 
             // 初始更新

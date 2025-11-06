@@ -448,6 +448,15 @@ public class QuestManager : MonoBehaviour
         objectiveRuntimeData.Clear();
         ResetAllQuestObjectives();
 
+        // 重置 UI 面板状态
+        if (QuestPanelController.Instance != null)
+        {
+            QuestPanelController.Instance.RemoveMainQuest();
+            QuestPanelController.Instance.RemoveSideQuest();
+            QuestPanelController.Instance.StopAllAnimations();
+            Debug.Log("任务面板已重置");
+        }
+
         if (mainQuestCompletedMark != null) mainQuestCompletedMark.SetActive(false);
         if (sideQuestCompletedMark != null) sideQuestCompletedMark.SetActive(false);
 

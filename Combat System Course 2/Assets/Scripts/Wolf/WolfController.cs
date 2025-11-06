@@ -12,6 +12,9 @@ public class WolfController : MonoBehaviour
     [SerializeField] private float impactStunTime = 2f; // 眩晕时间
     public float ImpactStunTime => impactStunTime;
 
+    [Header("狼的掉落设置")]
+    public LootTable wolfLootTable;
+
     public string wolfTypeID = "Wolf";
 
     private bool isStunned = false;
@@ -93,12 +96,10 @@ public class WolfController : MonoBehaviour
             Debug.Log("为狼添加了 MeleeFighter 组件");
         }
 
-        // 确保有虚拟武器
-        if (meleeFighter.currentWeapon == null)
+        if (GetComponent<WolfWeapon>() == null)
         {
             var wolfWeapon = gameObject.AddComponent<WolfWeapon>();
-            meleeFighter.SetWeapon(wolfWeapon);
-            Debug.Log("为狼添加了虚拟武器");
+            Debug.Log("为狼添加了 WolfWeapon 组件");
         }
 
         // 确保有 EnemyController 组件

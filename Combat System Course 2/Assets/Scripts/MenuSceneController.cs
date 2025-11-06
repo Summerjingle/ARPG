@@ -37,6 +37,14 @@ public class MenuSceneController : MonoBehaviour
 
     void Start()
     {
+        
+
+    // 强制显示和解锁鼠标
+    Cursor.lockState = CursorLockMode.None;
+    Cursor.visible = true;
+    
+    Debug.Log("主菜单：解锁鼠标，显示光标");
+
         InitializeUI();
         playerAnimator.SetBool("IsSitting", true);
 

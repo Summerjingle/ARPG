@@ -12,7 +12,7 @@ public class MeleeFighter : MonoBehaviour
     [SerializeField] List<AttackData> attacks;
     [SerializeField] List<AttackData> longRangeAttacks;
     [SerializeField] float LongRangeAttackThreshold = 1.5f;
-    public Weapon currentWeapon;
+    
 
 
     [field: SerializeField] public float MaxHealth { get;  set; } = 25f;
@@ -49,7 +49,6 @@ public class MeleeFighter : MonoBehaviour
     public void Awake()
     {
         animator = GetComponent<Animator>();
-        currentWeapon = GetComponentInChildren<Weapon>();
         Health = MaxHealth; // 初始化满血
         playerProperty = GetComponent<PlayerProperty>();
         isPlayer = playerProperty != null;
@@ -81,6 +80,7 @@ public class MeleeFighter : MonoBehaviour
         if (rightHandCollider == null) Debug.LogWarning("右手碰撞器未找到");
         if (rightFootCollider == null) Debug.LogWarning("右脚碰撞器未找到");
 
+        var currentWeapon = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
         if (currentWeapon != null)
         {
             WeaponCollider = currentWeapon.GetComponentInChildren<BoxCollider>();
@@ -90,7 +90,7 @@ public class MeleeFighter : MonoBehaviour
     public void TryToAttack(MeleeFighter target = null)//尝试进行攻击，此方法是 被调用的
     {
 
-        if (!InAction && currentWeapon != null)//如果不在攻击
+        if (!InAction && WeaponEquipmentManager.Instance?.GetCurrentWeapon() != null)//如果不在攻击
         {
             StartCoroutine(Attack(target));//调用攻击，进入攻击状态
         }
@@ -103,8 +103,8 @@ public class MeleeFighter : MonoBehaviour
     public MeleeFighter currTarget;
         IEnumerator Attack(MeleeFighter target = null)
         {
-            float damage = currentWeapon != null ? currentWeapon.GetDamage() : 5f;
-            InAction = true;
+        float damage = WeaponEquipmentManager.Instance?.GetWeaponDamage() ?? 5f;
+        InAction = true;
             currTarget = target;
             Attackstate = AttackStates.Windup;
 
@@ -229,9 +229,9 @@ public class MeleeFighter : MonoBehaviour
                 return;
             }
 
-            Debug.Log($"即将造成伤害: {attacker.currentWeapon.GetDamage()}");
-
-            TakeDamage(attacker.currentWeapon.GetDamage());
+            var attackerDamage = attacker?.GetWeaponDamage() ?? 5f;
+            Debug.Log($"即将造成伤害: {attackerDamage}");
+            TakeDamage(attackerDamage);
             OnGotHit?.Invoke(attacker);
 
             if (Health > 0)
@@ -242,8 +242,21 @@ public class MeleeFighter : MonoBehaviour
             else
             {
                 PlayDeathAnimation(attacker);
-                Invoke("SpawnItem", 1f);
             }
+        }
+    }
+    public float GetWeaponDamage()
+    {
+        // 如果是玩家，通过WeaponEquipmentManager获取
+        if (isPlayer)
+        {
+            return WeaponEquipmentManager.Instance?.GetWeaponDamage() ?? 5f;
+        }
+        // 如果是敌人（如狼），直接获取武器组件
+        else
+        {
+            var weapon = GetComponent<Weapon>();
+            return weapon?.GetDamage() ?? 5f;
         }
     }
     public void TakeDamage(float damage)
@@ -308,30 +321,7 @@ public class MeleeFighter : MonoBehaviour
         }
         OnHealthChanged?.Invoke();
     }
-    private void SpawnItem()
-    {
-        int count = 1;
-        for (int i = 0; i < count; i++)
-        {
-            ItemSO item = ItemDBManager.Instance.GetRandomDropAllowedItem();
-            if (item != null)
-            {
 
-                Vector3 dropPosition = transform.position + Vector3.up * 0.5f;
-                GameObject droppedItem = GameObject.Instantiate(item.interactablePrefab, dropPosition, Quaternion.identity);
-                PickableObject po = droppedItem.GetComponent<PickableObject>();
-                if (po == null)
-                {
-                    // 如果预制体没有PickableObject，就添加一个
-                    po = droppedItem.AddComponent<PickableObject>();
-                }
-
-                // 设置itemSO引用
-                po.itemSO = item;
-            }
-
-        }
-    }
 
     public void PlayDeathAnimation(MeleeFighter attacker)
     {
@@ -436,7 +426,8 @@ public class MeleeFighter : MonoBehaviour
                 if (rightFootCollider != null) rightFootCollider.enabled = true;
                 break;
             case AttackHitbox.Sword:
-                if (WeaponCollider != null) WeaponCollider.enabled = true;
+                var weaponCollider = WeaponEquipmentManager.Instance?.GetCurrentWeapon()?.GetComponentInChildren<BoxCollider>();
+                if (weaponCollider != null) weaponCollider.enabled = true;
                 else Debug.LogWarning("武器碰撞器为null，无法启用");
                 break;
             default:
@@ -456,53 +447,6 @@ public class MeleeFighter : MonoBehaviour
             leftFootCollider.enabled = false;
         if (rightFootCollider != null)
             rightFootCollider.enabled = false;
-    }
-    public void SetWeapon(Weapon weapon, ItemSO weaponItem = null)
-    {
-        // 先停止所有正在进行的攻击
-        StopAllCoroutines();
-
-        // 重置状态
-        InAction = false;
-        Attackstate = AttackStates.Idle;
-        comboCount = 0;
-
-        // 禁用所有碰撞器
-        DisableAllHitboxes();
-
-        // 设置新武器
-        currentWeapon = weapon;
-
-        if (currentWeapon != null)
-        {
-            // 初始化武器碰撞器
-            WeaponCollider = currentWeapon.GetComponentInChildren<BoxCollider>();
-            Debug.Log($"设置武器: {currentWeapon.name}, 碰撞器: {(WeaponCollider != null ? WeaponCollider.name : "null")}");
-
-            // 确保身体碰撞器已初始化（可能在Start之前调用SetWeapon）
-            if (leftHandCollider == null)
-            {
-                InitializeBodyColliders();
-            }
-        }
-        else
-        {
-            Debug.LogWarning("设置的武器为null");
-            WeaponCollider = null;
-        }
-    }
-    public void RefreshWeapon()
-    {
-        // 如果需要，这里可以保持向后兼容
-        currentWeapon = GetComponentInChildren<Weapon>();
-        if (currentWeapon != null)
-        {
-            WeaponCollider = currentWeapon.GetComponentInChildren<BoxCollider>();
-        }
-        else
-        {
-            WeaponCollider = null;
-        }
     }
 
 

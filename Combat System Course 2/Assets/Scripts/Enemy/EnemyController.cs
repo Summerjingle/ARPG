@@ -9,6 +9,12 @@ using UnityEngine.UI;
 public enum EnemyStates { Idle, CombatMovement, Attack, RetreatAfterAttack, Dead, GettingHit }
 public class EnemyController : MonoBehaviour
 {
+    [Header("掉落设置")]
+    public LootTable lootTable;
+    public string enemyTypeID = "Enemy"; // 用于任务系统
+
+    [Header("死亡设置")]
+    public float lootSpawnDelay = 1f; // 掉落延迟时间
     public int EXP = 20;
     public EnemyHeathBar healthBar;
     [field: SerializeField] public float Fov { get; private set; } = 180f;

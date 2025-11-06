@@ -836,7 +836,7 @@ Animator:
   m_GameObject: {fileID: 1490566209694213353}
   m_Enabled: 1
   m_Avatar: {fileID: 9000000, guid: bf119bfe0235e95449f57588d4ce9949, type: 3}
-  m_Controller: {fileID: 9100000, guid: d73acb6f90791d142933660f1e24b630, type: 2}
+  m_Controller: {fileID: 9100000, guid: 8560ca15b4752064fb7c2f3d474adb9b, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -860,8 +860,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attacks:
-  - {fileID: 11400000, guid: 27623ca069a7d884ea34224dcf453d69, type: 2}
-  - {fileID: 11400000, guid: 1e93282fae9d3c843a5da68147c2ca09, type: 2}
+  - {fileID: 11400000, guid: 7f65f269047ea964a8e422e26ed40b8d, type: 2}
+  - {fileID: 11400000, guid: ddb1c6e0b6bac904f9aab34da5ac3104, type: 2}
   longRangeAttacks: []
   LongRangeAttackThreshold: 1.5
   currentWeapon: {fileID: 0}
@@ -908,6 +908,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dab5b772ce6cf9d459045f3303bc892f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  lootTable: {fileID: 11400000, guid: 1dcfa131ac7400f458016ecb69be63c9, type: 2}
+  enemyTypeID: Enemy
+  lootSpawnDelay: 1
   EXP: 30
   healthBar: {fileID: 0}
   <Fov>k__BackingField: 180
@@ -1714,8 +1717,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\u5723\u6BBF\u9A91\u58EB"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 8c00b727dcddcce4a89bb4fa20ee513a, type: 2}
-  m_sharedMaterial: {fileID: -1374077734272989217, guid: 8c00b727dcddcce4a89bb4fa20ee513a,
+  m_fontAsset: {fileID: 11400000, guid: 73c3e2898fd5f5c4db45a4a77cb6da1d, type: 2}
+  m_sharedMaterial: {fileID: 711231962212728461, guid: 73c3e2898fd5f5c4db45a4a77cb6da1d,
     type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}

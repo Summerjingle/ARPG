@@ -207,7 +207,14 @@ public class InventoryManager : MonoBehaviour
         if (itemList != null)
         {
             itemList.Clear();
-            Debug.Log("库存已清空");
+            Debug.Log("库存数据已清空");
+        }
+
+        // 关键：同时更新 UI，清空显示的物品
+        if (InventoryUI.Instance != null)
+        {
+            InventoryUI.Instance.UpdateInventoryUI();
+            Debug.Log("库存UI已更新");
         }
     }
 

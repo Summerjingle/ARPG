@@ -6,9 +6,9 @@ using UnityEngine;
 [System.Serializable]
 public class GameSaveData
 {
-    public string saveId; // 新增：存档唯一标识
-    public string saveName; // 新增：存档名称
-    public int saveSlot; // 新增：存档槽位
+    public string saveId; // 存档唯一标识
+    public string saveName; // 存档名称
+    public int saveSlot; // 存档槽位
 
     // 场景信息
     public string currentScene;
@@ -43,7 +43,7 @@ public class GameSaveData
     // 保存时间
     public DateTime saveTime;
 
-    // 新增：构造函数
+    // 构造函数
     public GameSaveData()
     {
         saveId = Guid.NewGuid().ToString();
@@ -51,6 +51,7 @@ public class GameSaveData
         inventoryItems = new List<InventoryItemData>();
         questProgress = new List<QuestSaveData>();
         scenePickedItems = new Dictionary<string, HashSet<string>>();
+        sceneMechanismStates = new Dictionary<string, HashSet<string>>(); 
     }
 
     public GameSaveData(int slot) : this()
@@ -59,9 +60,10 @@ public class GameSaveData
         saveName = $"存档 {slot + 1}";
     }
 
+    #region 单个存档内一次性物品拾取逻辑
+    // 拾取物品字典
     public Dictionary<string, HashSet<string>> scenePickedItems = new Dictionary<string, HashSet<string>>();
-
-    // 新增：检查场景中的物品是否已被拾取
+    // 检查场景中的物品是否已被拾取
     public bool IsSceneItemPicked(string sceneName, string itemId)
     {
         if (scenePickedItems.TryGetValue(sceneName, out HashSet<string> pickedItems))
@@ -71,7 +73,7 @@ public class GameSaveData
         return false;
     }
 
-    // 新增：标记场景中的物品为已拾取
+    // 标记场景中的物品为已拾取
     public void MarkSceneItemAsPicked(string sceneName, string itemId)
     {
         if (!scenePickedItems.ContainsKey(sceneName))
@@ -80,6 +82,29 @@ public class GameSaveData
         }
         scenePickedItems[sceneName].Add(itemId);
     }
+    #endregion
+
+    #region 单个存档内一次性机关触发逻辑
+    // 机关激活状态字典
+    public Dictionary<string, HashSet<string>> sceneMechanismStates = new Dictionary<string, HashSet<string>>();
+    public bool IsMechanismActivated(string sceneName, string mechanismId)
+    {
+        if (sceneMechanismStates.TryGetValue(sceneName, out HashSet<string> activatedMechanisms))
+        {
+            return activatedMechanisms.Contains(mechanismId);
+        }
+        return false;
+    }
+
+    public void MarkMechanismAsActivated(string sceneName, string mechanismId)
+    {
+        if (!sceneMechanismStates.ContainsKey(sceneName))
+        {
+            sceneMechanismStates[sceneName] = new HashSet<string>();
+        }
+        sceneMechanismStates[sceneName].Add(mechanismId);
+    }
+    #endregion
 }
 [System.Serializable]
 public class InventoryItemData
@@ -104,7 +129,7 @@ public class QuestSaveData
 {
     public string questID;        // 改为使用ID而不是名称
     public QuestState questState;
-    public List<ObjectiveProgress> objectiveProgress; // 新增：保存目标进度
+    public List<ObjectiveProgress> objectiveProgress; // 保存目标进度
 
     public QuestSaveData(string id, QuestState state)
     {

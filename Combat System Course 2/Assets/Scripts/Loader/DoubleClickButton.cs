@@ -73,6 +73,6 @@ public class DoubleClickButton : MonoBehaviour
 
     private void UnequipWeapon()
     {
-        ItemUsageHandler.Instance.UnequipWeapon();
+        WeaponEquipmentManager.Instance.UnequipWeapon();
     }
 }
