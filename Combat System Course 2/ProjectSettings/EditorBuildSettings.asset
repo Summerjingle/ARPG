@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/RPG/01Scene_Cave.unity
     guid: 84e973c5129773f4d801bca538e641a7
   - enabled: 1
+    path: Assets/Scenes/RPG/02Scene_HighPlace.unity
+    guid: 0c359cfbd0bf17d4bbdbc7c87182fbe2
+  - enabled: 1
     path: Assets/Scenes/RPG/LoadingScene.unity
     guid: 36b757fbb177d8a43b81bc302bc5d32a
   m_configObjects: {}

@@ -84,11 +84,7 @@ public class DialogueManager : MonoBehaviour
             UIManager.Instance.HideInteractPrompt();
         }
 
-        if (cameraController != null)
-        {
-            cameraController.SetUIActive(true);
-        }
-
+        UIStateManager.SetUIActive(true);
         // 显示所有对话句子
         for (int i = 0; i < sentences.Length; i++)
         {
@@ -182,10 +178,8 @@ public class DialogueManager : MonoBehaviour
             UIManager.Instance.HideChoiceButtons();
         }
 
-        if (cameraController != null)
-        {
-            cameraController.SetUIActive(false);
-        }
+        UIStateManager.SetUIActive(false);
+
 
         currentOnAccept = null;
         currentOnReject = null;
@@ -195,15 +189,5 @@ public class DialogueManager : MonoBehaviour
 
         Debug.Log("对话清理完成");
     }
-    public void RegisterCameraController(CameraController controller)
-    {
-        cameraController = controller;
-        Debug.Log("CameraController 注册到 InventoryUI");
-    }
-
-    public void UnregisterCameraController()
-    {
-        cameraController = null;
-        Debug.Log("CameraController 从 InventoryUI 取消注册");
-    }
+  
 }

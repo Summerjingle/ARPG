@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class InventoryUI : MonoBehaviour
 {
     public static InventoryUI Instance { get; private set; }
-    public GameObject PausePanel;
+    
     public GameObject content;
     public GameObject itemPrefab;
     public ItemDetailUI itemDetail;
@@ -22,10 +22,9 @@ public class InventoryUI : MonoBehaviour
     public KeyCode attackKey = KeyCode.Mouse1; // 攻击按键，默认为鼠标左键
 
     [SerializeField] private GameObject inventoryPanel;
-    public CameraController cameraController;
 
     public static bool IsInventoryOpen { get; private set; }
-    private bool isMapOpen=false;
+    
 
     // 标记是否已经显示过攻击提示
     private static bool hasShownAttackHint = false;
@@ -58,68 +57,7 @@ public class InventoryUI : MonoBehaviour
         {
             ToggleInventory();
         }
-        //回到主菜单（快捷键esc键）
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            // 保存当前游戏（如果有）
-            if (IsInGameScene() && SaveManager.Instance != null)
-            {
-                SaveManager.Instance.SaveGame();
-            }
-
-            // 关键：清空所有单例数据
-            if (InventoryManager.Instance != null)
-            {
-                InventoryManager.Instance.ClearInventory();
-                Debug.Log("返回主菜单：InventoryManager 已清空");
-            }
-
-            if (QuestManager.Instance != null)
-            {
-                QuestManager.Instance.ResetAllQuests();
-                Debug.Log("返回主菜单：QuestManager 已重置");
-            }
-            if (WeaponEquipmentManager.Instance != null)
-            {
-                WeaponEquipmentManager.Instance.UnequipWeapon();
-                Debug.Log("返回主菜单：武器装备已重置");
-            }
-            if (ArmorEquipmentManager.Instance != null)
-            {
-
-                ArmorEquipmentManager.Instance.UnequipAll();
-                Debug.Log("返回主菜单：护甲装备已重置");
-            }
-
-            SaveManager.Instance.currentSaveData.level = 1;
-            SaveManager.Instance.currentSaveData.currEXP = 0;
-            SaveManager.Instance.currentSaveData.hpValue = 100;
-            SaveManager.Instance.currentSaveData.maxHealth = 100;
-            SaveManager.Instance.currentSaveData.energyValue = 100;
-            SaveManager.Instance.currentSaveData.armorValue = 0;
-
-            // 重置装备信息
-            SaveManager.Instance.currentSaveData.equippedWeapon = "";
-            SaveManager.Instance.currentSaveData.equippedHelmet = "";
-            SaveManager.Instance.currentSaveData.equippedChestplate = "";
-            SaveManager.Instance.currentSaveData.equippedGauntlets = "";
-            SaveManager.Instance.currentSaveData.equippedLeggings = "";
-            SaveManager.Instance.currentSaveData.equippedBoots = "";
-
-            // 清空场景物品拾取状态
-            SaveManager.Instance.currentSaveData.scenePickedItems.Clear();
-
-            // 清空机关激活状态
-            SaveManager.Instance.currentSaveData.sceneMechanismStates.Clear();
-
-
-            PlayerPrefs.SetString("TargetScene", "000Scene_Menu");
-            PlayerPrefs.Save();
-            SaveManager.shouldLoadFromSave = false;
-            SceneManager.LoadScene("LoadingScene");
-
-
-        }
+        
         // 检测攻击按键来关闭攻击提示
         if (attackHintUI != null && attackHintUI.activeSelf && Input.GetKeyDown(attackKey))
         {
@@ -127,20 +65,16 @@ public class InventoryUI : MonoBehaviour
             hasShownAttackHint = true;
         }
     }
-    private bool IsInGameScene()
-    {
-        string currentScene = SceneManager.GetActiveScene().name;
-        return currentScene != "000Scene_Menu" && currentScene != "LoadingScene";
-    }
+    
 
 
-    private void TogglePausePanel()
-    {
-        isMapOpen = !isMapOpen;
-        PausePanel.SetActive(isMapOpen);
-        Time.timeScale = isMapOpen ? 0f : 1f;
+    //private void TogglePausePanel()
+    //{
+    //    isMapOpen = !isMapOpen;
+    //    PausePanel.SetActive(isMapOpen);
+    //    Time.timeScale = isMapOpen ? 0f : 1f;
 
-    }
+    //}
 
     public void ToggleInventory()
     {
@@ -149,16 +83,7 @@ public class InventoryUI : MonoBehaviour
         if (inventoryPanel != null)
             inventoryPanel.SetActive(IsInventoryOpen);
 
-        // 控制相机和UI交互
-        if (cameraController != null)
-        {
-            cameraController.SetUIActive(IsInventoryOpen);
-           
-        }
-        else
-        {
-            Debug.LogWarning("CameraController未分配！");
-        }
+        UIStateManager.SetUIActive(IsInventoryOpen);
 
         Debug.Log($"背包 {(IsInventoryOpen ? "打开" : "关闭")}");
 
@@ -436,16 +361,5 @@ public class InventoryUI : MonoBehaviour
         // 强制刷新布局
         LayoutRebuilder.ForceRebuildLayoutImmediate(content.GetComponent<RectTransform>());
     }
-
-    public void RegisterCameraController(CameraController controller)
-    {
-        cameraController = controller;
-        Debug.Log("CameraController 注册到 InventoryUI");
-    }
-
-    public void UnregisterCameraController()
-    {
-        cameraController = null;
-        Debug.Log("CameraController 从 InventoryUI 解除注册");
-    }
+    
 }

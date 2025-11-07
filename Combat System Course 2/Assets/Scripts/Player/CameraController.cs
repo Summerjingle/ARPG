@@ -33,12 +33,12 @@ public class CameraController : MonoBehaviour
     private float distanceStableTimer;
     private bool isDistanceLocked = false;
 
-    public static bool IsAnyUIActive { get; private set; }
-    private static int uiActiveCount = 0;
+
 
     private void Awake()
     {
-        RegisterToManagers();
+        
+        UIStateManager.OnUIActiveStateChanged += HandleUIActiveStateChanged;
     }
 
     private void Start()
@@ -46,7 +46,6 @@ public class CameraController : MonoBehaviour
         currentDistance = distance;
         lastStableDistance = distance; // 初始化
         distanceStableTimer = 0f; // 初始化
-        UpdateCursorState();
         PrecalculateClipPoints();
     }
 
@@ -73,7 +72,7 @@ public class CameraController : MonoBehaviour
 
     private void Update()
     {
-        if (IsAnyUIActive) return;
+        if (UIStateManager.IsAnyUIActive) return;
 
         rotationX += Input.GetAxis("Mouse Y");
         rotationX = Mathf.Clamp(rotationX, minVerticalAngle, maxVerticalAngle);
@@ -82,7 +81,6 @@ public class CameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        UpdateCursorState();
 
         if (followTarget == null) return;
 
@@ -180,51 +178,22 @@ public class CameraController : MonoBehaviour
         return focusPosition - rotation * new Vector3(0, 0, currentDistance);
     }
 
-    // 保留原有UI状态管理方法...
-    public void SetUIActive(bool uiActive)
+    private void HandleUIActiveStateChanged(bool isActive)
     {
-        uiActiveCount += uiActive ? 1 : -1;
-        uiActiveCount = Mathf.Max(0, uiActiveCount);
-        IsAnyUIActive = uiActiveCount > 0;
-        UpdateCursorState();
+        // 可以在这里添加相机特定的UI响应逻辑
+        // 例如：UI打开时停止相机旋转等
+        Debug.Log($"CameraController: UI状态变为 {(isActive ? "活跃" : "非活跃")}");
     }
 
-    private void UpdateCursorState()
-    {
-        Cursor.visible = IsAnyUIActive;
-        Cursor.lockState = IsAnyUIActive ? CursorLockMode.None : CursorLockMode.Locked;
-    }
+   
 
     public Quaternion PlanarRotation => Quaternion.Euler(0, rotationY, 0);
 
-    private void RegisterToManagers()
-    {
-        // 注册到InventoryUI
-        if (InventoryUI.Instance != null)
-        {
-            InventoryUI.Instance.RegisterCameraController(this);
-        }
-
-        // 注册到DialogueManager
-        if (DialogueManager.Instance != null)
-        {
-            DialogueManager.Instance.RegisterCameraController(this);
-        }
-
-        // 注册到其他需要CameraController的管理器...
-    }
+    
 
     private void OnDestroy()
     {
-        // 取消注册
-        if (InventoryUI.Instance != null)
-        {
-            InventoryUI.Instance.UnregisterCameraController();
-        }
-
-        if (DialogueManager.Instance != null)
-        {
-            DialogueManager.Instance.UnregisterCameraController();
-        }
+        UIStateManager.OnUIActiveStateChanged -= HandleUIActiveStateChanged;
+     
     }
 }

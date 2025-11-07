@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerController : MonoBehaviour
 {
@@ -25,13 +26,11 @@ public class PlayerController : MonoBehaviour
     public CombatController combatController;
     public bool isGrounded;
     private float ySpeed;
+    private bool isMovementEnabled = true;
 
     private void Awake()
     {
-
         i = this;
-
-
         cameracontroller = Camera.main.GetComponent<CameraController>();//找到场景中的主摄像机，并获取其身上的cameracontroller组件
         animator = GetComponent<Animator>();//从脚本负载对象身上获取其动画控制机
         charactercontroller = GetComponent<CharacterController>();//从脚本负载对象身上获取其charactercontroller，目的在于通过该组件控制对象移动
@@ -39,6 +38,7 @@ public class PlayerController : MonoBehaviour
         combatController = GetComponent<CombatController>();
         StartCoroutine(DelayedRegistration());
         RegisterToHUD();
+        UIStateManager.OnUIActiveStateChanged += OnUIActiveStateChanged;
     }
     private IEnumerator DelayedRegistration()
     {
@@ -53,12 +53,16 @@ public class PlayerController : MonoBehaviour
             PlayerHUDUI.Instance.RegisterPlayerComponents(property, fighter);
         }
     }
-    
+
+    private void Start()
+    {
+        UIStateManager.SetUIActive(false);
+    }
     private void Update()
     {
-        
-        // 如果在对话中，禁用移动和旋转
-        if (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive)
+       
+        if (!isMovementEnabled ||
+            (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
             animator.SetFloat("forwardSpeed", 0f);
             animator.SetFloat("strafeSpeed", 0f);
@@ -131,6 +135,8 @@ public class PlayerController : MonoBehaviour
         charactercontroller.Move(velocity * Time.deltaTime);//通过CharacteController来控制玩家移动
     }
 
+    
+
     private void GroundCheck()
     {
         isGrounded = Physics.CheckSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius, groundLayer);
@@ -145,6 +151,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.color = new Color(0, 1, 0, 0.5f);
         Gizmos.DrawSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius);
     }
+
     private void RegisterToHUD()
     {
         PlayerProperty property = GetComponent<PlayerProperty>();
@@ -155,9 +162,23 @@ public class PlayerController : MonoBehaviour
             PlayerHUDUI.Instance.RegisterPlayerComponents(property, fighter);
         }
     }
+    private void OnUIActiveStateChanged(bool isUIActive)
+    {
+        isMovementEnabled = !isUIActive;
+
+        // 立即停止移动动画
+        if (isUIActive)
+        {
+            animator.SetFloat("forwardSpeed", 0f);
+            animator.SetFloat("strafeSpeed", 0f);
+        }
+
+        Debug.Log($"玩家移动: {(isMovementEnabled ? "启用" : "禁用")}");
+    }
 
     private void OnDestroy()
     {
+        UIStateManager.OnUIActiveStateChanged -= OnUIActiveStateChanged;
         if (PlayerHUDUI.Instance != null)
         {
             PlayerHUDUI.Instance.UnregisterPlayerComponents();

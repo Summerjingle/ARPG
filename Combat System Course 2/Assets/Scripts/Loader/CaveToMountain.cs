@@ -8,7 +8,7 @@ public class CaveToMountain : MonoBehaviour
     private bool isPlayerInTrigger=false;
     public AudioClip doorOpenSound;
     public GameObject openDoorTipText;
-    public string gameSceneName = "02Scene_Mountain";
+    public string gameSceneName = "02Scene_HighPlace";
     public string loadingSceneName = "LoadingScene";
     private void OnTriggerEnter(Collider other)
     {
@@ -37,12 +37,14 @@ public class CaveToMountain : MonoBehaviour
             if (SaveManager.Instance != null)
             {
                 SaveManager.Instance.SaveGame();
+                SaveManager.Instance.currentSaveData.currentScene = gameSceneName;
                 SaveManager.isNewGame = false;
             }
 
             // 设置目标场景并加载
             PlayerPrefs.SetString("TargetScene", gameSceneName);
             SaveManager.shouldLoadFromSave = true;
+            SaveManager.shouldLoadPosition = false;
             SceneManager.LoadScene(loadingSceneName);
         }
     }
