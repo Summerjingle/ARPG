@@ -864,7 +864,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: ddb1c6e0b6bac904f9aab34da5ac3104, type: 2}
   longRangeAttacks: []
   LongRangeAttackThreshold: 1.5
-  currentWeapon: {fileID: 0}
   <MaxHealth>k__BackingField: 100
   <Health>k__BackingField: 100
   animator: {fileID: 0}
@@ -3636,5 +3635,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e907ebbd0b3b74089d81d1f5e1efc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 0}
+  itemSO: {fileID: 11400000, guid: 9aae080c939e8164d8a9e56dc8b2e78d, type: 2}
   damage: 15

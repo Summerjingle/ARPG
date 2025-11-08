@@ -1712,7 +1712,6 @@ MonoBehaviour:
   - {fileID: 11400000, guid: b082f8a9ec8d3954baa8c94d6fca2cb5, type: 2}
   longRangeAttacks: []
   LongRangeAttackThreshold: 1.5
-  currentWeapon: {fileID: 1952438433802189156}
   <MaxHealth>k__BackingField: 30
   <Health>k__BackingField: 30
   animator: {fileID: 5059814822869282920}
@@ -1730,7 +1729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dab5b772ce6cf9d459045f3303bc892f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lootTable: {fileID: 0}
+  lootTable: {fileID: 11400000, guid: 0daca4d3cd6b4f949ace1ac93ee9ed26, type: 2}
   enemyTypeID: Enemy
   lootSpawnDelay: 1
   EXP: 20

@@ -27,6 +27,7 @@ public class PlayerController : MonoBehaviour
     public bool isGrounded;
     private float ySpeed;
     private bool isMovementEnabled = true;
+    private bool isRolling = false;
 
     private void Awake()
     {
@@ -60,7 +61,20 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-       
+        if (meeleFighter.InAction || isRolling)
+        {
+            // 可以保留翻滚结束检测，或者移到协程中
+            return;
+        }
+
+        // 翻滚输入检测
+        if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.Space) &&
+           !meeleFighter.InAction && isGrounded && !isRolling)
+        {
+            StartRoll();
+            return;
+        }
+
         if (!isMovementEnabled ||
             (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
@@ -176,6 +190,85 @@ public class PlayerController : MonoBehaviour
         Debug.Log($"玩家移动: {(isMovementEnabled ? "启用" : "禁用")}");
     }
 
+    private void StartRoll()
+    {
+        isRolling = true;
+        isMovementEnabled = false;
+
+        // 关键：像攻击一样设置 InAction
+        if (meeleFighter != null)
+        {
+            meeleFighter.InAction = true;
+        }
+
+        animator.SetFloat("forwardSpeed", 0f);
+        animator.SetFloat("strafeSpeed", 0f);
+
+        // 翻滚时临时退出战斗模式
+        if (combatController != null && combatController.CombatMode)
+        {
+            combatController.CancelCombatForDodge();
+        }
+
+        // 直接使用InputDir，没有输入就保持原方向
+        if (InputDir != Vector3.zero)
+        {
+            transform.rotation = Quaternion.LookRotation(InputDir.normalized);
+        }
+
+        animator.Play("Rolling");
+
+        // 启动协程控制翻滚过程（像攻击那样）
+        StartCoroutine(PerformRoll());
+    }
+    private IEnumerator PerformRoll()
+    {
+        float rollDistance = 5.5f; // 翻滚距离
+        float rollDuration = 0.75f; // 翻滚持续时间
+        float rollSpeed = rollDistance / rollDuration; // 计算翻滚速度
+
+        Vector3 rollDirection = InputDir != Vector3.zero ? InputDir.normalized : transform.forward;
+        Vector3 startPosition = transform.position;
+        float timer = 0f;
+
+        // 翻滚移动循环
+        while (timer < rollDuration)
+        {
+            timer += Time.deltaTime;
+            float progress = timer / rollDuration;
+
+            // 计算当前位置（可以使用曲线让移动更自然）
+            Vector3 targetPosition = startPosition + rollDirection * rollDistance;
+            Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, progress);
+
+            // 使用CharacterController移动
+            Vector3 moveDelta = newPosition - transform.position;
+            charactercontroller.Move(moveDelta);
+
+            yield return null;
+        }
+
+        // 恢复状态
+        isRolling = false;
+        if (meeleFighter != null)
+        {
+            meeleFighter.InAction = false;
+        }
+
+        if (!UIStateManager.IsAnyUIActive)
+        {
+            isMovementEnabled = true;
+        }
+
+        // 翻滚结束后的战斗模式恢复
+        if (combatController.TargetEnemy != null &&
+            !combatController.CombatMode &&
+            Vector3.Distance(transform.position, combatController.TargetEnemy.transform.position) < 10f)
+        {
+            combatController.CombatMode = true;
+            combatController.TargetEnemy.MeshHighlighter?.HighlightMesh(true);
+        }
+    }
     private void OnDestroy()
     {
         UIStateManager.OnUIActiveStateChanged -= OnUIActiveStateChanged;

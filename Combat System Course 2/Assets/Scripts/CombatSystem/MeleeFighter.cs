@@ -21,6 +21,7 @@ public class MeleeFighter : MonoBehaviour
     BoxCollider WeaponCollider;
     SphereCollider leftHandCollider, rightHandCollider, leftFootCollider, rightFootCollider;
     public Animator animator;
+    private Weapon enemyWeapon;
 
 
 
@@ -38,7 +39,7 @@ public class MeleeFighter : MonoBehaviour
 
 
 
-    public bool InAction { get; private set; } = false;
+    public bool InAction { get; set; } = false;
     public bool IsDead { get; private set; } = false;
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
@@ -61,7 +62,11 @@ public class MeleeFighter : MonoBehaviour
 
         // 禁用所有碰撞器
         DisableAllHitboxes();
-
+        if (!isPlayer)
+        {
+            enemyWeapon = GetComponentInChildren<Weapon>();
+            Debug.Log($"敌人武器初始化: {enemyWeapon?.name ?? "未找到"}, 伤害: {enemyWeapon?.GetDamage() ?? 0}");
+        }
 
     }
 
@@ -90,7 +95,7 @@ public class MeleeFighter : MonoBehaviour
     public void TryToAttack(MeleeFighter target = null)//尝试进行攻击，此方法是 被调用的
     {
 
-        if (!InAction && WeaponEquipmentManager.Instance?.GetCurrentWeapon() != null)//如果不在攻击
+        if (!InAction && HasUsableWeapon())//
         {
             StartCoroutine(Attack(target));//调用攻击，进入攻击状态
         }
@@ -247,16 +252,13 @@ public class MeleeFighter : MonoBehaviour
     }
     public float GetWeaponDamage()
     {
-        // 如果是玩家，通过WeaponEquipmentManager获取
         if (isPlayer)
         {
-            return WeaponEquipmentManager.Instance?.GetWeaponDamage() ?? 5f;
+            return WeaponEquipmentManager.Instance?.GetWeaponDamage() ?? 1f;
         }
-        // 如果是敌人（如狼），直接获取武器组件
         else
         {
-            var weapon = GetComponent<Weapon>();
-            return weapon?.GetDamage() ?? 5f;
+            return enemyWeapon?.GetDamage() ?? 1f;
         }
     }
     public void TakeDamage(float damage)
@@ -432,6 +434,34 @@ public class MeleeFighter : MonoBehaviour
                 break;
             default:
                 break;
+        }
+    }
+    private bool HasUsableWeapon()
+    {
+        if (isPlayer)
+        {
+            return WeaponEquipmentManager.Instance?.GetCurrentWeapon() != null;
+        }
+        else
+        {
+            // 敌人检查自己的武器
+            var weapon = GetComponentInChildren<Weapon>();
+            if (weapon != null)
+            {
+                Debug.Log($"敌人武器: {weapon.name}, 伤害: {weapon.GetDamage()}");
+                return true;
+            }
+
+            // 或者检查WolfWeapon
+            var wolfWeapon = GetComponentInChildren<Weapon>();
+            if (wolfWeapon != null)
+            {
+                Debug.Log($"狼武器伤害: {wolfWeapon.GetDamage()}");
+                return true;
+            }
+
+            Debug.LogWarning("敌人没有找到可用武器！");
+            return false;
         }
     }
 

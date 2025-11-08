@@ -148,6 +148,16 @@ public class CombatController : MonoBehaviour
             return transform.forward;
         }
     }
+
+    public void CancelCombatForDodge()
+    {
+        if (TargetEnemy != null)
+        {
+            TargetEnemy.MeshHighlighter?.HighlightMesh(false);
+        }
+        CombatMode = false;
+        // 注意：这里不设置TargetEnemy为null，以便翻滚后可以快速重新锁定
+    }
     private void ExitCombatMode()
     {
         // 清理高亮显示

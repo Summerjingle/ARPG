@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 
@@ -68,22 +69,9 @@ public class WolfController : MonoBehaviour
         navAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
 
-        bodyCollider = GetComponent<Collider>();
-        headCollider = transform.Find("AttackCollider")?.GetComponent<Collider>();
-
-        if (headCollider == null)
-        {
-            Debug.LogWarning("Head collider not found! Make sure there's a child object with collider tagged 'HitBox'");
-        }
-
-        // 初始化 EnemyController 和 MeleeFighter
-        InitializeCombatComponents();
-
         
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
-
-        InitializeStateMachine();
     }
+    
 
     // 初始化战斗组件
     void InitializeCombatComponents()
@@ -147,6 +135,25 @@ public class WolfController : MonoBehaviour
 
     void Start()
     {
+        bodyCollider = GetComponent<Collider>();
+        headCollider = transform.Find("AttackCollider")?.GetComponentInChildren<SphereCollider>();
+
+        if (headCollider == null)
+        {
+            Debug.LogWarning("Head collider not found! Make sure there's a child object with collider tagged 'HitBox'");
+        }
+        else
+        {
+            Debug.Log("AttackCollider已经找到");
+        }
+
+        // 初始化 EnemyController 和 MeleeFighter
+        InitializeCombatComponents();
+
+
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+
+        InitializeStateMachine();
         ChangeState(WolfStates.Idle);
         CurrentMode = WolfMode.Patrol;
         // Ensure head collider is disabled initially

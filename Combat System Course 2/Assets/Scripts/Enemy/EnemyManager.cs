@@ -50,7 +50,7 @@ public class EnemyManager : MonoBehaviour
                 var prevEnemy = player.TargetEnemy;
 
                 player.TargetEnemy = closestEnemy;
-                player?.TargetEnemy.MeshHighlighter.HighlightMesh(true);
+                player?.TargetEnemy.MeshHighlighter?.HighlightMesh(true);
                 prevEnemy?.MeshHighlighter?.HighlightMesh(false);
             }
         }
