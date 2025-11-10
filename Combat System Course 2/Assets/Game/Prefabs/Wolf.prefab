@@ -1483,6 +1483,7 @@ GameObject:
   - component: {fileID: 4157212616275321444}
   - component: {fileID: 7679148113618752945}
   - component: {fileID: 2885587196200165287}
+  - component: {fileID: 8707101889500439282}
   m_Layer: 8
   m_Name: Wolf
   m_TagString: Untagged
@@ -1763,8 +1764,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a03762f06f1840449b5a763f02963367, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <MaxHealth>k__BackingField: 10
-  <Health>k__BackingField: 10
+  <MaxHealth>k__BackingField: 100
+  <Health>k__BackingField: 100
+--- !u!114 &8707101889500439282
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7348538030188717989}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c724cbd4ed9ee944996bbefc9c5bb1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7652352047989869751
 GameObject:
   m_ObjectHideFlags: 0
@@ -2039,7 +2052,6 @@ MonoBehaviour:
   myName: {fileID: 8740821039428015586}
   healthBarFill: {fileID: 380107332912914975}
   healthBarBG: {fileID: 2001962293713472885}
-  fighter: {fileID: 8757950569063107020}
   positionOffset: {x: 0, y: -0.45, z: 0}
   faceCamera: 1
   hideWhenFull: 1
