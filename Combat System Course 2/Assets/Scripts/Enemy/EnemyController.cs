@@ -41,7 +41,15 @@ public class EnemyController : MonoBehaviour
         CharacterController = GetComponent<CharacterController>();
         MeshHighlighter = GetComponent<SkinnedMashHighlighter>();
         healthBar = GetComponentInChildren<EnemyHeathBar>();
-
+        HealthSystem healthSystem = GetComponent<HealthSystem>();
+        if (healthSystem != null)
+        {
+            healthSystem.OnDeath += HandleDeath;
+        }
+        else
+        {
+            Debug.LogWarning("EnemyController 找不到 HealthSystem 组件");
+        }
 
 
         // 1. 先创建字典
@@ -59,13 +67,16 @@ public class EnemyController : MonoBehaviour
 
         StateMachine = new StateMachine<EnemyController>(this);
         StateMachine.ChangeState(stateDict[EnemyStates.Idle]);
+
         Fighter.OnGotHit += (MeleeFighter attacker) =>
         {
-            if (Fighter.HealthSystem.Health > 0)
+            HealthSystem healthSystem = GetComponent<HealthSystem>();
+            if (healthSystem != null && healthSystem.Health > 0)
                 ChangerState(EnemyStates.GettingHit);
             else
                 ChangerState(EnemyStates.Dead);
         };
+
         MeleeFighter fighter = GetComponent<MeleeFighter>();
         if (fighter != null)
         {
@@ -88,10 +99,10 @@ public class EnemyController : MonoBehaviour
 
     private void OnDestroy()
     {
-        // 清理事件订阅
-        if (TryGetComponent<MeleeFighter>(out var fighter))
+        HealthSystem healthSystem = GetComponent<HealthSystem>();
+        if (healthSystem != null)
         {
-            fighter.HealthSystem.OnDeath -= HandleDeath;
+            healthSystem.OnDeath -= HandleDeath;
         }
     }
 

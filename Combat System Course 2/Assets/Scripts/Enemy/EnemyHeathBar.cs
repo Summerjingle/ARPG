@@ -9,7 +9,8 @@ public class EnemyHeathBar : MonoBehaviour
     public Image healthBarFill;
     public Image healthBarBG;
 
-    public MeleeFighter fighter;
+    
+    private HealthSystem healthSystem;
 
     [Header("位置偏移")]
     public Vector3 positionOffset = new Vector3(0, 2f, 0);
@@ -28,22 +29,21 @@ public class EnemyHeathBar : MonoBehaviour
         canvas = GetComponent<Canvas>();
         mainCamera = Camera.main;
 
-        // 如果没有指定fighter，尝试从父对象获取
-        if (fighter == null)
+        // 获取 HealthSystem
+        healthSystem = GetComponentInParent<HealthSystem>();
+        if (healthSystem == null )
         {
-            fighter = GetComponentInParent<MeleeFighter>();
+            Debug.Log("没找到health system");
         }
 
-        if (fighter != null)
+        if (healthSystem != null)
         {
-           
-            fighter.OnGotHit += UpdateHealthBar;
-            fighter.HealthSystem.OnDeath += OnFighterDeath;
-            fighter.HealthSystem.OnDeathComplete += OnFighterDeathComplete;
-
-            // 初始更新
+            healthSystem.OnHealthChanged += OnHealthChanged; // 直接订阅
+            healthSystem.OnDeath += OnFighterDeath;
+            healthSystem.OnDeathComplete += OnFighterDeathComplete;
             RefreshHealthBar();
         }
+
 
         // 配置Canvas
         if (canvas != null)
@@ -58,11 +58,10 @@ public class EnemyHeathBar : MonoBehaviour
     void Update()
     {
         // 如果角色已死亡，不再更新位置和旋转
-        if (fighter != null && fighter.HealthSystem.IsDead) return;
+        if (healthSystem != null && healthSystem.IsDead) return;
 
         // 更新血条位置（跟随角色）
-        transform.position = fighter.transform.position + positionOffset;
-
+        transform.position = healthSystem.transform.position + positionOffset;
         // 让血条始终面向相机
         if (faceCamera && mainCamera != null)
         {
@@ -74,10 +73,10 @@ public class EnemyHeathBar : MonoBehaviour
             myName.transform.rotation = mainCamera.transform.rotation;
         }
 
-        if (hideWhenFull && canvas != null && fighter != null)
+        if (hideWhenFull && canvas != null && healthSystem != null)
         {
             hideTimer -= Time.deltaTime;
-            if (hideTimer <= 0 && fighter.HealthSystem.Health >= fighter.HealthSystem.MaxHealth)
+            if (hideTimer <= 0 && healthSystem.Health >= healthSystem.MaxHealth)
             {
                 healthBarFill.enabled = false;
                 healthBarBG.enabled = false;
@@ -85,9 +84,8 @@ public class EnemyHeathBar : MonoBehaviour
         }
     }
 
-    void UpdateHealthBar(MeleeFighter attacker)
+    void OnHealthChanged(HealthSystem hs)
     {
-        // 这里我们不需要attacker参数，但为了匹配委托签名必须添加
         RefreshHealthBar();
     }
 
@@ -107,25 +105,23 @@ public class EnemyHeathBar : MonoBehaviour
 
     void OnDestroy()
     {
-        // 取消订阅事件
-        if (fighter != null)
+        if (healthSystem != null)
         {
-            fighter.OnGotHit -= UpdateHealthBar;
-            fighter.HealthSystem.OnDeath -= OnFighterDeath;
-            fighter.HealthSystem.OnDeathComplete -= OnFighterDeathComplete;
+            healthSystem.OnHealthChanged -= OnHealthChanged;
+            healthSystem.OnDeath -= OnFighterDeath;
+            healthSystem.OnDeathComplete -= OnFighterDeathComplete;
         }
     }
 
     // 手动更新血条（外部调用）
     public void RefreshHealthBar()
     {
-        // 如果角色已死亡，不再更新血条
-        if (fighter != null && fighter.HealthSystem.IsDead) return;
+        if (healthSystem != null && healthSystem.IsDead) return;
+        if (healthBarFill == null || healthSystem == null) return;
 
-        if (healthBarFill == null || fighter == null) return;
 
         // 计算血量百分比
-        float fillAmount = fighter.HealthSystem.Health / fighter.HealthSystem.MaxHealth;
+        float fillAmount = healthSystem.Health / healthSystem.MaxHealth;
         healthBarFill.fillAmount = fillAmount;
 
         if (hideWhenFull && canvas != null)

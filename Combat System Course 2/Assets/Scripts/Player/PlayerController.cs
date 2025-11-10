@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
 
     Quaternion targetRotation;
     MeleeFighter meeleFighter;
+    private HealthSystem healthSystem;
 
     private CameraController cameracontroller;
     public Animator animator;
@@ -37,6 +38,7 @@ public class PlayerController : MonoBehaviour
         charactercontroller = GetComponent<CharacterController>();//从脚本负载对象身上获取其charactercontroller，目的在于通过该组件控制对象移动
         meeleFighter = GetComponent<MeleeFighter>();
         combatController = GetComponent<CombatController>();
+        healthSystem = GetComponent<HealthSystem>();
         StartCoroutine(DelayedRegistration());
         RegisterToHUD();
         UIStateManager.OnUIActiveStateChanged += OnUIActiveStateChanged;
@@ -47,11 +49,11 @@ public class PlayerController : MonoBehaviour
         yield return new WaitUntil(() => PlayerHUDUI.Instance != null);
 
         PlayerProperty property = GetComponent<PlayerProperty>();
-        MeleeFighter fighter = GetComponent<MeleeFighter>();
+        HealthSystem healthSys = GetComponent<HealthSystem>();
 
-        if (property != null && fighter != null)
+        if (property != null && healthSys != null)
         {
-            PlayerHUDUI.Instance.RegisterPlayerComponents(property, fighter);
+            PlayerHUDUI.Instance.RegisterPlayerComponents(property, healthSys);
         }
     }
 
@@ -169,11 +171,11 @@ public class PlayerController : MonoBehaviour
     private void RegisterToHUD()
     {
         PlayerProperty property = GetComponent<PlayerProperty>();
-        MeleeFighter fighter = GetComponent<MeleeFighter>();
+        HealthSystem healthSys = GetComponent<HealthSystem>();
 
-        if (PlayerHUDUI.Instance != null && property != null && fighter != null)
+        if (PlayerHUDUI.Instance != null && property != null && healthSys != null)
         {
-            PlayerHUDUI.Instance.RegisterPlayerComponents(property, fighter);
+            PlayerHUDUI.Instance.RegisterPlayerComponents(property, healthSys);
         }
     }
     private void OnUIActiveStateChanged(bool isUIActive)

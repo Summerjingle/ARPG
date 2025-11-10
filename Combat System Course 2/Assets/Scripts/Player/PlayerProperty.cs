@@ -18,7 +18,9 @@ public class PlayerProperty : MonoBehaviour
     [SerializeField] private int baseArmorValue = 0; // 基础护甲值（不受装备影响）
     private int equipmentArmorBonus = 0; // 装备加成护甲值
 
-    private MeleeFighter meleeFighter;
+   
+    private HealthSystem healthSystem;
+
 
     public event System.Action OnArmorChanged;//护甲值改变事件（增加、减少）
 
@@ -38,10 +40,11 @@ public class PlayerProperty : MonoBehaviour
         propertyDict.Add(PropertyType.HPValue, new List<Property>());
         propertyDict.Add(PropertyType.EnergyValue, new List<Property>());
 
-        meleeFighter = GetComponent<MeleeFighter>();
-        if (meleeFighter != null)
+       
+        healthSystem = GetComponent<HealthSystem>();    
+        if (healthSystem != null)
         {
-            hpValue = Mathf.RoundToInt(meleeFighter.HealthSystem.Health);
+            hpValue = Mathf.RoundToInt(healthSystem.Health);
         }
 
         // 订阅所有预先放置的敌人的死亡事件
@@ -50,39 +53,29 @@ public class PlayerProperty : MonoBehaviour
 
     private void SubscribeToAllEnemies()
     {
-        // 查找场景中所有的MeleeFighter
-        MeleeFighter[] allFighters = FindObjectsOfType<MeleeFighter>();
+        EnemyController[] allEnemies = FindObjectsOfType<EnemyController>();
 
-        foreach (MeleeFighter fighter in allFighters)
+        foreach (EnemyController enemy in allEnemies)
         {
-            // 只订阅非玩家的死亡事件（敌人）
-            if (!fighter.isPlayer)
+            HealthSystem enemyHealth = enemy.GetComponent<HealthSystem>();
+            if (enemyHealth != null)
             {
-                // 先取消订阅（避免重复），再重新订阅
-                fighter.HealthSystem.OnDeath -= HandleEnemyDeath;
-                fighter.HealthSystem.OnDeath += HandleEnemyDeath;
-                Debug.Log($"已订阅敌人: {fighter.gameObject.name}");
+                enemyHealth.OnDeath -= HandleEnemyDeath; // 先取消
+                enemyHealth.OnDeath += HandleEnemyDeath; // 再订阅
+                Debug.Log($"已订阅敌人: {enemy.gameObject.name}");
             }
         }
 
-        Debug.Log($"总共订阅了 {allFighters.Length} 个战斗单位");
+        Debug.Log($"总共订阅了 {allEnemies.Length} 个敌人");
     }
 
     // 处理敌人死亡事件
     private void HandleEnemyDeath(HealthSystem healthSystem)
     {
-        MeleeFighter deadFighter = healthSystem.GetComponent<MeleeFighter>();
-        if (deadFighter == null) return;
-        // 检查是否是敌人
-        if (!deadFighter.isPlayer)
+        EnemyController enemyController = healthSystem.GetComponent<EnemyController>();
+        if (enemyController != null)
         {
-            // 获取EnemyController组件
-            EnemyController enemyController = deadFighter.GetComponent<EnemyController>();
-            if (enemyController != null)
-            {
-                // 调用你的OnEnemyDie方法
-                OnEnemyDie(enemyController);
-            }
+            OnEnemyDie(enemyController);
         }
     }
 
@@ -144,10 +137,10 @@ public class PlayerProperty : MonoBehaviour
         {
             case PropertyType.HPValue:
                 hpValue = Mathf.Clamp(hpValue + value, 0, 100);
-                if (meleeFighter != null)
+                if (healthSystem != null)
                 {
-                    meleeFighter.RestoreHealth(value);
-                    hpValue = Mathf.RoundToInt(meleeFighter.HealthSystem.Health);
+                    healthSystem.RestoreHealth(value);
+                    hpValue = Mathf.RoundToInt(healthSystem.Health);
                 }
                 return;
             case PropertyType.EnergyValue:
@@ -182,11 +175,14 @@ public class PlayerProperty : MonoBehaviour
     private void OnDestroy()
     {
         OnArmorChanged = null;
-        // 取消订阅所有事件
-        MeleeFighter[] allFighters = FindObjectsOfType<MeleeFighter>();
-        foreach (MeleeFighter fighter in allFighters)
+        EnemyController[] allEnemies = FindObjectsOfType<EnemyController>();
+        foreach (EnemyController enemy in allEnemies)
         {
-            fighter.HealthSystem.OnDeath -= HandleEnemyDeath;
+            HealthSystem enemyHealth = enemy.GetComponent<HealthSystem>();
+            if (enemyHealth != null)
+            {
+                enemyHealth.OnDeath -= HandleEnemyDeath;
+            }
         }
     }
 

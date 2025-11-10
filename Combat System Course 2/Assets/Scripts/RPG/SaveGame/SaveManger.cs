@@ -253,9 +253,10 @@ public class SaveManager : MonoBehaviour
 
         PlayerProperty playerProperty = player.GetComponent<PlayerProperty>();
         MeleeFighter meleeFighter = player.GetComponent<MeleeFighter>();
+        HealthSystem healthSystem = player.GetComponent<HealthSystem>();
         ArmorEquipmentManager equipmentManager = player.GetComponent<ArmorEquipmentManager>();
 
-        if (playerProperty == null || meleeFighter == null)
+        if (playerProperty == null || healthSystem == null || meleeFighter == null)
         {
             Debug.LogWarning("玩家缺少必要的组件，无法保存游戏");
             return;
@@ -270,8 +271,8 @@ public class SaveManager : MonoBehaviour
 
         currentSaveData.level = playerProperty.level;
         currentSaveData.currEXP = playerProperty.currEXP;
-        currentSaveData.hpValue = playerProperty.hpValue;
-        currentSaveData.maxHealth = Mathf.RoundToInt(meleeFighter.HealthSystem.MaxHealth);
+        currentSaveData.hpValue = Mathf.RoundToInt(healthSystem.Health);
+        currentSaveData.maxHealth = Mathf.RoundToInt(healthSystem.MaxHealth);
         currentSaveData.energyValue = playerProperty.energyValue;
         currentSaveData.armorValue = playerProperty.GetBaseArmor();
         currentSaveData.saveTime = System.DateTime.Now;
@@ -491,9 +492,9 @@ public class SaveManager : MonoBehaviour
     private void ApplyPlayerProperties(GameObject player)
     {
         PlayerProperty playerProperty = player.GetComponent<PlayerProperty>();
-        MeleeFighter meleeFighter = player.GetComponent<MeleeFighter>();
+        HealthSystem healthSystem = player.GetComponent<HealthSystem>();
 
-        if (playerProperty == null || meleeFighter == null)
+        if (playerProperty == null || healthSystem == null)
         {
             Debug.LogWarning("玩家缺少必要的属性组件");
             return;
@@ -507,10 +508,10 @@ public class SaveManager : MonoBehaviour
         playerProperty.energyValue = currentSaveData.energyValue;
         playerProperty.SetBaseArmor(currentSaveData.armorValue);
 
-        meleeFighter.HealthSystem.MaxHealth = currentSaveData.maxHealth;
-        meleeFighter.HealthSystem.Health = currentSaveData.hpValue;
+        healthSystem.MaxHealth = currentSaveData.maxHealth;
+        healthSystem.Health = currentSaveData.hpValue;
 
-        Debug.Log($"应用后属性 - 等级: {playerProperty.level}, 经验: {playerProperty.currEXP}, 血量: {meleeFighter.HealthSystem.Health}");
+        Debug.Log($"应用后属性 - 等级: {playerProperty.level}, 经验: {playerProperty.currEXP}, 血量: {healthSystem.Health}");
         RefreshHUDUI();
     }
 

@@ -58,6 +58,7 @@ public class WolfController : MonoBehaviour
     // EnemyController 相关
     private EnemyController enemyController;
     private MeleeFighter meleeFighter;
+    private HealthSystem healthSystem;
 
     public void SetStunned(bool stunned)
     {
@@ -68,6 +69,7 @@ public class WolfController : MonoBehaviour
         spawnPosition = transform.position;
         navAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
+        healthSystem = GetComponent<HealthSystem>();
 
         
     }
@@ -102,7 +104,10 @@ public class WolfController : MonoBehaviour
         SetEnemyControllerReferences();
 
         // 注册死亡事件
-        meleeFighter.HealthSystem.OnDeath += OnWolfDeath;
+        if (healthSystem != null)
+        {
+            healthSystem.OnDeath += OnWolfDeath;
+        }
     }
 
     // 通过反射设置 EnemyController 的私有字段
@@ -239,13 +244,9 @@ public class WolfController : MonoBehaviour
         if (isDead || CurrentState == WolfStates.Impact) return;
 
         // 直接调用 MeleeFighter 的 TakeDamage，并检查是否已死亡
-        if (Fighter != null && !Fighter.HealthSystem.IsDead)
+        if (healthSystem != null && !healthSystem.IsDead)
         {
-            Fighter.TakeDamage(damage);
-        }
-        else
-        {
-            Debug.LogError("WolfController: Fighter component is missing or already dead!");
+            healthSystem.TakeDamage(damage, 0); // 狼没有护甲
         }
     }
 
@@ -299,9 +300,9 @@ public class WolfController : MonoBehaviour
     // 清理事件
     private void OnDestroy()
     {
-        if (meleeFighter != null)
+        if (healthSystem != null)
         {
-            meleeFighter.HealthSystem.OnDeath -= OnWolfDeath;
+            healthSystem.OnDeath -= OnWolfDeath;
         }
     }
     public void HandleWolfDeath()
@@ -364,9 +365,10 @@ public class WolfController : MonoBehaviour
     public WolfMode Mode { get => CurrentMode; set => CurrentMode = value; }
 
     // 健康值属性 - 完全使用 MeleeFighter 的健康值
-    public float Health => Fighter != null ? Fighter.HealthSystem.Health : 0f;
-    public float MaxHealth => Fighter != null ? Fighter.HealthSystem.MaxHealth : 0f;
-    public bool IsAlive => Fighter != null && !Fighter.HealthSystem.IsDead;
+    public float Health => GetComponent<HealthSystem>()?.Health ?? 0f;
+    public float MaxHealth => GetComponent<HealthSystem>()?.MaxHealth ?? 0f;
+    public bool IsAlive => GetComponent<HealthSystem>()?.IsAlive ?? false;
+
 
     // 战斗相关属性
     public EnemyController EnemyController => enemyController;

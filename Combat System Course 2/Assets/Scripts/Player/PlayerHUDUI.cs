@@ -9,7 +9,7 @@ public class PlayerHUDUI : MonoBehaviour
     public static PlayerHUDUI Instance { get; private set; }
     //外部组件
     public PlayerProperty playerProperty;
-    public MeleeFighter meleeFighter;
+    public HealthSystem healthSystem;
     //所有填充条
     public Image playerHealthBarFill;
     public Image playerEnergyBarFill;
@@ -31,14 +31,14 @@ public class PlayerHUDUI : MonoBehaviour
     {
         UpdateEnergyBar();
     }
-    public void RegisterPlayerComponents(PlayerProperty property, MeleeFighter fighter)
+    public void RegisterPlayerComponents(PlayerProperty property, HealthSystem healthSys)
     {
         // 先取消旧的订阅
         UnsubscribeFromEvents();
 
         // 设置新的引用
         playerProperty = property;
-        meleeFighter = fighter;
+        healthSystem = healthSys;
 
         // 订阅事件
         SubscribeToEvents();
@@ -54,16 +54,16 @@ public class PlayerHUDUI : MonoBehaviour
     {
         UnsubscribeFromEvents();
         playerProperty = null;
-        meleeFighter = null;
+        healthSystem=null;
         Debug.Log("玩家组件从 PlayerHUDUI 取消注册");
     }
 
     // 订阅事件
     private void SubscribeToEvents()
     {
-        if (meleeFighter != null)
+        if (healthSystem != null)
         {
-            meleeFighter.HealthSystem.OnHealthChanged += OnHealthChanged;
+            healthSystem.OnHealthChanged += OnHealthChanged; 
         }
 
         if (playerProperty != null)
@@ -75,9 +75,9 @@ public class PlayerHUDUI : MonoBehaviour
     // 取消订阅事件
     private void UnsubscribeFromEvents()
     {
-        if (meleeFighter != null)
+        if (healthSystem != null)  
         {
-            meleeFighter.HealthSystem.OnHealthChanged -= OnHealthChanged;
+            healthSystem.OnHealthChanged -= OnHealthChanged;  
         }
 
         if (playerProperty != null)
@@ -105,9 +105,9 @@ public class PlayerHUDUI : MonoBehaviour
 
     private void UpdateHealthBar()
     {
-        if (meleeFighter != null && playerHealthBarFill != null)
+        if (healthSystem != null && playerHealthBarFill != null)
         {
-            float fillAmount = meleeFighter.HealthSystem.Health / meleeFighter.HealthSystem.MaxHealth;
+            float fillAmount = healthSystem.Health / healthSystem.MaxHealth; 
             playerHealthBarFill.fillAmount = fillAmount;
         }
     }
@@ -216,9 +216,9 @@ public class PlayerHUDUI : MonoBehaviour
 
     private void OnDestroy()//取消订阅
     {
-        if (meleeFighter != null)
+        if (healthSystem != null)
         {
-            meleeFighter.HealthSystem.OnHealthChanged -= OnHealthChanged;
+            healthSystem.OnHealthChanged -= OnHealthChanged; 
         }
 
         if (playerProperty != null)
