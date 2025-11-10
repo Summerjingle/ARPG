@@ -94,15 +94,15 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
+   
     // 检查并显示攻击提示
     private void CheckAndShowAttackHint()
     {
         // 如果已经显示过提示，不再显示
         if (hasShownAttackHint) return;
 
-        // 找到玩家角色的MeleeFighter
-        var playerFighter = FindPlayerMeleeFighter();
-        if (playerFighter != null && WeaponEquipmentManager.Instance?.GetCurrentWeapon() != null)
+        // 直接检查是否有武器，不依赖玩家战斗组件
+        if (WeaponEquipmentManager.Instance?.GetCurrentWeapon() != null)
         {
             // 玩家有武器且未显示过提示，显示攻击提示
             if (attackHintUI != null)
@@ -111,34 +111,6 @@ public class InventoryUI : MonoBehaviour
                 Debug.Log("显示攻击提示：按鼠标左键进行攻击");
             }
         }
-    }
-
-    // 找到玩家的MeleeFighter组件
-    private MeleeFighter FindPlayerMeleeFighter()
-    {
-        // 方法1：通过标签查找
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
-        {
-            return player.GetComponent<MeleeFighter>();
-        }
-
-        // 方法2：通过PlayerProperty组件查找
-        PlayerProperty playerProperty = FindObjectOfType<PlayerProperty>();
-        if (playerProperty != null)
-        {
-            return playerProperty.GetComponent<MeleeFighter>();
-        }
-
-        // 方法3：通过isPlayer字段查找
-        MeleeFighter[] allFighters = FindObjectsOfType<MeleeFighter>();
-        foreach (MeleeFighter fighter in allFighters)
-        {
-            if (fighter.isPlayer)
-                return fighter;
-        }
-
-        return null;
     }
 
     // 手动重置攻击提示状态（用于新游戏等场景）

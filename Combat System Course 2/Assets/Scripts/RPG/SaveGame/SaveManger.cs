@@ -252,11 +252,10 @@ public class SaveManager : MonoBehaviour
         }
 
         PlayerProperty playerProperty = player.GetComponent<PlayerProperty>();
-        MeleeFighter meleeFighter = player.GetComponent<MeleeFighter>();
         HealthSystem healthSystem = player.GetComponent<HealthSystem>();
         ArmorEquipmentManager equipmentManager = player.GetComponent<ArmorEquipmentManager>();
 
-        if (playerProperty == null || healthSystem == null || meleeFighter == null)
+        if (playerProperty == null || healthSystem == null)
         {
             Debug.LogWarning("玩家缺少必要的组件，无法保存游戏");
             return;
@@ -281,7 +280,7 @@ public class SaveManager : MonoBehaviour
         currentSaveData.inventoryItems.Clear();
         currentSaveData.questProgress.Clear();
 
-        SaveEquipment(equipmentManager, meleeFighter);
+        SaveEquipment(equipmentManager);
         SaveInventory();
         SaveQuests();
 
@@ -304,7 +303,7 @@ public class SaveManager : MonoBehaviour
         return File.Exists(savePath);
     }
 
-    private void SaveEquipment(ArmorEquipmentManager equipmentManager, MeleeFighter meleeFighter)
+    private void SaveEquipment(ArmorEquipmentManager equipmentManager)
     {
         if (equipmentManager != null)
         {
@@ -315,7 +314,7 @@ public class SaveManager : MonoBehaviour
             currentSaveData.equippedBoots = GetEquippedItemName(equipmentManager, ArmorType.Boots);
         }
         var currentWeapon = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
-        if (meleeFighter != null && currentWeapon != null)
+        if (currentWeapon != null)  
         {
             PickableObject weaponPickable = currentWeapon.GetComponent<PickableObject>();
             if (weaponPickable != null && weaponPickable.itemSO != null)
@@ -434,9 +433,9 @@ public class SaveManager : MonoBehaviour
             if (player != null)
             {
                 PlayerProperty playerProperty = player.GetComponent<PlayerProperty>();
-                MeleeFighter meleeFighter = player.GetComponent<MeleeFighter>();
+                HealthSystem healthSystem = player.GetComponent<HealthSystem>();
 
-                if (playerProperty != null && meleeFighter != null)
+                if (playerProperty != null && healthSystem != null)
                 {
                     ApplySaveDataToPlayer(player);
                     Debug.Log("存档数据已应用");
@@ -635,7 +634,6 @@ public class SaveManager : MonoBehaviour
         Debug.Log($"找到玩家: {player.name}");
 
         ArmorEquipmentManager equipmentManager = player.GetComponent<ArmorEquipmentManager>();
-        MeleeFighter meleeFighter = player.GetComponent<MeleeFighter>();
         ItemUsageHandler itemUsageHandler = player.GetComponent<ItemUsageHandler>();
 
         if (equipmentManager != null)
@@ -649,7 +647,7 @@ public class SaveManager : MonoBehaviour
             Debug.Log("护甲装备完成");
         }
 
-        if (!string.IsNullOrEmpty(currentSaveData.equippedWeapon) && meleeFighter != null)
+        if (!string.IsNullOrEmpty(currentSaveData.equippedWeapon))
         {
             Debug.Log($"开始装备武器: {currentSaveData.equippedWeapon}");
             ItemSO weaponItem = ItemDBManager.Instance?.itemDB?.itemList?.Find(i => i != null && i.name == currentSaveData.equippedWeapon);
