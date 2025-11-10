@@ -28,7 +28,7 @@ public class CombatMovementState : State<EnemyController>
     public override void Execute()
     {
         // 首先检查是否死亡
-        if (enemyController.Fighter.IsDead)
+        if (enemyController.Fighter.HealthSystem.IsDead)
         {
             enemyController.ChangerState(EnemyStates.Dead);
             return;

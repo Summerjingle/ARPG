@@ -38,8 +38,8 @@ public class EnemyHeathBar : MonoBehaviour
         {
            
             fighter.OnGotHit += UpdateHealthBar;
-            fighter.OnDeath += OnFighterDeath; 
-            fighter.OnDeathComplete += OnFighterDeathComplete;
+            fighter.HealthSystem.OnDeath += OnFighterDeath;
+            fighter.HealthSystem.OnDeathComplete += OnFighterDeathComplete;
 
             // 初始更新
             RefreshHealthBar();
@@ -58,7 +58,7 @@ public class EnemyHeathBar : MonoBehaviour
     void Update()
     {
         // 如果角色已死亡，不再更新位置和旋转
-        if (fighter != null && fighter.IsDead) return;
+        if (fighter != null && fighter.HealthSystem.IsDead) return;
 
         // 更新血条位置（跟随角色）
         transform.position = fighter.transform.position + positionOffset;
@@ -77,7 +77,7 @@ public class EnemyHeathBar : MonoBehaviour
         if (hideWhenFull && canvas != null && fighter != null)
         {
             hideTimer -= Time.deltaTime;
-            if (hideTimer <= 0 && fighter.Health >= fighter.MaxHealth)
+            if (hideTimer <= 0 && fighter.HealthSystem.Health >= fighter.HealthSystem.MaxHealth)
             {
                 healthBarFill.enabled = false;
                 healthBarBG.enabled = false;
@@ -92,14 +92,14 @@ public class EnemyHeathBar : MonoBehaviour
     }
 
     // 修改2：修改方法签名以匹配 Action<MeleeFighter>
-    void OnFighterDeath(MeleeFighter deadFighter)
+    void OnFighterDeath(HealthSystem healthSystem)
     {
         // 虽然参数可能用不到，但为了匹配事件签名必须接受
         if (canvas != null) canvas.enabled = false;
     }
 
     // 死亡序列完成时调用（可选）
-    void OnFighterDeathComplete()
+    void OnFighterDeathComplete(HealthSystem healthSystem)
     {
         // 可以在这里添加额外的清理逻辑
         Debug.Log("Death sequence completed, health bar hidden");
@@ -111,8 +111,8 @@ public class EnemyHeathBar : MonoBehaviour
         if (fighter != null)
         {
             fighter.OnGotHit -= UpdateHealthBar;
-            fighter.OnDeath -= OnFighterDeath;
-            fighter.OnDeathComplete -= OnFighterDeathComplete;
+            fighter.HealthSystem.OnDeath -= OnFighterDeath;
+            fighter.HealthSystem.OnDeathComplete -= OnFighterDeathComplete;
         }
     }
 
@@ -120,12 +120,12 @@ public class EnemyHeathBar : MonoBehaviour
     public void RefreshHealthBar()
     {
         // 如果角色已死亡，不再更新血条
-        if (fighter != null && fighter.IsDead) return;
+        if (fighter != null && fighter.HealthSystem.IsDead) return;
 
         if (healthBarFill == null || fighter == null) return;
 
         // 计算血量百分比
-        float fillAmount = fighter.Health / fighter.MaxHealth;
+        float fillAmount = fighter.HealthSystem.Health / fighter.HealthSystem.MaxHealth;
         healthBarFill.fillAmount = fillAmount;
 
         if (hideWhenFull && canvas != null)

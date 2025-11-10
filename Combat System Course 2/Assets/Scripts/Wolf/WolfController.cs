@@ -102,7 +102,7 @@ public class WolfController : MonoBehaviour
         SetEnemyControllerReferences();
 
         // 注册死亡事件
-        meleeFighter.OnDeath += OnWolfDeath;
+        meleeFighter.HealthSystem.OnDeath += OnWolfDeath;
     }
 
     // 通过反射设置 EnemyController 的私有字段
@@ -239,7 +239,7 @@ public class WolfController : MonoBehaviour
         if (isDead || CurrentState == WolfStates.Impact) return;
 
         // 直接调用 MeleeFighter 的 TakeDamage，并检查是否已死亡
-        if (Fighter != null && !Fighter.IsDead)
+        if (Fighter != null && !Fighter.HealthSystem.IsDead)
         {
             Fighter.TakeDamage(damage);
         }
@@ -249,7 +249,7 @@ public class WolfController : MonoBehaviour
         }
     }
 
-    public  void OnWolfDeath(MeleeFighter deadFighter)
+    public  void OnWolfDeath(HealthSystem healthSystem)
     {
         if (!isDead)
         {
@@ -301,7 +301,7 @@ public class WolfController : MonoBehaviour
     {
         if (meleeFighter != null)
         {
-            meleeFighter.OnDeath -= OnWolfDeath;
+            meleeFighter.HealthSystem.OnDeath -= OnWolfDeath;
         }
     }
     public void HandleWolfDeath()
@@ -364,9 +364,9 @@ public class WolfController : MonoBehaviour
     public WolfMode Mode { get => CurrentMode; set => CurrentMode = value; }
 
     // 健康值属性 - 完全使用 MeleeFighter 的健康值
-    public float Health => Fighter != null ? Fighter.Health : 0f;
-    public float MaxHealth => Fighter != null ? Fighter.MaxHealth : 0f;
-    public bool IsAlive => Fighter != null && !Fighter.IsDead;
+    public float Health => Fighter != null ? Fighter.HealthSystem.Health : 0f;
+    public float MaxHealth => Fighter != null ? Fighter.HealthSystem.MaxHealth : 0f;
+    public bool IsAlive => Fighter != null && !Fighter.HealthSystem.IsDead;
 
     // 战斗相关属性
     public EnemyController EnemyController => enemyController;

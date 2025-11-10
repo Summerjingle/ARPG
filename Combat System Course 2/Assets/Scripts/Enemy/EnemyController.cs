@@ -61,7 +61,7 @@ public class EnemyController : MonoBehaviour
         StateMachine.ChangeState(stateDict[EnemyStates.Idle]);
         Fighter.OnGotHit += (MeleeFighter attacker) =>
         {
-            if (Fighter.Health > 0)
+            if (Fighter.HealthSystem.Health > 0)
                 ChangerState(EnemyStates.GettingHit);
             else
                 ChangerState(EnemyStates.Dead);
@@ -69,11 +69,12 @@ public class EnemyController : MonoBehaviour
         MeleeFighter fighter = GetComponent<MeleeFighter>();
         if (fighter != null)
         {
-            fighter.OnDeath += HandleDeath;
+            fighter.HealthSystem.OnDeath += HandleDeath;
         }
     }
-    private void HandleDeath(MeleeFighter deadFighter)
+    private void HandleDeath(HealthSystem healthSystem)
     {
+        var fighter = healthSystem.GetComponent<MeleeFighter>();
         // 通知 CombatController 这个敌人已死亡
         var playerCombatController = FindObjectOfType<CombatController>();
         if (playerCombatController != null && playerCombatController.TargetEnemy == this)
@@ -90,13 +91,13 @@ public class EnemyController : MonoBehaviour
         // 清理事件订阅
         if (TryGetComponent<MeleeFighter>(out var fighter))
         {
-            fighter.OnDeath -= HandleDeath;
+            fighter.HealthSystem.OnDeath -= HandleDeath;
         }
     }
 
     public void ChangerState(EnemyStates enemyStates)
     {
-        Debug.Log($"{gameObject.name} 尝试从 {StateMachine.CurrentState?.GetType().Name} 切换到 {enemyStates}，血量: {Fighter.Health}");
+        
         // 防止在死亡状态下切换到其他状态
         if (IsInState(EnemyStates.Dead) && enemyStates != EnemyStates.Dead)
         {
@@ -155,7 +156,7 @@ public class EnemyController : MonoBehaviour
         foreach (var target in TargetsInRange)
         {
             // 排除死亡目标和无效目标
-            if (target == null || target.IsDead || !target.isActiveAndEnabled)
+            if (target == null || target.HealthSystem.IsDead || !target.isActiveAndEnabled)
                 continue;
 
             var vecToTarget = target.transform.position - transform.position;

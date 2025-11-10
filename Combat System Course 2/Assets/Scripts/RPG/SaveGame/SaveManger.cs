@@ -271,7 +271,7 @@ public class SaveManager : MonoBehaviour
         currentSaveData.level = playerProperty.level;
         currentSaveData.currEXP = playerProperty.currEXP;
         currentSaveData.hpValue = playerProperty.hpValue;
-        currentSaveData.maxHealth = Mathf.RoundToInt(meleeFighter.MaxHealth);
+        currentSaveData.maxHealth = Mathf.RoundToInt(meleeFighter.HealthSystem.MaxHealth);
         currentSaveData.energyValue = playerProperty.energyValue;
         currentSaveData.armorValue = playerProperty.GetBaseArmor();
         currentSaveData.saveTime = System.DateTime.Now;
@@ -507,10 +507,10 @@ public class SaveManager : MonoBehaviour
         playerProperty.energyValue = currentSaveData.energyValue;
         playerProperty.SetBaseArmor(currentSaveData.armorValue);
 
-        meleeFighter.MaxHealth = currentSaveData.maxHealth;
-        meleeFighter.Health = currentSaveData.hpValue;
+        meleeFighter.HealthSystem.MaxHealth = currentSaveData.maxHealth;
+        meleeFighter.HealthSystem.Health = currentSaveData.hpValue;
 
-        Debug.Log($"应用后属性 - 等级: {playerProperty.level}, 经验: {playerProperty.currEXP}, 血量: {meleeFighter.Health}");
+        Debug.Log($"应用后属性 - 等级: {playerProperty.level}, 经验: {playerProperty.currEXP}, 血量: {meleeFighter.HealthSystem.Health}");
         RefreshHUDUI();
     }
 

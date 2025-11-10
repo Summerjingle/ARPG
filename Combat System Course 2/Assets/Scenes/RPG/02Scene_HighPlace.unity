@@ -18763,6 +18763,7 @@ GameObject:
   - component: {fileID: 1763240345}
   - component: {fileID: 1763240344}
   - component: {fileID: 1763240343}
+  - component: {fileID: 1763240355}
   m_Layer: 7
   m_Name: 'Player '
   m_TagString: Player
@@ -18940,8 +18941,7 @@ MonoBehaviour:
   longRangeAttacks:
   - {fileID: 11400000, guid: 26324fa0526e9c04cad3a6cffde1c32a, type: 2}
   LongRangeAttackThreshold: 1.5
-  <MaxHealth>k__BackingField: 100
-  <Health>k__BackingField: 100
+  healthSystem: {fileID: 1763240355}
   animator: {fileID: 0}
   isPlayer: 0
   currTarget: {fileID: 0}
@@ -19030,6 +19030,20 @@ Transform:
   - {fileID: 1718838690}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 30, z: 0}
+--- !u!114 &1763240355
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1763240341}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a03762f06f1840449b5a763f02963367, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <MaxHealth>k__BackingField: 25
+  <Health>k__BackingField: 25
 --- !u!1001 &1766689043
 PrefabInstance:
   m_ObjectHideFlags: 0

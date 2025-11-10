@@ -41,7 +41,7 @@ public class PlayerProperty : MonoBehaviour
         meleeFighter = GetComponent<MeleeFighter>();
         if (meleeFighter != null)
         {
-            hpValue = Mathf.RoundToInt(meleeFighter.Health);
+            hpValue = Mathf.RoundToInt(meleeFighter.HealthSystem.Health);
         }
 
         // 订阅所有预先放置的敌人的死亡事件
@@ -59,8 +59,8 @@ public class PlayerProperty : MonoBehaviour
             if (!fighter.isPlayer)
             {
                 // 先取消订阅（避免重复），再重新订阅
-                fighter.OnDeath -= HandleEnemyDeath;
-                fighter.OnDeath += HandleEnemyDeath;
+                fighter.HealthSystem.OnDeath -= HandleEnemyDeath;
+                fighter.HealthSystem.OnDeath += HandleEnemyDeath;
                 Debug.Log($"已订阅敌人: {fighter.gameObject.name}");
             }
         }
@@ -69,8 +69,10 @@ public class PlayerProperty : MonoBehaviour
     }
 
     // 处理敌人死亡事件
-    private void HandleEnemyDeath(MeleeFighter deadFighter)
+    private void HandleEnemyDeath(HealthSystem healthSystem)
     {
+        MeleeFighter deadFighter = healthSystem.GetComponent<MeleeFighter>();
+        if (deadFighter == null) return;
         // 检查是否是敌人
         if (!deadFighter.isPlayer)
         {
@@ -145,7 +147,7 @@ public class PlayerProperty : MonoBehaviour
                 if (meleeFighter != null)
                 {
                     meleeFighter.RestoreHealth(value);
-                    hpValue = Mathf.RoundToInt(meleeFighter.Health);
+                    hpValue = Mathf.RoundToInt(meleeFighter.HealthSystem.Health);
                 }
                 return;
             case PropertyType.EnergyValue:
@@ -184,7 +186,7 @@ public class PlayerProperty : MonoBehaviour
         MeleeFighter[] allFighters = FindObjectsOfType<MeleeFighter>();
         foreach (MeleeFighter fighter in allFighters)
         {
-            fighter.OnDeath -= HandleEnemyDeath;
+            fighter.HealthSystem.OnDeath -= HandleEnemyDeath;
         }
     }
 

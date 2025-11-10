@@ -63,7 +63,7 @@ public class PlayerHUDUI : MonoBehaviour
     {
         if (meleeFighter != null)
         {
-            meleeFighter.OnHealthChanged += OnHealthChanged;
+            meleeFighter.HealthSystem.OnHealthChanged += OnHealthChanged;
         }
 
         if (playerProperty != null)
@@ -77,7 +77,7 @@ public class PlayerHUDUI : MonoBehaviour
     {
         if (meleeFighter != null)
         {
-            meleeFighter.OnHealthChanged -= OnHealthChanged;
+            meleeFighter.HealthSystem.OnHealthChanged -= OnHealthChanged;
         }
 
         if (playerProperty != null)
@@ -98,7 +98,7 @@ public class PlayerHUDUI : MonoBehaviour
         UpdateArmorDisplay();
     }
 
-    private void OnHealthChanged()
+    private void OnHealthChanged(HealthSystem healthSystem)
     {
         UpdateHealthBar();
     }
@@ -107,7 +107,7 @@ public class PlayerHUDUI : MonoBehaviour
     {
         if (meleeFighter != null && playerHealthBarFill != null)
         {
-            float fillAmount = meleeFighter.Health / meleeFighter.MaxHealth;
+            float fillAmount = meleeFighter.HealthSystem.Health / meleeFighter.HealthSystem.MaxHealth;
             playerHealthBarFill.fillAmount = fillAmount;
         }
     }
@@ -218,7 +218,7 @@ public class PlayerHUDUI : MonoBehaviour
     {
         if (meleeFighter != null)
         {
-            meleeFighter.OnHealthChanged -= OnHealthChanged;
+            meleeFighter.HealthSystem.OnHealthChanged -= OnHealthChanged;
         }
 
         if (playerProperty != null)

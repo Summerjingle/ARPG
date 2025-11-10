@@ -7,19 +7,13 @@ using UnityEngine;
 public enum AttackStates { Idle, Windup, Impact, Cooldown }//枚举武器的状态
 public class MeleeFighter : MonoBehaviour
 {
-
-
     [SerializeField] List<AttackData> attacks;
     [SerializeField] List<AttackData> longRangeAttacks;
     [SerializeField] float LongRangeAttackThreshold = 1.5f;
-    
-
-
-    [field: SerializeField] public float MaxHealth { get;  set; } = 25f;
-    [field: SerializeField] public float Health { get;  set; } = 25f;
-
-    BoxCollider WeaponCollider;
-    SphereCollider leftHandCollider, rightHandCollider, leftFootCollider, rightFootCollider;
+    [SerializeField] private HealthSystem healthSystem;
+    public HealthSystem HealthSystem => healthSystem;
+    private BoxCollider WeaponCollider;
+    private SphereCollider leftHandCollider, rightHandCollider, leftFootCollider, rightFootCollider;
     public Animator animator;
     private Weapon enemyWeapon;
 
@@ -29,18 +23,17 @@ public class MeleeFighter : MonoBehaviour
     public AttackStates Attackstate { get; private set; }
     public event Action<MeleeFighter> OnGotHit;//收到打击事件
     public event Action OnHitComplete;//收到打击完成事件
-    public event Action OnHealthChanged;//血量变动事件
+   
 
 
-    public event Action<MeleeFighter> OnDeath;
-    public event Action OnDeathComplete;//死亡完成事件
+
     private PlayerProperty playerProperty;
     public bool isPlayer;
 
 
 
     public bool InAction { get; set; } = false;
-    public bool IsDead { get; private set; } = false;
+   
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
     private bool docombo;
@@ -50,9 +43,13 @@ public class MeleeFighter : MonoBehaviour
     public void Awake()
     {
         animator = GetComponent<Animator>();
-        Health = MaxHealth; // 初始化满血
+        healthSystem = GetComponent<HealthSystem>();
+        if (healthSystem == null)
+            healthSystem = gameObject.AddComponent<HealthSystem>();
         playerProperty = GetComponent<PlayerProperty>();
         isPlayer = playerProperty != null;
+        healthSystem.OnDeath += HandleDeath;
+        healthSystem.OnHealthChanged += HandleHealthChanged;
     }
 
     private void Start()
@@ -105,6 +102,39 @@ public class MeleeFighter : MonoBehaviour
         }
     }
 
+    private void HandleDeath(HealthSystem hs)
+    {
+        // 同步 PlayerProperty
+        if (isPlayer && playerProperty != null)
+        {
+            playerProperty.hpValue = 0;
+        }
+
+        // 处理敌人死亡逻辑
+        if (!isPlayer)
+        {
+            var wolfController = GetComponent<WolfController>();
+            if (wolfController != null)
+            {
+                wolfController.HandleWolfDeath();
+            }
+            else
+            {
+                var enemyController = GetComponent<EnemyController>();
+                if (enemyController != null)
+                {
+                    enemyController.ChangerState(EnemyStates.Dead);
+                }
+            }
+        }
+    }
+    private void HandleHealthChanged(HealthSystem hs)
+    {
+        if (isPlayer && playerProperty != null)
+        {
+            playerProperty.hpValue = Mathf.RoundToInt(hs.Health);
+        }
+    }
     public MeleeFighter currTarget;
         IEnumerator Attack(MeleeFighter target = null)
         {
@@ -212,36 +242,19 @@ public class MeleeFighter : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // 如果已经死亡，不处理任何碰撞
-        if (IsDead) return;
+        if (healthSystem.IsDead) return;
 
         if (other.tag == "Hitbox" && !IsTakingHit && !InCounter)
         {
             var attacker = other.GetComponentInParent<MeleeFighter>();
-            Debug.Log($"攻击者: {attacker?.gameObject.name}, 当前目标: {attacker?.currTarget?.gameObject.name}, 攻击状态: {attacker?.Attackstate}");
-
-            // 修复的目标检查逻辑
-            if (attacker == null || attacker.currTarget == null)
-            {
-                Debug.Log("攻击者或目标为空，返回");
-                return;
-            }
-
-            // 关键修复：比较GameObject而不是组件引用
-            if (attacker.currTarget.gameObject != this.gameObject)
-            {
-                Debug.Log($"攻击目标不匹配: 攻击者目标={attacker.currTarget.gameObject.name}, 自身={this.gameObject.name}，返回");
-                return;
-            }
+            if (attacker == null || attacker.currTarget == null) return;
+            if (attacker.currTarget.gameObject != this.gameObject) return;
 
             var attackerDamage = attacker?.GetWeaponDamage() ?? 5f;
-            Debug.Log($"即将造成伤害: {attackerDamage}");
             TakeDamage(attackerDamage);
-            OnGotHit?.Invoke(attacker);
 
-            if (Health > 0)
+            if (!healthSystem.IsDead)
             {
-                Debug.Log("受伤但未死亡");
                 StartCoroutine(PlayHitReaction(attacker));
             }
             else
@@ -263,72 +276,28 @@ public class MeleeFighter : MonoBehaviour
     }
     public void TakeDamage(float damage)
     {
-        if (IsDead) return;
+        if (healthSystem.IsDead) return;
+
         int currentArmor = 0;
         if (isPlayer && playerProperty != null)
         {
             currentArmor = playerProperty.armorValue;
         }
 
-        // 计算护甲减免 (每点护甲减少0.5%伤害)
-        float damageReduction = currentArmor * 0.005f; // 0.5% per armor point
-        float reducedDamage = damage * (1 - Mathf.Clamp(damageReduction, 0, 0.8f)); // 最多减少80%伤害
-
-        Debug.Log($"原始伤害: {damage}, 护甲值: {currentArmor}, 护甲减免: {damageReduction * 100}%, 实际伤害: {reducedDamage}");
-
-        Health = Math.Clamp(Health - reducedDamage, 0, MaxHealth);
-
-
-        if (isPlayer && playerProperty != null)
-        {
-            playerProperty.hpValue = Mathf.RoundToInt(Health);
-        }
-        CheckDeathState();
-        OnHealthChanged?.Invoke();
+        healthSystem.TakeDamage(damage, currentArmor);
+        OnGotHit?.Invoke(this);
     }
-    private void CheckDeathState()
+    
+    public void RestoreHealth(int amount)
     {
-        if (Health <= 0 && !IsDead)
-        {
-            IsDead = true;
-            OnDeath?.Invoke(this);
-
-            // 如果是狼，确保通过WolfController处理死亡
-            if (!isPlayer)
-            {
-                var wolfController = GetComponent<WolfController>();
-                if (wolfController != null && !wolfController.IsDead)
-                {
-                    wolfController.HandleWolfDeath();
-                }
-                else
-                {
-                    // 备用方案：直接播放死亡动画
-                    var enemyController = GetComponent<EnemyController>();
-                    if (enemyController != null)
-                    {
-                        enemyController.ChangerState(EnemyStates.Dead);
-                    }
-                }
-            }
-        }
-    }
-    public void RestoreHealth(int amount)//供PlayerProperty调用
-    {
-        Health = Mathf.Clamp(Health + amount, 0, MaxHealth);
-
-        if (isPlayer && playerProperty != null)
-        {
-            playerProperty.hpValue = Mathf.RoundToInt(Health);
-        }
-        OnHealthChanged?.Invoke();
+        healthSystem.RestoreHealth(amount);
     }
 
 
     public void PlayDeathAnimation(MeleeFighter attacker)
     {
         animator.CrossFade("Death", 0.2f);
-        OnDeathComplete?.Invoke();
+        
     }
     public IEnumerator PlayHitReaction(MeleeFighter attacker)
     {
@@ -464,7 +433,14 @@ public class MeleeFighter : MonoBehaviour
             return false;
         }
     }
-
+    private void OnDestroy()
+    {
+        if (healthSystem != null)
+        {
+            healthSystem.OnDeath -= HandleDeath;
+            healthSystem.OnHealthChanged -= HandleHealthChanged;
+        }
+    }
     private void DisableAllHitboxes()//游戏开始时默认禁用所有碰撞器
     {
         if (WeaponCollider != null)

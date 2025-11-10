@@ -96,7 +96,7 @@ public class CombatController : MonoBehaviour
     private void Update()
     {
         // 新增：检查目标敌人是否死亡或无效
-        if (combatMode && (TargetEnemy == null || TargetEnemy.Fighter.IsDead || !TargetEnemy.gameObject.activeInHierarchy))
+        if (combatMode && (TargetEnemy == null || TargetEnemy.Fighter.HealthSystem.IsDead || !TargetEnemy.gameObject.activeInHierarchy))
         {
             ExitCombatMode();
         }

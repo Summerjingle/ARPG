@@ -22,7 +22,7 @@ public class GettingHitState : State<EnemyController>
             enemyController.isActiveAndEnabled &&
             !enemyController.IsInState(EnemyStates.Dead) &&
             enemyController.Fighter != null &&
-            !enemyController.Fighter.IsDead)
+            !enemyController.Fighter.HealthSystem.IsDead)
         {
             enemyController.ChangerState(EnemyStates.CombatMovement);
         }
