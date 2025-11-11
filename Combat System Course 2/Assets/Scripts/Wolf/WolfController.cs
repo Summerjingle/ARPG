@@ -57,7 +57,7 @@ public class WolfController : MonoBehaviour
 
     // EnemyController 相关
     private EnemyController enemyController;
-    private MeleeFighter meleeFighter;
+    private WolfFighter wolfFighter;
     private HealthSystem healthSystem;
 
     public void SetStunned(bool stunned)
@@ -79,10 +79,10 @@ public class WolfController : MonoBehaviour
     void InitializeCombatComponents()
     {
         // 确保有 MeleeFighter 组件
-        meleeFighter = GetComponent<MeleeFighter>();
-        if (meleeFighter == null)
+        wolfFighter = GetComponent<WolfFighter>();
+        if (wolfFighter == null)
         {
-            meleeFighter = gameObject.AddComponent<MeleeFighter>();
+            wolfFighter = gameObject.AddComponent<WolfFighter>();
             Debug.Log("为狼添加了 MeleeFighter 组件");
         }
 
@@ -116,9 +116,9 @@ public class WolfController : MonoBehaviour
         // 设置 Fighter 引用
         var fighterField = typeof(EnemyController).GetField("Fighter",
             System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance);
-        if (fighterField != null && meleeFighter != null)
+        if (fighterField != null && wolfFighter != null)
         {
-            fighterField.SetValue(enemyController, meleeFighter);
+            fighterField.SetValue(enemyController, wolfFighter);
         }
 
         // 设置 Animator 引用
@@ -323,6 +323,7 @@ public class WolfController : MonoBehaviour
             {
                 enemyController.MeshHighlighter.HighlightMesh(false);
             }
+            
         }
     }
     void CheckAttackRange()
@@ -372,7 +373,7 @@ public class WolfController : MonoBehaviour
 
     // 战斗相关属性
     public EnemyController EnemyController => enemyController;
-    public MeleeFighter Fighter => meleeFighter;
+    public EnemyFighter Fighter => wolfFighter;
 
     public void DisableWolf()
     {

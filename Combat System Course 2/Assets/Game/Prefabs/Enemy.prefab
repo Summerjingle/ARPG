@@ -787,10 +787,8 @@ GameObject:
   m_Component:
   - component: {fileID: 9174998447299826086}
   - component: {fileID: 7685059510493614137}
-  - component: {fileID: 440253943546295781}
   - component: {fileID: 5798108665843508083}
   - component: {fileID: 4758262276919959149}
-  - component: {fileID: 8305543617790897674}
   - component: {fileID: 7749999924895640372}
   - component: {fileID: 4477679943484720095}
   - component: {fileID: 6230885526479286383}
@@ -800,6 +798,7 @@ GameObject:
   - component: {fileID: 435492207332084282}
   - component: {fileID: 4206415274733721982}
   - component: {fileID: 3011562524213349512}
+  - component: {fileID: 8038806420452073058}
   m_Layer: 8
   m_Name: Enemy
   m_TagString: Untagged
@@ -849,27 +848,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &440253943546295781
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1490566209694213353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68a143cb7970b2847a84aabd4f98daca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attacks:
-  - {fileID: 11400000, guid: 7f65f269047ea964a8e422e26ed40b8d, type: 2}
-  - {fileID: 11400000, guid: ddb1c6e0b6bac904f9aab34da5ac3104, type: 2}
-  longRangeAttacks: []
-  LongRangeAttackThreshold: 1.5
-  healthSystem: {fileID: 4206415274733721982}
-  animator: {fileID: 0}
-  isPlayer: 0
-  currTarget: {fileID: 0}
 --- !u!143 &5798108665843508083
 CharacterController:
   m_ObjectHideFlags: 0
@@ -914,18 +892,6 @@ MonoBehaviour:
   EXP: 30
   healthBar: {fileID: 0}
   <Fov>k__BackingField: 180
---- !u!114 &8305543617790897674
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1490566209694213353}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 3249d8f61ab8bb4459e89ac149a657fc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &7749999924895640372
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1059,6 +1025,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0c724cbd4ed9ee944996bbefc9c5bb1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attacks:
+  - {fileID: 11400000, guid: 7f65f269047ea964a8e422e26ed40b8d, type: 2}
+  - {fileID: 11400000, guid: ddb1c6e0b6bac904f9aab34da5ac3104, type: 2}
+  longRangeAttacks: []
+  longRangeAttackThreshold: 1.5
+--- !u!114 &8038806420452073058
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1490566209694213353}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3249d8f61ab8bb4459e89ac149a657fc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &1524264393415628621

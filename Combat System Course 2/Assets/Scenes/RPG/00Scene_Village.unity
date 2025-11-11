@@ -4654,76 +4654,6 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 2066409972}
   m_SourcePrefab: {fileID: 100100000, guid: 6b0df067d8acef346aae1d839098fcbb, type: 3}
---- !u!1 &776235161
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 776235163}
-  - component: {fileID: 776235162}
-  - component: {fileID: 776235164}
-  - component: {fileID: 776235165}
-  m_Layer: 0
-  m_Name: GeminiManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &776235162
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776235161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b3bfa68dacf88cc4c9b5100a6ec485dd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!4 &776235163
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776235161}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -59.379265, y: 6.8199997, z: 23.76}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &776235164
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776235161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2eaae45e3976f1146af55e5f21e277e3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
---- !u!114 &776235165
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 776235161}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 84b202d616f1b2543918b788e2eaf88a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!135 &777007453
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -4995,7 +4925,6 @@ GameObject:
   - component: {fileID: 911669074}
   - component: {fileID: 911669073}
   - component: {fileID: 911669069}
-  - component: {fileID: 911669067}
   - component: {fileID: 911669072}
   - component: {fileID: 911669070}
   - component: {fileID: 911669068}
@@ -5027,36 +4956,6 @@ Transform:
   - {fileID: 543450652931348158}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 184.52, z: 0}
---- !u!114 &911669067
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 911669065}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68a143cb7970b2847a84aabd4f98daca, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attacks:
-  - {fileID: 11400000, guid: 27623ca069a7d884ea34224dcf453d69, type: 2}
-  - {fileID: 11400000, guid: 1e93282fae9d3c843a5da68147c2ca09, type: 2}
-  - {fileID: 11400000, guid: 39abf01fd90cfbe489cfec233cb452be, type: 2}
-  - {fileID: 11400000, guid: feccfa9d21e466d478d996b2381b3c7d, type: 2}
-  longRangeAttacks:
-  - {fileID: 11400000, guid: 26324fa0526e9c04cad3a6cffde1c32a, type: 2}
-  LongRangeAttackThreshold: 1.5
-  healthSystem: {fileID: 911669080}
-  WeaponCollider: {fileID: 0}
-  leftHandCollider: {fileID: 0}
-  rightHandCollider: {fileID: 0}
-  leftFootCollider: {fileID: 0}
-  rightFootCollider: {fileID: 0}
-  animator: {fileID: 0}
-  docombo: 0
-  comboCount: 0
-  currTarget: {fileID: 0}
 --- !u!114 &911669068
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5317,6 +5216,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fd2dc22c40aa7349b21735719cb7cce, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  attacks:
+  - {fileID: 11400000, guid: 27623ca069a7d884ea34224dcf453d69, type: 2}
+  - {fileID: 11400000, guid: 1e93282fae9d3c843a5da68147c2ca09, type: 2}
+  - {fileID: 11400000, guid: 39abf01fd90cfbe489cfec233cb452be, type: 2}
+  - {fileID: 11400000, guid: feccfa9d21e466d478d996b2381b3c7d, type: 2}
+  longRangeAttacks:
+  - {fileID: 11400000, guid: 26324fa0526e9c04cad3a6cffde1c32a, type: 2}
+  longRangeAttackThreshold: 1.5
 --- !u!1 &920828548
 GameObject:
   m_ObjectHideFlags: 0
@@ -20488,4 +20395,3 @@ SceneRoots:
   - {fileID: 2098890403}
   - {fileID: 1115675787}
   - {fileID: 1659152906}
-  - {fileID: 776235163}

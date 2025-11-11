@@ -6,6 +6,11 @@ public class DeadState : State<EnemyController>
 {
     public override void Enter(EnemyController owner)
     {
+        if (owner.GetComponent<WolfController>() != null)
+        {
+            Debug.Log($"狼 {owner.gameObject.name} 跳过普通敌人死亡处理");
+            return;
+        }
         // 1. 取消高亮
         if (owner.MeshHighlighter != null)
         {

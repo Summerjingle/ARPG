@@ -32412,7 +32412,6 @@ MonoBehaviour:
   myName: {fileID: 1803319319}
   healthBarFill: {fileID: 218317449}
   healthBarBG: {fileID: 1337512234}
-  fighter: {fileID: 1920819413}
   positionOffset: {x: 0, y: 0.27, z: 0}
   faceCamera: 1
   hideWhenFull: 1
@@ -46071,8 +46070,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 26324fa0526e9c04cad3a6cffde1c32a, type: 2}
   LongRangeAttackThreshold: 1.5
   healthSystem: {fileID: 1568984253}
+  WeaponCollider: {fileID: 0}
+  leftHandCollider: {fileID: 0}
+  rightHandCollider: {fileID: 0}
+  leftFootCollider: {fileID: 0}
+  rightFootCollider: {fileID: 0}
   animator: {fileID: 0}
-  isPlayer: 0
+  docombo: 0
+  comboCount: 0
   currTarget: {fileID: 0}
 --- !u!114 &1568984242
 MonoBehaviour:
@@ -47734,6 +47739,10 @@ PrefabInstance:
         type: 3}
       insertIndex: -1
       addedObject: {fileID: 1920819414}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 0a04861375e92c3478b9ae49a1253cd6,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1920819415}
   m_SourcePrefab: {fileID: 100100000, guid: 0a04861375e92c3478b9ae49a1253cd6, type: 3}
 --- !u!4 &1640361933 stripped
 Transform:
@@ -56010,8 +56019,14 @@ MonoBehaviour:
   longRangeAttacks: []
   LongRangeAttackThreshold: 1.5
   healthSystem: {fileID: 1920819414}
+  WeaponCollider: {fileID: 0}
+  leftHandCollider: {fileID: 0}
+  rightHandCollider: {fileID: 0}
+  leftFootCollider: {fileID: 0}
+  rightFootCollider: {fileID: 0}
   animator: {fileID: 0}
-  isPlayer: 0
+  docombo: 0
+  comboCount: 0
   currTarget: {fileID: 0}
 --- !u!114 &1920819414
 MonoBehaviour:
@@ -56027,6 +56042,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <MaxHealth>k__BackingField: 25
   <Health>k__BackingField: 25
+--- !u!114 &1920819415
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1920819401}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c724cbd4ed9ee944996bbefc9c5bb1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attacks:
+  - {fileID: 11400000, guid: 7f65f269047ea964a8e422e26ed40b8d, type: 2}
+  - {fileID: 11400000, guid: ddb1c6e0b6bac904f9aab34da5ac3104, type: 2}
+  longRangeAttacks: []
+  longRangeAttackThreshold: 1.5
 --- !u!1001 &1923946199
 PrefabInstance:
   m_ObjectHideFlags: 0

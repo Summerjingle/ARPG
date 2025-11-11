@@ -13,8 +13,17 @@ public class StateMachine<T>
 	}
 	public void ChangeState(State<T> newState)
 	{
-		CurrentState?.Exit();
-		CurrentState = newState;
+        Debug.Log($"StateMachine.ChangeState 被调用，newState: {newState?.GetType().Name ?? "NULL"}");
+        if (CurrentState != null)
+        {
+            Debug.Log($"退出当前状态: {CurrentState.GetType().Name}");
+            CurrentState.Exit();
+        }
+        else
+        {
+            Debug.Log("当前状态为null，无需退出");
+        }
+        CurrentState = newState;
 		CurrentState.Enter(_owner);
 	}
 

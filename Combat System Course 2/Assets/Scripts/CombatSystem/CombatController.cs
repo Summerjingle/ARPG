@@ -6,8 +6,8 @@ public class CombatController : MonoBehaviour
 {
     EnemyController targetEnemy;
     private CameraController cam;
-    private MeleeFighter meleeFighter;
     private Animator animator;
+    private ICombatSystem combatSystem;
 
     public EnemyController TargetEnemy
     {
@@ -36,21 +36,21 @@ public class CombatController : MonoBehaviour
 
     private void Awake()
     {
-        meleeFighter = GetComponent<MeleeFighter>();
         animator = GetComponent<Animator>();
         cam = Camera.main.GetComponent<CameraController>();
+        combatSystem = GetComponent<ICombatSystem>();
     }
 
     private void Start()
     {
-        meleeFighter.OnGotHit += (MeleeFighter attacker) =>
+        combatSystem.OnGotHit += (ICombatSystem attacker) =>
         {
             // 自动进入战斗模式
             CombatMode = true;
 
             // 尝试获取攻击者的EnemyController
-            EnemyController attackerEnemy = attacker.GetComponent<EnemyController>();
-            WolfController attackerWolf = attacker.GetComponent<WolfController>();
+            EnemyController attackerEnemy = attacker.gameObject.GetComponent<EnemyController>();
+            WolfController attackerWolf = attacker.gameObject.GetComponent<WolfController>();
 
             EnemyController targetToSet = null;
 
@@ -102,18 +102,18 @@ public class CombatController : MonoBehaviour
         }
 
         // 执行攻击
-        if (Input.GetButtonDown("Attack") && !meleeFighter.IsTakingHit)
+        if (Input.GetButtonDown("Attack") && !combatSystem.IsTakingHit)
         {
             var enemy = EnemyManager.i.GetAttackingEnemy();
-            if (enemy != null && enemy.Fighter.IsCounterable && !meleeFighter.InAction)
+            if (enemy != null && enemy.Fighter.IsCounterable && !combatSystem.InAction)
             {
-                StartCoroutine(meleeFighter.PerfromCounterAttack(enemy));
+                StartCoroutine(PerformCounterAttack(enemy));
             }
             else
             {
                 var enemyToAttack = EnemyManager.i.GetClosestEnemyToDirection(PlayerController.i.GetIntentDirection());
 
-                meleeFighter.TryToAttack(enemyToAttack?.Fighter);
+                combatSystem?.TryToAttack(enemyToAttack?.Fighter);
 
                 CombatMode = true;
             }
@@ -127,7 +127,7 @@ public class CombatController : MonoBehaviour
 
     private void OnAnimatorMove()
     {
-        if (!meleeFighter.InCounter)
+        if (!combatSystem.InCounter)
         {
             transform.position += animator.deltaPosition;
         }
@@ -147,6 +147,51 @@ public class CombatController : MonoBehaviour
         {
             return transform.forward;
         }
+    }
+    public IEnumerator PerformCounterAttack(EnemyController opponent)
+    {
+        // 检查对手是否是狼，如果是狼则不执行处决动画
+        if (opponent.GetComponent<WolfController>() != null)
+        {
+            Debug.LogWarning("Counterattack 对狼无效，改为普通攻击");
+            // 对狼执行普通攻击
+            combatSystem?.TryToAttack(opponent.Fighter);
+            yield break;
+        }
+
+        combatSystem.InAction = true;
+        combatSystem.InCounter = true;
+        opponent.healthBar.healthBarBG.enabled = false;
+        opponent.healthBar.healthBarFill.enabled = false;
+        opponent.healthBar.myName.enabled = false;
+        opponent.Fighter.InCounter = true;
+        opponent.ChangerState(EnemyStates.Dead);
+
+        var dispVec = opponent.transform.position - transform.position;
+        dispVec.y = 0f;
+        transform.rotation = Quaternion.LookRotation(dispVec);
+        opponent.transform.rotation = Quaternion.LookRotation(-dispVec);
+
+        var targetPos = opponent.transform.position - dispVec.normalized * 1f;
+
+        animator.CrossFade("Counterattack", 0.2f);
+        opponent.Animator.CrossFade("CounterattackVictim", 0.2f);
+
+        yield return null;
+
+        var animstate = animator.GetNextAnimatorStateInfo(1);
+
+        float timer = 0f;
+        while (timer <= animstate.length)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, targetPos, 5 * Time.deltaTime);
+            yield return null;
+            timer += Time.deltaTime;
+        }
+
+        combatSystem.InCounter = false;
+        opponent.Fighter.InCounter = false;
+        combatSystem.InAction = false;
     }
 
     public void CancelCombatForDodge()

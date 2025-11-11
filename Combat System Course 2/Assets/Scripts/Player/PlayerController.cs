@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     public static PlayerController i { get; private set; }
 
     Quaternion targetRotation;
-    MeleeFighter meeleFighter;
+    ICombatSystem combatSystem;
     private HealthSystem healthSystem;
 
     private CameraController cameracontroller;
@@ -36,7 +36,7 @@ public class PlayerController : MonoBehaviour
         cameracontroller = Camera.main.GetComponent<CameraController>();//找到场景中的主摄像机，并获取其身上的cameracontroller组件
         animator = GetComponent<Animator>();//从脚本负载对象身上获取其动画控制机
         charactercontroller = GetComponent<CharacterController>();//从脚本负载对象身上获取其charactercontroller，目的在于通过该组件控制对象移动
-        meeleFighter = GetComponent<MeleeFighter>();
+        combatSystem = GetComponent<ICombatSystem>();
         combatController = GetComponent<CombatController>();
         healthSystem = GetComponent<HealthSystem>();
         StartCoroutine(DelayedRegistration());
@@ -63,7 +63,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        if (meeleFighter.InAction || isRolling)
+        if (combatSystem.InAction || isRolling)
         {
             // 可以保留翻滚结束检测，或者移到协程中
             return;
@@ -71,7 +71,7 @@ public class PlayerController : MonoBehaviour
 
         // 翻滚输入检测
         if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.Space) &&
-           !meeleFighter.InAction && isGrounded && !isRolling)
+           !combatSystem.InAction && isGrounded && !isRolling)
         {
             StartRoll();
             return;
@@ -85,7 +85,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (meeleFighter.InAction)
+        if (combatSystem.InAction)
         {
             targetRotation = transform.rotation;
             animator.SetFloat("forwardSpeed", 0f);
@@ -198,9 +198,9 @@ public class PlayerController : MonoBehaviour
         isMovementEnabled = false;
 
         // 关键：像攻击一样设置 InAction
-        if (meeleFighter != null)
+        if (combatSystem != null)
         {
-            meeleFighter.InAction = true;
+            combatSystem.InAction = true;
         }
 
         animator.SetFloat("forwardSpeed", 0f);
@@ -252,9 +252,9 @@ public class PlayerController : MonoBehaviour
 
         // 恢复状态
         isRolling = false;
-        if (meeleFighter != null)
+        if (combatSystem != null)
         {
-            meeleFighter.InAction = false;
+            combatSystem.InAction = false;
         }
 
         if (!UIStateManager.IsAnyUIActive)

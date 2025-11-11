@@ -27,11 +27,11 @@ public class AttackState : State<EnemyController >
 	{
 		isAttacking= true;
 		enemyController.Animator.applyRootMotion=true;
-		enemyController.Fighter.TryToAttack(enemyController.Target);
-		for (int i = 1; i < comboCount; i++)
+        enemyController.CombatSystem?.TryToAttack(enemyController.Target);
+        for (int i = 1; i < comboCount; i++)
 		{
             yield return new WaitUntil(() => enemyController.Fighter.Attackstate == AttackStates.Cooldown);
-            enemyController.Fighter.TryToAttack(enemyController.Target);
+            enemyController.CombatSystem?.TryToAttack(enemyController.Target);
         }
 		yield return new WaitUntil(() => enemyController.Fighter.Attackstate == AttackStates.Idle);
         enemyController.Animator.applyRootMotion = false;

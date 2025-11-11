@@ -24,7 +24,7 @@ public class WolfAttackState : State<WolfController>
             }
 
             // 关键：设置MeleeFighter的攻击目标
-            var playerFighter = wolf.Player.GetComponent<MeleeFighter>();
+            var playerFighter = wolf.Player.GetComponent<PlayerFighter>();
             if (playerFighter != null)
             {
                 wolf.Fighter.currTarget = playerFighter;
