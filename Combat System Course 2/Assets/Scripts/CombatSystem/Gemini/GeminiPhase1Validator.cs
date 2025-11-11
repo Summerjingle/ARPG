@@ -14,7 +14,7 @@ public class GeminiPhase1Validator : MonoBehaviour
 
             Debug.Log($"玩家MeleeFighter: {meleeFighter != null}");
             Debug.Log($"玩家PlayerFighter: {playerFighter != null}");
-            Debug.Log($"isPlayer标志: {meleeFighter?.isPlayer}");
+           
         }
 
         // 延迟执行武器伤害测试，确保所有组件初始化完成

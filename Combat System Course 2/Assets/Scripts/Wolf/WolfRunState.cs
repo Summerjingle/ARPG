@@ -19,7 +19,7 @@ public class WolfRunState : State<WolfController>
         // 设置奔跑动画的混合参数
         wolf.Animator.SetFloat("Speed", 1f); // 奔跑速度对应1.0
 
-        Debug.Log("Wolf entering Run state");
+        
     }
 
     public override void Execute()
@@ -70,6 +70,6 @@ public class WolfRunState : State<WolfController>
         wolf.NavAgent.ResetPath();
         // 重置动画参数
         wolf.Animator.SetFloat("Speed", 0f);
-        Debug.Log("Wolf exiting Run state");
+        
     }
 }

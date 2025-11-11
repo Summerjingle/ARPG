@@ -24,14 +24,6 @@ public class MeleeFighter : MonoBehaviour
     public event Action<MeleeFighter> OnGotHit;//收到打击事件
     public event Action OnHitComplete;//收到打击完成事件
    
-
-
-
-    private PlayerProperty playerProperty;
-    public bool isPlayer;
-
-
-
     public bool InAction { get; set; } = false;
    
     public bool IsTakingHit { get; private set; } = false;
@@ -40,16 +32,28 @@ public class MeleeFighter : MonoBehaviour
 
     public int comboCount = 0;
 
+    private ICombatSystem GetCombatSystem()
+    {
+        // 直接获取接口，不再分别检查具体组件
+        var combatSystem = GetComponent<ICombatSystem>();
+
+        if (combatSystem == null)
+        {
+            Debug.LogError($"[战斗系统] {gameObject.name} 缺少 ICombatSystem 实现！");
+            Debug.LogError("请添加 PlayerFighter 或 EnemyFighter 组件");
+        }
+
+        return combatSystem;
+    }
     public void Awake()
     {
         animator = GetComponent<Animator>();
         healthSystem = GetComponent<HealthSystem>();
         if (healthSystem == null)
             healthSystem = gameObject.AddComponent<HealthSystem>();
-        playerProperty = GetComponent<PlayerProperty>();
-        isPlayer = playerProperty != null;
+        
         healthSystem.OnDeath += HandleDeath;
-        healthSystem.OnHealthChanged += HandleHealthChanged;
+        
     }
 
     private void Start()
@@ -59,13 +63,15 @@ public class MeleeFighter : MonoBehaviour
 
         // 禁用所有碰撞器
         DisableAllHitboxes();
-        if (!isPlayer)
+        var enemyFighter = GetComponent<EnemyFighter>();
+        if (enemyFighter != null)
         {
             enemyWeapon = GetComponentInChildren<Weapon>();
             Debug.Log($"敌人武器初始化: {enemyWeapon?.name ?? "未找到"}, 伤害: {enemyWeapon?.GetDamage() ?? 0}");
         }
 
     }
+
 
     // 单独的方法来初始化身体碰撞器
     private void InitializeBodyColliders()
@@ -89,44 +95,24 @@ public class MeleeFighter : MonoBehaviour
             Debug.Log($"初始化武器碰撞器: {(WeaponCollider != null ? WeaponCollider.name : "null")}");
         }
     }
-    public void TryToAttack(MeleeFighter target = null)//尝试进行攻击，此方法是 被调用的
+    public void TryToAttack(MeleeFighter target = null)
     {
-        // 阶段2：优先使用新的专用组件
-        var playerFighter = GetComponent<PlayerFighter>();
-        var enemyFighter = GetComponent<EnemyFighter>();
-
-        if (playerFighter != null)
+        var combatSystem = GetComponent<ICombatSystem>();
+        if (combatSystem != null)
         {
-            playerFighter.PlayerTryToAttack(target);
-            return;
-        }
-        else if (enemyFighter != null)
-        {
-            enemyFighter.EnemyTryToAttack(target);
+            combatSystem.TryToAttack(target);
             return;
         }
 
-        // 回退到原有逻辑（保持兼容）
-        if (!InAction && HasUsableWeapon())//
-        {
-            StartCoroutine(Attack(target));//调用攻击，进入攻击状态
-        }
-        else if (Attackstate == AttackStates.Impact || Attackstate == AttackStates.Cooldown)//如果已经在攻击
-        {
-            docombo = true;//进入连击
-        }
+        Debug.LogError($"[战斗系统] {gameObject.name} 缺少 ICombatSystem 实现组件！");
+        Debug.LogError("请添加 PlayerFighter 或 EnemyFighter 组件");
     }
 
     private void HandleDeath(HealthSystem hs)
     {
-        // 同步 PlayerProperty
-        if (isPlayer && playerProperty != null)
-        {
-            playerProperty.hpValue = 0;
-        }
 
-        // 处理敌人死亡逻辑
-        if (!isPlayer)
+        var enemyFighter = GetComponent<EnemyFighter>();
+        if (enemyFighter != null)
         {
             var wolfController = GetComponent<WolfController>();
             if (wolfController != null)
@@ -143,214 +129,9 @@ public class MeleeFighter : MonoBehaviour
             }
         }
     }
-    private void HandleHealthChanged(HealthSystem hs)
-    {
-        if (isPlayer && playerProperty != null)
-        {
-            playerProperty.hpValue = Mathf.RoundToInt(hs.Health);
-        }
-    }
+  
     public MeleeFighter currTarget;
-    public IEnumerator Attack(MeleeFighter target = null)
-    {
-        // 阶段2：使用专用组件的方法
-
-        // 1. 攻击准备阶段
-        var playerFighter = GetComponent<PlayerFighter>();
-        var enemyFighter = GetComponent<EnemyFighter>();
-
-        if (playerFighter != null)
-        {
-            playerFighter.PreparePlayerAttack(target);
-        }
-        else if (enemyFighter != null)
-        {
-            enemyFighter.PrepareEnemyAttack(target);
-        }
-
-        InAction = true;
-        currTarget = target;
-        Attackstate = AttackStates.Windup;
-
-        // 2. 攻击数据选择 - 使用专用方法
-        var attack = attacks[comboCount];
-        Vector3 attackDir = transform.forward;
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = Vector3.zero;
-
-        // 使用专用组件计算攻击数据
-        if (playerFighter != null)
-        {
-            attack = playerFighter.SelectPlayerAttack(target, attacks, longRangeAttacks, comboCount, LongRangeAttackThreshold);
-            attackDir = playerFighter.CalculatePlayerAttackDirection(target);
-
-            if (target != null && attack.MoveToTarget)
-            {
-                targetPos = playerFighter.CalculatePlayerAttackPosition(target, attack, attackDir, startPos);
-            }
-        }
-        else if (enemyFighter != null)
-        {
-            attack = enemyFighter.SelectEnemyAttack(target, attacks, longRangeAttacks, comboCount);
-            attackDir = enemyFighter.CalculateEnemyAttackDirection(target);
-            targetPos = enemyFighter.CalculateEnemyAttackPosition(target, attack, attackDir, startPos);
-        }
-        else
-        {
-            // 回退到原有逻辑（保持兼容）
-            if (target != null)
-            {
-                var vecToTarget = target.transform.position - transform.position;
-                vecToTarget.y = 0;
-                attackDir = vecToTarget.normalized;
-                float distance = vecToTarget.magnitude;
-                if (distance > LongRangeAttackThreshold && longRangeAttacks.Count > 0)
-                {
-                    attack = longRangeAttacks[0];
-                }
-                if (attack.MoveToTarget)
-                {
-                    if (distance < attack.MaxMoveDistance)
-                        targetPos = target.transform.position - attackDir * attack.DistanceFromTarget;
-                    else
-                        targetPos = startPos + attackDir * attack.MaxMoveDistance;
-                }
-            }
-        }
-
-        // 3. 动画播放（保持不变）
-        animator.CrossFade(attack.AttackName, 0.2f);
-        yield return null;
-        var animstate = animator.GetNextAnimatorStateInfo(1);
-
-        // 4. 攻击执行循环 - 包含状态管理分离
-        float timer = 0f;
-        while (timer <= animstate.length)
-        {
-            if (IsTakingHit) break;
-            timer += Time.deltaTime;
-            float normalizedTime = timer / animstate.length;
-
-            // 移动逻辑（玩家需要，敌人通常不需要）
-            if (target != null && attack.MoveToTarget)
-            {
-                if (playerFighter != null) // 只有玩家需要手动移动
-                {
-                    float percTime = (normalizedTime - attack.MoveStartTime) / (attack.MoveEndTime - attack.MoveStartTime);
-                    Vector3 desiredPosition = Vector3.Lerp(startPos, targetPos, percTime);
-                    Vector3 moveDelta = desiredPosition - transform.position;
-
-                    CharacterController controller = GetComponent<CharacterController>();
-                    if (controller != null)
-                    {
-                        controller.Move(moveDelta);
-                    }
-                    else
-                    {
-                        transform.position = desiredPosition;
-                    }
-                }
-            }
-
-            // 转向控制（保持不变）
-            if (attackDir != null)
-            {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attackDir), 500f * Time.deltaTime);
-            }
-
-            // =============================================
-            // 阶段2：攻击状态管理分离 - 关键修改部分
-            // =============================================
-            if (playerFighter != null)
-            {
-                // 使用玩家专属状态管理
-                playerFighter.UpdatePlayerAttackState(normalizedTime, attack);
-
-                // 玩家连击检查
-                if (playerFighter.CheckPlayerComboCondition())
-                {
-                    docombo = false;
-                    comboCount = (comboCount + 1) % attacks.Count;
-                    StartCoroutine(Attack(target));
-                    yield break;
-                }
-            }
-            else if (enemyFighter != null)
-            {
-                // 使用敌人专属状态管理
-                enemyFighter.UpdateEnemyAttackState(normalizedTime, attack);
-
-                // 敌人连击由AttackState控制，这里不处理
-                // 原有的连击逻辑被移除，因为敌人连击在AttackState中处理
-            }
-            else
-            {
-                // 回退到原有状态管理逻辑（保持兼容）
-                if (Attackstate == AttackStates.Windup)
-                {
-                    if (InCounter) break;
-                    if (normalizedTime >= attack.ImpactStartTime)
-                    {
-                        Attackstate = AttackStates.Impact;
-                        EnableHitbox(attack);
-                    }
-                }
-                else if (Attackstate == AttackStates.Impact)
-                {
-                    if (normalizedTime >= attack.ImpactEndTime)
-                    {
-                        Attackstate = AttackStates.Cooldown;
-                        DisableAllHitboxes();
-                    }
-                }
-                else if (Attackstate == AttackStates.Cooldown)
-                {
-                    if (docombo)
-                    {
-                        docombo = false;
-                        comboCount = (comboCount + 1) % attacks.Count;
-                        StartCoroutine(Attack(target));
-                        yield break;
-                    }
-                }
-            }
-            // =============================================
-            // 状态管理分离结束
-            // =============================================
-
-            yield return null;
-        }
-
-        // 5. 攻击结束处理 - 使用专用状态重置
-        if (playerFighter != null)
-        {
-            playerFighter.ResetPlayerAttackState();
-        }
-        else if (enemyFighter != null)
-        {
-            enemyFighter.ResetEnemyAttackState();
-        }
-        else
-        {
-            // 回退到原有状态重置逻辑
-            Attackstate = AttackStates.Idle;
-            comboCount = 0;
-            InAction = false;
-        }
-
-        currTarget = null;
-
-        // 攻击结束后的清理
-        if (playerFighter != null)
-        {
-            playerFighter.FinishPlayerAttack();
-        }
-        else if (enemyFighter != null)
-        {
-            enemyFighter.FinishEnemyAttack();
-        }
-    }
-
+    
     private void OnTriggerEnter(Collider other)
     {
         if (healthSystem.IsDead) return;
@@ -376,33 +157,30 @@ public class MeleeFighter : MonoBehaviour
     }
     public float GetWeaponDamage()
     {
-        // 阶段2：尝试使用新的专用组件
-        var playerFighter = GetComponent<PlayerFighter>();
-        var enemyFighter = GetComponent<EnemyFighter>();
-
-        if (playerFighter != null)
-            return playerFighter.GetWeaponDamage();
-        else if (enemyFighter != null)
-            return enemyFighter.GetWeaponDamage();
-
-        // 回退到原有逻辑（保持兼容）
-        if (isPlayer)
+        var combatSystem = GetComponent<ICombatSystem>();
+        if (combatSystem != null)
         {
-            return WeaponEquipmentManager.Instance?.GetWeaponDamage() ?? 1f;
+            return combatSystem.GetWeaponDamage();
         }
-        else
-        {
-            return enemyWeapon?.GetDamage() ?? 1f;
-        }
+
+        Debug.LogError($"[战斗系统] {gameObject.name} 无法获取武器伤害：缺少战斗组件");
+        return 0f;
     }
     public void TakeDamage(float damage)
     {
         if (healthSystem.IsDead) return;
 
         int currentArmor = 0;
-        if (isPlayer && playerProperty != null)
+        // 通过接口获取护甲值
+        var playerFighter = GetComponent<PlayerFighter>();
+        if (playerFighter != null)
         {
-            currentArmor = playerProperty.armorValue;
+            // 玩家护甲逻辑可以移到PlayerFighter中
+            var playerProperty = GetComponent<PlayerProperty>();
+            if (playerProperty != null)
+            {
+                currentArmor = playerProperty.armorValue;
+            }
         }
 
         healthSystem.TakeDamage(damage, currentArmor);
@@ -528,48 +306,20 @@ public class MeleeFighter : MonoBehaviour
     }
     public bool HasUsableWeapon()
     {
-        // 阶段2：优先使用新的专用组件
-        var playerFighter = GetComponent<PlayerFighter>();
-        var enemyFighter = GetComponent<EnemyFighter>();
-
-        if (playerFighter != null)
-            return playerFighter.PlayerHasUsableWeapon();
-        else if (enemyFighter != null)
-            return enemyFighter.EnemyHasUsableWeapon();
-
-        // 回退到原有逻辑（保持兼容）
-        if (isPlayer)
+        var combatSystem = GetComponent<ICombatSystem>();
+        if (combatSystem != null)
         {
-            return WeaponEquipmentManager.Instance?.GetCurrentWeapon() != null;
+            return combatSystem.HasUsableWeapon();
         }
-        else
-        {
-            // 敌人检查自己的武器
-            var weapon = GetComponentInChildren<Weapon>();
-            if (weapon != null)
-            {
-                Debug.Log($"敌人武器: {weapon.name}, 伤害: {weapon.GetDamage()}");
-                return true;
-            }
 
-            // 或者检查WolfWeapon
-            var wolfWeapon = GetComponentInChildren<Weapon>();
-            if (wolfWeapon != null)
-            {
-                Debug.Log($"狼武器伤害: {wolfWeapon.GetDamage()}");
-                return true;
-            }
-
-            Debug.LogWarning("敌人没有找到可用武器！");
-            return false;
-        }
+        Debug.LogError($"[战斗系统] {gameObject.name} 武器检查失败：缺少战斗组件");
+        return false;
     }
     private void OnDestroy()
     {
         if (healthSystem != null)
         {
             healthSystem.OnDeath -= HandleDeath;
-            healthSystem.OnHealthChanged -= HandleHealthChanged;
         }
     }
     public void DisableAllHitboxes()//游戏开始时默认禁用所有碰撞器

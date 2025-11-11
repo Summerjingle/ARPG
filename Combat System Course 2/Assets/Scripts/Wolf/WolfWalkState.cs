@@ -27,7 +27,7 @@ public class WolfWalkState : State<WolfController>
         // Set random walk time
         wolf.StateTimer = Random.Range(wolf.MinWalkTime, wolf.MaxWalkTime);
 
-        Debug.Log("Wolf entering Walk state");
+        
     }
 
     public override void Execute()
@@ -65,7 +65,7 @@ public class WolfWalkState : State<WolfController>
     {
         // 重置动画参数
         wolf.Animator.SetFloat("Speed", 0f);
-        Debug.Log("Wolf exiting Walk state");
+            
     }
 
     void FindNewPatrolPosition()

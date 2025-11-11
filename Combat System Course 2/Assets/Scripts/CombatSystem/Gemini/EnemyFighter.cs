@@ -1,17 +1,34 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
 [RequireComponent(typeof(MeleeFighter))]
-public class EnemyFighter : MonoBehaviour
+public class EnemyFighter : MonoBehaviour, ICombatSystem
 {
     private MeleeFighter baseFighter;
     private Weapon enemyWeapon;
+    private NavMeshAgent navAgent;
+    private EnemyController enemyController;
+    private WolfController wolfController;
+
+    private float decisionCooldown;
+    private MeleeFighter currentTarget;
+    private Vector3 lastKnownPlayerPosition;
 
     private void Awake()
     {
         baseFighter = GetComponent<MeleeFighter>();
         enemyWeapon = GetComponentInChildren<Weapon>();
+        navAgent = GetComponent<NavMeshAgent>();
+        enemyController = GetComponent<EnemyController>();
+        wolfController = GetComponent<WolfController>();
     }
+  
+  
+    
+  
+
     public float GetWeaponDamage()
     {
         return enemyWeapon?.GetDamage() ?? 1f;
@@ -42,7 +59,7 @@ public class EnemyFighter : MonoBehaviour
 
         if (EnemyCanAttack())
         {
-            meleeFighter.StartCoroutine(meleeFighter.Attack(target));
+            StartCoroutine(ExecuteEnemyAttack(target, meleeFighter.comboCount));
         }
         else if (meleeFighter.Attackstate == AttackStates.Impact ||
                  meleeFighter.Attackstate == AttackStates.Cooldown)
@@ -70,7 +87,7 @@ public class EnemyFighter : MonoBehaviour
         return transform.forward;
     }
 
-    // 敌人攻击数据选择 - 可能基于AI策略
+    // 敌人攻击数据选择 
     public AttackData SelectEnemyAttack(MeleeFighter target, List<AttackData> attacks, List<AttackData> longRangeAttacks, int comboCount)
     {
         // 敌人可能基于距离、状态等选择攻击
@@ -237,4 +254,83 @@ public class EnemyFighter : MonoBehaviour
 
         Debug.Log($"禁用所有敌人({gameObject.name})Hitbox");
     }
+    public IEnumerator ExecuteEnemyAttack(MeleeFighter target, int comboCount)
+    {
+        // 1. 准备攻击
+        PrepareEnemyAttack(target);
+
+        var baseFighter = GetComponent<MeleeFighter>();
+        baseFighter.InAction = true;
+        baseFighter.currTarget = target;
+        baseFighter.Attackstate = AttackStates.Windup;
+
+        // 2. 获取攻击数据
+        var attack = SelectEnemyAttack(target, baseFighter.Attacks, baseFighter.longRangeAttacks, comboCount);
+        Vector3 attackDir = CalculateEnemyAttackDirection(target);
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = CalculateEnemyAttackPosition(target, attack, attackDir, startPos);
+
+        // 3. 播放动画
+        baseFighter.animator.CrossFade(attack.AttackName, 0.2f);
+        yield return null;
+        var animstate = baseFighter.animator.GetNextAnimatorStateInfo(1);
+
+        // 4. 攻击执行循环
+        float timer = 0f;
+        while (timer <= animstate.length)
+        {
+            if (baseFighter.IsTakingHit) break;
+
+            timer += Time.deltaTime;
+            float normalizedTime = timer / animstate.length;
+
+            // 敌人通常不需要手动移动，由NavAgent处理
+            // 但保留转向控制
+            if (attackDir != Vector3.zero)
+            {
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation,
+                    Quaternion.LookRotation(attackDir),
+                    500f * Time.deltaTime);
+            }
+
+            // 5. 状态管理
+            UpdateEnemyAttackState(normalizedTime, attack);
+
+            // 6. 敌人连击由AI控制，这里不处理连击
+            // 原有的连击逻辑被移除，因为敌人连击在AttackState中处理
+
+            yield return null;
+        }
+
+        // 7. 攻击结束
+        ResetEnemyAttackState();
+        FinishEnemyAttack();
+
+        baseFighter.currTarget = null;
+    }
+
+    #region ICombatSystem接口方法实现
+    public bool CanAttack() => EnemyCanAttack();//能否进行攻击
+    public void TryToAttack(MeleeFighter target = null) => EnemyTryToAttack(target);//尝试攻击
+    
+    public bool HasUsableWeapon() => EnemyHasUsableWeapon();//检查是否有武器
+    public AttackData SelectAttack(MeleeFighter target, int comboCount)
+        => SelectEnemyAttack(target, baseFighter.Attacks, baseFighter.longRangeAttacks, comboCount);//选择攻击数据
+    public Vector3 CalculateAttackDirection(MeleeFighter target) => CalculateEnemyAttackDirection(target);//计算攻击时的朝向
+    public Vector3 CalculateAttackPosition(MeleeFighter target, AttackData attack, Vector3 attackDir, Vector3 startPos)
+        => CalculateEnemyAttackPosition(target, attack, attackDir, startPos);//计算攻击时移动到的位置
+    public void UpdateAttackState(float normalizedTime, AttackData attack) => UpdateEnemyAttackState(normalizedTime, attack);//更新攻击数据
+    public void ResetAttackState() => ResetEnemyAttackState();//重置攻击数据
+    public void EnableHitbox(AttackData attack) => EnableEnemyHitbox(attack);//启用碰撞体
+    public void DisableHitboxes() => DisableEnemyHitboxes();//禁用碰撞体
+    public void PrepareAttack(MeleeFighter target) => PrepareEnemyAttack(target);//攻击
+    public void FinishAttack() => FinishEnemyAttack();//攻击完成
+    public bool CheckComboCondition() => CheckEnemyComboCondition();//查看连招状态
+
+    public IEnumerator ExecuteAttack(MeleeFighter target, int comboCount)
+    {
+        yield return ExecuteEnemyAttack(target, comboCount);
+    }
+    #endregion
 }

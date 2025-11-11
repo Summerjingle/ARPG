@@ -4664,6 +4664,8 @@ GameObject:
   m_Component:
   - component: {fileID: 776235163}
   - component: {fileID: 776235162}
+  - component: {fileID: 776235164}
+  - component: {fileID: 776235165}
   m_Layer: 0
   m_Name: GeminiManager
   m_TagString: Untagged
@@ -4698,6 +4700,30 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &776235164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776235161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2eaae45e3976f1146af55e5f21e277e3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &776235165
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 776235161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 84b202d616f1b2543918b788e2eaf88a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!135 &777007453
 SphereCollider:
   m_ObjectHideFlags: 0
@@ -5022,8 +5048,14 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 26324fa0526e9c04cad3a6cffde1c32a, type: 2}
   LongRangeAttackThreshold: 1.5
   healthSystem: {fileID: 911669080}
+  WeaponCollider: {fileID: 0}
+  leftHandCollider: {fileID: 0}
+  rightHandCollider: {fileID: 0}
+  leftFootCollider: {fileID: 0}
+  rightFootCollider: {fileID: 0}
   animator: {fileID: 0}
-  isPlayer: 0
+  docombo: 0
+  comboCount: 0
   currTarget: {fileID: 0}
 --- !u!114 &911669068
 MonoBehaviour:
