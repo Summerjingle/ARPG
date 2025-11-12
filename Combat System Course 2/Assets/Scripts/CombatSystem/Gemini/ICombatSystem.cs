@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-// 统一战斗系统接口
+public enum AttackStates { Idle, Windup, Impact, Cooldown }
 public interface ICombatSystem
 {
     // 基础战斗能力

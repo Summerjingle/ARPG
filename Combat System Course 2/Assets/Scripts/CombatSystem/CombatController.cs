@@ -161,9 +161,9 @@ public class CombatController : MonoBehaviour
 
         combatSystem.InAction = true;
         combatSystem.InCounter = true;
-        opponent.healthBar.healthBarBG.enabled = false;
-        opponent.healthBar.healthBarFill.enabled = false;
-        opponent.healthBar.myName.enabled = false;
+        if (opponent.healthBar?.healthBarBG!=null) { opponent.healthBar.healthBarBG.enabled = false; }
+        if (opponent.healthBar?.healthBarFill!=null ) { opponent.healthBar.healthBarFill.enabled = false; }
+        if (opponent.healthBar?.myName != null){ opponent.healthBar.myName.enabled = false;}
         opponent.Fighter.InCounter = true;
         opponent.ChangerState(EnemyStates.Dead);
 
