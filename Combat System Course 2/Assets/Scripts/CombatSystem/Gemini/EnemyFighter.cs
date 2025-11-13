@@ -125,16 +125,18 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
     public void EnemyTryToAttack(ICombatSystem target = null)
     {
-        
-
         if (EnemyCanAttack())
         {
-            StartCoroutine(ExecuteEnemyAttack(target, comboCount));
+            StartCoroutine(ExecuteEnemyAttack(target, comboCount, false));
         }
         else if (Attackstate == AttackStates.Impact ||
                  Attackstate == AttackStates.Cooldown)
         {
-            Debug.Log($"敌人({gameObject.name})进入连击状态，由AttackState控制");
+            docombo = true;
+            if (!IsTakingHit && currTarget != null)
+            {
+                StartCoroutine(ExecuteEnemyAttack(target, comboCount, true));
+            }
         }
     }
 
@@ -292,11 +294,12 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         Debug.Log($"敌人({gameObject.name})攻击状态重置");
     }
 
-    // 敌人连击状态检查（由AttackState控制，这里只是接口）
+    // 敌人连击状态检查
     public bool CheckEnemyComboCondition()
     {
-        // 敌人的连击由AttackState状态机控制
-        return false; // 返回false，让AttackState处理
+        return docombo &&
+               (Attackstate == AttackStates.Impact ||
+                Attackstate == AttackStates.Cooldown);
     }
 
     // 敌人专属Hitbox启用
@@ -381,28 +384,27 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
         Debug.Log($"禁用所有敌人({gameObject.name})Hitbox");
     }
-    public IEnumerator ExecuteEnemyAttack(ICombatSystem target, int comboCount)
+    public IEnumerator ExecuteEnemyAttack(ICombatSystem target, int comboCount, bool isComboAttack = false)
     {
-        // 1. 准备攻击
         PrepareEnemyAttack(target);
 
-        
         InAction = true;
         currTarget = target;
         Attackstate = AttackStates.Windup;
 
-        // 2. 获取攻击数据
+        // 获取攻击数据
         var attack = SelectEnemyAttack(target, Attacks, LongRangeAttacks, comboCount);
         Vector3 attackDir = CalculateEnemyAttackDirection(target);
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = CalculateEnemyAttackPosition(target, attack, attackDir, startPos);
 
-        // 3. 播放动画
+        // 播放动画
         animator.CrossFade(attack.AttackName, 0.2f);
         yield return null;
         var animstate = animator.GetNextAnimatorStateInfo(1);
 
-        // 4. 攻击执行循环
+        // 重置连击标志
+        docombo = false;
+
+        // 攻击执行循环
         float timer = 0f;
         while (timer <= animstate.length)
         {
@@ -411,8 +413,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             timer += Time.deltaTime;
             float normalizedTime = timer / animstate.length;
 
-            // 敌人通常不需要手动移动，由NavAgent处理
-            // 但保留转向控制
+            // 转向控制
             if (attackDir != Vector3.zero)
             {
                 transform.rotation = Quaternion.RotateTowards(
@@ -421,19 +422,24 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                     500f * Time.deltaTime);
             }
 
-            // 5. 状态管理
+            // 状态管理
             UpdateEnemyAttackState(normalizedTime, attack);
 
-            // 6. 敌人连击由AI控制，这里不处理连击
-            // 原有的连击逻辑被移除，因为敌人连击在AttackState中处理
+            // 连击检查 - 和玩家一样的逻辑
+            if (CheckEnemyComboCondition())
+            {
+                docombo = false;
+                int newComboCount = (comboCount + 1) % Attacks.Count;
+                StartCoroutine(ExecuteEnemyAttack(target, newComboCount));
+                yield break;
+            }
 
             yield return null;
         }
 
-        // 7. 攻击结束
+        // 攻击结束
         ResetEnemyAttackState();
         FinishEnemyAttack();
-
         currTarget = null;
     }
 

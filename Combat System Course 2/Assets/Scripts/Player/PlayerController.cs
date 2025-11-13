@@ -70,7 +70,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // ·­¹öÊäÈë¼ì²â
-        if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.Space) &&
+        if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.LeftShift) &&
            !combatSystem.InAction && isGrounded && !isRolling)
         {
             StartRoll();
@@ -278,6 +278,6 @@ public class PlayerController : MonoBehaviour
         {
             PlayerHUDUI.Instance.UnregisterPlayerComponents();
         }
-      
     }
+    public float RotationSpeed => rotationSpeed;
 }
