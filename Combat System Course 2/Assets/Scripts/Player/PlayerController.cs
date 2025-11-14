@@ -279,5 +279,16 @@ public class PlayerController : MonoBehaviour
             PlayerHUDUI.Instance.UnregisterPlayerComponents();
         }
     }
+
+    private Quaternion GetCameraPlanarRotation()
+    {
+        if (Camera.main != null)
+        {
+            Vector3 cameraForward = Camera.main.transform.forward;
+            cameraForward.y = 0; // 只取水平方向
+            return Quaternion.LookRotation(cameraForward.normalized);
+        }
+        return Quaternion.identity;
+    }
     public float RotationSpeed => rotationSpeed;
 }

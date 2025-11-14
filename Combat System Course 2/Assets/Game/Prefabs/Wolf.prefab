@@ -1469,7 +1469,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1540754800763702773}
   - component: {fileID: 5059814822869282920}
-  - component: {fileID: 7059929200461660636}
   - component: {fileID: 7116894393991550974}
   - component: {fileID: 4558502122326579602}
   - component: {fileID: 9073326294631951445}
@@ -1489,6 +1488,7 @@ GameObject:
   - component: {fileID: 4135534634092307230}
   - component: {fileID: 3669250503060723878}
   - component: {fileID: 4743116988458981810}
+  - component: {fileID: 7382129130358209370}
   m_Layer: 8
   m_Name: Wolf
   m_TagString: Untagged
@@ -1537,27 +1537,6 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!135 &7059929200461660636
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7348538030188717989}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 8.49
-  m_Center: {x: 0, y: 8.4, z: -4.6}
 --- !u!54 &7116894393991550974
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1566,7 +1545,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7348538030188717989}
   serializedVersion: 4
-  m_Mass: 1
+  m_Mass: 10
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -1763,6 +1742,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70dbddb58f30ec242bfb81ee94f55c2c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  hitSound: {fileID: 8300000, guid: 0974347849d43e1489b43374f67637fb, type: 3}
+  hitFxPrefab: {fileID: 1000013355911406, guid: d32aa916f50cac94db11e6f19821a58f,
+    type: 3}
   attacks:
   - {fileID: 11400000, guid: b082f8a9ec8d3954baa8c94d6fca2cb5, type: 2}
   longRangeAttacks: []
@@ -1848,6 +1830,27 @@ MonoBehaviour:
   circlingSpeed: 20
   idleTimeRange: {x: 2, y: 5}
   circlingTimeRange: {x: 3, y: 6}
+--- !u!65 &7382129130358209370
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7348538030188717989}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8, y: 8.28934, z: 15.48655}
+  m_Center: {x: 0, y: 4.56467, z: -2.2567248}
 --- !u!1 &7652352047989869751
 GameObject:
   m_ObjectHideFlags: 0
@@ -1987,8 +1990,8 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Radius: 1.2171919
-  m_Center: {x: -0.6328072, y: -0.000000088044295, z: -0.00000024586183}
+  m_Radius: 0.67
+  m_Center: {x: 0.02, y: 0.32, z: 0}
 --- !u!114 &1952438433802189156
 MonoBehaviour:
   m_ObjectHideFlags: 0

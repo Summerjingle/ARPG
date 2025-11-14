@@ -86,7 +86,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     private void HandlePlayerInput()
     {
         // ºÏ≤‚π•ª˜ ‰»Î
-        if (Input.GetMouseButtonDown(0) && !IsUIActive())
+        if (Input.GetMouseButtonDown(1) && !IsUIActive())
         {
             attackInput = true;
             lastAttackTime = Time.time;

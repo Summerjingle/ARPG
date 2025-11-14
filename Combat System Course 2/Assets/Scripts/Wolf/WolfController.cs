@@ -37,8 +37,7 @@ public class WolfController : MonoBehaviour
     // Components
     private NavMeshAgent navAgent;
     private Animator animator;
-    private Collider bodyCollider;
-    private Collider headCollider;
+    private SphereCollider attackCollider;
 
     // State management
     public WolfStates CurrentState { get; private set; }
@@ -70,30 +69,29 @@ public class WolfController : MonoBehaviour
         navAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         healthSystem = GetComponent<HealthSystem>();
+        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        wolfFighter = GetComponent<WolfFighter>();
 
-        
     }
     
 
     // 初始化战斗组件
     void InitializeCombatComponents()
     {
-        // 确保有 MeleeFighter 组件
-        wolfFighter = GetComponent<WolfFighter>();
-        if (wolfFighter == null)
-        {
-            wolfFighter = gameObject.AddComponent<WolfFighter>();
-            Debug.Log("为狼添加了 MeleeFighter 组件");
-        }
+        
 
-        if (GetComponent<WolfWeapon>() == null)
+        if (GetComponentInChildren<WolfWeapon>() == null)
         {
             var wolfWeapon = gameObject.AddComponent<WolfWeapon>();
             Debug.Log("为狼添加了 WolfWeapon 组件");
         }
+        else
+        {
+            Debug.Log("狼的武器已找到");
+        }
 
-        // 确保有 EnemyController 组件
-        enemyController = GetComponent<EnemyController>();
+            // 确保有 EnemyController 组件
+            enemyController = GetComponent<EnemyController>();
         if (enemyController == null)
         {
             enemyController = gameObject.AddComponent<EnemyController>();
@@ -140,10 +138,10 @@ public class WolfController : MonoBehaviour
 
     void Start()
     {
-        bodyCollider = GetComponent<Collider>();
-        headCollider = transform.Find("AttackCollider")?.GetComponentInChildren<SphereCollider>();
+        
+        attackCollider = GetComponentInChildren<SphereCollider>();
 
-        if (headCollider == null)
+        if (attackCollider == null)
         {
             Debug.LogWarning("Head collider not found! Make sure there's a child object with collider tagged 'HitBox'");
         }
@@ -156,15 +154,15 @@ public class WolfController : MonoBehaviour
         InitializeCombatComponents();
 
 
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        
 
         InitializeStateMachine();
         ChangeState(WolfStates.Idle);
         CurrentMode = WolfMode.Patrol;
         // Ensure head collider is disabled initially
-        if (headCollider != null)
+        if (attackCollider != null)
         {
-            headCollider.enabled = false;
+            attackCollider.enabled = false;
         }
     }
 
@@ -192,13 +190,7 @@ public class WolfController : MonoBehaviour
     {
         stateDict = new Dictionary<WolfStates, State<WolfController>>();
 
-        // Add state components if they don't exist
-        gameObject.AddComponent<WolfIdleState>();
-        gameObject.AddComponent<WolfWalkState>();
-        gameObject.AddComponent<WolfRunState>();
-        gameObject.AddComponent<WolfAttackState>();
-        gameObject.AddComponent<WolfImpactState>();
-        gameObject.AddComponent<WolfDeadState>();
+       
 
         // Get states
         stateDict[WolfStates.Idle] = GetComponent<WolfIdleState>();
@@ -283,17 +275,17 @@ public class WolfController : MonoBehaviour
     // Called by animation events
     public void EnableAttackCollider()
     {
-        if (headCollider != null)
+        if (attackCollider != null)
         {
-            headCollider.enabled = true;
+            attackCollider.enabled = true;
         }
     }
 
     public void DisableAttackCollider()
     {
-        if (headCollider != null)
+        if (attackCollider != null)
         {
-            headCollider.enabled = false;
+            attackCollider.enabled = false;
         }
     }
 

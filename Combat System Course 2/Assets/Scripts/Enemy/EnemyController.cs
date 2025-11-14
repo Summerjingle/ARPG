@@ -17,6 +17,7 @@ public class EnemyController : MonoBehaviour
     public float lootSpawnDelay = 1f; // µÙ¬‰—”≥Ÿ ±º‰
     public int EXP = 20;
     public EnemyHeathBar healthBar;
+    public bool IsUncounterable= false;
 
     [field: SerializeField] public float Fov { get; private set; } = 180f;
     public List<PlayerFighter> TargetsInRange { get; set; } = new List<PlayerFighter>();

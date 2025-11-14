@@ -14,6 +14,10 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     private float decisionCooldown;
     private Vector3 lastKnownPlayerPosition;
 
+    [SerializeField] private AudioClip hitSound;         // 命中音效
+    [SerializeField] private GameObject hitFxPrefab;     // 飙血特效预制体
+
+
     // 健康系统
     public HealthSystem HealthSystem { get; private set; }
 
@@ -35,6 +39,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     [SerializeField] private List<AttackData> attacks;
     [SerializeField] private List<AttackData> longRangeAttacks;
     [SerializeField] private float longRangeAttackThreshold = 1.5f;
+
+    
 
     public List<AttackData> Attacks => attacks;
     public List<AttackData> LongRangeAttacks => longRangeAttacks;
@@ -242,7 +248,23 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
             var attackerDamage = attacker.GetWeaponDamage();
             TakeDamage(attackerDamage);
+            HitEffect.Instance.PlaySound(hitSound, transform.position);
+            HitEffect.Instance.PlayFX(hitFxPrefab,
+                other.ClosestPointOnBounds(transform.position),
+                Quaternion.LookRotation(attacker.transform.forward)
+            );
 
+            // 顿帧（攻击者 + 自己）
+            Animator attackerAnimator = (attacker as MonoBehaviour)?.GetComponent<Animator>();
+            Animator selfAnimator = GetComponent<Animator>();
+            Debug.Log($"attacker={attacker}, animator={attackerAnimator}");
+            if (attackerAnimator != null)
+                HitStop.Instance.Stop(0.07f, attackerAnimator);
+
+            if (selfAnimator != null)
+                HitStop.Instance.Stop(0.04f, selfAnimator);
+
+            // 受击动画
             if (!HealthSystem.IsDead)
             {
                 StartCoroutine(PlayHitReaction(attacker));
@@ -253,6 +275,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             }
         }
     }
+
 
 
     // 敌人专属状态管理
@@ -386,6 +409,13 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     }
     public IEnumerator ExecuteEnemyAttack(ICombatSystem target, int comboCount, bool isComboAttack = false)
     {
+        if (HealthSystem.IsDead || InCounter)
+        {
+            ResetEnemyAttackState();
+            FinishEnemyAttack();
+            yield break;
+        }
+       
         PrepareEnemyAttack(target);
 
         InAction = true;
@@ -408,6 +438,12 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         float timer = 0f;
         while (timer <= animstate.length)
         {
+            if (HealthSystem.IsDead || InCounter)
+            {
+                ResetEnemyAttackState();
+                FinishEnemyAttack();
+                yield break;
+            }
             if (IsTakingHit) break;
 
             timer += Time.deltaTime;
@@ -424,7 +460,13 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
             // 状态管理
             UpdateEnemyAttackState(normalizedTime, attack);
-
+            if (CheckEnemyComboCondition() && !HealthSystem.IsDead && !InCounter)
+            {
+                docombo = false;
+                int newComboCount = (comboCount + 1) % Attacks.Count;
+                StartCoroutine(ExecuteEnemyAttack(target, newComboCount));
+                yield break;
+            }   
             // 连击检查 - 和玩家一样的逻辑
             if (CheckEnemyComboCondition())
             {
@@ -444,6 +486,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     }
 
     #region ICombatSystem接口方法实现
+
+
     public bool CanAttack() => EnemyCanAttack();//能否进行攻击
     public void TryToAttack(ICombatSystem target = null) => EnemyTryToAttack(target);//尝试攻击
     

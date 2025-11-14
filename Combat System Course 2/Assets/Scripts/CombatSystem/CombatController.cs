@@ -105,7 +105,7 @@ public class CombatController : MonoBehaviour
         if (Input.GetButtonDown("Attack") && !combatSystem.IsTakingHit)
         {
             var enemy = EnemyManager.i.GetAttackingEnemy();
-            if (enemy != null && enemy.Fighter.IsCounterable && !combatSystem.InAction)
+            if (enemy != null &&!enemy.IsUncounterable&&enemy.Fighter.IsCounterable && !combatSystem.InAction)
             {
                 StartCoroutine(PerformCounterAttack(enemy));
             }
@@ -150,14 +150,7 @@ public class CombatController : MonoBehaviour
     }
     public IEnumerator PerformCounterAttack(EnemyController opponent)
     {
-        // 检查对手是否是狼，如果是狼则不执行处决动画
-        if (opponent.GetComponent<WolfController>() != null)
-        {
-            Debug.LogWarning("Counterattack 对狼无效，改为普通攻击");
-            // 对狼执行普通攻击
-            combatSystem?.TryToAttack(opponent.Fighter);
-            yield break;
-        }
+      
 
         combatSystem.InAction = true;
         combatSystem.InCounter = true;
