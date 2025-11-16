@@ -1699,6 +1699,7 @@ MonoBehaviour:
   lootSpawnDelay: 1
   EXP: 20
   healthBar: {fileID: 0}
+  IsUncounterable: 1
   <Fov>k__BackingField: 180
 --- !u!114 &7679148113618752945
 MonoBehaviour:
@@ -1849,8 +1850,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 8, y: 8.28934, z: 15.48655}
-  m_Center: {x: 0, y: 4.56467, z: -2.2567248}
+  m_Size: {x: 8, y: 8.916584, z: 15.48655}
+  m_Center: {x: 0, y: 4.878294, z: -2.2567248}
 --- !u!1 &7652352047989869751
 GameObject:
   m_ObjectHideFlags: 0

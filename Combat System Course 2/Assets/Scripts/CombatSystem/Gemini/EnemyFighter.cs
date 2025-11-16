@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
@@ -14,28 +14,28 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     private float decisionCooldown;
     private Vector3 lastKnownPlayerPosition;
 
-    [SerializeField] private AudioClip hitSound;         // ÃüÖĞÒôĞ§
-    [SerializeField] private GameObject hitFxPrefab;     // ì­ÑªÌØĞ§Ô¤ÖÆÌå
+    [SerializeField] private AudioClip hitSound;         // å‘½ä¸­éŸ³æ•ˆ
+    [SerializeField] private GameObject hitFxPrefab;     // é£™è¡€ç‰¹æ•ˆé¢„åˆ¶ä½“
 
 
-    // ½¡¿µÏµÍ³
+    // å¥åº·ç³»ç»Ÿ
     public HealthSystem HealthSystem { get; private set; }
 
-    // Õ½¶·×´Ì¬
+    // æˆ˜æ–—çŠ¶æ€
     public bool InAction { get; set; } = false;
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
     public bool IsCounterable => Attackstate == AttackStates.Windup && comboCount == 0;
 
-    // ¹¥»÷×´Ì¬
+    // æ”»å‡»çŠ¶æ€
     public AttackStates Attackstate { get; set; }
     public bool docombo { get; set; }
     public int comboCount { get; set; } = 0;
 
-    // Ä¿±ê¹ÜÀí
+    // ç›®æ ‡ç®¡ç†
     public ICombatSystem currTarget { get; set; }
 
-    // ¹¥»÷Êı¾İ
+    // æ”»å‡»æ•°æ®
     [SerializeField] private List<AttackData> attacks;
     [SerializeField] private List<AttackData> longRangeAttacks;
     [SerializeField] private float longRangeAttackThreshold = 1.5f;
@@ -46,7 +46,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public List<AttackData> LongRangeAttacks => longRangeAttacks;
     public float LongRangeAttackThreshold => longRangeAttackThreshold;
 
-    // ×é¼şÒıÓÃ
+    // ç»„ä»¶å¼•ç”¨
     public Animator animator { get; private set; }
     public BoxCollider WeaponCollider { get; protected set; }
     public SphereCollider leftHandCollider { get; private set; }
@@ -54,7 +54,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public SphereCollider leftFootCollider { get; private set; }
     public SphereCollider rightFootCollider { get; private set; }
 
-    // ÊÂ¼ş
+    // äº‹ä»¶
     public event System.Action<ICombatSystem> OnGotHit;
     public event System.Action OnHitComplete;
 
@@ -70,19 +70,19 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
         animator = GetComponent<Animator>();
 
-        // ³õÊ¼»¯Åö×²Æ÷
+        // åˆå§‹åŒ–ç¢°æ’å™¨
         InitializeEnemyBodyColliders();
     }
-    // µĞÈË×¨ÊôµÄÅö×²Æ÷³õÊ¼»¯
+    // æ•Œäººä¸“å±çš„ç¢°æ’å™¨åˆå§‹åŒ–
     protected virtual void InitializeEnemyBodyColliders()
     {
-        // ´Ó MeleeFighter Ç¨ÒÆ¹ıÀ´µÄµĞÈËÅö×²Æ÷³õÊ¼»¯Âß¼­
+        // ä» MeleeFighter è¿ç§»è¿‡æ¥çš„æ•Œäººç¢°æ’å™¨åˆå§‹åŒ–é€»è¾‘
         leftHandCollider = animator.GetBoneTransform(HumanBodyBones.LeftHand)?.GetComponent<SphereCollider>();
         leftFootCollider = animator.GetBoneTransform(HumanBodyBones.LeftFoot)?.GetComponent<SphereCollider>();
         rightHandCollider = animator.GetBoneTransform(HumanBodyBones.RightHand)?.GetComponent<SphereCollider>();
         rightFootCollider = animator.GetBoneTransform(HumanBodyBones.RightFoot)?.GetComponent<SphereCollider>();
 
-        // µĞÈËÊ¹ÓÃ×Ô¼ºµÄÎäÆ÷
+        // æ•Œäººä½¿ç”¨è‡ªå·±çš„æ­¦å™¨
         if (enemyWeapon != null)
         {
             WeaponCollider = enemyWeapon.GetComponentInChildren<BoxCollider>();
@@ -98,29 +98,29 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     {
         if (HealthSystem.IsDead) return;
 
-        // µĞÈË»¤¼×Âß¼­£¨¿ÉÒÔ¸ù¾İĞèÒªÀ©Õ¹£©
+        // æ•ŒäººæŠ¤ç”²é€»è¾‘ï¼ˆå¯ä»¥æ ¹æ®éœ€è¦æ‰©å±•ï¼‰
         int currentArmor = 0;
 
-        // Èç¹ûÓĞĞèÒª£¬¿ÉÒÔÔÚÕâÀïÌí¼ÓµĞÈËµÄ»¤¼×¼ÆËã
-        // ÀıÈç£ºvar enemyProperty = GetComponent<EnemyProperty>();
+        // å¦‚æœæœ‰éœ€è¦ï¼Œå¯ä»¥åœ¨è¿™é‡Œæ·»åŠ æ•Œäººçš„æŠ¤ç”²è®¡ç®—
+        // ä¾‹å¦‚ï¼švar enemyProperty = GetComponent<EnemyProperty>();
         // currentArmor = enemyProperty?.armorValue ?? 0;
 
         HealthSystem.TakeDamage(damage, currentArmor);
-        OnGotHit?.Invoke(this);  // this ¾ÍÊÇ ICombatSystem
+        OnGotHit?.Invoke(this);  // this å°±æ˜¯ ICombatSystem
 
-        Debug.Log($"µĞÈË({gameObject.name})ÊÜµ½ÉËº¦: {damage}, »¤¼×¼õÃâ: {currentArmor}, Ê£ÓàÉúÃü: {HealthSystem.Health}");
+        Debug.Log($"æ•Œäºº({gameObject.name})å—åˆ°ä¼¤å®³: {damage}, æŠ¤ç”²å‡å…: {currentArmor}, å‰©ä½™ç”Ÿå‘½: {HealthSystem.Health}");
     }
     public bool EnemyHasUsableWeapon()
     {
-        // ÓÅ»¯µĞÈËÎäÆ÷¼ì²éÂß¼­
+        // ä¼˜åŒ–æ•Œäººæ­¦å™¨æ£€æŸ¥é€»è¾‘
         var weapon = GetComponentInChildren<Weapon>();
         if (weapon != null)
         {
-            Debug.Log($"µĞÈËÎäÆ÷: {weapon.name}, ÉËº¦: {weapon.GetDamage()}");
+            Debug.Log($"æ•Œäººæ­¦å™¨: {weapon.name}, ä¼¤å®³: {weapon.GetDamage()}");
             return true;
         }
 
-        Debug.LogWarning($"{gameObject.name} Ã»ÓĞÕÒµ½¿ÉÓÃÎäÆ÷£¡");
+        Debug.LogWarning($"{gameObject.name} æ²¡æœ‰æ‰¾åˆ°å¯ç”¨æ­¦å™¨ï¼");
         return false;
     }
     public bool EnemyCanAttack()
@@ -133,27 +133,24 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     {
         if (EnemyCanAttack())
         {
-            StartCoroutine(ExecuteEnemyAttack(target, comboCount, false));
+            StartCoroutine(ExecuteEnemyAttack(target, comboCount));
         }
         else if (Attackstate == AttackStates.Impact ||
                  Attackstate == AttackStates.Cooldown)
         {
             docombo = true;
-            if (!IsTakingHit && currTarget != null)
-            {
-                StartCoroutine(ExecuteEnemyAttack(target, comboCount, true));
-            }
         }
+
     }
 
     public Vector3 CalculateEnemyAttackPosition(ICombatSystem target, AttackData attack, Vector3 attackDir, Vector3 startPos)
     {
-        // µĞÈËÍ¨³£²»ĞèÒª¸´ÔÓµÄÒÆ¶¯¼ÆËã£¬NavAgent»á´¦Àí
-        // ·µ»Øµ±Ç°Î»ÖÃ£¬ÈÃNavAgent¿ØÖÆÒÆ¶¯
+        // æ•Œäººé€šå¸¸ä¸éœ€è¦å¤æ‚çš„ç§»åŠ¨è®¡ç®—ï¼ŒNavAgentä¼šå¤„ç†
+        // è¿”å›å½“å‰ä½ç½®ï¼Œè®©NavAgentæ§åˆ¶ç§»åŠ¨
         return startPos;
     }
 
-    // µĞÈË¹¥»÷·½Ïò¼ÆËã - ÃæÏòÄ¿±ê¼´¿É
+    // æ•Œäººæ”»å‡»æ–¹å‘è®¡ç®— - é¢å‘ç›®æ ‡å³å¯
     public Vector3 CalculateEnemyAttackDirection(ICombatSystem target)
     {
         if (target != null)
@@ -165,15 +162,15 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         return transform.forward;
     }
 
-    // µĞÈË¹¥»÷Êı¾İÑ¡Ôñ 
+    // æ•Œäººæ”»å‡»æ•°æ®é€‰æ‹© 
     public AttackData SelectEnemyAttack(ICombatSystem target, List<AttackData> attacks, List<AttackData> longRangeAttacks, int comboCount)
     {
-        // µĞÈË¿ÉÄÜ»ùÓÚ¾àÀë¡¢×´Ì¬µÈÑ¡Ôñ¹¥»÷
-        // Ä¿Ç°±£³Ö¼òµ¥Âß¼­
+        // æ•Œäººå¯èƒ½åŸºäºè·ç¦»ã€çŠ¶æ€ç­‰é€‰æ‹©æ”»å‡»
+        // ç›®å‰ä¿æŒç®€å•é€»è¾‘
         return attacks[comboCount % attacks.Count];
     }
 
-    // µĞÈËÌØ¶¨µÄ¹¥»÷×¼±¸Âß¼­
+    // æ•Œäººç‰¹å®šçš„æ”»å‡»å‡†å¤‡é€»è¾‘
     public void PrepareEnemyAttack(ICombatSystem target)
     {
 
@@ -181,21 +178,21 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
         if (enemyController != null)
         {
-            // µĞÈË¿ÉÄÜĞèÒªÔÚ¹¥»÷Ç°Í£Ö¹µ¼º½
+            // æ•Œäººå¯èƒ½éœ€è¦åœ¨æ”»å‡»å‰åœæ­¢å¯¼èˆª
             enemyController.NavAgent.isStopped = true;
         }
 
-        // ÉèÖÃ¹¥»÷Ä¿±ê
+        // è®¾ç½®æ”»å‡»ç›®æ ‡
         currTarget = target;
     }
 
-    // µĞÈË¹¥»÷½áÊøÂß¼­
+    // æ•Œäººæ”»å‡»ç»“æŸé€»è¾‘
     public void FinishEnemyAttack()
     {
         var enemyController = GetComponent<EnemyController>();
         if (enemyController != null)
         {
-            // »Ö¸´µ¼º½
+            // æ¢å¤å¯¼èˆª
             enemyController.NavAgent.isStopped = false;
         }
     }
@@ -208,12 +205,12 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         dispVec.y = 0f;
         transform.rotation = Quaternion.LookRotation(dispVec);
 
-        // ¼ì²éµĞÈËÀàĞÍ
+        // æ£€æŸ¥æ•Œäººç±»å‹
         bool isHumanoid = GetComponent<WolfController>() == null;
 
         if (isHumanoid)
         {
-            // ÈËĞÎµĞÈË£ºÊ¹ÓÃÍ¼²ã1
+            // äººå½¢æ•Œäººï¼šä½¿ç”¨å›¾å±‚1
             animator.CrossFade("SwordImpact", 0.2f, 1);
             yield return null;
             var animstate = animator.GetNextAnimatorStateInfo(1);
@@ -221,7 +218,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         }
         else
         {
-            // ÀÇ£ºÊ¹ÓÃÍ¼²ã0
+            // ç‹¼ï¼šä½¿ç”¨å›¾å±‚0
             animator.CrossFade("SwordImpact", 0.2f, 0);
             yield return null;
             var animstate = animator.GetCurrentAnimatorStateInfo(0);
@@ -254,17 +251,17 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                 Quaternion.LookRotation(attacker.transform.forward)
             );
 
-            // ¶ÙÖ¡£¨¹¥»÷Õß + ×Ô¼º£©
+            // é¡¿å¸§ï¼ˆæ”»å‡»è€… + è‡ªå·±ï¼‰
             Animator attackerAnimator = (attacker as MonoBehaviour)?.GetComponent<Animator>();
             Animator selfAnimator = GetComponent<Animator>();
             Debug.Log($"attacker={attacker}, animator={attackerAnimator}");
             if (attackerAnimator != null)
-                HitStop.Instance.Stop(0.07f, attackerAnimator);
+                HitDelay.Instance.Stop(0.07f, attackerAnimator);
 
             if (selfAnimator != null)
-                HitStop.Instance.Stop(0.04f, selfAnimator);
+                HitDelay.Instance.Stop(0.04f, selfAnimator);
 
-            // ÊÜ»÷¶¯»­
+            // å—å‡»åŠ¨ç”»
             if (!HealthSystem.IsDead)
             {
                 StartCoroutine(PlayHitReaction(attacker));
@@ -278,7 +275,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
 
 
-    // µĞÈË×¨Êô×´Ì¬¹ÜÀí
+    // æ•Œäººä¸“å±çŠ¶æ€ç®¡ç†
     public void UpdateEnemyAttackState(float normalizedTime, AttackData attack)
     {
 
@@ -287,7 +284,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             if (normalizedTime >= attack.ImpactStartTime)
             {
                 Attackstate = AttackStates.Impact;
-                Debug.Log($"µĞÈË({gameObject.name})¹¥»÷½øÈëImpact×´Ì¬");
+                Debug.Log($"æ•Œäºº({gameObject.name})æ”»å‡»è¿›å…¥ImpactçŠ¶æ€");
                 EnableEnemyHitbox(attack);
             }
         }
@@ -296,28 +293,28 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             if (normalizedTime >= attack.ImpactEndTime)
             {
                 Attackstate = AttackStates.Cooldown;
-                Debug.Log($"µĞÈË({gameObject.name})¹¥»÷½øÈëCooldown×´Ì¬");
+                Debug.Log($"æ•Œäºº({gameObject.name})æ”»å‡»è¿›å…¥CooldownçŠ¶æ€");
                 DisableEnemyHitboxes();
             }
         }
     }
 
-    // µĞÈË×´Ì¬ÖØÖÃ
+    // æ•ŒäººçŠ¶æ€é‡ç½®
     public void ResetEnemyAttackState()
     {
         Attackstate = AttackStates.Idle;
         InAction = false;
+       
 
-        // µĞÈË¿ÉÄÜ²»ĞèÒªÖØÖÃcomboCount£¬ÒòÎªÓÉAI¿ØÖÆ
         var enemyController = GetComponent<EnemyController>();
         if (enemyController != null)
         {
             enemyController.NavAgent.isStopped = false;
         }
-        Debug.Log($"µĞÈË({gameObject.name})¹¥»÷×´Ì¬ÖØÖÃ");
+        Debug.Log($"æ•Œäºº({gameObject.name})æ”»å‡»çŠ¶æ€é‡ç½®");
     }
 
-    // µĞÈËÁ¬»÷×´Ì¬¼ì²é
+    // æ•Œäººè¿å‡»çŠ¶æ€æ£€æŸ¥
     public bool CheckEnemyComboCondition()
     {
         return docombo &&
@@ -325,7 +322,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                 Attackstate == AttackStates.Cooldown);
     }
 
-    // µĞÈË×¨ÊôHitboxÆôÓÃ
+    // æ•Œäººä¸“å±Hitboxå¯ç”¨
     public void EnableEnemyHitbox(AttackData attack)
     {
 
@@ -335,32 +332,32 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                 if (leftHandCollider != null)
                 {
                     leftHandCollider.enabled = true;
-                    Debug.Log($"ÆôÓÃµĞÈË({gameObject.name})×óÊÖHitbox");
+                    Debug.Log($"å¯ç”¨æ•Œäºº({gameObject.name})å·¦æ‰‹Hitbox");
                 }
                 break;
             case AttackHitbox.RightHand:
                 if (rightHandCollider != null)
                 {
                     rightHandCollider.enabled = true;
-                    Debug.Log($"ÆôÓÃµĞÈË({gameObject.name})ÓÒÊÖHitbox");
+                    Debug.Log($"å¯ç”¨æ•Œäºº({gameObject.name})å³æ‰‹Hitbox");
                 }
                 break;
             case AttackHitbox.LeftFoot:
                 if (leftFootCollider != null)
                 {
                     leftFootCollider.enabled = true;
-                    Debug.Log($"ÆôÓÃµĞÈË({gameObject.name})×ó½ÅHitbox");
+                    Debug.Log($"å¯ç”¨æ•Œäºº({gameObject.name})å·¦è„šHitbox");
                 }
                 break;
             case AttackHitbox.RightFoot:
                 if (rightFootCollider != null)
                 {
                     rightFootCollider.enabled = true;
-                    Debug.Log($"ÆôÓÃµĞÈË({gameObject.name})ÓÒ½ÅHitbox");
+                    Debug.Log($"å¯ç”¨æ•Œäºº({gameObject.name})å³è„šHitbox");
                 }
                 break;
             case AttackHitbox.Sword:
-                // µĞÈËÊ¹ÓÃ×Ô¼ºµÄÎäÆ÷×é¼ş
+                // æ•Œäººä½¿ç”¨è‡ªå·±çš„æ­¦å™¨ç»„ä»¶
                 var enemyWeapon = GetComponentInChildren<Weapon>();
                 if (enemyWeapon != null)
                 {
@@ -368,25 +365,25 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                     if (weaponCollider != null)
                     {
                         weaponCollider.enabled = true;
-                        Debug.Log($"ÆôÓÃµĞÈË({gameObject.name})ÎäÆ÷Hitbox");
+                        Debug.Log($"å¯ç”¨æ•Œäºº({gameObject.name})æ­¦å™¨Hitbox");
                     }
                 }
                 else
                 {
-                    Debug.LogWarning($"µĞÈË({gameObject.name})ÎäÆ÷Îªnull£¬ÎŞ·¨ÆôÓÃHitbox");
+                    Debug.LogWarning($"æ•Œäºº({gameObject.name})æ­¦å™¨ä¸ºnullï¼Œæ— æ³•å¯ç”¨Hitbox");
                 }
                 break;
             default:
-                Debug.Log($"µĞÈËÊ¹ÓÃÎ´ÖªHitboxÀàĞÍ: {attack.HitboxToUse}");
+                Debug.Log($"æ•Œäººä½¿ç”¨æœªçŸ¥Hitboxç±»å‹: {attack.HitboxToUse}");
                 break;
         }
     }
 
-    // µĞÈË×¨ÊôHitbox½ûÓÃ
+    // æ•Œäººä¸“å±Hitboxç¦ç”¨
     public void DisableEnemyHitboxes()
     {
 
-        // ½ûÓÃËùÓĞÉíÌå²¿Î»Hitbox
+        // ç¦ç”¨æ‰€æœ‰èº«ä½“éƒ¨ä½Hitbox
         if (leftHandCollider != null)
             leftHandCollider.enabled = false;
         if (rightHandCollider != null)
@@ -396,7 +393,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         if (rightFootCollider != null)
             rightFootCollider.enabled = false;
 
-        // ½ûÓÃµĞÈËÎäÆ÷Hitbox
+        // ç¦ç”¨æ•Œäººæ­¦å™¨Hitbox
         var enemyWeapon = GetComponentInChildren<Weapon>();
         if (enemyWeapon != null)
         {
@@ -405,105 +402,147 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                 weaponCollider.enabled = false;
         }
 
-        Debug.Log($"½ûÓÃËùÓĞµĞÈË({gameObject.name})Hitbox");
+        Debug.Log($"ç¦ç”¨æ‰€æœ‰æ•Œäºº({gameObject.name})Hitbox");
     }
-    public IEnumerator ExecuteEnemyAttack(ICombatSystem target, int comboCount, bool isComboAttack = false)
+    public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCount = 0)
     {
-        if (HealthSystem.IsDead || InCounter)
-        {
-            ResetEnemyAttackState();
-            FinishEnemyAttack();
-            yield break;
-        }
-       
-        PrepareEnemyAttack(target);
-
+        float damage = GetWeaponDamage();
         InAction = true;
         currTarget = target;
         Attackstate = AttackStates.Windup;
 
-        // »ñÈ¡¹¥»÷Êı¾İ
-        var attack = SelectEnemyAttack(target, Attacks, LongRangeAttacks, comboCount);
-        Vector3 attackDir = CalculateEnemyAttackDirection(target);
+        var attack = attacks[comboCount];
 
-        // ²¥·Å¶¯»­
+        var attackDir = transform.forward;
+        Vector3 startPos = transform.position;
+        Vector3 targetPos = Vector3.zero;
+
+        if (target != null)
+        {
+            var vecToTarget = target.transform.position - transform.position;
+            vecToTarget.y = 0;
+            attackDir = vecToTarget.normalized;
+            float distance = vecToTarget.magnitude;
+            if (distance > LongRangeAttackThreshold && longRangeAttacks.Count > 0)
+            {
+                attack = longRangeAttacks[0];
+            }
+            if (attack.MoveToTarget)
+            {
+                if (distance < attack.MaxMoveDistance)
+                    targetPos = target.transform.position - attackDir * attack.DistanceFromTarget;
+                else
+                    targetPos = startPos + attackDir * attack.MaxMoveDistance;
+            }
+        }
+
         animator.CrossFade(attack.AttackName, 0.2f);
         yield return null;
         var animstate = animator.GetNextAnimatorStateInfo(1);
 
-        // ÖØÖÃÁ¬»÷±êÖ¾
-        docombo = false;
-
-        // ¹¥»÷Ö´ĞĞÑ­»·
         float timer = 0f;
         while (timer <= animstate.length)
         {
-            if (HealthSystem.IsDead || InCounter)
-            {
-                ResetEnemyAttackState();
-                FinishEnemyAttack();
-                yield break;
-            }
             if (IsTakingHit) break;
-
             timer += Time.deltaTime;
             float normalizedTime = timer / animstate.length;
 
-            // ×ªÏò¿ØÖÆ
-            if (attackDir != Vector3.zero)
+            
+            if (target != null && attack.MoveToTarget)
             {
-                transform.rotation = Quaternion.RotateTowards(
-                    transform.rotation,
-                    Quaternion.LookRotation(attackDir),
-                    500f * Time.deltaTime);
+                float percTime = (normalizedTime - attack.MoveStartTime) / (attack.MoveEndTime - attack.MoveStartTime);
+                Vector3 desiredPosition = Vector3.Lerp(startPos, targetPos, percTime);
+
+               
+                float currentDistance = Vector3.Distance(transform.position, target.transform.position);
+                if (currentDistance > 1.0f) 
+                {
+                    transform.position = desiredPosition;
+                }
             }
 
-            // ×´Ì¬¹ÜÀí
-            UpdateEnemyAttackState(normalizedTime, attack);
-            if (CheckEnemyComboCondition() && !HealthSystem.IsDead && !InCounter)
+           
+            if (attackDir != null)
             {
-                docombo = false;
-                int newComboCount = (comboCount + 1) % Attacks.Count;
-                StartCoroutine(ExecuteEnemyAttack(target, newComboCount));
-                yield break;
-            }   
-            // Á¬»÷¼ì²é - ºÍÍæ¼ÒÒ»ÑùµÄÂß¼­
-            if (CheckEnemyComboCondition())
-            {
-                docombo = false;
-                int newComboCount = (comboCount + 1) % Attacks.Count;
-                StartCoroutine(ExecuteEnemyAttack(target, newComboCount));
-                yield break;
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attackDir), 500f * Time.deltaTime);
             }
-
+            if (Attackstate == AttackStates.Windup)
+            {
+                if (InCounter) break;
+                if (normalizedTime >= attack.ImpactStartTime)
+                {
+                    Attackstate = AttackStates.Impact;
+                    EnableEnemyHitbox(attack);
+                }
+            }
+            else if (Attackstate == AttackStates.Impact)
+            {
+                if (normalizedTime >= attack.ImpactEndTime)
+                {
+                    Attackstate = AttackStates.Cooldown;
+                    DisableEnemyHitboxes();
+                }
+            }
+            else if (Attackstate == AttackStates.Cooldown)
+            {
+                if (docombo)
+                {
+                    docombo = false;
+                    int newComboCount = (comboCount + 1) % attacks.Count;  // è®¡ç®—æ–°çš„è¿å‡»æ•°
+                    StartCoroutine(ExecuteEnemyAttack(target, newComboCount));  // 
+                    yield break;
+                }
+            }
             yield return null;
         }
-
-        // ¹¥»÷½áÊø
-        ResetEnemyAttackState();
-        FinishEnemyAttack();
+        //ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        Attackstate = AttackStates.Idle;
+        comboCount = 0;
+        InAction = false;
         currTarget = null;
     }
+    public void UpdateEnemyAttackStateWithCombo(float normalizedTime, AttackData attack)
+    {
+        if (Attackstate == AttackStates.Windup)
+        {
+            if (normalizedTime >= attack.ImpactStartTime)
+            {
+                Attackstate = AttackStates.Impact;
+                Debug.Log($"æ•Œäºº({gameObject.name})æ”»å‡»è¿›å…¥ImpactçŠ¶æ€");
+                EnableEnemyHitbox(attack);
+            }
+        }
+        else if (Attackstate == AttackStates.Impact)
+        {
+            if (normalizedTime >= attack.ImpactEndTime)
+            {
+                Attackstate = AttackStates.Cooldown;
+                Debug.Log($"æ•Œäºº({gameObject.name})æ”»å‡»è¿›å…¥CooldownçŠ¶æ€");
+                DisableEnemyHitboxes();
+            }
+        }
+      
+    }
 
-    #region ICombatSystem½Ó¿Ú·½·¨ÊµÏÖ
+    #region ICombatSystemæ¥å£æ–¹æ³•å®ç°
 
 
-    public bool CanAttack() => EnemyCanAttack();//ÄÜ·ñ½øĞĞ¹¥»÷
-    public void TryToAttack(ICombatSystem target = null) => EnemyTryToAttack(target);//³¢ÊÔ¹¥»÷
+    public bool CanAttack() => EnemyCanAttack();//èƒ½å¦è¿›è¡Œæ”»å‡»
+    public void TryToAttack(ICombatSystem target = null) => EnemyTryToAttack(target);//å°è¯•æ”»å‡»
     
-    public bool HasUsableWeapon() => EnemyHasUsableWeapon();//¼ì²éÊÇ·ñÓĞÎäÆ÷
+    public bool HasUsableWeapon() => EnemyHasUsableWeapon();//æ£€æŸ¥æ˜¯å¦æœ‰æ­¦å™¨
     public AttackData SelectAttack(ICombatSystem target, int comboCount)
-        => SelectEnemyAttack(target, Attacks,  LongRangeAttacks, comboCount);//Ñ¡Ôñ¹¥»÷Êı¾İ
-    public Vector3 CalculateAttackDirection(ICombatSystem target) => CalculateEnemyAttackDirection(target);//¼ÆËã¹¥»÷Ê±µÄ³¯Ïò
+        => SelectEnemyAttack(target, Attacks,  LongRangeAttacks, comboCount);//é€‰æ‹©æ”»å‡»æ•°æ®
+    public Vector3 CalculateAttackDirection(ICombatSystem target) => CalculateEnemyAttackDirection(target);//è®¡ç®—æ”»å‡»æ—¶çš„æœå‘
     public Vector3 CalculateAttackPosition(ICombatSystem target, AttackData attack, Vector3 attackDir, Vector3 startPos)
-        => CalculateEnemyAttackPosition(target, attack, attackDir, startPos);//¼ÆËã¹¥»÷Ê±ÒÆ¶¯µ½µÄÎ»ÖÃ
-    public void UpdateAttackState(float normalizedTime, AttackData attack) => UpdateEnemyAttackState(normalizedTime, attack);//¸üĞÂ¹¥»÷Êı¾İ
-    public void ResetAttackState() => ResetEnemyAttackState();//ÖØÖÃ¹¥»÷Êı¾İ
-    public void EnableHitbox(AttackData attack) => EnableEnemyHitbox(attack);//ÆôÓÃÅö×²Ìå
-    public void DisableHitboxes() => DisableEnemyHitboxes();//½ûÓÃÅö×²Ìå
-    public void PrepareAttack(ICombatSystem target) => PrepareEnemyAttack(target);//¹¥»÷
-    public void FinishAttack() => FinishEnemyAttack();//¹¥»÷Íê³É
-    public bool CheckComboCondition() => CheckEnemyComboCondition();//²é¿´Á¬ÕĞ×´Ì¬
+        => CalculateEnemyAttackPosition(target, attack, attackDir, startPos);//è®¡ç®—æ”»å‡»æ—¶ç§»åŠ¨åˆ°çš„ä½ç½®
+    public void UpdateAttackState(float normalizedTime, AttackData attack) => UpdateEnemyAttackState(normalizedTime, attack);//æ›´æ–°æ”»å‡»æ•°æ®
+    public void ResetAttackState() => ResetEnemyAttackState();//é‡ç½®æ”»å‡»æ•°æ®
+    public void EnableHitbox(AttackData attack) => EnableEnemyHitbox(attack);//å¯ç”¨ç¢°æ’ä½“
+    public void DisableHitboxes() => DisableEnemyHitboxes();//ç¦ç”¨ç¢°æ’ä½“
+    public void PrepareAttack(ICombatSystem target) => PrepareEnemyAttack(target);//æ”»å‡»
+    public void FinishAttack() => FinishEnemyAttack();//æ”»å‡»å®Œæˆ
+    public bool CheckComboCondition() => CheckEnemyComboCondition();//æŸ¥çœ‹è¿æ‹›çŠ¶æ€
 
     public IEnumerator ExecuteAttack(ICombatSystem target, int comboCount)
     {

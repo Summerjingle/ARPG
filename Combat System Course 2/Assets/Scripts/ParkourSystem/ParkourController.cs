@@ -57,7 +57,7 @@ public class ParkourController : MonoBehaviour
             float normalizedTime = timer / animState.length;
 
             if (action.RotateToObstacle)
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, action.TargetRotation, playerController.RotationSpeed * Time.deltaTime);
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, action.TargetRotation, playerController.  RotationSpeed * Time.deltaTime);
 
             if (action.EnableTargetMatching && !hasMatched)
             {

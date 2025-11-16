@@ -13,6 +13,23 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float groundCheckRadius = 0.2f;
     [SerializeField] Vector3 groundCheckOffset;
     [SerializeField] LayerMask groundLayer;
+    [Header("Cinemachine")]
+    public GameObject CinemachineCameraTarget; // 摄像机跟随目标
+
+    private float _cinemachineTargetYaw;
+    private float _cinemachineTargetPitch;
+
+    [Tooltip("How far in degrees can you move the camera up")]
+    public float TopClamp = 70.0f;
+
+    [Tooltip("How far in degrees can you move the camera down")]
+    public float BottomClamp = -30.0f;
+
+    [Tooltip("Additional degress to override the camera. Useful for fine tuning camera position when locked")]
+    public float CameraAngleOverride = 0.0f;
+
+    [Tooltip("For locking the camera position on all axis")]
+    public bool LockCameraPosition = false;
 
     public Vector3 InputDir { get; private set; }
     public static PlayerController i { get; private set; }
@@ -59,6 +76,11 @@ public class PlayerController : MonoBehaviour
 
     private void Start()
     {
+        // 初始化摄像机旋转角度
+        if (CinemachineCameraTarget != null)
+        {
+            _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
+        }
         UIStateManager.SetUIActive(false);
     }
     private void Update()
@@ -100,7 +122,9 @@ public class PlayerController : MonoBehaviour
 
         var moveInput = (new Vector3(h, 0, v)).normalized;
 
-        var moveDir = cameracontroller.PlanarRotation * moveInput;
+        var moveDir = GetCameraPlanarRotation() * moveInput;
+
+
 
         InputDir = moveDir;
 
@@ -150,9 +174,43 @@ public class PlayerController : MonoBehaviour
         velocity.y = ySpeed;
         charactercontroller.Move(velocity * Time.deltaTime);//通过CharacteController来控制玩家移动
     }
+    private void LateUpdate()
+    {
+        CameraRotation(); // 添加摄像机旋转
+    }
 
-    
+    private void CameraRotation()
+    {
+        if (UIStateManager.IsAnyUIActive) return;
 
+        // if there is an input and camera position is not fixed
+        if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y") != 0 && !LockCameraPosition)
+        {
+            // Don't multiply mouse input by Time.deltaTime
+            float deltaTimeMultiplier = 1.0f; // 假设总是使用鼠标
+
+            _cinemachineTargetYaw += Input.GetAxis("Mouse X") * deltaTimeMultiplier;
+            _cinemachineTargetPitch += Input.GetAxis("Mouse Y") * deltaTimeMultiplier;
+        }
+
+        // clamp our rotations so our values are limited 360 degrees
+        _cinemachineTargetYaw = ClampAngle(_cinemachineTargetYaw, float.MinValue, float.MaxValue);
+        _cinemachineTargetPitch = ClampAngle(_cinemachineTargetPitch, BottomClamp, TopClamp);
+
+        // Cinemachine will follow this target
+        if (CinemachineCameraTarget != null)
+        {
+            CinemachineCameraTarget.transform.rotation = Quaternion.Euler(_cinemachineTargetPitch + CameraAngleOverride,
+                _cinemachineTargetYaw, 0.0f);
+        }
+    }
+
+    private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
+    {
+        if (lfAngle < -360f) lfAngle += 360f;
+        if (lfAngle > 360f) lfAngle -= 360f;
+        return Mathf.Clamp(lfAngle, lfMin, lfMax);
+    }
     private void GroundCheck()
     {
         isGrounded = Physics.CheckSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius, groundLayer);
@@ -282,13 +340,14 @@ public class PlayerController : MonoBehaviour
 
     private Quaternion GetCameraPlanarRotation()
     {
-        if (Camera.main != null)
+        if (CinemachineCameraTarget != null)
         {
-            Vector3 cameraForward = Camera.main.transform.forward;
+            Vector3 cameraForward = CinemachineCameraTarget.transform.forward;
             cameraForward.y = 0; // 只取水平方向
             return Quaternion.LookRotation(cameraForward.normalized);
         }
         return Quaternion.identity;
     }
     public float RotationSpeed => rotationSpeed;
+    public Quaternion PlanarRotation => GetCameraPlanarRotation();
 }

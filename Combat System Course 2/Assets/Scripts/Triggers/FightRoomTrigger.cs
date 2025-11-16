@@ -10,7 +10,7 @@ public class FightRoomTrigger : MonoBehaviour
     public AudioClip doorSound;
     public GameObject enemyHealthBar;
     private bool isplayerintheroom=false;
-    public Animator caveCamera;
+    
 
 
    
@@ -21,7 +21,7 @@ public class FightRoomTrigger : MonoBehaviour
         if (other.CompareTag("Player") && !isplayerintheroom){
             isplayerintheroom = true;
             doorAnim.SetTrigger("Close");
-            caveCamera.SetTrigger("MeetBoss");
+            
             enemyHealthBar.SetActive(true);
             AudioSource.PlayClipAtPoint(doorSound,transform.position);
             BossBloodBarAnim.SetTrigger("ShowBar");

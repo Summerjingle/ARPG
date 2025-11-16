@@ -4,67 +4,43 @@ using UnityEngine;
 
 public class AttackState : State<EnemyController >
 {
-	[SerializeField] float attackDistance = 1f;
+	[SerializeField] private float attackDistance = 1f;
+	private EnemyController enemy;
+    private bool isAttacking;
 
-	private EnemyController enemyController;
-	private bool isAttacking;
-	public override void Enter(EnemyController owner)
-	{
-		enemyController = owner;
-		enemyController.NavAgent.stoppingDistance=attackDistance;
-	}
-    public override void Execute()
+    public override void Enter(EnemyController owner)
     {
-		if (isAttacking) return;
-		enemyController.NavAgent.SetDestination(enemyController.Target.transform.position);
-		if (Vector3.Distance(enemyController.Target.transform.position, enemyController.transform.position) <= attackDistance + 0.03f)
-		{
-			StartCoroutine(Attack(Random.Range(0,enemyController.Fighter.Attacks.Count+1	 )));  
-		}
+        enemy = owner;
+        enemy.NavAgent.stoppingDistance=attackDistance;
     }
 
-    IEnumerator Attack(int comboCount = 1)
+    public override void Execute()
+    {  
+        if (isAttacking) return;
+        enemy.NavAgent.SetDestination(enemy.Target.transform.position);
+        if (Vector3.Distance(enemy.Target.transform.position, enemy.transform.position) <= attackDistance + 0.03f)
+            StartCoroutine(Attack(Random.Range(0,enemy.Fighter.Attacks.Count + 1)));//这里加1，是因为第二个参数是互斥的，开始连击前总会先攻击一次，如果连击数是3，那么加上开始的一次就是4了
+
+    }
+
+    protected IEnumerator Attack(int comboCount=1)
     {
         isAttacking = true;
-        enemyController.Animator.applyRootMotion = true;
-
-        Debug.Log($"=== 攻击开始，计划连击: {comboCount}次 ===");
-
-        // 第一次攻击
-        enemyController.CombatSystem?.TryToAttack(enemyController.Target);
-        Debug.Log($"第一次攻击触发");
-
-        // 连击循环
-        for (int i = 1; i < comboCount; i++)
+        enemy.Animator.applyRootMotion=true;
+        enemy.Fighter.TryToAttack();
+        for (int i = 0; i < comboCount; i++)
         {
-            Debug.Log($"等待第{i + 1}次攻击条件...");
-
-            // 等待进入Cooldown状态
-            yield return new WaitUntil(() =>
-            {
-                bool condition = enemyController.Fighter.Attackstate == AttackStates.Cooldown;
-                if (condition) Debug.Log($"检测到Cooldown状态，准备第{i + 1}次攻击");
-                return condition;
-            });
-
-            Debug.Log($"执行第{i + 1}次攻击");
-            enemyController.CombatSystem?.TryToAttack(enemyController.Target);
+            yield return new WaitUntil(() => enemy.Fighter.Attackstate == AttackStates.Cooldown);
+            enemy.Fighter.TryToAttack();
         }
 
-        Debug.Log($"等待攻击完全结束...");
-        yield return new WaitUntil(() => enemyController.Fighter.Attackstate == AttackStates.Idle);
-
-        enemyController.Animator.applyRootMotion = false;
-        isAttacking = false;
-        Debug.Log($"=== 攻击序列完成 ===");
-
-        if (enemyController.IsInState(EnemyStates.Attack))
-        {
-            enemyController.ChangerState(EnemyStates.RetreatAfterAttack);
-        }
+        yield return new WaitUntil( () =>enemy.Fighter.Attackstate==AttackStates.Idle);
+        enemy.Animator.applyRootMotion=false;
+        isAttacking=false;
+        enemy.ChangerState(EnemyStates.RetreatAfterAttack);
     }
     public override void Exit()
     {
-        enemyController.NavAgent.ResetPath();
+        enemy.NavAgent.ResetPath();
     }
 }
