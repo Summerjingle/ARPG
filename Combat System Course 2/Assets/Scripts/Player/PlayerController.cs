@@ -33,9 +33,11 @@ public class PlayerController : MonoBehaviour
 
     public Vector3 InputDir { get; private set; }
     public static PlayerController i { get; private set; }
+    public bool LockRotation { get; set; } = false;
 
-    Quaternion targetRotation;
-    ICombatSystem combatSystem;
+
+    public Quaternion targetRotation;
+    public ICombatSystem combatSystem;
     private HealthSystem healthSystem;
 
     private CameraController cameracontroller;
@@ -44,8 +46,8 @@ public class PlayerController : MonoBehaviour
     public CombatController combatController;
     public bool isGrounded;
     private float ySpeed;
-    private bool isMovementEnabled = true;
-    private bool isRolling = false;
+    public bool isMovementEnabled = true;
+    public bool isRolling = false;
 
     private void Awake()
     {
@@ -85,6 +87,16 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        if (LockRotation)  // 只在锁定时输出
+        {
+            Debug.Log($"PlayerController.Update开始 - 旋转: {transform.rotation.eulerAngles.y:F1}");
+        }
+        // ... 原有代码
+        if (LockRotation)
+        {
+            Debug.Log($"PlayerController.Update结束 - 旋转: {transform.rotation.eulerAngles.y:F1}");
+        }
+
         if (combatSystem.InAction || isRolling)
         {
             // 可以保留翻滚结束检测，或者移到协程中
@@ -146,7 +158,7 @@ public class PlayerController : MonoBehaviour
             //在战斗状态时，玩家需要一直面对敌人
             var targetVec = combatController.TargetEnemy.transform.position - transform.position;
             targetVec.y = 0f;
-            if (moveAmount > 0)
+            if (moveAmount > 0 && !LockRotation)
             {
                 targetRotation = Quaternion.LookRotation(targetVec);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
@@ -163,12 +175,11 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            if (moveAmount > 0)
+            if (moveAmount > 0 && !LockRotation)
             {
                 targetRotation = Quaternion.LookRotation(moveDir);
             }
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
             animator.SetFloat("forwardSpeed", moveAmount, 0.2f, Time.deltaTime);
         }
         velocity.y = ySpeed;
@@ -182,6 +193,12 @@ public class PlayerController : MonoBehaviour
     private void CameraRotation()
     {
         if (UIStateManager.IsAnyUIActive) return;
+
+        if (LockCameraPosition)
+        {
+            // 相机锁定时不允许鼠标输入
+            return;
+        }
 
         // if there is an input and camera position is not fixed
         if (Input.GetAxis("Mouse X") != 0 && Input.GetAxis("Mouse Y") != 0 && !LockCameraPosition)
@@ -204,7 +221,28 @@ public class PlayerController : MonoBehaviour
                 _cinemachineTargetYaw, 0.0f);
         }
     }
+    // --- LockOn 系统用：让相机瞬间对齐某个敌人 ---
+    public void LookAtTargetInstant(Transform target)
+    {
+        if (target == null) return;
 
+        Vector3 dir = target.position - transform.position;
+        dir.y = 0;
+
+        // 水平角度
+        _cinemachineTargetYaw = Quaternion.LookRotation(dir).eulerAngles.y;
+
+        // 垂直角度（可根据需要算）
+        _cinemachineTargetPitch = 10f;
+
+        LockCameraPosition = true;
+    }
+
+    // --- LockOn 退出时恢复自由相机 ---
+    public void UnlockCamera()
+    {
+        LockCameraPosition = false;
+    }
     private static float ClampAngle(float lfAngle, float lfMin, float lfMax)
     {
         if (lfAngle < -360f) lfAngle += 360f;
