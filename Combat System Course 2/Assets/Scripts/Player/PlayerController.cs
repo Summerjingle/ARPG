@@ -16,7 +16,7 @@ public class PlayerController : MonoBehaviour
     [Header("Cinemachine")]
     public GameObject CinemachineCameraTarget; // 摄像机跟随目标
 
-    private float _cinemachineTargetYaw;
+    public float _cinemachineTargetYaw;
     private float _cinemachineTargetPitch;
 
     [Tooltip("How far in degrees can you move the camera up")]
@@ -48,6 +48,9 @@ public class PlayerController : MonoBehaviour
     private float ySpeed;
     public bool isMovementEnabled = true;
     public bool isRolling = false;
+
+    [HideInInspector] public bool isLockedOn = false;
+    [HideInInspector] public Vector3 lockedTargetDir;
 
     private void Awake()
     {
@@ -87,104 +90,84 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
-        if (LockRotation)  // 只在锁定时输出
-        {
-            Debug.Log($"PlayerController.Update开始 - 旋转: {transform.rotation.eulerAngles.y:F1}");
-        }
-        // ... 原有代码
-        if (LockRotation)
-        {
-            Debug.Log($"PlayerController.Update结束 - 旋转: {transform.rotation.eulerAngles.y:F1}");
-        }
-
-        if (combatSystem.InAction || isRolling)
-        {
-            // 可以保留翻滚结束检测，或者移到协程中
-            return;
-        }
-
-        // 翻滚输入检测
-        if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.LeftShift) &&
-           !combatSystem.InAction && isGrounded && !isRolling)
-        {
-            StartRoll();
-            return;
-        }
-
-        if (!isMovementEnabled ||
-            (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
+        if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
             animator.SetFloat("forwardSpeed", 0f);
             animator.SetFloat("strafeSpeed", 0f);
             return;
         }
 
-        if (combatSystem.InAction)
+        // 翻滚输入检测
+        if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isRolling)
         {
-            targetRotation = transform.rotation;
-            animator.SetFloat("forwardSpeed", 0f);
-            ySpeed = 0;
+            StartRoll();
             return;
         }
 
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
+        Vector3 moveInput = new Vector3(h, 0, v).normalized;
+        float moveAmount = Mathf.Clamp01(Mathf.Abs(h) + Mathf.Abs(v));
 
-        float moveAmount = Mathf.Clamp01(MathF.Abs(h) + MathF.Abs(v));
-
-        var moveInput = (new Vector3(h, 0, v)).normalized;
-
-        var moveDir = GetCameraPlanarRotation() * moveInput;
-
-
-
-        InputDir = moveDir;
-
-        GroundCheck();//在一帧中多次检测玩家是否处于着地状态
-        if (isGrounded)
+        // --- 移动方向 ---
+        Vector3 moveDir;
+        if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
         {
-            ySpeed = -0.5f;//如果在地面，则赋予一个黏在地上的力
+            // 锁定敌人时，以锁定方向为基准
+            Vector3 right = Vector3.Cross(Vector3.up, lockedTargetDir);
+            moveDir = lockedTargetDir * moveInput.z + right * moveInput.x;
         }
         else
         {
-            ySpeed += Physics.gravity.y * Time.deltaTime;//如果不在地面，则赋予下落的重力
+            // 自由移动
+            moveDir = GetCameraPlanarRotation() * moveInput;
         }
 
-        var velocity = moveDir * moveSpeed;
+        InputDir = moveDir.normalized;
 
-        if (combatController.CombatMode)
+        // --- GroundCheck ---
+        GroundCheck();
+        if (!isGrounded) ySpeed += Physics.gravity.y * Time.deltaTime;
+        else ySpeed = 0f;
+
+        // --- velocity ---
+        Vector3 velocity = moveDir * moveSpeed;
+
+        if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
         {
-            velocity /= 4;
-            //在战斗状态时，玩家需要一直面对敌人
-            var targetVec = combatController.TargetEnemy.transform.position - transform.position;
-            targetVec.y = 0f;
-            if (moveAmount > 0 && !LockRotation)
-            {
-                targetRotation = Quaternion.LookRotation(targetVec);
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-            }
-            //分割玩家速率
-            float forwardSpeed = Vector3.Dot(velocity, transform.forward);
+            // --- LockOnMode 
+            velocity /= 3f; // 缓慢移动（原来是 /4f）
 
-            animator.SetFloat("forwardSpeed", forwardSpeed / moveSpeed, 0.2f, Time.deltaTime);
+            var targetVec = lockedTargetDir;
+            targetRotation = Quaternion.LookRotation(lockedTargetDir);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            // --- 动画同步 ---
+            // forwardSpeed 除以实际速度 * 原来比例，保持动画匹配移动
+            float forwardSpeed = Vector3.Dot(velocity, transform.forward);
+            animator.SetFloat("forwardSpeed", forwardSpeed / (moveSpeed / 2f), 0.2f, Time.deltaTime);
 
             float angle = Vector3.SignedAngle(transform.forward, velocity, Vector3.up);
-
-            float Stradespeed = Mathf.Sin(angle * Mathf.Deg2Rad);
-            animator.SetFloat("strafeSpeed", Stradespeed, 0.2f, Time.deltaTime);
+            animator.SetFloat("strafeSpeed", Mathf.Sin(angle * Mathf.Deg2Rad), 0.2f, Time.deltaTime);
         }
         else
         {
+            // 自由移动
             if (moveAmount > 0 && !LockRotation)
             {
                 targetRotation = Quaternion.LookRotation(moveDir);
             }
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
             animator.SetFloat("forwardSpeed", moveAmount, 0.2f, Time.deltaTime);
+            animator.SetFloat("strafeSpeed", 0f, 0.2f, Time.deltaTime);
         }
+
+        // --- CharacterController 移动 ---
         velocity.y = ySpeed;
-        charactercontroller.Move(velocity * Time.deltaTime);//通过CharacteController来控制玩家移动
+        charactercontroller.Move(velocity * Time.deltaTime);
     }
+
+
     private void LateUpdate()
     {
         CameraRotation(); // 添加摄像机旋转
@@ -236,6 +219,7 @@ public class PlayerController : MonoBehaviour
         _cinemachineTargetPitch = 10f;
 
         LockCameraPosition = true;
+        targetRotation = Quaternion.LookRotation(dir);
     }
 
     // --- LockOn 退出时恢复自由相机 ---
@@ -375,7 +359,13 @@ public class PlayerController : MonoBehaviour
             PlayerHUDUI.Instance.UnregisterPlayerComponents();
         }
     }
+    public void ResetMovementBase()
+    {
+        // 清除任何可能缓存的方向数据
+        InputDir = transform.forward; // 重置为当前面对方向
 
+      
+    }
     private Quaternion GetCameraPlanarRotation()
     {
         if (CinemachineCameraTarget != null)

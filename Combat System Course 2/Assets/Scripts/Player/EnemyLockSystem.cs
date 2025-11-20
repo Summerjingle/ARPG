@@ -20,14 +20,17 @@ public class EnemyLockSystem : MonoBehaviour
     private Transform currentTarget;
     private Transform cam;
     private PlayerController player;
+    private CombatController combatController;
 
     private bool isLocked = false;
     private float yOffset = 1f;
+    private int frameCount = 0;
 
-    
 
     void Start()
     {
+     
+        combatController = GetComponent<CombatController>();
         cam = Camera.main.transform;
         player = GetComponent<PlayerController>();
         
@@ -57,6 +60,13 @@ public class EnemyLockSystem : MonoBehaviour
             UpdateUI();
             RotatePlayer();
         }
+        frameCount++;
+#if UNITY_EDITOR
+        if (frameCount % 60 == 0)
+        {
+            Debug.Log($"第{frameCount}帧 -玩家没动的 位置: {player.transform.position}");
+        }
+#endif
     }
 
     Transform ScanForTargets()
@@ -102,19 +112,19 @@ public class EnemyLockSystem : MonoBehaviour
         player.LockRotation = true;
 
         if (lockUICanvas) lockUICanvas.gameObject.SetActive(true);
-        
+
         // 禁止玩家鼠标控制摄像机
         player.LockCameraPosition = true;
-
+        player.animator.SetBool("combatMode",true);
         
-
-        // 玩家瞬间朝向目标
         player.LookAtTargetInstant(t);
+        player.ResetMovementBase(); // 保持原来的逻辑
 
         // 切换到锁定镜头
         cinemachineAnimator.Play("TargetCamera");
 
-        Debug.Log("Lock-On: " + t.name);
+        // 设置锁定状态
+        player.isLockedOn = true;
     }
 
     void Unlock()
@@ -127,11 +137,14 @@ public class EnemyLockSystem : MonoBehaviour
         Vector3 dir = transform.forward; // 保持当前朝向
         dir.y = 0;
         player.targetRotation = Quaternion.LookRotation(dir);
-      
+        player.animator.SetBool("combatMode", false);
         if (lockUICanvas) lockUICanvas.gameObject.SetActive(false);
+        player.isLockedOn = false;
+        player.lockedTargetDir = Vector3.zero;
         player.UnlockCamera();
+        player.targetRotation = player.transform.rotation;
 
-       
+
 
         // 切换回跟随镜头
         cinemachineAnimator.Play("FollowCamera");
@@ -151,27 +164,20 @@ public class EnemyLockSystem : MonoBehaviour
 
     void RotatePlayer()
     {
-        
+        if (currentTarget == null) return;
 
-        // 计算目标位置并更新 enemyTarget_Locator
+        // --- 1. 更新锁定方向，每帧动态计算 ---
+        Vector3 dir = currentTarget.position - player.transform.position;
+        dir.y = 0;
+        if (dir.sqrMagnitude > 0.001f)
+            player.lockedTargetDir = dir.normalized;
+
+        // --- 2. 更新敌人 UI/Locator，保持锁定显示 ---
         Vector3 targetPos = currentTarget.position + Vector3.up * yOffset;
-
         if (enemyTarget_Locator != null)
             enemyTarget_Locator.position = targetPos;
-
-      
-        Vector3 dir = currentTarget.position - transform.position;
-        dir.y = 0;
-        Quaternion rot = Quaternion.LookRotation(dir);
-
-        transform.rotation = Quaternion.RotateTowards(
-            transform.rotation,
-            rot,
-            player.RotationSpeed * 5 * Time.deltaTime  // 放大5倍
-        );
-
-
     }
+
 
     bool TargetStillValid()
     {

@@ -3179,12 +3179,12 @@ GameObject:
   - component: {fileID: 7374575564958285355}
   - component: {fileID: 5301018679838291051}
   - component: {fileID: 7492888182976872616}
-  - component: {fileID: 4133361035132110170}
   - component: {fileID: 4915124741775050119}
   - component: {fileID: 1734778538510985966}
   - component: {fileID: 4834186171688951597}
   - component: {fileID: 7236576831548135024}
   - component: {fileID: 8794569445368444747}
+  - component: {fileID: 7781128133825253609}
   m_Layer: 7
   m_Name: 'Player '
   m_TagString: Player
@@ -3200,7 +3200,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9111229454801698064}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: 0.9992222, z: -0, w: -0.039433833}
+  m_LocalRotation: {x: 0, y: 0.9992222, z: -0, w: -0.039434165}
   m_LocalPosition: {x: 15.190001, y: 4.8, z: -8.709}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3233,9 +3233,12 @@ MonoBehaviour:
   BottomClamp: 0
   CameraAngleOverride: 0
   LockCameraPosition: 0
+  targetRotation: {x: 0, y: 0, z: 0, w: 0}
   animator: {fileID: 8861156661709691242}
   combatController: {fileID: 7822828275873829295}
   isGrounded: 0
+  isMovementEnabled: 1
+  isRolling: 0
 --- !u!95 &8861156661709691242
 Animator:
   serializedVersion: 5
@@ -3393,33 +3396,6 @@ MonoBehaviour:
     currentEquipment: {fileID: 0}
     leftEquipment: {fileID: 0}
     rightEquipment: {fileID: 0}
---- !u!54 &4133361035132110170
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9111229454801698064}
-  serializedVersion: 4
-  m_Mass: 10
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 1
-  m_ImplicitTensor: 1
-  m_UseGravity: 1
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!114 &4915124741775050119
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3501,6 +3477,27 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e3ee4a8910d6c194984f8769c973179e, type: 2}
   - {fileID: 11400000, guid: 99e8d59f1f06a4f47b3b3e369987274b, type: 2}
   - {fileID: 11400000, guid: 9f6f504c5c0b0334abda6749dd4e501a, type: 2}
+--- !u!114 &7781128133825253609
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9111229454801698064}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4e1b986200bb25b468c207a87d9bac21, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  noticeRadius: 14
+  noticeAngle: 60
+  enemyLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  cinemachineAnimator: {fileID: 0}
+  enemyTarget_Locator: {fileID: 0}
+  lockUICanvas: {fileID: 0}
+  uiScaleFactor: 0.1
 --- !u!1 &9129802134961441904
 GameObject:
   m_ObjectHideFlags: 0

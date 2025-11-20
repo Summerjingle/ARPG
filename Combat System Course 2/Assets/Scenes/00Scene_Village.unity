@@ -4607,7 +4607,7 @@ MonoBehaviour:
     type: 3}
   m_PrefabInstance: {fileID: 3656704230247441864}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1895218371}
+  m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6948b98581012654c8b92591912f4047, type: 3}
@@ -7841,7 +7841,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1521775111}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.034892347, y: 0.9952612, z: 0.018875524, w: 0.08877811}
+  m_LocalRotation: {x: -0.034892343, y: 0.9952612, z: 0.018875523, w: 0.08877811}
   m_LocalPosition: {x: -4.3940783, y: -0.6179249, z: 8.420406}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -10250,33 +10250,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1886115293}
   m_CullTransparentMesh: 1
---- !u!1 &1895218371 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 9111229454801698064, guid: 0329ac313e7f4664696a8aba29794931,
-    type: 3}
-  m_PrefabInstance: {fileID: 3656704230247441864}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &1895218386
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1895218371}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4e1b986200bb25b468c207a87d9bac21, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  noticeRadius: 14
-  noticeAngle: 60
-  enemyLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  cinemachineAnimator: {fileID: 1809396293}
-  enemyTarget_Locator: {fileID: 1649514569}
-  lockUICanvas: {fileID: 2057720959}
-  uiScaleFactor: 0.1
 --- !u!1 &1904528094 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 100000, guid: 6b0df067d8acef346aae1d839098fcbb,
@@ -13971,6 +13944,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7781128133825253609, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: lockUICanvas
+      value: 
+      objectReference: {fileID: 2057720959}
+    - target: {fileID: 7781128133825253609, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: cinemachineAnimator
+      value: 
+      objectReference: {fileID: 1809396293}
+    - target: {fileID: 7781128133825253609, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: enemyTarget_Locator
+      value: 
+      objectReference: {fileID: 1649514569}
     - target: {fileID: 9111229454801698064, guid: 0329ac313e7f4664696a8aba29794931,
         type: 3}
       propertyPath: m_Name
@@ -13979,11 +13967,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 9111229454801698064, guid: 0329ac313e7f4664696a8aba29794931,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 1895218386}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 0329ac313e7f4664696a8aba29794931, type: 3}
 --- !u!1 &3657304670532129519
 GameObject:
