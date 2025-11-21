@@ -104,14 +104,7 @@ public class EnemyController : MonoBehaviour
 
     private void HandleDeath(HealthSystem healthSystem)
     {
-        // 通知 CombatController 这个敌人已死亡
-        var playerCombatController = FindObjectOfType<CombatController>();
-        if (playerCombatController != null && playerCombatController.TargetEnemy == this)
-        {
-            playerCombatController.TargetEnemy = null;
-            playerCombatController.CombatMode = false;
-        }
-        // 切换到死亡状态
+       
         ChangerState(EnemyStates.Dead);
     }
 

@@ -22,22 +22,22 @@ public class WolfController : MonoBehaviour
     public bool IsStunned => isStunned;
 
     [Header("Wolf Settings")]
-    [SerializeField] private float attackDistance = 2f;
-    [SerializeField] private float chaseDistance = 10f;
-    [SerializeField] private float giveUpDistance = 15f;
-    [SerializeField] private float attackCooldown = 5f;
+    [SerializeField] public float attackDistance = 2f;
+    [SerializeField] public float chaseDistance = 10f;
+    [SerializeField] public float giveUpDistance = 15f;
+    [SerializeField] public float attackCooldown = 5f;
 
     [Header("Patrol Settings")]
-    [SerializeField] private float patrolRadius = 10f;
-    [SerializeField] private float minIdleTime = 2f;
-    [SerializeField] private float maxIdleTime = 5f;
-    [SerializeField] private float minWalkTime = 3f;
-    [SerializeField] private float maxWalkTime = 8f;
+    [SerializeField] public float patrolRadius = 10f;
+    [SerializeField] public float minIdleTime = 2f;
+    [SerializeField] public float maxIdleTime = 5f;
+    [SerializeField] public float minWalkTime = 3f;
+    [SerializeField] public float maxWalkTime = 8f;
 
     // Components
     private NavMeshAgent navAgent;
     private Animator animator;
-    private SphereCollider attackCollider;
+    private BoxCollider attackCollider;
 
     // State management
     public WolfStates CurrentState { get; private set; }
@@ -73,12 +73,11 @@ public class WolfController : MonoBehaviour
         wolfFighter = GetComponent<WolfFighter>();
 
     }
-    
+
 
     // 初始化战斗组件
     void InitializeCombatComponents()
     {
-        
 
         if (GetComponentInChildren<WolfWeapon>() == null)
         {
@@ -90,8 +89,8 @@ public class WolfController : MonoBehaviour
             Debug.Log("狼的武器已找到");
         }
 
-            // 确保有 EnemyController 组件
-            enemyController = GetComponent<EnemyController>();
+        // 确保有 EnemyController 组件
+        enemyController = GetComponent<EnemyController>();
         if (enemyController == null)
         {
             enemyController = gameObject.AddComponent<EnemyController>();
@@ -138,24 +137,17 @@ public class WolfController : MonoBehaviour
 
     void Start()
     {
-        
-        attackCollider = GetComponentInChildren<SphereCollider>();
+        WolfWeapon wolfWeapon = GetComponentInChildren<WolfWeapon>();
+
+        attackCollider = wolfWeapon.GetComponent<BoxCollider>();
 
         if (attackCollider == null)
-        {
             Debug.LogWarning("Head collider not found! Make sure there's a child object with collider tagged 'HitBox'");
-        }
         else
-        {
             Debug.Log("AttackCollider已经找到");
-        }
 
-        // 初始化 EnemyController 和 MeleeFighter
+
         InitializeCombatComponents();
-
-
-        
-
         InitializeStateMachine();
         ChangeState(WolfStates.Idle);
         CurrentMode = WolfMode.Patrol;
@@ -175,7 +167,11 @@ public class WolfController : MonoBehaviour
         {
             CheckAttackRange();
             UpdateAnimations();
-            CheckForPlayer();
+            if (CurrentMode == WolfMode.Combat)
+            {
+                // 战斗模式下检查是否放弃追逐
+                CheckGiveUpCombat();
+            }
             stateMachine?.Execute();
         }
 
@@ -190,9 +186,6 @@ public class WolfController : MonoBehaviour
     {
         stateDict = new Dictionary<WolfStates, State<WolfController>>();
 
-       
-
-        // Get states
         stateDict[WolfStates.Idle] = GetComponent<WolfIdleState>();
         stateDict[WolfStates.Walk] = GetComponent<WolfWalkState>();
         stateDict[WolfStates.Run] = GetComponent<WolfRunState>();
@@ -202,23 +195,9 @@ public class WolfController : MonoBehaviour
 
         stateMachine = new StateMachine<WolfController>(this);
     }
-
-    void CheckForPlayer()
-    {
-        if (player == null || CurrentMode == WolfMode.Combat) return;
-
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
-
-        if (distanceToPlayer <= chaseDistance)
-        {
-            CurrentMode = WolfMode.Combat;
-            ChangeState(WolfStates.Run);
-        }
-    }
-
     void UpdateAnimations()
     {
-        // Update speed parameter based on nav agent velocity
+
         float speed = navAgent.velocity.magnitude / navAgent.speed;
         animator.SetFloat("Speed", speed);
     }
@@ -242,7 +221,7 @@ public class WolfController : MonoBehaviour
         }
     }
 
-    public  void OnWolfDeath(HealthSystem healthSystem)
+    public void OnWolfDeath(HealthSystem healthSystem)
     {
         if (!isDead)
         {
@@ -254,20 +233,6 @@ public class WolfController : MonoBehaviour
             if (enemyController != null)
             {
                 EnemyManager.i.RemoveEnemyInRange(enemyController);
-            }
-
-            // 取消高亮
-            if (enemyController != null && enemyController.MeshHighlighter != null)
-            {
-                enemyController.MeshHighlighter.HighlightMesh(false);
-            }
-
-            // 通知CombatController清理目标
-            var playerCombatController = FindObjectOfType<CombatController>();
-            if (playerCombatController != null && playerCombatController.TargetEnemy == enemyController)
-            {
-                playerCombatController.TargetEnemy = null;
-                playerCombatController.CombatMode = false;
             }
         }
     }
@@ -309,13 +274,6 @@ public class WolfController : MonoBehaviour
             {
                 EnemyManager.i.RemoveEnemyInRange(enemyController);
             }
-
-            // 取消高亮
-            if (enemyController != null && enemyController.MeshHighlighter != null)
-            {
-                enemyController.MeshHighlighter.HighlightMesh(false);
-            }
-            
         }
     }
     void CheckAttackRange()
@@ -337,6 +295,25 @@ public class WolfController : MonoBehaviour
             ChangeState(WolfStates.Attack);
         }
     }
+    void CheckGiveUpCombat()
+    {
+        if (player == null) return;
+
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceToPlayer > giveUpDistance)
+        {
+            // 放弃战斗，回到巡逻模式
+            CurrentMode = WolfMode.Patrol;
+            ChangeState(WolfStates.Idle);
+
+            // 从 EnemyManager 移除
+            if (enemyController != null)
+            {
+                EnemyManager.i.RemoveEnemyInRange(enemyController);
+            }
+        }
+    }
 
     // Properties
     public NavMeshAgent NavAgent => navAgent;
@@ -344,15 +321,6 @@ public class WolfController : MonoBehaviour
     public Transform Player => player;
     public Vector3 SpawnPosition => spawnPosition;
     public bool IsDead => isDead;
-    public float AttackDistance => attackDistance;
-    public float ChaseDistance => chaseDistance;
-    public float GiveUpDistance => giveUpDistance;
-    public float AttackCooldown => attackCooldown;
-    public float PatrolRadius => patrolRadius;
-    public float MinIdleTime => minIdleTime;
-    public float MaxIdleTime => maxIdleTime;
-    public float MinWalkTime => minWalkTime;
-    public float MaxWalkTime => maxWalkTime;
     public float StateTimer { get => stateTimer; set => stateTimer = value; }
     public float AttackTimer { get => attackTimer; set => attackTimer = value; }
     public WolfMode Mode { get => CurrentMode; set => CurrentMode = value; }
@@ -369,10 +337,10 @@ public class WolfController : MonoBehaviour
 
     public void DisableWolf()
     {
-        
+
         Destroy(gameObject);
     }
 
-    
-   
+
+
 }

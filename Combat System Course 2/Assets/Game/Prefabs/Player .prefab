@@ -3185,6 +3185,7 @@ GameObject:
   - component: {fileID: 7236576831548135024}
   - component: {fileID: 8794569445368444747}
   - component: {fileID: 7781128133825253609}
+  - component: {fileID: 8268290122085347550}
   m_Layer: 7
   m_Name: 'Player '
   m_TagString: Player
@@ -3229,6 +3230,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   CinemachineCameraTarget: {fileID: 2707255009169272224}
+  _cinemachineTargetYaw: 0
   TopClamp: 20
   BottomClamp: 0
   CameraAngleOverride: 0
@@ -3239,6 +3241,8 @@ MonoBehaviour:
   isGrounded: 0
   isMovementEnabled: 1
   isRolling: 0
+  isLockedOn: 0
+  lockedTargetDir: {x: 0, y: 0, z: 0}
 --- !u!95 &8861156661709691242
 Animator:
   serializedVersion: 5
@@ -3498,6 +3502,29 @@ MonoBehaviour:
   enemyTarget_Locator: {fileID: 0}
   lockUICanvas: {fileID: 0}
   uiScaleFactor: 0.1
+--- !u!136 &8268290122085347550
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9111229454801698064}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Radius: 0.3
+  m_Height: 1.8
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!1 &9129802134961441904
 GameObject:
   m_ObjectHideFlags: 0

@@ -21,7 +21,7 @@ public class WolfIdleState : State<WolfController>
         wolf.Animator.SetFloat("Speed", 0f);
 
         // Set random idle time
-        wolf.StateTimer = Random.Range(wolf.MinIdleTime, wolf.MaxIdleTime);
+        wolf.StateTimer = Random.Range(wolf.minIdleTime, wolf.maxIdleTime);
 
        
     }
@@ -67,18 +67,18 @@ public class WolfIdleState : State<WolfController>
         float distanceToPlayer = Vector3.Distance(wolf.transform.position, wolf.Player.position);
 
         // Check if player is too far away
-        if (distanceToPlayer > wolf.GiveUpDistance)
+        if (distanceToPlayer > wolf.giveUpDistance)
         {
             wolf.Mode = WolfMode.Patrol;
             return;
         }
 
         // Check if player is in attack range
-        if (distanceToPlayer <= wolf.AttackDistance && wolf.AttackTimer <= 0)
+        if (distanceToPlayer <= wolf.attackDistance && wolf.AttackTimer <= 0)
         {
             wolf.ChangeState(WolfStates.Attack);
         }
-        else if (distanceToPlayer > wolf.AttackDistance)
+        else if (distanceToPlayer > wolf.attackDistance)
         {
             // Move towards player
             wolf.ChangeState(WolfStates.Run);

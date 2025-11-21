@@ -25,7 +25,7 @@ public class WolfWalkState : State<WolfController>
         FindNewPatrolPosition();
 
         // Set random walk time
-        wolf.StateTimer = Random.Range(wolf.MinWalkTime, wolf.MaxWalkTime);
+        wolf.StateTimer = Random.Range(wolf.minWalkTime, wolf.maxWalkTime);
 
         
     }
@@ -70,12 +70,12 @@ public class WolfWalkState : State<WolfController>
 
     void FindNewPatrolPosition()
     {
-        Vector3 randomDirection = Random.insideUnitSphere * wolf.PatrolRadius;
+        Vector3 randomDirection = Random.insideUnitSphere * wolf.patrolRadius;
         randomDirection += wolf.SpawnPosition;
         randomDirection.y = wolf.transform.position.y;
 
         NavMeshHit hit;
-        if (NavMesh.SamplePosition(randomDirection, out hit, wolf.PatrolRadius, NavMesh.AllAreas))
+        if (NavMesh.SamplePosition(randomDirection, out hit, wolf.patrolRadius, NavMesh.AllAreas))
         {
             targetPosition = hit.position;
             wolf.NavAgent.SetDestination(targetPosition);

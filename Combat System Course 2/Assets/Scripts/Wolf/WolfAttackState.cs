@@ -32,7 +32,7 @@ public class WolfAttackState : State<WolfController>
         }
 
         // 设置攻击冷却
-        wolf.AttackTimer = wolf.AttackCooldown;
+        wolf.AttackTimer = wolf.attackCooldown;
 
         // 启动协程等待攻击完成
         wolf.StartCoroutine(WaitForAttackCompletion());
@@ -41,7 +41,7 @@ public class WolfAttackState : State<WolfController>
     IEnumerator WaitForAttackCompletion()
     {
         // 等待攻击动画完成（这里需要根据你的实际动画长度调整）
-        yield return new WaitForSeconds(1f); // 假设攻击动画大约1.5秒
+        yield return new WaitForSeconds(1f); // 假设攻击动画大约1秒
 
         isAttacking = false;
 
@@ -50,14 +50,22 @@ public class WolfAttackState : State<WolfController>
         {
             float distanceToPlayer = Vector3.Distance(wolf.transform.position, wolf.Player.position);
 
-            if (distanceToPlayer > wolf.AttackDistance && distanceToPlayer <= wolf.ChaseDistance)
+            if (distanceToPlayer > wolf.attackDistance && distanceToPlayer <= wolf.giveUpDistance)
             {
+                // 玩家在攻击范围外但仍在放弃距离内，继续追击
                 wolf.ChangeState(WolfStates.Run);
             }
-            else if (distanceToPlayer > wolf.ChaseDistance)
+            else if (distanceToPlayer > wolf.giveUpDistance)
             {
+                // 玩家超出放弃距离，回到巡逻模式
                 wolf.Mode = WolfMode.Patrol;
                 wolf.ChangeState(WolfStates.Idle);
+
+                // 从 EnemyManager 移除
+                if (wolf.EnemyController != null)
+                {
+                    EnemyManager.i.RemoveEnemyInRange(wolf.EnemyController);
+                }
             }
             else
             {

@@ -44,15 +44,7 @@ public class EnemyManager : MonoBehaviour
         if (timer >= 0.1f)
         {
             timer = 0f;
-            var closestEnemy = GetClosestEnemyToDirection(player.GetTargetingDir());
-            if (closestEnemy != null && closestEnemy != player.TargetEnemy)
-            {
-                var prevEnemy = player.TargetEnemy;
-
-                player.TargetEnemy = closestEnemy;
-                player?.TargetEnemy.MeshHighlighter?.HighlightMesh(true);
-                prevEnemy?.MeshHighlighter?.HighlightMesh(false);
-            }
+            
         }
 
         timer += Time.deltaTime;
@@ -72,19 +64,10 @@ public class EnemyManager : MonoBehaviour
     }
     public void RemoveEnemyInRange(EnemyController enemyController)
     {
-        // 先取消高亮，再移除
-        if (enemyController != null && enemyController.MeshHighlighter != null)
-        {
-            enemyController.MeshHighlighter.HighlightMesh(false);
-        }
+        
 
         enemiesIsRange.Remove(enemyController);
 
-        if (enemyController == player.TargetEnemy)
-        {
-            player.TargetEnemy = GetClosestEnemyToDirection(player.GetTargetingDir());
-            player.TargetEnemy?.MeshHighlighter?.HighlightMesh(true);
-        }
     }
 
     public EnemyController GetAttackingEnemy()

@@ -4,7 +4,7 @@ public class WolfDamageHandler : MonoBehaviour
 {
     private WolfController wolfController;
     private float lastDamageTime = -1f;
-    private const float DAMAGE_COOLDOWN = 1.0f;
+    private const float DAMAGE_COOLDOWN = 0.5f;
     private int lastDamageFrame = -1;
     private Collider lastDamageCollider;
 

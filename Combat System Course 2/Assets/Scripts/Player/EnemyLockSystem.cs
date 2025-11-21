@@ -10,46 +10,42 @@ public class EnemyLockSystem : MonoBehaviour
     [SerializeField] LayerMask enemyLayer;
 
     [Header("Lock Camera Animator")]
-    [SerializeField] Animator cinemachineAnimator; // 控制摄像机切换的 Animator
+    [SerializeField] Animator cinemachineAnimator;
     [SerializeField] Transform enemyTarget_Locator;
 
     [Header("UI Indicator")]
     [SerializeField] Transform lockUICanvas;
     [SerializeField] float uiScaleFactor = 0.1f;
 
-    private Transform currentTarget;
+    public Transform currentTarget { get; private set; }
     private Transform cam;
     private PlayerController player;
-    private CombatController combatController;
+    private Animator animator;
 
-    private bool isLocked = false;
+    public bool IsLocked { get; private set; }
     private float yOffset = 1f;
-    private int frameCount = 0;
-
 
     void Start()
     {
-     
-        combatController = GetComponent<CombatController>();
         cam = Camera.main.transform;
         player = GetComponent<PlayerController>();
-        
+        animator = GetComponent<Animator>();
 
         if (lockUICanvas != null)
             lockUICanvas.gameObject.SetActive(false);
-
-        
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.Q))
         {
-            if (!isLocked) TryLockTarget();
-            else Unlock();
+            if (!IsLocked)
+                TryLockTarget();
+            else
+                Unlock();
         }
 
-        if (isLocked)
+        if (IsLocked)
         {
             if (!TargetStillValid())
             {
@@ -60,13 +56,6 @@ public class EnemyLockSystem : MonoBehaviour
             UpdateUI();
             RotatePlayer();
         }
-        frameCount++;
-#if UNITY_EDITOR
-        if (frameCount % 60 == 0)
-        {
-            Debug.Log($"第{frameCount}帧 -玩家没动的 位置: {player.transform.position}");
-        }
-#endif
     }
 
     Transform ScanForTargets()
@@ -104,58 +93,57 @@ public class EnemyLockSystem : MonoBehaviour
 
     void TryLockTarget()
     {
-        Transform t = ScanForTargets();
-        if (!t) return;
+        Transform target = ScanForTargets();
+        if (target == null) return;
 
-        currentTarget = t;
-        isLocked = true;
+        currentTarget = target;
+        IsLocked = true;
         player.LockRotation = true;
 
-        if (lockUICanvas) lockUICanvas.gameObject.SetActive(true);
+        if (lockUICanvas != null)
+            lockUICanvas.gameObject.SetActive(true);
 
-        // 禁止玩家鼠标控制摄像机
         player.LockCameraPosition = true;
-        player.animator.SetBool("combatMode",true);
-        
-        player.LookAtTargetInstant(t);
-        player.ResetMovementBase(); // 保持原来的逻辑
+        animator.SetBool("combatMode", true); 
 
-        // 切换到锁定镜头
-        cinemachineAnimator.Play("TargetCamera");
+        player.LookAtTargetInstant(target);
+        player.ResetMovementBase();
 
-        // 设置锁定状态
+        if (cinemachineAnimator != null)
+            cinemachineAnimator.Play("TargetCamera");
+
         player.isLockedOn = true;
     }
 
-    void Unlock()
+    public void Unlock()
     {
-        isLocked = false;
+        IsLocked = false;
         currentTarget = null;
         player.LockRotation = false;
 
-        // 设置玩家解锁后的默认朝向
-        Vector3 dir = transform.forward; // 保持当前朝向
+        Vector3 dir = transform.forward;
         dir.y = 0;
         player.targetRotation = Quaternion.LookRotation(dir);
-        player.animator.SetBool("combatMode", false);
-        if (lockUICanvas) lockUICanvas.gameObject.SetActive(false);
+        animator.SetBool("combatMode", false); 
+
+        if (lockUICanvas != null)
+            lockUICanvas.gameObject.SetActive(false);
+
         player.isLockedOn = false;
         player.lockedTargetDir = Vector3.zero;
         player.UnlockCamera();
         player.targetRotation = player.transform.rotation;
 
-
-
-        // 切换回跟随镜头
-        cinemachineAnimator.Play("FollowCamera");
-
-        Debug.Log("Unlock");
+        if (cinemachineAnimator != null)
+            cinemachineAnimator.Play("FollowCamera");
     }
 
     void UpdateUI()
     {
+        if (currentTarget == null) return;
+
         Vector3 toCamera = (cam.position - currentTarget.position).normalized;
-        Vector3 pos = currentTarget.position + Vector3.up * yOffset+ toCamera * 0.3f; 
+        Vector3 pos = currentTarget.position + Vector3.up * yOffset + toCamera * 0.5f;
         lockUICanvas.position = pos;
 
         float dis = Vector3.Distance(cam.position, pos);
@@ -166,25 +154,28 @@ public class EnemyLockSystem : MonoBehaviour
     {
         if (currentTarget == null) return;
 
-        // --- 1. 更新锁定方向，每帧动态计算 ---
         Vector3 dir = currentTarget.position - player.transform.position;
         dir.y = 0;
         if (dir.sqrMagnitude > 0.001f)
             player.lockedTargetDir = dir.normalized;
 
-        // --- 2. 更新敌人 UI/Locator，保持锁定显示 ---
         Vector3 targetPos = currentTarget.position + Vector3.up * yOffset;
         if (enemyTarget_Locator != null)
             enemyTarget_Locator.position = targetPos;
     }
 
-
     bool TargetStillValid()
     {
         if (!currentTarget) return false;
 
-        float dis = Vector3.Distance(transform.position, currentTarget.position);
+        var enemyController = currentTarget.GetComponent<EnemyController>();
+        if (enemyController != null &&
+            (enemyController.Fighter.HealthSystem.IsDead || !enemyController.gameObject.activeInHierarchy))
+        {
+            return false;
+        }
 
+        float dis = Vector3.Distance(transform.position, currentTarget.position);
         return dis <= noticeRadius * 1.5f;
     }
 

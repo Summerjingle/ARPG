@@ -8,7 +8,8 @@ public class IdleState : State<EnemyController>
     public override void Enter(EnemyController owner)
     {
         enemyController = owner;
-        enemyController.Animator.SetBool("combatMode", false);
+        
+        enemyController?.Animator?.SetBool("combatMode", false);
 
     }
 

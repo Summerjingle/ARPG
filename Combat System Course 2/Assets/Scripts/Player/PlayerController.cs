@@ -38,9 +38,7 @@ public class PlayerController : MonoBehaviour
 
     public Quaternion targetRotation;
     public ICombatSystem combatSystem;
-    private HealthSystem healthSystem;
 
-    private CameraController cameracontroller;
     public Animator animator;
     private CharacterController charactercontroller;
     public CombatController combatController;
@@ -55,12 +53,9 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         i = this;
-        cameracontroller = Camera.main.GetComponent<CameraController>();//找到场景中的主摄像机，并获取其身上的cameracontroller组件
         animator = GetComponent<Animator>();//从脚本负载对象身上获取其动画控制机
         charactercontroller = GetComponent<CharacterController>();//从脚本负载对象身上获取其charactercontroller，目的在于通过该组件控制对象移动
         combatSystem = GetComponent<ICombatSystem>();
-        combatController = GetComponent<CombatController>();
-        healthSystem = GetComponent<HealthSystem>();
         StartCoroutine(DelayedRegistration());
         RegisterToHUD();
         UIStateManager.OnUIActiveStateChanged += OnUIActiveStateChanged;
@@ -90,6 +85,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Update()
     {
+        if (combatSystem.InAction) return;
         if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
             animator.SetFloat("forwardSpeed", 0f);
@@ -286,11 +282,6 @@ public class PlayerController : MonoBehaviour
         animator.SetFloat("forwardSpeed", 0f);
         animator.SetFloat("strafeSpeed", 0f);
 
-        // 翻滚时临时退出战斗模式
-        if (combatController != null && combatController.CombatMode)
-        {
-            combatController.CancelCombatForDodge();
-        }
 
         // 直接使用InputDir，没有输入就保持原方向
         if (InputDir != Vector3.zero)
@@ -342,14 +333,6 @@ public class PlayerController : MonoBehaviour
             isMovementEnabled = true;
         }
 
-        // 翻滚结束后的战斗模式恢复
-        if (combatController.TargetEnemy != null &&
-            !combatController.CombatMode &&
-            Vector3.Distance(transform.position, combatController.TargetEnemy.transform.position) < 10f)
-        {
-            combatController.CombatMode = true;
-            combatController.TargetEnemy.MeshHighlighter?.HighlightMesh(true);
-        }
     }
     private void OnDestroy()
     {
@@ -364,7 +347,7 @@ public class PlayerController : MonoBehaviour
         // 清除任何可能缓存的方向数据
         InputDir = transform.forward; // 重置为当前面对方向
 
-      
+
     }
     private Quaternion GetCameraPlanarRotation()
     {

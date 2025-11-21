@@ -48,7 +48,7 @@ public class WolfRunState : State<WolfController>
         }
 
         // Check if player is too far away
-        if (distanceToPlayer > wolf.GiveUpDistance)
+        if (distanceToPlayer > wolf.giveUpDistance)
         {
             wolf.Mode = WolfMode.Patrol;
             wolf.ChangeState(WolfStates.Idle);
@@ -59,7 +59,7 @@ public class WolfRunState : State<WolfController>
         wolf.NavAgent.SetDestination(wolf.Player.position);
 
         // Check attack conditions
-        if (distanceToPlayer <= wolf.AttackDistance && wolf.AttackTimer <= 0)
+        if (distanceToPlayer <= wolf.attackDistance && wolf.AttackTimer <= 0)
         {
             wolf.ChangeState(WolfStates.Attack);
         }
