@@ -424,8 +424,8 @@ public class SaveManager : MonoBehaviour
         }
         isApplyingSaveData = true;
 
-        int maxRetries = 8;
-        float retryInterval = 0.1f;
+        int maxRetries = 15;
+        float retryInterval = 0.2f;
 
         for (int i = 0; i < maxRetries; i++)
         {
