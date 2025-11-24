@@ -3186,7 +3186,6 @@ GameObject:
   - component: {fileID: 8794569445368444747}
   - component: {fileID: 7781128133825253609}
   - component: {fileID: 8268290122085347550}
-  - component: {fileID: 1961151864474548145}
   m_Layer: 7
   m_Name: 'Player '
   m_TagString: Player
@@ -3204,7 +3203,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.9992222, z: -0, w: -0.039434165}
   m_LocalPosition: {x: 15.190001, y: 4.8, z: -8.709}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 0.9, y: 0.9, z: 0.9}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8676786389372295574}
@@ -3223,6 +3222,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9577306733a4a08478ef0d063f14c3af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  walkSpeedMultiplier: 0.4
+  Armed: 0
+  armedToggleKey: 9
   moveSpeed: 5
   rotationSpeed: 500
   groundCheckRadius: 0.2
@@ -3499,10 +3501,11 @@ MonoBehaviour:
   enemyLayer:
     serializedVersion: 2
     m_Bits: 256
-  cinemachineAnimator: {fileID: 0}
   enemyTarget_Locator: {fileID: 0}
   lockUICanvas: {fileID: 0}
   uiScaleFactor: 0.1
+  followCam: {fileID: 0}
+  lockCam: {fileID: 0}
 --- !u!136 &8268290122085347550
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -3526,18 +3529,6 @@ CapsuleCollider:
   m_Height: 1.8
   m_Direction: 1
   m_Center: {x: 0, y: 0.9, z: 0}
---- !u!114 &1961151864474548145
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9111229454801698064}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c1f6ab517c7bb5f4cbf5759b4d275d42, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1 &9129802134961441904
 GameObject:
   m_ObjectHideFlags: 0

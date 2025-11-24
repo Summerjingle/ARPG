@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class CombatController : MonoBehaviour
 {
-    private CameraController cam;
     private ICombatSystem combatSystem;
     private Animator animator;
     private EnemyLockSystem lockSystem;
@@ -14,7 +13,6 @@ public class CombatController : MonoBehaviour
     private void Awake()
     {
         animator = GetComponent<Animator>();
-        cam = Camera.main.GetComponent<CameraController>();
         combatSystem = GetComponent<ICombatSystem>();
         lockSystem = GetComponent<EnemyLockSystem>();
     }
@@ -45,20 +43,7 @@ public class CombatController : MonoBehaviour
         transform.rotation *= animator.deltaRotation;
     }
 
-    public Vector3 GetTargetingDir()
-    {
-        if (!CombatMode)
-        {
-            var vecForCam = transform.position - cam.transform.position;
-            vecForCam.y = 0;
-            return vecForCam.normalized;
-        }
-        else
-        {
-            return transform.forward;
-        }
-    }
-
+    
     public IEnumerator PerformCounterAttack(EnemyController opponent)
     {
         combatSystem.InAction = true;

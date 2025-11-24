@@ -8,6 +8,14 @@
     public class PlayerController : MonoBehaviour
     {
 
+        [Header("Movement Settings")]
+        [SerializeField] private float walkSpeedMultiplier = 0.5f; // 走路速度乘数
+        private float currentRunBlend = 0f;
+
+        [Header("Armed Mode")]
+        [SerializeField] private bool Armed = false;
+        [SerializeField] private KeyCode armedToggleKey = KeyCode.Tab;
+
         [SerializeField] float moveSpeed = 5f;
         [SerializeField] float rotationSpeed = 500f;
         [SerializeField] float groundCheckRadius = 0.2f;
@@ -51,7 +59,7 @@
         [HideInInspector] public Vector3 lockedTargetDir;
          
     private Vector3 lastPlayerPos;
-    private bool firstFrameAfterLoad = true;
+
 
     private void Awake()
         {
@@ -89,7 +97,13 @@
                 _cinemachineTargetYaw = CinemachineCameraTarget.transform.rotation.eulerAngles.y;
             }
             UIStateManager.SetUIActive(false);
+        if (CinemachineCameraTarget != null)
+        {
+            CinemachineCameraTarget.transform.rotation = transform.rotation;
+            _cinemachineTargetYaw = transform.rotation.eulerAngles.y;
+            _cinemachineTargetPitch = 0;
         }
+    }
         private void Update()
         {
 
@@ -100,9 +114,14 @@
                 animator.SetFloat("strafeSpeed", 0f);
                 return;
             }
+        // 武装模式切换输入检测
+        if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(armedToggleKey)&& !isRolling)
+        {
+            ToggleArmedMode();
+        }
 
-            // 翻滚输入检测
-            if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.LeftShift) && isGrounded && !isRolling)
+        // 翻滚输入检测
+        if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.Space) && isGrounded && !isRolling)
             {
                 StartRoll();
                 return;
@@ -113,8 +132,12 @@
             Vector3 moveInput = new Vector3(h, 0, v).normalized;
             float moveAmount = Mathf.Clamp01(Mathf.Abs(h) + Mathf.Abs(v));
 
-            // --- 移动方向 ---
-            Vector3 moveDir;
+            bool targetRunning = Input.GetKey(KeyCode.LeftShift) && moveAmount > 0.1f && !isRolling;
+            currentRunBlend = Mathf.MoveTowards(currentRunBlend, targetRunning ? 1f : 0f, Time.deltaTime * 5f);
+            float currentMoveSpeed = Mathf.Lerp(moveSpeed * walkSpeedMultiplier, moveSpeed, currentRunBlend);
+        
+        // --- 移动方向 ---
+        Vector3 moveDir;
             if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
             {
                 // 锁定敌人时，以锁定方向为基准
@@ -134,41 +157,67 @@
             if (!isGrounded) ySpeed += Physics.gravity.y * Time.deltaTime;
             else ySpeed = 0f;
 
-            // --- velocity ---
-            Vector3 velocity = moveDir * moveSpeed;
+        // --- velocity ---
+        Vector3 velocity = moveDir * currentMoveSpeed;
 
-            if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
+        // --- 动画同步 ---
+        if (Armed)
+        {
+            // --- ArmedMode: 使用 StrafeSpeed 和 ForwardSpeed ---
+            Vector3 localVelocity = transform.InverseTransformDirection(velocity);
+
+            // 根据你的动画配置设置参数
+            float forwardSpeed = localVelocity.z / moveSpeed; // 标准化到 -1 到 1 范围
+            float strafeSpeed = localVelocity.x / moveSpeed;  // 标准化到 -1 到 1 范围
+
+            if (Mathf.Abs(forwardSpeed) > 0.1f)
+                forwardSpeed = Mathf.Sign(forwardSpeed) * Mathf.Lerp(0.2f, 1.0f, currentRunBlend);
+
+            if (Mathf.Abs(strafeSpeed) > 0.1f)
+                strafeSpeed = Mathf.Sign(strafeSpeed) * Mathf.Lerp(0.2f, 1.0f, currentRunBlend);
+            animator.SetFloat("forwardSpeed", forwardSpeed, 0.2f, Time.deltaTime);
+            animator.SetFloat("strafeSpeed", strafeSpeed, 0.2f, Time.deltaTime);
+
+            // 武装模式下保持面向移动方向
+            if (moveAmount > 0 && !LockRotation)
             {
-                // --- LockOnMode 
-                velocity /= 3f; // 缓慢移动（原来是 /4f）
-
-                var targetVec = lockedTargetDir;
-                targetRotation = Quaternion.LookRotation(lockedTargetDir);
+                targetRotation = Quaternion.LookRotation(moveDir);
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-                // --- 动画同步 ---
-                // forwardSpeed 除以实际速度 * 原来比例，保持动画匹配移动
-                float forwardSpeed = Vector3.Dot(velocity, transform.forward);
-                animator.SetFloat("forwardSpeed", forwardSpeed / (moveSpeed / 2f), 0.2f, Time.deltaTime);
-
-                float angle = Vector3.SignedAngle(transform.forward, velocity, Vector3.up);
-                animator.SetFloat("strafeSpeed", Mathf.Sin(angle * Mathf.Deg2Rad), 0.2f, Time.deltaTime);
             }
-            else
+        }
+        else if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
+        {
+            // --- LockOnMode (保持你现有的逻辑) ---
+            float baseSpeed = Mathf.Lerp(moveSpeed * walkSpeedMultiplier, moveSpeed, currentRunBlend);
+            velocity /= 3f;
+
+            var targetVec = lockedTargetDir;
+            targetRotation = Quaternion.LookRotation(lockedTargetDir);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+            float forwardSpeed = Vector3.Dot(velocity, transform.forward);
+            animator.SetFloat("forwardSpeed", forwardSpeed / (moveSpeed / 2f), 0.2f, Time.deltaTime);
+
+            float angle = Vector3.SignedAngle(transform.forward, velocity, Vector3.up);
+            animator.SetFloat("strafeSpeed", Mathf.Sin(angle * Mathf.Deg2Rad), 0.2f, Time.deltaTime);
+        }
+        else
+        {
+            // 自由移动
+            if (moveAmount > 0 && !LockRotation)
             {
-                // 自由移动
-                if (moveAmount > 0 && !LockRotation)
-                {
-                    targetRotation = Quaternion.LookRotation(moveDir);
-                }
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-                animator.SetFloat("forwardSpeed", moveAmount, 0.2f, Time.deltaTime);
-                animator.SetFloat("strafeSpeed", 0f, 0.2f, Time.deltaTime);
+                targetRotation = Quaternion.LookRotation(moveDir);
             }
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+            float animationSpeed = Mathf.Lerp(moveAmount * walkSpeedMultiplier, moveAmount, currentRunBlend);
+            animator.SetFloat("forwardSpeed", animationSpeed, 0.2f, Time.deltaTime);
+            animator.SetFloat("strafeSpeed", 0f, 0.2f, Time.deltaTime);
+        }
 
-            // --- CharacterController 移动 ---
-            velocity.y = ySpeed;
-            charactercontroller.Move(velocity * Time.deltaTime);
+        // --- CharacterController 移动 ---
+        velocity.y = ySpeed;
+       
+        charactercontroller.Move(velocity * Time.deltaTime);
         }
 
 
@@ -176,23 +225,8 @@
     {
         if (UIStateManager.IsAnyUIActive) return;
 
-        if (firstFrameAfterLoad)
-        {
-            // 第一次 LateUpdate，直接同步位置和旋转
-            if (CinemachineCameraTarget != null)
-            {
-                CinemachineCameraTarget.transform.position = transform.position + new Vector3(0, 1.41f, 0); // 你的肩膀偏移
-                CinemachineCameraTarget.transform.rotation = transform.rotation;
-            }
 
-            // 刷新 CharacterController 内部状态
-            if (charactercontroller != null)
-                charactercontroller.Move(Vector3.zero);
-
-            firstFrameAfterLoad = false;
-            return; // 第一帧不处理鼠标旋转，避免偏差
-        }
-
+        
         CameraRotation(); // 原来的 LateUpdate 摄像机逻辑
     }
 
@@ -294,74 +328,85 @@
 
             Debug.Log($"玩家移动: {(isMovementEnabled ? "启用" : "禁用")}");
         }
+    private void ToggleArmedMode()
+    {
+        Armed = !Armed;
 
-        private void StartRoll()
+        // 更新动画器参数
+        animator.SetBool("Armed", Armed);
+
+        // 重置移动参数以确保平滑过渡
+        if (!Armed)
         {
-            isRolling = true;
-            isMovementEnabled = false;
-
-            // 关键：像攻击一样设置 InAction
-            if (combatSystem != null)
-            {
-                combatSystem.InAction = true;
-            }
-
             animator.SetFloat("forwardSpeed", 0f);
             animator.SetFloat("strafeSpeed", 0f);
-
-
-            // 直接使用InputDir，没有输入就保持原方向
-            if (InputDir != Vector3.zero)
-            {
-                transform.rotation = Quaternion.LookRotation(InputDir.normalized);
-            }
-
-            animator.Play("Rolling");
-
-            // 启动协程控制翻滚过程（像攻击那样）
-            StartCoroutine(PerformRoll());
         }
-        private IEnumerator PerformRoll()
+
+        Debug.Log($"武装模式: {(Armed ? "开启" : "关闭")}");
+    }
+
+    // 公共方法供其他系统调用
+    public void SetArmedMode(bool armed)
+    {
+        if (Armed != armed)
         {
-            float rollDistance = 5.5f; // 翻滚距离
-            float rollDuration = 0.75f; // 翻滚持续时间
-            float rollSpeed = rollDistance / rollDuration; // 计算翻滚速度
-
-            Vector3 rollDirection = InputDir != Vector3.zero ? InputDir.normalized : transform.forward;
-            Vector3 startPosition = transform.position;
-            float timer = 0f;
-
-            // 翻滚移动循环
-            while (timer < rollDuration)
-            {
-                timer += Time.deltaTime;
-                float progress = timer / rollDuration;
-
-                // 计算当前位置（可以使用曲线让移动更自然）
-                Vector3 targetPosition = startPosition + rollDirection * rollDistance;
-                Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, progress);
-
-                // 使用CharacterController移动
-                Vector3 moveDelta = newPosition - transform.position;
-                charactercontroller.Move(moveDelta);
-
-                yield return null;
-            }
-
-            // 恢复状态
-            isRolling = false;
-            if (combatSystem != null)
-            {
-                combatSystem.InAction = false;
-            }
-
-            if (!UIStateManager.IsAnyUIActive)
-            {
-                isMovementEnabled = true;
-            }
-
+            ToggleArmedMode();
         }
-        private void OnDestroy()
+    }
+
+    private void StartRoll()
+    {
+        isRolling = true;
+        isMovementEnabled = false;
+
+        if (combatSystem != null)
+        {
+            combatSystem.InAction = true;
+        }
+
+        animator.SetFloat("forwardSpeed", 0f);
+        animator.SetFloat("strafeSpeed", 0f);
+        string rollAnimation = Armed ? "ArmedRoll" : "Rolling";
+        animator.Play(rollAnimation);
+
+
+        StartCoroutine(PerformRoll());
+    }
+    private IEnumerator PerformRoll()
+    {
+        float rollDistance = 5.5f;
+        float rollDuration = 0.75f;
+        float rollSpeed = rollDistance / rollDuration;
+
+       
+        Vector3 rollDirection = transform.forward;
+        rollDirection.y = 0;
+        rollDirection.Normalize();
+
+        Vector3 startPosition = transform.position;
+        float timer = 0f;
+
+        while (timer < rollDuration)
+        {
+            timer += Time.deltaTime;
+            float progress = timer / rollDuration;
+
+            Vector3 targetPosition = startPosition + rollDirection * rollDistance;
+            Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, progress);
+
+            Vector3 moveDelta = newPosition - transform.position;
+            charactercontroller.Move(moveDelta);
+
+            yield return null;
+        }
+
+        isRolling = false;
+        if (combatSystem != null) combatSystem.InAction = false;
+
+        if (!UIStateManager.IsAnyUIActive)
+            isMovementEnabled = true;
+    }
+    private void OnDestroy()
         {
             UIStateManager.OnUIActiveStateChanged -= OnUIActiveStateChanged;
             if (PlayerHUDUI.Instance != null)
@@ -387,6 +432,7 @@
             return Quaternion.identity;
         }
    
-    public float RotationSpeed => rotationSpeed;
+        public float RotationSpeed => rotationSpeed;
         public Quaternion PlanarRotation => GetCameraPlanarRotation();
-    }
+        public bool IsArmed => Armed;
+}

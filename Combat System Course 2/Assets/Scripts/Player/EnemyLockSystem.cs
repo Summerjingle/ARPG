@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,13 +10,15 @@ public class EnemyLockSystem : MonoBehaviour
     [SerializeField] float noticeAngle = 60f;
     [SerializeField] LayerMask enemyLayer;
 
-    [Header("Lock Camera Animator")]
-    [SerializeField] Animator cinemachineAnimator;
+   
     [SerializeField] Transform enemyTarget_Locator;
 
     [Header("UI Indicator")]
     [SerializeField] Transform lockUICanvas;
     [SerializeField] float uiScaleFactor = 0.1f;
+
+    public CinemachineVirtualCamera followCam;
+    public CinemachineVirtualCamera lockCam;
 
     public Transform currentTarget { get; private set; }
     private Transform cam;
@@ -109,8 +112,8 @@ public class EnemyLockSystem : MonoBehaviour
         player.LookAtTargetInstant(target);
         player.ResetMovementBase();
 
-        if (cinemachineAnimator != null)
-            cinemachineAnimator.Play("TargetCamera");
+        followCam.Priority = 10;
+        lockCam.Priority = 20;    // ¿ªÆôËø¶¨
 
         player.isLockedOn = true;
     }
@@ -134,8 +137,8 @@ public class EnemyLockSystem : MonoBehaviour
         player.UnlockCamera();
         player.targetRotation = player.transform.rotation;
 
-        if (cinemachineAnimator != null)
-            cinemachineAnimator.Play("FollowCamera");
+        followCam.Priority = 20;
+        lockCam.Priority = 10;
     }
 
     void UpdateUI()

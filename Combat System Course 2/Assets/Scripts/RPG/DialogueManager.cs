@@ -6,7 +6,7 @@ public class DialogueManager : MonoBehaviour
     public static DialogueManager Instance;
 
 
-    public CameraController cameraController;
+    
     [SerializeField] private GameObject resumeTips;
 
     [Header("State")]
@@ -31,12 +31,9 @@ public class DialogueManager : MonoBehaviour
 
         Instance = this;
 
-        if (cameraController == null)
-        {
-            cameraController = FindObjectOfType<CameraController>();
-        }
+        
         DontDestroyOnLoad(gameObject);
-        cameraController = Camera.main.GetComponent<CameraController>();
+        
     }
 
     // 普通对话（不带选项）
