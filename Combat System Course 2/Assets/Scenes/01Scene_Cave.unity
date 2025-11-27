@@ -11584,8 +11584,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 497115386}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0000028342688, y: 0.000010820621, z: 0.00000006274918, w: 1}
-  m_LocalPosition: {x: 0.03137061, y: -0.025787361, z: -12.65934}
+  m_LocalRotation: {x: -0.00005871258, y: -0.99670327, z: -0.0007212939, w: 0.08113062}
+  m_LocalPosition: {x: 0.45087963, y: 0.082528114, z: 7.244213}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -32127,7 +32127,7 @@ Camera:
     height: 1
   near clip plane: 0.2
   far clip plane: 500
-  field of view: 60.000004
+  field of view: 45
   orthographic: 0
   orthographic size: 10
   m_Depth: -1
@@ -32153,8 +32153,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 966651295}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00002944589, y: 0.9999442, z: 0.0028980402, w: 0.010160057}
-  m_LocalPosition: {x: -21.670938, y: 4.6951547, z: -23.85422}
+  m_LocalRotation: {x: 0, y: 0.0913308, z: -0, w: -0.99582064}
+  m_LocalPosition: {x: -21.08606, y: 4.6762347, z: -18.403807}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -51230,6 +51230,26 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5301018679838291051, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: sprintCostPerSecond
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7667074650134938192, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: topClamp
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7667074650134938192, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: bottomClamp
+      value: -20
+      objectReference: {fileID: 0}
+    - target: {fileID: 7667074650134938192, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: cameraAngleOverride
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 7781128133825253609, guid: 0329ac313e7f4664696a8aba29794931,
         type: 3}
       propertyPath: lockCam
@@ -55005,8 +55025,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1893160632}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00023535748, y: 0.99669296, z: 0.0028886173, w: 0.0812081}
-  m_LocalPosition: {x: -0.65152436, y: -0.15272918, z: -4.731972}
+  m_LocalRotation: {x: 0, y: 0.0000000019757023, z: 0, w: 1}
+  m_LocalPosition: {x: -0.15775327, y: -0.020235062, z: -0.6899591}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:

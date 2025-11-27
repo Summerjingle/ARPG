@@ -7,98 +7,105 @@ using UnityEngine.UI;
 public class PlayerHUDUI : MonoBehaviour
 {
     public static PlayerHUDUI Instance { get; private set; }
-    //外部组件
-    public PlayerProperty playerProperty;
-    public HealthSystem healthSystem;
-    //所有填充条
+
+    // 外部组件
+    private PlayerProperty playerProperty;
+    private HealthSystem healthSystem;
+
+    // 所有填充条
     public Image playerHealthBarFill;
     public Image playerEnergyBarFill;
     public Image playerEXPBarFill;
-    //经验值相关
+
+    // 经验值相关
     public TextMeshProUGUI levelText;
     [SerializeField] private float expFillSpeed = 1f;
-    //护甲值相关
+    [SerializeField] private float energyFillSpeed = 4f;  // 新增：能量条平滑速度
+
+    // 护甲值相关
     public TextMeshProUGUI armorText;
-    
 
-    void Start()
+    private Coroutine energyCoroutine;  // 用于平滑能量条
+
+    private void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
         Instance = this;
-        
     }
 
-    void Update()
-    {
-        UpdateEnergyBar();
-    }
     public void RegisterPlayerComponents(PlayerProperty property, HealthSystem healthSys)
     {
-        // 先取消旧的订阅
         UnsubscribeFromEvents();
 
-        // 设置新的引用
         playerProperty = property;
         healthSystem = healthSys;
 
-        // 订阅事件
         SubscribeToEvents();
-
-        // 更新UI
         InitializeUI();
 
         Debug.Log("玩家组件注册到 PlayerHUDUI");
     }
 
-    // 取消注册
     public void UnregisterPlayerComponents()
     {
         UnsubscribeFromEvents();
         playerProperty = null;
-        healthSystem=null;
+        healthSystem = null;
         Debug.Log("玩家组件从 PlayerHUDUI 取消注册");
     }
 
-    // 订阅事件
     private void SubscribeToEvents()
     {
         if (healthSystem != null)
         {
-            healthSystem.OnHealthChanged += OnHealthChanged; 
+            healthSystem.OnHealthChanged += OnHealthChanged;
         }
 
         if (playerProperty != null)
         {
             playerProperty.OnArmorChanged += UpdateArmorDisplay;
+            playerProperty.OnEnergyChanged += OnEnergyChanged;  // 新增：订阅能量变化
         }
     }
 
-    // 取消订阅事件
     private void UnsubscribeFromEvents()
     {
-        if (healthSystem != null)  
+        if (healthSystem != null)
         {
-            healthSystem.OnHealthChanged -= OnHealthChanged;  
+            healthSystem.OnHealthChanged -= OnHealthChanged;
         }
 
         if (playerProperty != null)
         {
             playerProperty.OnArmorChanged -= UpdateArmorDisplay;
+            playerProperty.OnEnergyChanged -= OnEnergyChanged;  // 取消订阅
         }
     }
+
     private void InitializeUI()
     {
         if (playerProperty != null)
         {
-            playerEXPBarFill.fillAmount = playerProperty.currEXP * 1.0f / (playerProperty.level * 30);
+            // 经验条
+            int expRequired = playerProperty.level * 30;
+            playerEXPBarFill.fillAmount = expRequired > 0 ? (float)playerProperty.currEXP / expRequired : 0f;
             levelText.text = playerProperty.level.ToString();
+
+            // 能量条（直接设初始值，后续用事件平滑）
+            if (playerEnergyBarFill != null)
+                playerEnergyBarFill.fillAmount = playerProperty.EnergyNormalized;
+
+            UpdateArmorDisplay();
         }
 
         UpdateHealthBar();
-        UpdateEnergyBar();
-        UpdateArmorDisplay();
     }
 
-    private void OnHealthChanged(HealthSystem healthSystem)
+    private void OnHealthChanged(HealthSystem sys)
     {
         UpdateHealthBar();
     }
@@ -107,57 +114,71 @@ public class PlayerHUDUI : MonoBehaviour
     {
         if (healthSystem != null && playerHealthBarFill != null)
         {
-            float fillAmount = healthSystem.Health / healthSystem.MaxHealth; 
-            playerHealthBarFill.fillAmount = fillAmount;
+            playerHealthBarFill.fillAmount = healthSystem.Health / healthSystem.MaxHealth;
         }
     }
 
-    // 新的经验条更新方法，处理升级动画
+    // ==================== 能量条事件驱动更新（推荐方式） ====================
+    private void OnEnergyChanged(float normalizedValue)
+    {
+        if (playerEnergyBarFill == null) return;
+
+        // 停止旧的协程
+        if (energyCoroutine != null)
+            StopCoroutine(energyCoroutine);
+
+        // 启动平滑动画
+        energyCoroutine = StartCoroutine(SmoothFillEnergyBar(normalizedValue));
+    }
+
+    private IEnumerator SmoothFillEnergyBar(float target)
+    {
+        float current = playerEnergyBarFill.fillAmount;
+        float timer = 0f;
+        float duration = 1f / energyFillSpeed;  // 使用你定义的 speed！
+
+        while (timer < duration)
+        {
+            timer += Time.deltaTime;
+            playerEnergyBarFill.fillAmount = Mathf.Lerp(current, target, timer / duration);
+            yield return null;
+        }
+
+        playerEnergyBarFill.fillAmount = target;
+        energyCoroutine = null;
+    }
+    // ==================== 经验条系统（你原来的完美保留） ====================
     public void UpdateEXPBar(bool levelUp = false)
     {
         if (levelUp)
         {
-            // 如果是升级，先填满再清空
             StartCoroutine(LevelUpAnimation());
         }
         else
         {
-            // 普通经验增加
             StartCoroutine(AnimateEXPBar());
         }
     }
 
-    // 升级动画：先填满再清空
     private IEnumerator LevelUpAnimation()
     {
-        // 先填满当前经验条
         while (playerEXPBarFill.fillAmount < 1f)
         {
             playerEXPBarFill.fillAmount = Mathf.MoveTowards(
-                playerEXPBarFill.fillAmount,
-                1f,
-                expFillSpeed * Time.deltaTime
-            );
+                playerEXPBarFill.fillAmount, 1f, expFillSpeed * Time.deltaTime);
             yield return null;
         }
 
-        // 更新等级文本
         UpdateEXPText();
-
-        // 短暂停顿，让玩家看到满条
         yield return new WaitForSeconds(0.3f);
-
-        // 清空经验条，准备下一级
         playerEXPBarFill.fillAmount = 0f;
 
-        // 如果有剩余经验，继续填充
         if (playerProperty.currEXP > 0)
         {
             StartCoroutine(AnimateEXPBar());
         }
     }
 
-    // 普通经验增加动画
     private IEnumerator AnimateEXPBar()
     {
         int expRequired = playerProperty.level * 30;
@@ -165,21 +186,17 @@ public class PlayerHUDUI : MonoBehaviour
 
         float targetFill = (float)playerProperty.currEXP / expRequired;
 
-        // 动画填充经验条
         while (playerEXPBarFill.fillAmount < targetFill - 0.001f)
         {
             playerEXPBarFill.fillAmount = Mathf.MoveTowards(
-                playerEXPBarFill.fillAmount,
-                targetFill,
-                expFillSpeed * Time.deltaTime
-            );
+                playerEXPBarFill.fillAmount, targetFill, expFillSpeed * Time.deltaTime);
             yield return null;
         }
 
         playerEXPBarFill.fillAmount = targetFill;
     }
 
-    public void UpdateEXPText()//这里将经验填充条和等级文字的更新剥离，得以控制经验条动画
+    public void UpdateEXPText()
     {
         if (levelText != null && playerProperty != null)
         {
@@ -187,43 +204,28 @@ public class PlayerHUDUI : MonoBehaviour
         }
     }
 
-    private void UpdateEnergyBar()
-    {
-        if (playerProperty != null && playerEnergyBarFill != null)
-        {
-            float fillAmount = playerProperty.energyValue / 100f;
-            playerEnergyBarFill.fillAmount = fillAmount;
-        }
-    }
-
+    // ==================== 护甲显示 ====================
     public void UpdateArmorDisplay()
     {
         if (playerProperty != null && armorText != null)
         {
             armorText.text = playerProperty.armorValue.ToString();
-            
-           
         }
     }
+
+    // ==================== 手动刷新（调试用） ====================
     public void RefreshUI()
     {
         UpdateHealthBar();
-        UpdateEnergyBar();
+        if (playerProperty != null)
+            OnEnergyChanged(playerProperty.EnergyNormalized); // 强制刷新能量条
         UpdateArmorDisplay();
         UpdateEXPBar();
         UpdateEXPText();
     }
 
-    private void OnDestroy()//取消订阅
+    private void OnDestroy()
     {
-        if (healthSystem != null)
-        {
-            healthSystem.OnHealthChanged -= OnHealthChanged; 
-        }
-
-        if (playerProperty != null)
-        {
-            playerProperty.OnArmorChanged -= UpdateArmorDisplay;
-        }
+        UnsubscribeFromEvents();
     }
 }

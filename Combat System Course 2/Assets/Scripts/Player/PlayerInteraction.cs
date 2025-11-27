@@ -6,7 +6,7 @@ public class PlayerInteraction : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        
+        Debug.Log($"【触发器进入】{other.name} | Layer:{LayerMask.LayerToName(other.gameObject.layer)} | Tag:{other.tag} | IsTrigger:{other.isTrigger}", other);
 
         if (other.CompareTag("NPC"))
         {
@@ -14,6 +14,7 @@ public class PlayerInteraction : MonoBehaviour
             if (currentNPC != null && currentNPC.isInteractable)
             {
                 currentNPC.OnPlayerEnterRange();
+                Debug.Log("碰到npc");
             }
         }//碰到NPC
         else if (other.CompareTag("Interactable"))

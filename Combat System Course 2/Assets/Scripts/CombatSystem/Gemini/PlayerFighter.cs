@@ -199,7 +199,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     private void OnTriggerEnter(Collider other)
     {
         if (HealthSystem.IsDead) return;
-
+        
         if (other.tag == "Hitbox" && !IsTakingHit && !InCounter)
         {
             var attacker = other.GetComponentInParent<ICombatSystem>();
@@ -208,7 +208,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
 
             var attackerDamage = attacker.GetWeaponDamage();
             TakeDamage(attackerDamage);
-
+            Debug.Log("ÕÊº“ ‹…À");
             if (!HealthSystem.IsDead)
             {
                 StartCoroutine(PlayHitReaction(attacker));

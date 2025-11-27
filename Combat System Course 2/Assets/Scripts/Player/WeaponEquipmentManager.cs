@@ -46,6 +46,7 @@ public class WeaponEquipmentManager : MonoBehaviour
 
         // 更新UI
         InventoryUI.Instance?.UpdateEquipmentIcon(weaponItem);
+        PlayerController.i.SetArmedMode(true);
     }
 
     // 卸下武器
@@ -65,6 +66,7 @@ public class WeaponEquipmentManager : MonoBehaviour
 
         // 清除UI
         InventoryUI.Instance?.ClearEquipmentIcon(ItemType.Weapon, ArmorType.NotArmor);
+        PlayerController.i.SetArmedMode(false);
     }
 
     // 获取当前武器

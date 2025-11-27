@@ -406,9 +406,11 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     }
     public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCount = 0)
     {
+        Debug.Log($"[EnemyAttack] 开始执行敌人攻击，目标: {(target != null ? target.gameObject.name : "null")}");
         float damage = GetWeaponDamage();
         InAction = true;
         currTarget = target;
+        Debug.Log($"[EnemyAttack] 敌人攻击目标设置为: {currTarget?.gameObject?.name}");
         Attackstate = AttackStates.Windup;
 
         var attack = attacks[comboCount];

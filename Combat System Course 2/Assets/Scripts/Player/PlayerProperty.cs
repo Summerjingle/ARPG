@@ -6,6 +6,22 @@ using UnityEngine;
 public class PlayerProperty : MonoBehaviour
 
 {
+    [Header("Energy System")]
+    [SerializeField] private int maxEnergy = 100;                    // 最大能量
+    [SerializeField] public float idleRegenRate = 200f;              // 每秒恢复（站立不动）
+    [SerializeField] public float walkRegenRate = 150f;              // 每秒恢复（走路）
+    [SerializeField] private float sprintCostPerSecond = 15f;        // 冲刺每秒消耗
+    [SerializeField] private int rollEnergyCost = 20;                // 每次翻滚消耗
+
+    public int EnergyValue => energyValue;                           // 只读对外暴露
+    public int MaxEnergy => maxEnergy;
+    public float EnergyNormalized => (float)energyValue / maxEnergy;
+
+    public System.Action<float> OnEnergyChanged; // 传入 0~1 的百分比，用于UI
+
+    // 新增：获取消耗值的方法，供 PlayerController 调用
+    public float GetSprintCostPerSecond() => sprintCostPerSecond;
+    public int GetRollEnergyCost() => rollEnergyCost;
     public static PlayerProperty Instance;
     public Dictionary<PropertyType, List<Property>> propertyDict;
     public int hpValue = 100;
@@ -214,5 +230,32 @@ public class PlayerProperty : MonoBehaviour
         equipmentArmorBonus -= value;
         Debug.Log($"移除装备护甲加成: {value}, 当前总护甲值: {armorValue}");
         OnArmorChanged?.Invoke();
+    }
+    // 消耗能量（可被外部调用）
+    public bool ConsumeEnergy(int amount)
+    {
+        if (energyValue >= amount)
+        {
+            energyValue -= amount;
+            energyValue = Mathf.Clamp(energyValue, 0, maxEnergy);
+            OnEnergyChanged?.Invoke(EnergyNormalized);
+            return true;
+        }
+        return false; // 能量不足
+    }
+
+    // 恢复能量（内部用）
+    public void RestoreEnergy(int amount)
+    {
+        energyValue += amount;
+        energyValue = Mathf.Clamp(energyValue, 0, maxEnergy);
+        OnEnergyChanged?.Invoke(EnergyNormalized);
+    }
+
+    // 强制设置能量（比如读档）
+    public void SetEnergy(int value)
+    {
+        energyValue = Mathf.Clamp(value, 0, maxEnergy);
+        OnEnergyChanged?.Invoke(EnergyNormalized);
     }
 }

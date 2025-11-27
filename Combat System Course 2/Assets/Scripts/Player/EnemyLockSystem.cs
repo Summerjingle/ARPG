@@ -106,10 +106,10 @@ public class EnemyLockSystem : MonoBehaviour
         if (lockUICanvas != null)
             lockUICanvas.gameObject.SetActive(true);
 
-        player.LockCameraPosition = true;
+        player.cameraController.LockOnTarget(target);
         animator.SetBool("combatMode", true); 
 
-        player.LookAtTargetInstant(target);
+        
         player.ResetMovementBase();
 
         followCam.Priority = 10;
@@ -134,7 +134,7 @@ public class EnemyLockSystem : MonoBehaviour
 
         player.isLockedOn = false;
         player.lockedTargetDir = Vector3.zero;
-        player.UnlockCamera();
+        player.cameraController.UnlockCamera();
         player.targetRotation = player.transform.rotation;
 
         followCam.Priority = 20;
