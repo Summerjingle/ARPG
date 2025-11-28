@@ -98,8 +98,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         {
             if (PlayerCanAttack())
             {
-                if (currentTarget is KnightDFighter knight)
-                    knight.TryPredictiveBlock();
+               
                 TryToAttack(currentTarget);
                 attackInput = false;
             }

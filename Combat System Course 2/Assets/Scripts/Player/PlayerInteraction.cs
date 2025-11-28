@@ -6,7 +6,7 @@ public class PlayerInteraction : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"¡¾´¥·¢Æ÷½øÈë¡¿{other.name} | Layer:{LayerMask.LayerToName(other.gameObject.layer)} | Tag:{other.tag} | IsTrigger:{other.isTrigger}", other);
+       
 
         if (other.CompareTag("NPC"))
         {

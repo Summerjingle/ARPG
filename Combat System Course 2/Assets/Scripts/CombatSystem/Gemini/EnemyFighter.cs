@@ -233,7 +233,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     {
         animator.CrossFade("Death", 0.2f);
     }
-    private void OnTriggerEnter(Collider other)
+    protected void OnTriggerEnter(Collider other)
     {
         if (HealthSystem.IsDead) return;
 

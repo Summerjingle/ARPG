@@ -4,7 +4,7 @@ using System.Collections;
 public class KnightDFighter : EnemyFighter
 {
     [Header("骑士特殊参数")]
-    [SerializeField] private float shieldBlockChance = 0.25f; // 25% 几率格挡
+    [SerializeField] private float shieldBlockChance = 1f; // % 几率格挡
 
     private bool pendingBlock = false;
 

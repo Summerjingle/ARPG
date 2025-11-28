@@ -1,0 +1,2568 @@
+fileFormatVersion: 2
+guid: bf39294e5fbf9314281585172bbdf671
+ModelImporter:
+  serializedVersion: 22200
+  internalIDToNameTable:
+  - first:
+      1: 100000
+    second: axe_bone
+  - first:
+      1: 100002
+    second: axe_control
+  - first:
+      1: 100004
+    second: axe_control_01
+  - first:
+      1: 100006
+    second: beard03
+  - first:
+      1: 100008
+    second: beard04
+  - first:
+      1: 100010
+    second: beard05
+  - first:
+      1: 100012
+    second: beard06
+  - first:
+      1: 100014
+    second: beard07
+  - first:
+      1: 100016
+    second: beard08
+  - first:
+      1: 100018
+    second: beard09
+  - first:
+      1: 100020
+    second: //RootNode
+  - first:
+      1: 100022
+    second: Red_Gnome
+  - first:
+      1: 100024
+    second: Red_gnome Footsteps
+  - first:
+      1: 100026
+    second: Red_Gnome Head
+  - first:
+      1: 100028
+    second: Red_Gnome HeadNub
+  - first:
+      1: 100030
+    second: Red_Gnome L Calf
+  - first:
+      1: 100032
+    second: Red_Gnome L Clavicle
+  - first:
+      1: 100034
+    second: Red_Gnome L Finger0
+  - first:
+      1: 100036
+    second: Red_Gnome L Finger01
+  - first:
+      1: 100038
+    second: Red_Gnome L Finger0Nub
+  - first:
+      1: 100040
+    second: Red_Gnome L Finger1
+  - first:
+      1: 100042
+    second: Red_Gnome L Finger11
+  - first:
+      1: 100044
+    second: Red_Gnome L Finger1Nub
+  - first:
+      1: 100046
+    second: Red_Gnome L Finger2
+  - first:
+      1: 100048
+    second: Red_Gnome L Finger21
+  - first:
+      1: 100050
+    second: Red_Gnome L Finger2Nub
+  - first:
+      1: 100052
+    second: Red_Gnome L Finger3
+  - first:
+      1: 100054
+    second: Red_Gnome L Finger31
+  - first:
+      1: 100056
+    second: Red_Gnome L Finger3Nub
+  - first:
+      1: 100058
+    second: Red_Gnome L Finger4
+  - first:
+      1: 100060
+    second: Red_Gnome L Finger41
+  - first:
+      1: 100062
+    second: Red_Gnome L Finger4Nub
+  - first:
+      1: 100064
+    second: Red_Gnome L Foot
+  - first:
+      1: 100066
+    second: Red_Gnome L Forearm
+  - first:
+      1: 100068
+    second: Red_Gnome L Hand
+  - first:
+      1: 100070
+    second: Red_Gnome L Thigh
+  - first:
+      1: 100072
+    second: Red_Gnome L Toe0
+  - first:
+      1: 100074
+    second: Red_Gnome L Toe0Nub
+  - first:
+      1: 100076
+    second: Red_Gnome L UpperArm
+  - first:
+      1: 100078
+    second: Red_Gnome Neck
+  - first:
+      1: 100080
+    second: Red_Gnome R Calf
+  - first:
+      1: 100082
+    second: Red_Gnome R Clavicle
+  - first:
+      1: 100084
+    second: Red_Gnome R Finger0
+  - first:
+      1: 100086
+    second: Red_Gnome R Finger01
+  - first:
+      1: 100088
+    second: Red_Gnome R Finger0Nub
+  - first:
+      1: 100090
+    second: Red_Gnome R Finger1
+  - first:
+      1: 100092
+    second: Red_Gnome R Finger11
+  - first:
+      1: 100094
+    second: Red_Gnome R Finger1Nub
+  - first:
+      1: 100096
+    second: Red_Gnome R Finger2
+  - first:
+      1: 100098
+    second: Red_Gnome R Finger21
+  - first:
+      1: 100100
+    second: Red_Gnome R Finger2Nub
+  - first:
+      1: 100102
+    second: Red_Gnome R Finger3
+  - first:
+      1: 100104
+    second: Red_Gnome R Finger31
+  - first:
+      1: 100106
+    second: Red_Gnome R Finger3Nub
+  - first:
+      1: 100108
+    second: Red_Gnome R Finger4
+  - first:
+      1: 100110
+    second: Red_Gnome R Finger41
+  - first:
+      1: 100112
+    second: Red_Gnome R Finger4Nub
+  - first:
+      1: 100114
+    second: Red_Gnome R Foot
+  - first:
+      1: 100116
+    second: Red_Gnome R Forearm
+  - first:
+      1: 100118
+    second: Red_Gnome R Hand
+  - first:
+      1: 100120
+    second: Red_Gnome R Thigh
+  - first:
+      1: 100122
+    second: Red_Gnome R Toe0
+  - first:
+      1: 100124
+    second: Red_Gnome R Toe0Nub
+  - first:
+      1: 100126
+    second: Red_Gnome R UpperArm
+  - first:
+      1: 100128
+    second: Red_Gnome Spine
+  - first:
+      1: 100130
+    second: Red_Gnome Spine1
+  - first:
+      1: 100132
+    second: Red_Gnome Spine2
+  - first:
+      1: 100134
+    second: Red_Gnome Spine3
+  - first:
+      1: 100136
+    second: Red_Gnome_mesh
+  - first:
+      1: 100138
+    second: Red_Gnome_Pelvis
+  - first:
+      4: 400000
+    second: axe_bone
+  - first:
+      4: 400002
+    second: axe_control
+  - first:
+      4: 400004
+    second: axe_control_01
+  - first:
+      4: 400006
+    second: beard03
+  - first:
+      4: 400008
+    second: beard04
+  - first:
+      4: 400010
+    second: beard05
+  - first:
+      4: 400012
+    second: beard06
+  - first:
+      4: 400014
+    second: beard07
+  - first:
+      4: 400016
+    second: beard08
+  - first:
+      4: 400018
+    second: beard09
+  - first:
+      4: 400020
+    second: //RootNode
+  - first:
+      4: 400022
+    second: Red_Gnome
+  - first:
+      4: 400024
+    second: Red_gnome Footsteps
+  - first:
+      4: 400026
+    second: Red_Gnome Head
+  - first:
+      4: 400028
+    second: Red_Gnome HeadNub
+  - first:
+      4: 400030
+    second: Red_Gnome L Calf
+  - first:
+      4: 400032
+    second: Red_Gnome L Clavicle
+  - first:
+      4: 400034
+    second: Red_Gnome L Finger0
+  - first:
+      4: 400036
+    second: Red_Gnome L Finger01
+  - first:
+      4: 400038
+    second: Red_Gnome L Finger0Nub
+  - first:
+      4: 400040
+    second: Red_Gnome L Finger1
+  - first:
+      4: 400042
+    second: Red_Gnome L Finger11
+  - first:
+      4: 400044
+    second: Red_Gnome L Finger1Nub
+  - first:
+      4: 400046
+    second: Red_Gnome L Finger2
+  - first:
+      4: 400048
+    second: Red_Gnome L Finger21
+  - first:
+      4: 400050
+    second: Red_Gnome L Finger2Nub
+  - first:
+      4: 400052
+    second: Red_Gnome L Finger3
+  - first:
+      4: 400054
+    second: Red_Gnome L Finger31
+  - first:
+      4: 400056
+    second: Red_Gnome L Finger3Nub
+  - first:
+      4: 400058
+    second: Red_Gnome L Finger4
+  - first:
+      4: 400060
+    second: Red_Gnome L Finger41
+  - first:
+      4: 400062
+    second: Red_Gnome L Finger4Nub
+  - first:
+      4: 400064
+    second: Red_Gnome L Foot
+  - first:
+      4: 400066
+    second: Red_Gnome L Forearm
+  - first:
+      4: 400068
+    second: Red_Gnome L Hand
+  - first:
+      4: 400070
+    second: Red_Gnome L Thigh
+  - first:
+      4: 400072
+    second: Red_Gnome L Toe0
+  - first:
+      4: 400074
+    second: Red_Gnome L Toe0Nub
+  - first:
+      4: 400076
+    second: Red_Gnome L UpperArm
+  - first:
+      4: 400078
+    second: Red_Gnome Neck
+  - first:
+      4: 400080
+    second: Red_Gnome R Calf
+  - first:
+      4: 400082
+    second: Red_Gnome R Clavicle
+  - first:
+      4: 400084
+    second: Red_Gnome R Finger0
+  - first:
+      4: 400086
+    second: Red_Gnome R Finger01
+  - first:
+      4: 400088
+    second: Red_Gnome R Finger0Nub
+  - first:
+      4: 400090
+    second: Red_Gnome R Finger1
+  - first:
+      4: 400092
+    second: Red_Gnome R Finger11
+  - first:
+      4: 400094
+    second: Red_Gnome R Finger1Nub
+  - first:
+      4: 400096
+    second: Red_Gnome R Finger2
+  - first:
+      4: 400098
+    second: Red_Gnome R Finger21
+  - first:
+      4: 400100
+    second: Red_Gnome R Finger2Nub
+  - first:
+      4: 400102
+    second: Red_Gnome R Finger3
+  - first:
+      4: 400104
+    second: Red_Gnome R Finger31
+  - first:
+      4: 400106
+    second: Red_Gnome R Finger3Nub
+  - first:
+      4: 400108
+    second: Red_Gnome R Finger4
+  - first:
+      4: 400110
+    second: Red_Gnome R Finger41
+  - first:
+      4: 400112
+    second: Red_Gnome R Finger4Nub
+  - first:
+      4: 400114
+    second: Red_Gnome R Foot
+  - first:
+      4: 400116
+    second: Red_Gnome R Forearm
+  - first:
+      4: 400118
+    second: Red_Gnome R Hand
+  - first:
+      4: 400120
+    second: Red_Gnome R Thigh
+  - first:
+      4: 400122
+    second: Red_Gnome R Toe0
+  - first:
+      4: 400124
+    second: Red_Gnome R Toe0Nub
+  - first:
+      4: 400126
+    second: Red_Gnome R UpperArm
+  - first:
+      4: 400128
+    second: Red_Gnome Spine
+  - first:
+      4: 400130
+    second: Red_Gnome Spine1
+  - first:
+      4: 400132
+    second: Red_Gnome Spine2
+  - first:
+      4: 400134
+    second: Red_Gnome Spine3
+  - first:
+      4: 400136
+    second: Red_Gnome_mesh
+  - first:
+      4: 400138
+    second: Red_Gnome_Pelvis
+  - first:
+      43: 4300000
+    second: Red_Gnome_mesh
+  - first:
+      74: 7400000
+    second: 'Red_Gnome_idle '
+  - first:
+      74: 7400002
+    second: Red_Gnome_cast
+  - first:
+      74: 7400004
+    second: Red_Gnome_walk
+  - first:
+      74: 7400006
+    second: Red_Gnome_attack
+  - first:
+      74: 7400008
+    second: Red_Gnome_damage
+  - first:
+      74: 7400010
+    second: Red_Gnome_idle_2
+  - first:
+      74: 7400012
+    second: Red_Gnome_die
+  - first:
+      95: 9500000
+    second: //RootNode
+  - first:
+      137: 13700000
+    second: Red_Gnome_mesh
+  externalObjects: {}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: 'Red_Gnome_idle '
+      takeName: Take 001
+      internalID: 0
+      firstFrame: 0
+      lastFrame: 40
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: axe_bone
+        weight: 1
+      - path: Red_Gnome
+        weight: 1
+      - path: Red_Gnome/Red_gnome Footsteps
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0/Red_Gnome L Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0/Red_Gnome R Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04/beard05
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06/beard07
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08/beard09
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/Red_Gnome HeadNub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01/Red_Gnome L Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11/Red_Gnome L Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21/Red_Gnome L Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31/Red_Gnome L Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41/Red_Gnome L Finger4Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control/axe_control_01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01/Red_Gnome R Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11/Red_Gnome R Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21/Red_Gnome R Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31/Red_Gnome R Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41/Red_Gnome R Finger4Nub
+        weight: 1
+      - path: Red_Gnome_mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Red_Gnome_cast
+      takeName: Take 001
+      internalID: 0
+      firstFrame: 40
+      lastFrame: 80
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: axe_bone
+        weight: 1
+      - path: Red_Gnome
+        weight: 1
+      - path: Red_Gnome/Red_gnome Footsteps
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0/Red_Gnome L Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0/Red_Gnome R Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04/beard05
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06/beard07
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08/beard09
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/Red_Gnome HeadNub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01/Red_Gnome L Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11/Red_Gnome L Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21/Red_Gnome L Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31/Red_Gnome L Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41/Red_Gnome L Finger4Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control/axe_control_01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01/Red_Gnome R Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11/Red_Gnome R Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21/Red_Gnome R Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31/Red_Gnome R Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41/Red_Gnome R Finger4Nub
+        weight: 1
+      - path: Red_Gnome_mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Red_Gnome_walk
+      takeName: Take 001
+      internalID: 0
+      firstFrame: 81
+      lastFrame: 111
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: axe_bone
+        weight: 1
+      - path: Red_Gnome
+        weight: 1
+      - path: Red_Gnome/Red_gnome Footsteps
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0/Red_Gnome L Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0/Red_Gnome R Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04/beard05
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06/beard07
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08/beard09
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/Red_Gnome HeadNub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01/Red_Gnome L Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11/Red_Gnome L Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21/Red_Gnome L Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31/Red_Gnome L Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41/Red_Gnome L Finger4Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control/axe_control_01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01/Red_Gnome R Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11/Red_Gnome R Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21/Red_Gnome R Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31/Red_Gnome R Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41/Red_Gnome R Finger4Nub
+        weight: 1
+      - path: Red_Gnome_mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Red_Gnome_attack
+      takeName: Take 001
+      internalID: 0
+      firstFrame: 112
+      lastFrame: 166
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: axe_bone
+        weight: 1
+      - path: Red_Gnome
+        weight: 1
+      - path: Red_Gnome/Red_gnome Footsteps
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0/Red_Gnome L Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0/Red_Gnome R Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04/beard05
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06/beard07
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08/beard09
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/Red_Gnome HeadNub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01/Red_Gnome L Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11/Red_Gnome L Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21/Red_Gnome L Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31/Red_Gnome L Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41/Red_Gnome L Finger4Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control/axe_control_01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01/Red_Gnome R Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11/Red_Gnome R Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21/Red_Gnome R Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31/Red_Gnome R Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41/Red_Gnome R Finger4Nub
+        weight: 1
+      - path: Red_Gnome_mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Red_Gnome_damage
+      takeName: Take 001
+      internalID: 0
+      firstFrame: 166
+      lastFrame: 221
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: axe_bone
+        weight: 1
+      - path: Red_Gnome
+        weight: 1
+      - path: Red_Gnome/Red_gnome Footsteps
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0/Red_Gnome L Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0/Red_Gnome R Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04/beard05
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06/beard07
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08/beard09
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/Red_Gnome HeadNub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01/Red_Gnome L Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11/Red_Gnome L Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21/Red_Gnome L Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31/Red_Gnome L Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41/Red_Gnome L Finger4Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control/axe_control_01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01/Red_Gnome R Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11/Red_Gnome R Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21/Red_Gnome R Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31/Red_Gnome R Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41/Red_Gnome R Finger4Nub
+        weight: 1
+      - path: Red_Gnome_mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Red_Gnome_idle_2
+      takeName: Take 001
+      internalID: 0
+      firstFrame: 221
+      lastFrame: 300
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 1
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: axe_bone
+        weight: 1
+      - path: Red_Gnome
+        weight: 1
+      - path: Red_Gnome/Red_gnome Footsteps
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0/Red_Gnome L Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0/Red_Gnome R Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04/beard05
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06/beard07
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08/beard09
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/Red_Gnome HeadNub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01/Red_Gnome L Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11/Red_Gnome L Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21/Red_Gnome L Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31/Red_Gnome L Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41/Red_Gnome L Finger4Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control/axe_control_01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01/Red_Gnome R Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11/Red_Gnome R Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21/Red_Gnome R Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31/Red_Gnome R Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41/Red_Gnome R Finger4Nub
+        weight: 1
+      - path: Red_Gnome_mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    - serializedVersion: 16
+      name: Red_Gnome_die
+      takeName: Take 001
+      internalID: 0
+      firstFrame: 300
+      lastFrame: 326
+      wrapMode: 0
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      hasAdditiveReferencePose: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: axe_bone
+        weight: 1
+      - path: Red_Gnome
+        weight: 1
+      - path: Red_Gnome/Red_gnome Footsteps
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome L Thigh/Red_Gnome
+          L Calf/Red_Gnome L Foot/Red_Gnome L Toe0/Red_Gnome L Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome R Thigh/Red_Gnome
+          R Calf/Red_Gnome R Foot/Red_Gnome R Toe0/Red_Gnome R Toe0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard03/beard04/beard05
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard06/beard07
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/beard08/beard09
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome Head/Red_Gnome HeadNub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger0/Red_Gnome
+          L Finger01/Red_Gnome L Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger1/Red_Gnome
+          L Finger11/Red_Gnome L Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger2/Red_Gnome
+          L Finger21/Red_Gnome L Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger3/Red_Gnome
+          L Finger31/Red_Gnome L Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome L Clavicle/Red_Gnome L
+          UpperArm/Red_Gnome L Forearm/Red_Gnome L Hand/Red_Gnome L Finger4/Red_Gnome
+          L Finger41/Red_Gnome L Finger4Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/axe_control/axe_control_01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger0/Red_Gnome
+          R Finger01/Red_Gnome R Finger0Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger1/Red_Gnome
+          R Finger11/Red_Gnome R Finger1Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger2/Red_Gnome
+          R Finger21/Red_Gnome R Finger2Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger3/Red_Gnome
+          R Finger31/Red_Gnome R Finger3Nub
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41
+        weight: 1
+      - path: Red_Gnome/Red_Gnome_Pelvis/Red_Gnome Spine/Red_Gnome Spine1/Red_Gnome
+          Spine2/Red_Gnome Spine3/Red_Gnome Neck/Red_Gnome R Clavicle/Red_Gnome R
+          UpperArm/Red_Gnome R Forearm/Red_Gnome R Hand/Red_Gnome R Finger4/Red_Gnome
+          R Finger41/Red_Gnome R Finger4Nub
+        weight: 1
+      - path: Red_Gnome_mesh
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+      additiveReferencePoseFrame: 0
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 10
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 0
+    importVisibility: 0
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 0
+    fileIdsGeneration: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 0
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 4
+    normalCalculationMode: 0
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 1
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 10
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 0
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 1
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 0
+  importBlendShapeDeformPercent: 0
+  remapMaterialsIfMaterialImportModeIsNone: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

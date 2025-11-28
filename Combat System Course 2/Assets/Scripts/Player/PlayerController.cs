@@ -14,6 +14,7 @@ public class PlayerController : MonoBehaviour
     private bool isSprinting = false; // 当前是否正在冲刺（消耗能量）
 
     [SerializeField] private bool Armed = false;
+    private bool isFalling = false;
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float rotationSpeed = 500f;
     [SerializeField] float groundCheckRadius = 0.2f;
@@ -75,10 +76,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
-        if (isSprinting)
-        {
-            Debug.Log($"当前能量: {PlayerProperty.Instance?.EnergyValue ?? -999} | Instance是否存在: {PlayerProperty.Instance != null}");
-        }
+        
         if (combatSystem.InAction) return;
 
         if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
@@ -147,8 +145,27 @@ public class PlayerController : MonoBehaviour
 
         // ====================== 重力 ======================
         GroundCheck();
+
+        // 1. 重力必须最先计算（否则卡空）
         ySpeed = isGrounded ? 0f : ySpeed + Physics.gravity.y * Time.deltaTime;
 
+        
+        if (!isGrounded && ySpeed < -4f && !isFalling && !isRolling)   // -3f 防小台阶误触
+        {
+
+            isFalling = true;
+            animator.SetBool("Falling", true);
+        }
+
+       
+        else if (isGrounded && isFalling)
+        {
+            isFalling = false;
+            animator.SetBool("Falling", false);
+
+            
+            animator.Play("Land", -1, 0f);
+        }
         // ====================== 最终速度 ======================
         Vector3 velocity = moveDir * currentMoveSpeed;
 
@@ -314,9 +331,60 @@ public class PlayerController : MonoBehaviour
         float rollDistance = 5.5f;
         float rollDuration = 0.75f;
 
-        Vector3 rollDirection = transform.forward;
-        rollDirection.y = 0;
-        rollDirection.Normalize();
+        // 计算翻滚方向
+        float h = Input.GetAxisRaw("Horizontal");
+        float v = Input.GetAxisRaw("Vertical");
+        Vector3 wishDir;
+
+        if (isLockedOn)
+        {
+            Vector3 lockedDir = cameraController != null
+                ? cameraController.GetLockedDirection()
+                : lockedTargetDir;
+
+            if (lockedDir.sqrMagnitude > 0.001f)
+            {
+                Vector3 right = Vector3.Cross(Vector3.up, lockedDir);
+                wishDir = lockedDir * v + right * h;
+            }
+            else
+            {
+                wishDir = GetCameraPlanarRotation() * new Vector3(h, 0, v);
+            }
+        }
+        else
+        {
+            wishDir = GetCameraPlanarRotation() * new Vector3(h, 0, v);
+        }
+
+        // 无输入翻滚
+        if (wishDir.sqrMagnitude < 0.1f)
+        {
+            wishDir = isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f
+                ? lockedTargetDir
+                : transform.forward;
+        }
+
+        wishDir.y = 0;
+        wishDir = wishDir.normalized;
+
+        //有输入-翻滚前转向
+        if (wishDir.sqrMagnitude > 0.01f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(wishDir);
+            float turnTime = 0f;
+            float turnDuration = 0.1f;   
+
+            while (turnTime < turnDuration)
+            {
+                turnTime += Time.deltaTime;
+                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turnTime / turnDuration);
+                yield return null;
+            }
+            transform.rotation = targetRot; // 确保完全对齐
+        }
+
+        Vector3 rollDirection = transform.forward;  
 
         Vector3 startPosition = transform.position;
         float timer = 0f;
@@ -324,36 +392,22 @@ public class PlayerController : MonoBehaviour
         while (timer < rollDuration)
         {
             timer += Time.deltaTime;
-            float progress = timer / rollDuration;
+            float t = timer / rollDuration;
 
-            Vector3 targetPosition = startPosition + rollDirection * rollDistance;
-            Vector3 newPosition = Vector3.Lerp(startPosition, targetPosition, progress);
+            Vector3 targetPos = startPosition + rollDirection * rollDistance;
+            Vector3 newPos = Vector3.Lerp(startPosition, targetPos, t);
 
-            Vector3 moveDelta = newPosition - transform.position;
-            charactercontroller.Move(moveDelta);
-
+            charactercontroller.Move(newPos - transform.position);
             yield return null;
         }
-
         yield return new WaitForSeconds(0.15f);
 
         isRolling = false;
-        if (combatSystem != null)
-        {
-            combatSystem.InAction = false;
-        }
-
-        animator.SetFloat("forwardSpeed", 0f);
-        animator.SetFloat("strafeSpeed", 0f);
-
-        if (!UIStateManager.IsAnyUIActive)
-        {
-            isMovementEnabled = true;
-        }
+        if (combatSystem != null) combatSystem.InAction = false;
+        if (!UIStateManager.IsAnyUIActive) isMovementEnabled = true;
 
         currentRollCoroutine = null;
     }
-
     private void OnDestroy()
     {
         UIStateManager.OnUIActiveStateChanged -= OnUIActiveStateChanged;
@@ -367,7 +421,18 @@ public class PlayerController : MonoBehaviour
     {
         InputDir = transform.forward;
     }
-
+    public void OnLandBegin()
+    {
+        isMovementEnabled = false;
+        LockRotation = true;  // 锁定旋转
+        Debug.Log("Landing Begin, InAction set to true.");
+    }
+    public void OnLandComplete()
+    {
+         isMovementEnabled = true;
+        LockRotation = false;  // 解锁旋转
+        Debug.Log("Landing completed, InAction set to false.");
+    }
     private Quaternion GetCameraPlanarRotation()
     {
         return cameraController != null ? cameraController.GetPlanarRotation() : Quaternion.identity;
