@@ -89,17 +89,16 @@ public class EnemyHeathBar : MonoBehaviour
         RefreshHealthBar();
     }
 
-    // 修改2：修改方法签名以匹配 Action<MeleeFighter>
+   
     void OnFighterDeath(HealthSystem healthSystem)
     {
         // 虽然参数可能用不到，但为了匹配事件签名必须接受
         if (canvas != null) canvas.enabled = false;
     }
 
-    // 死亡序列完成时调用（可选）
+  
     void OnFighterDeathComplete(HealthSystem healthSystem)
     {
-        // 可以在这里添加额外的清理逻辑
         Debug.Log("Death sequence completed, health bar hidden");
     }
 

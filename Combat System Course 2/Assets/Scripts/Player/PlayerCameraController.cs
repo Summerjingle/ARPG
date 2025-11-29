@@ -118,7 +118,26 @@ public class PlayerCameraController : MonoBehaviour
         }
         return Vector3.zero;
     }
+    private void OnEnable()
+    {
+        UIStateManager.OnUIActiveStateChanged += HandleUIStateChanged;
+    }
+    private void OnDisable()
+    {
+        UIStateManager.OnUIActiveStateChanged -= HandleUIStateChanged;
+    }
 
+    private void HandleUIStateChanged(bool isUIActive)
+    {
+        // UI 打开 → 摄像机锁住
+        lockCameraPosition = isUIActive;
+
+        // UI 打开时，阻止输入干扰数值
+        if (isUIActive)
+        {
+            Input.ResetInputAxes();
+        }
+    }
     public float Yaw => yaw;
     public float Pitch => pitch;
 }

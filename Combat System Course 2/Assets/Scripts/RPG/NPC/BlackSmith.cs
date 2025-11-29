@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -7,6 +8,7 @@ public class BlackSmith : MonoBehaviour
     public GameObject tips;
     public GameObject blacksmithDialogue;
     private bool isInTrigger=false;
+    public CinemachineVirtualCamera blacksmithCam;
 
     private void Awake()
     {
@@ -36,6 +38,7 @@ public class BlackSmith : MonoBehaviour
             tips.SetActive(false);
             blacksmithDialogue.SetActive(true);
             UIStateManager.SetUIActive(true);
+            blacksmithCam.Priority = 30;
         }
     }
 
@@ -44,5 +47,6 @@ public class BlackSmith : MonoBehaviour
     {
         blacksmithDialogue.SetActive(false);
         UIStateManager.SetUIActive(false);
+        blacksmithCam.Priority = 10;
     }
 }

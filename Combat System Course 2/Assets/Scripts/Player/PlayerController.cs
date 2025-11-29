@@ -103,7 +103,7 @@ public class PlayerController : MonoBehaviour
         float moveAmount = Mathf.Clamp01(Mathf.Abs(h) + Mathf.Abs(v));
 
         bool wantsToSprint = Input.GetKey(KeyCode.LeftShift) && moveAmount > 0.1f && !isRolling;
-        isSprinting = wantsToSprint && PlayerProperty.Instance.EnergyValue > 0;
+        isSprinting = wantsToSprint && PlayerProperty.Instance.EnergyValue > 15;
 
         if (isSprinting)
         {
@@ -111,15 +111,21 @@ public class PlayerController : MonoBehaviour
             if (!PlayerProperty.Instance.ConsumeEnergy(Mathf.CeilToInt(costPerSecond * Time.deltaTime)))
                 isSprinting = false;
         }
-
+        if (PlayerProperty.Instance.EnergyValue <= 15)
+        {
+            currentRunBlend = 0f;
+        }
+        else
+        {
+            currentRunBlend = Mathf.MoveTowards(currentRunBlend, isSprinting ? 1f : 0f, Time.deltaTime * 5f);
+        }
         if (!isSprinting && !isRolling && PlayerProperty.Instance.EnergyValue < PlayerProperty.Instance.MaxEnergy)
         {
             float regenRate = moveAmount < 0.1f ? PlayerProperty.Instance.idleRegenRate : PlayerProperty.Instance.walkRegenRate;
-            int regenInt = Mathf.FloorToInt(regenRate * Time.deltaTime);
-            if (regenInt > 0) PlayerProperty.Instance.RestoreEnergy(regenInt);
+            PlayerProperty.Instance.RestoreEnergy(regenRate * Time.deltaTime);
         }
 
-        currentRunBlend = Mathf.MoveTowards(currentRunBlend, isSprinting ? 1f : 0f, Time.deltaTime * 5f);
+     
         float currentMoveSpeed = Mathf.Lerp(moveSpeed * walkSpeedMultiplier, moveSpeed, currentRunBlend);
 
         // ====================== ÒÆ¶¯·½Ïò ======================

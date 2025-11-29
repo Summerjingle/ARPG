@@ -13,7 +13,7 @@ public class PlayerProperty : MonoBehaviour
     [SerializeField] private float sprintCostPerSecond = 15f;        // 冲刺每秒消耗
     [SerializeField] private int rollEnergyCost = 20;                // 每次翻滚消耗
 
-    public int EnergyValue => energyValue;                           // 只读对外暴露
+    public float EnergyValue => energyValue;                           // 只读对外暴露
     public int MaxEnergy => maxEnergy;
     public float EnergyNormalized => (float)energyValue / maxEnergy;
 
@@ -25,7 +25,7 @@ public class PlayerProperty : MonoBehaviour
     public static PlayerProperty Instance;
     public Dictionary<PropertyType, List<Property>> propertyDict;
     public int hpValue = 100;
-    public int energyValue = 100;
+    public float energyValue = 100;
     public int armorValue => baseArmorValue + equipmentArmorBonus; // 只读属性：总护甲值
     public int level = 1;
     public int currEXP = 0;
@@ -232,7 +232,7 @@ public class PlayerProperty : MonoBehaviour
         OnArmorChanged?.Invoke();
     }
     // 消耗能量（可被外部调用）
-    public bool ConsumeEnergy(int amount)
+    public bool ConsumeEnergy(float amount)
     {
         if (energyValue >= amount)
         {
@@ -241,11 +241,11 @@ public class PlayerProperty : MonoBehaviour
             OnEnergyChanged?.Invoke(EnergyNormalized);
             return true;
         }
-        return false; // 能量不足
+        return false;
     }
 
     // 恢复能量（内部用）
-    public void RestoreEnergy(int amount)
+    public void RestoreEnergy(float amount)
     {
         energyValue += amount;
         energyValue = Mathf.Clamp(energyValue, 0, maxEnergy);

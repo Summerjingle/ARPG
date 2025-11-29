@@ -20,7 +20,7 @@ public class GameSaveData
     public int currEXP;
     public int hpValue;
     public int maxHealth;
-    public int energyValue;
+    public float energyValue;
     public int armorValue;
 
     // 装备信息
