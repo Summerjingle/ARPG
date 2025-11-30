@@ -138,6 +138,24 @@ public class PlayerCameraController : MonoBehaviour
             Input.ResetInputAxes();
         }
     }
+    public void SetCameraHeight(float height, bool smooth = true)
+    {
+        if (cinemachineCameraTarget == null) return;
+
+        Vector3 pos = cinemachineCameraTarget.transform.localPosition;
+
+        if (smooth)
+        {
+            // Æ½»¬¹ý¶É
+            pos.y = Mathf.Lerp(pos.y, height, Time.deltaTime * 10f);
+        }
+        else
+        {
+            pos.y = height;
+        }
+
+        cinemachineCameraTarget.transform.localPosition = pos;
+    }
     public float Yaw => yaw;
     public float Pitch => pitch;
 }

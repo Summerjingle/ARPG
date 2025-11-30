@@ -16,25 +16,7 @@ public class ParkourController : MonoBehaviour
         combatSystem=GetComponent<ICombatSystem>();
         playerController = GetComponent<PlayerController>();
     }
-    private void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.F)&&!combatSystem.InAction)
-        {
-            var hitData = environmentScanner.ObstacleCheck();
-
-            if (hitData.forwardHitFound)
-            {
-                foreach (var action in parkourActions)
-                {
-                    if (action.CheckIfPossible(hitData, transform))
-                    {
-                        StartCoroutine(DoParkourAction(action));
-                        break;
-                    }
-                }
-            }
-        }
-    }
+    
     IEnumerator DoParkourAction(ParkourAction action)
     {
         combatSystem.InAction = true;
@@ -82,7 +64,26 @@ public class ParkourController : MonoBehaviour
         combatSystem.InAction = false;
         UIStateManager.SetUIActive(false);
     }
+    public bool TryClimb()
+    {
+        if (combatSystem.InAction)
+            return false;
 
+        var hitData = environmentScanner.ObstacleCheck();
+        if (!hitData.forwardHitFound)
+            return false;
+
+        foreach (var action in parkourActions)
+        {
+            if (action.CheckIfPossible(hitData, transform))
+            {
+                StartCoroutine(DoParkourAction(action));
+                return true; // 成功攀爬
+            }
+        }
+
+        return false; // 没找到动作 → 不攀爬
+    }
     private void MatchTarget(ParkourAction action)
     {
         if (animator.isMatchingTarget) return;

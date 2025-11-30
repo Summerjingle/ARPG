@@ -10,7 +10,17 @@ public class PlayerController : MonoBehaviour
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeedMultiplier = 0.5f; // 走路速度乘数
     private float currentRunBlend = 0f;
-    
+    private bool isCrouching = false;
+    [SerializeField] LayerMask obstacleLayer; // 只检测障碍物
+
+
+    [SerializeField] private float crouchHeight = 0.9f;
+    [SerializeField] private float standHeight = 1.8f;
+    [SerializeField] private Vector3 crouchCenter = new Vector3(0, 0.5f, 0);
+
+    private Vector3 standCenter;
+   
+
     private bool isSprinting = false; // 当前是否正在冲刺（消耗能量）
 
     [SerializeField] private bool Armed = false;
@@ -32,6 +42,7 @@ public class PlayerController : MonoBehaviour
 
     public Animator animator;
     private CharacterController charactercontroller;
+    private ParkourController parkourController;
     public CombatController combatController;
     public bool isGrounded;
     private float ySpeed;
@@ -51,6 +62,9 @@ public class PlayerController : MonoBehaviour
         charactercontroller = GetComponent<CharacterController>();
         combatSystem = GetComponent<ICombatSystem>();
         cameraController = GetComponent<PlayerCameraController>();
+        parkourController = GetComponent<ParkourController>();
+        standCenter = charactercontroller.center;
+        isCrouching = false;
         StartCoroutine(DelayedRegistration());
         RegisterToHUD();
         UIStateManager.OnUIActiveStateChanged += OnUIActiveStateChanged;
@@ -78,6 +92,7 @@ public class PlayerController : MonoBehaviour
     {
         
         if (combatSystem.InAction) return;
+      
 
         if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
@@ -86,16 +101,20 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        // ====================== 翻滚输入 ======================
+        // ====================== 空格输入，可以攀爬？攀爬：翻滚 ======================
         if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.Space) && isGrounded && !isRolling)
         {
+            // 先尝试执行攀爬
+            if (parkourController != null && parkourController.TryClimb())
+                return; // 成功攀爬 → 直接 return，不进行翻滚
+
+            // 失败 → 允许翻滚
             if (Time.time >= lastRollTime + rollCooldown)
             {
                 StartRoll();
                 return;
             }
         }
-
         // ====================== 输入 & 能量系统 ======================
         float h = Input.GetAxis("Horizontal");
         float v = Input.GetAxis("Vertical");
@@ -127,7 +146,7 @@ public class PlayerController : MonoBehaviour
 
      
         float currentMoveSpeed = Mathf.Lerp(moveSpeed * walkSpeedMultiplier, moveSpeed, currentRunBlend);
-
+        UpdateCrouchState(moveInput);
         // ====================== 移动方向 ======================
         Vector3 moveDir;
         if (isLockedOn)
@@ -152,33 +171,25 @@ public class PlayerController : MonoBehaviour
         // ====================== 重力 ======================
         GroundCheck();
 
-        // 1. 重力必须最先计算（否则卡空）
         ySpeed = isGrounded ? 0f : ySpeed + Physics.gravity.y * Time.deltaTime;
-
-        
-        if (!isGrounded && ySpeed < -4f && !isFalling && !isRolling)   // -3f 防小台阶误触
+        if (!isGrounded && ySpeed < -2f && !isFalling && !isRolling)   // -2f 防小台阶误触
         {
-
             isFalling = true;
             animator.SetBool("Falling", true);
-        }
-
-       
+        } 
         else if (isGrounded && isFalling)
         {
             isFalling = false;
             animator.SetBool("Falling", false);
-
-            
             animator.Play("Land", -1, 0f);
         }
-        // ====================== 最终速度 ======================
+
+        // ====================== 移动逻辑 ======================
         Vector3 velocity = moveDir * currentMoveSpeed;
 
-        // ====================== 核心修复：锁定状态下统一使用“魂系盘旋”逻辑！======================
         if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
         {
-            // —— 锁定状态：不管有没有武器，都强制走这套！——
+            //  锁定状态[最高优先级]
             velocity /= 3f;  // 减速
 
             targetRotation = Quaternion.LookRotation(lockedTargetDir);
@@ -192,7 +203,7 @@ public class PlayerController : MonoBehaviour
         }
         else if (Armed)
         {
-            // —— 非锁定 + 武装：持枪自由移动 ——
+            //  非锁定+装备武器 
             Vector3 localVelocity = transform.InverseTransformDirection(velocity);
             float forwardSpeed = localVelocity.z / moveSpeed;
             float strafeSpeed = localVelocity.x / moveSpeed;
@@ -211,7 +222,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // —— 非锁定 + 空手：经典前后走 ——
+            // 非锁定+非装备武器 
             if (moveAmount > 0 && !LockRotation)
                 targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
@@ -286,6 +297,7 @@ public class PlayerController : MonoBehaviour
 
     private void StartRoll()
     {
+        if (Input.GetKey(KeyCode.LeftControl)) return;
         if (isRolling || Time.time < lastRollTime + rollCooldown)
         {
             return;
@@ -442,6 +454,68 @@ public class PlayerController : MonoBehaviour
     private Quaternion GetCameraPlanarRotation()
     {
         return cameraController != null ? cameraController.GetPlanarRotation() : Quaternion.identity;
+    }
+
+    private void UpdateCrouchState(Vector3 moveInput)
+    {
+        bool pressingCrouch = Input.GetKey(KeyCode.LeftControl);
+        bool canCrouchNow = isGrounded && !isRolling && !combatSystem.InAction;
+       
+
+        // 关键改动：蹲下状态完全等于“当前是否按着 Ctrl 并且允许蹲下”
+        isCrouching = pressingCrouch && canCrouchNow;
+
+        // 直接驱动动画（不需要 wasCrouchPressed 这种历史状态）
+        animator.SetBool("IsCrouching", isCrouching);
+
+        // 蹲下时才判断是否移动
+        if (isCrouching)
+        {
+            bool moving = moveInput.sqrMagnitude > 0.01f;
+            animator.SetBool("CrouchMoving", moving);
+        }
+        else
+        {
+            animator.SetBool("CrouchMoving", false);
+        }
+    }
+
+    // 添加蹲下条件检查方法
+
+
+    private void LateUpdate()
+    {
+        float targetHeight = standHeight;
+        Vector3 targetCenter = standCenter;
+
+        if (isCrouching || !CanStandUpFromCrouch())
+        {
+            targetHeight = crouchHeight;
+            targetCenter = crouchCenter;
+        }
+
+        // 更新 CharacterController
+        charactercontroller.height = targetHeight;
+        charactercontroller.center = targetCenter;
+
+      
+
+        // 同步摄像机 target 高度
+        if (cameraController != null)
+        {
+            cameraController.SetCameraHeight(targetCenter.y, true);
+        }
+    }
+
+
+    // 只在“准备从蹲→站”这一刻才检测一次
+    private bool CanStandUpFromCrouch()
+    {
+        float radius = charactercontroller.radius;
+        Vector3 bottom = transform.position + Vector3.up * (crouchHeight * 0.5f);
+        Vector3 top = transform.position + Vector3.up * (standHeight - radius);
+
+        return !Physics.CheckCapsule(bottom, top, radius, obstacleLayer);
     }
 
     public float RotationSpeed => rotationSpeed;

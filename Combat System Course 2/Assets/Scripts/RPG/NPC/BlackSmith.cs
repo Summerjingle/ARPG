@@ -7,13 +7,18 @@ public class BlackSmith : MonoBehaviour
 {
     public GameObject tips;
     public GameObject blacksmithDialogue;
-    private bool isInTrigger=false;
     public CinemachineVirtualCamera blacksmithCam;
+    public AudioClip wellcom;
+    public AudioClip end;
+
+    private bool isInTrigger = false;
+    private Animator ratManAnim;
 
     private void Awake()
     {
+        ratManAnim = GetComponent<Animator>();
         tips.SetActive(false);
-        hideDialogue();
+        blacksmithDialogue.SetActive(false);
     }
     private void OnTriggerEnter(Collider other)
     {
@@ -27,6 +32,7 @@ public class BlackSmith : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+          
             isInTrigger = false;
             tips.SetActive(false);
         }
@@ -35,6 +41,9 @@ public class BlackSmith : MonoBehaviour
     {
         if (isInTrigger && Input.GetKeyDown(KeyCode.E))
         {
+            ratManAnim.SetTrigger("Welcom");
+            AudioSource.PlayClipAtPoint(wellcom, transform.position);
+            Debug.Log("wellcom");
             tips.SetActive(false);
             blacksmithDialogue.SetActive(true);
             UIStateManager.SetUIActive(true);
@@ -45,8 +54,11 @@ public class BlackSmith : MonoBehaviour
     
     public void hideDialogue()
     {
+        AudioSource.PlayClipAtPoint(end, transform.position);
         blacksmithDialogue.SetActive(false);
         UIStateManager.SetUIActive(false);
         blacksmithCam.Priority = 10;
+        ratManAnim.SetTrigger("End");
+        Debug.Log("end");
     }
 }
