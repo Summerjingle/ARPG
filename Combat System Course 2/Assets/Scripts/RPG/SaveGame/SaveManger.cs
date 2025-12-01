@@ -66,35 +66,28 @@ public class SaveManager : MonoBehaviour
     }
 
     #region 存档管理
-    
+
     public void ResetSaveManagerState()
     {
-        // 重置所有静态状态
         shouldLoadFromSave = false;
         isNewGame = true;
         currentSaveId = null;
         shouldLoadPosition = false;
 
-        // 重置实例数据
         currentSaveData = null;
         registeredPlayer = null;
         isApplyingSaveData = false;
         isApplySaveDataAfterFrameRunning = false;
         hasSaveDataBeenAppliedInCurrentScene = false;
 
-        // 关键：也清空其他单例的数据
-        if (InventoryManager.Instance != null)
-        {
-            InventoryManager.Instance.ClearInventory();
-        }
-
-        if (QuestManager.Instance != null)
-        {
-            QuestManager.Instance.ResetAllQuests();
-        }
+        // 清空系统
+        InventoryManager.Instance?.ClearInventory();
+        QuestManager.Instance?.ResetAllQuests();
+        WeaponEquipmentManager.Instance?.UnequipWeapon();
+        ArmorEquipmentManager.Instance?.UnequipAll();
+        CurrencySystem.Instance?.SetCurrentCoins(0);
 
         Debug.Log("SaveManager 状态和所有单例数据已重置");
-        Debug.Log("SaveManager 状态已重置");
     }
     public void CreateNewGame(int slot)
     {
@@ -274,6 +267,7 @@ public class SaveManager : MonoBehaviour
         currentSaveData.maxHealth = Mathf.RoundToInt(healthSystem.MaxHealth);
         currentSaveData.energyValue = playerProperty.energyValue;
         currentSaveData.armorValue = playerProperty.GetBaseArmor();
+        currentSaveData.currCoins=CurrencySystem.Instance.GetCurrentCoins();
         currentSaveData.saveTime = System.DateTime.Now;
 
         // 清空旧数据
@@ -509,7 +503,7 @@ public class SaveManager : MonoBehaviour
 
         healthSystem.MaxHealth = currentSaveData.maxHealth;
         healthSystem.Health = currentSaveData.hpValue;
-
+        CurrencySystem.Instance.SetCurrentCoins(currentSaveData.currCoins);
         Debug.Log($"应用后属性 - 等级: {playerProperty.level}, 经验: {playerProperty.currEXP}, 血量: {healthSystem.Health}");
         RefreshHUDUI();
     }

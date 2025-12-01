@@ -100,7 +100,7 @@ public class DualQuestNPC : NPC
         if (QuestManager.Instance != null)
         {
             QuestManager.Instance.SetQuestState(mainQuest, QuestState.Completed);
-            Debug.Log($"完成主线任务: {mainQuest.questName}，获得奖励: {mainQuest.rewardGold}金币");
+            Debug.Log($"完成主线任务: {mainQuest.questName}，获得奖励: {mainQuest.rewardCoins}金币");
 
             // 更新任务面板
             if (QuestPanelController.Instance != null)

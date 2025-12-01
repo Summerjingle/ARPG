@@ -357,7 +357,7 @@ public class QuestManager : MonoBehaviour
     /// </summary>
     public void CompleteQuest(Quest quest)
     {
-        if (quest == null) return;
+        if (quest == null) { Debug.Log("无法发放奖励"); return; }
 
         // 给予奖励
         GiveQuestRewards(quest);
@@ -371,11 +371,12 @@ public class QuestManager : MonoBehaviour
     /// <summary>
     /// 给予任务奖励
     /// </summary>
-    private void GiveQuestRewards(Quest quest)
+    public void GiveQuestRewards(Quest quest)
     {
-        if (quest.rewardGold > 0)
+        if (quest.rewardCoins > 0)
         {
-            Debug.Log($"获得金币奖励: {quest.rewardGold}");
+            CurrencySystem.Instance.AddCoins(quest.rewardCoins);
+            Debug.Log($"获得金币奖励: {quest.rewardCoins}");
         }
 
         if (quest.rewardExp > 0)
@@ -410,6 +411,7 @@ public class QuestManager : MonoBehaviour
         {
             ShowCompletionMark(quest);
         }
+   
     }
 
     /// <summary>

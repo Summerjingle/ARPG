@@ -24,8 +24,9 @@ MonoBehaviour:
     requiredAmount: 1
     currentAmount: 0
     isCompleted: 0
-  rewardGold: 0
+  rewardCoins: 300
   rewardExp: 0
-  rewardItems: []
+  rewardItems:
+  - {fileID: 11400000, guid: 58e4c5d37c74b184f973eb451bd4b9ad, type: 2}
   isRepeatable: 0
   autoComplete: 0

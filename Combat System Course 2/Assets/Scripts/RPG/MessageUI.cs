@@ -54,65 +54,24 @@ public class MessageUI : MonoBehaviour
     { 
         messageText.enabled = false;
     }
-    public void BackToMenuYes()//供Yes按钮绑定
+    public void BackToMenuYes()
     {
         PortalConfirm.SetActive(false);
         UIStateManager.SetUIActive(false);
-        // 保存当前游戏（如果有）
-        if (IsInGameScene() && SaveManager.Instance != null)
-        {
+
+        // 保存当前存档（如果在游戏中）
+        if (IsInGameScene())
             SaveManager.Instance.SaveGame();
-        }
 
-        // 关键：清空所有单例数据
-        if (InventoryManager.Instance != null)
-        {
-            InventoryManager.Instance.ClearInventory();
-            Debug.Log("返回主菜单：InventoryManager 已清空");
-        }
+        // 关键：真正重置所有状态
+        SaveManager.Instance.ResetSaveManagerState();
 
-        if (QuestManager.Instance != null)
-        {
-            QuestManager.Instance.ResetAllQuests();
-            Debug.Log("返回主菜单：QuestManager 已重置");
-        }
-        if (WeaponEquipmentManager.Instance != null)
-        {
-            WeaponEquipmentManager.Instance.UnequipWeapon();
-            Debug.Log("返回主菜单：武器装备已重置");
-        }
-        if (ArmorEquipmentManager.Instance != null)
-        {
-
-            ArmorEquipmentManager.Instance.UnequipAll();
-            Debug.Log("返回主菜单：护甲装备已重置");
-        }
-
-        SaveManager.Instance.currentSaveData.level = 1;
-        SaveManager.Instance.currentSaveData.currEXP = 0;
-        SaveManager.Instance.currentSaveData.hpValue = 100;
-        SaveManager.Instance.currentSaveData.maxHealth = 100;
-        SaveManager.Instance.currentSaveData.energyValue = 100;
-        SaveManager.Instance.currentSaveData.armorValue = 0;
-
-        // 重置装备信息
-        SaveManager.Instance.currentSaveData.equippedWeapon = "";
-        SaveManager.Instance.currentSaveData.equippedHelmet = "";
-        SaveManager.Instance.currentSaveData.equippedChestplate = "";
-        SaveManager.Instance.currentSaveData.equippedGauntlets = "";
-        SaveManager.Instance.currentSaveData.equippedLeggings = "";
-        SaveManager.Instance.currentSaveData.equippedBoots = "";
-
-        // 清空场景物品拾取状态
-        SaveManager.Instance.currentSaveData.scenePickedItems.Clear();
-
-        // 清空机关激活状态
-        SaveManager.Instance.currentSaveData.sceneMechanismStates.Clear();
-
+        // 不加载存档，走默认流程
+        SaveManager.shouldLoadFromSave = false;
 
         PlayerPrefs.SetString("TargetScene", "000Scene_Menu");
         PlayerPrefs.Save();
-        SaveManager.shouldLoadFromSave = false;
+
         SceneManager.LoadScene("LoadingScene");
     }
     private bool IsInGameScene()

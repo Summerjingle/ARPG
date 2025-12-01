@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeedMultiplier = 0.5f; // 走路速度乘数
+    [SerializeField] private float crouchSpeedMultiplier = 0.3f; // 蹲走速度（30%）
     private float currentRunBlend = 0f;
     private bool isCrouching = false;
     [SerializeField] LayerMask obstacleLayer; // 只检测障碍物
@@ -16,9 +17,9 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float crouchHeight = 0.9f;
     [SerializeField] private float standHeight = 1.8f;
-    [SerializeField] private Vector3 crouchCenter = new Vector3(0, 0.5f, 0);
+   
 
-    private Vector3 standCenter;
+    
    
 
     private bool isSprinting = false; // 当前是否正在冲刺（消耗能量）
@@ -63,7 +64,7 @@ public class PlayerController : MonoBehaviour
         combatSystem = GetComponent<ICombatSystem>();
         cameraController = GetComponent<PlayerCameraController>();
         parkourController = GetComponent<ParkourController>();
-        standCenter = charactercontroller.center;
+        
         isCrouching = false;
         StartCoroutine(DelayedRegistration());
         RegisterToHUD();
@@ -144,8 +145,15 @@ public class PlayerController : MonoBehaviour
             PlayerProperty.Instance.RestoreEnergy(regenRate * Time.deltaTime);
         }
 
-     
-        float currentMoveSpeed = Mathf.Lerp(moveSpeed * walkSpeedMultiplier, moveSpeed, currentRunBlend);
+
+        float baseSpeed = Mathf.Lerp(moveSpeed * walkSpeedMultiplier, moveSpeed, currentRunBlend);
+
+        if (isCrouching)
+        {
+            baseSpeed *= crouchSpeedMultiplier;
+        }
+
+        float currentMoveSpeed = baseSpeed;
         UpdateCrouchState(moveInput);
         // ====================== 移动方向 ======================
         Vector3 moveDir;
@@ -485,27 +493,19 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        float targetHeight = standHeight;
-        Vector3 targetCenter = standCenter;
+        float targetHeight = isCrouching || !CanStandUpFromCrouch()
+            ? crouchHeight
+            : standHeight;
 
-        if (isCrouching || !CanStandUpFromCrouch())
-        {
-            targetHeight = crouchHeight;
-            targetCenter = crouchCenter;
-        }
-
-        // 更新 CharacterController
         charactercontroller.height = targetHeight;
-        charactercontroller.center = targetCenter;
+        charactercontroller.center = new Vector3(0, targetHeight * 0.5f, 0);
 
-      
-
-        // 同步摄像机 target 高度
         if (cameraController != null)
         {
-            cameraController.SetCameraHeight(targetCenter.y, true);
+            cameraController.SetCameraHeight(charactercontroller.center.y, true);
         }
     }
+
 
 
     // 只在“准备从蹲→站”这一刻才检测一次

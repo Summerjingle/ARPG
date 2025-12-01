@@ -22,6 +22,8 @@ public class GameSaveData
     public int maxHealth;
     public float energyValue;
     public int armorValue;
+    public int currCoins;
+
 
     // 装备信息
     public string equippedWeapon;

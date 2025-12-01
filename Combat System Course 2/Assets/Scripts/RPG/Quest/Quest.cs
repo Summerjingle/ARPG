@@ -17,7 +17,7 @@ public class Quest : ScriptableObject
     public List<QuestObjective> objectives;   // 任务目标
 
     [Header("奖励")]
-    public int rewardGold;
+    public int rewardCoins;
     public int rewardExp;
     public List<ItemSO> rewardItems;          // 奖励物品
 

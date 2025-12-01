@@ -86,8 +86,9 @@ public class QuestNPC : NPC
     {
         if (QuestManager.Instance != null)
         {
-            // ¸øÓè½±Àø
-            
+            QuestManager.Instance.GiveQuestRewards(quest);
+
+
             }
 
         QuestManager.Instance.SetQuestState(quest, QuestState.Completed);
