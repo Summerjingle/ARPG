@@ -3,24 +3,26 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.SceneManagement;
+
 
 public class PlayerController : MonoBehaviour
 {
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeedMultiplier = 0.5f; // 走路速度乘数
     [SerializeField] private float crouchSpeedMultiplier = 0.3f; // 蹲走速度（30%）
+    private bool shouldCrouch;      // 实际蹲下状态
     private float currentRunBlend = 0f;
     private bool isCrouching = false;
     [SerializeField] LayerMask obstacleLayer; // 只检测障碍物
 
 
+
     [SerializeField] private float crouchHeight = 0.9f;
     [SerializeField] private float standHeight = 1.8f;
-   
+    private float currentHeightVelocity;  // 新增：用于平滑过渡
 
-    
-   
+
+
 
     private bool isSprinting = false; // 当前是否正在冲刺（消耗能量）
 
@@ -45,7 +47,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController charactercontroller;
     private ParkourController parkourController;
     public CombatController combatController;
+    private HeadCollisionChecker headChecker;
     public bool isGrounded;
+    private bool isDrinking;
     private float ySpeed;
     public bool isMovementEnabled = true;
     public bool isRolling = false;
@@ -55,6 +59,7 @@ public class PlayerController : MonoBehaviour
 
     [HideInInspector] public bool isLockedOn = false;
     [HideInInspector] public Vector3 lockedTargetDir;
+    public ItemSO testHealthPotion;
 
     private void Awake()
     {
@@ -64,6 +69,7 @@ public class PlayerController : MonoBehaviour
         combatSystem = GetComponent<ICombatSystem>();
         cameraController = GetComponent<PlayerCameraController>();
         parkourController = GetComponent<ParkourController>();
+        headChecker = GetComponentInChildren<HeadCollisionChecker>();
         
         isCrouching = false;
         StartCoroutine(DelayedRegistration());
@@ -91,6 +97,11 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (isGrounded && !isDrinking &&!isRolling&&Input.GetKeyDown(KeyCode.Alpha1))//在地上，还没喝，没滚
+        {
+            PlayerProperty.Instance.UseDrag(testHealthPotion);
+            isDrinking = true;
+        }
         
         if (combatSystem.InAction) return;
       
@@ -103,7 +114,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // ====================== 空格输入，可以攀爬？攀爬：翻滚 ======================
-        if (!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.Space) && isGrounded && !isRolling)
+        if (!isDrinking&&!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.Space) && isGrounded && !isRolling)
         {
             // 先尝试执行攀爬
             if (parkourController != null && parkourController.TryClimb())
@@ -180,7 +191,7 @@ public class PlayerController : MonoBehaviour
         GroundCheck();
 
         ySpeed = isGrounded ? 0f : ySpeed + Physics.gravity.y * Time.deltaTime;
-        if (!isGrounded && ySpeed < -2f && !isFalling && !isRolling)   // -2f 防小台阶误触
+        if (!isGrounded && ySpeed < -5f && !isFalling && !isRolling)   // -2f 防小台阶误触
         {
             isFalling = true;
             animator.SetBool("Falling", true);
@@ -467,17 +478,22 @@ public class PlayerController : MonoBehaviour
     private void UpdateCrouchState(Vector3 moveInput)
     {
         bool pressingCrouch = Input.GetKey(KeyCode.LeftControl);
+        if (pressingCrouch) 
+        {
+            headChecker.EnableHeadCheck();
+        }
+        else if (headChecker.CanStandUpFromCrouch())
+        {
+            headChecker.DisableHeadCheck();
+        }
         bool canCrouchNow = isGrounded && !isRolling && !combatSystem.InAction;
-       
-
-        // 关键改动：蹲下状态完全等于“当前是否按着 Ctrl 并且允许蹲下”
         isCrouching = pressingCrouch && canCrouchNow;
-
-        // 直接驱动动画（不需要 wasCrouchPressed 这种历史状态）
-        animator.SetBool("IsCrouching", isCrouching);
+        shouldCrouch = isCrouching || !headChecker.CanStandUpFromCrouch();
+        
+        animator.SetBool("IsCrouching", shouldCrouch);
 
         // 蹲下时才判断是否移动
-        if (isCrouching)
+        if (shouldCrouch)
         {
             bool moving = moveInput.sqrMagnitude > 0.01f;
             animator.SetBool("CrouchMoving", moving);
@@ -493,30 +509,37 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
-        float targetHeight = isCrouching || !CanStandUpFromCrouch()
+        // 判断目标高度
+        float targetHeight = isCrouching || !headChecker.CanStandUpFromCrouch()
             ? crouchHeight
             : standHeight;
 
-        charactercontroller.height = targetHeight;
-        charactercontroller.center = new Vector3(0, targetHeight * 0.5f, 0);
-
-        if (cameraController != null)
+        // 平滑调整 CharacterController 高度
+        if (Mathf.Abs(charactercontroller.height - targetHeight) > 0.01f)
         {
-            cameraController.SetCameraHeight(charactercontroller.center.y, true);
+            float oldHeight = charactercontroller.height;
+            charactercontroller.height = Mathf.SmoothDamp(
+                charactercontroller.height,
+                targetHeight,
+                ref currentHeightVelocity,
+                0.1f
+            );
+
+            charactercontroller.center = new Vector3(0, charactercontroller.height * 0.5f, 0);
+
+            if (cameraController != null)
+                cameraController.SetCameraHeight(charactercontroller.center.y, true);
         }
     }
 
 
 
-    // 只在“准备从蹲→站”这一刻才检测一次
-    private bool CanStandUpFromCrouch()
+    public void OnDrinkAnimationComplete()
     {
-        float radius = charactercontroller.radius;
-        Vector3 bottom = transform.position + Vector3.up * (crouchHeight * 0.5f);
-        Vector3 top = transform.position + Vector3.up * (standHeight - radius);
-
-        return !Physics.CheckCapsule(bottom, top, radius, obstacleLayer);
+        isDrinking = false;
     }
+  
+
 
     public float RotationSpeed => rotationSpeed;
 }

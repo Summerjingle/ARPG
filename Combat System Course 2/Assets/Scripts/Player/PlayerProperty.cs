@@ -36,6 +36,11 @@ public class PlayerProperty : MonoBehaviour
 
    
     private HealthSystem healthSystem;
+    private Animator anim;
+    private ItemSO pendingItem;
+    [SerializeField] private GameObject hpPotionModel;
+    [SerializeField] private GameObject eyPotionModel;
+    public AudioClip DrinkSound;
 
 
     public event System.Action OnArmorChanged;//护甲值改变事件（增加、减少）
@@ -48,6 +53,8 @@ public class PlayerProperty : MonoBehaviour
             return;
         }
         Instance = this;
+        anim=GetComponent<Animator>();
+
     }
 
     private void Start()
@@ -55,8 +62,10 @@ public class PlayerProperty : MonoBehaviour
         propertyDict = new Dictionary<PropertyType, List<Property>>();
         propertyDict.Add(PropertyType.HPValue, new List<Property>());
         propertyDict.Add(PropertyType.EnergyValue, new List<Property>());
+        HideAllDrugModels();
 
-       
+
+
         healthSystem = GetComponent<HealthSystem>();    
         if (healthSystem != null)
         {
@@ -141,10 +150,8 @@ public class PlayerProperty : MonoBehaviour
 
     public void UseDrag(ItemSO itemSO)
     {
-        foreach (Property p in itemSO.propertyList)
-        {
-            AddProperty(p.propertyType, p.value);
-        }
+        pendingItem = itemSO;                // 记录这次要用的药
+        anim.SetTrigger("UsePotion");            // 播喝药动画（你 Animator 里的 trigger）
     }
 
     public void AddProperty(PropertyType pt, int value)
@@ -161,6 +168,7 @@ public class PlayerProperty : MonoBehaviour
                 return;
             case PropertyType.EnergyValue:
                 energyValue += value;
+                
                 return;
         }
 
@@ -257,5 +265,43 @@ public class PlayerProperty : MonoBehaviour
     {
         energyValue = Mathf.Clamp(value, 0, maxEnergy);
         OnEnergyChanged?.Invoke(EnergyNormalized);
+    }
+    // 动画途中显示模型
+    public void OnDrinkShowModel()
+    {
+        HideAllDrugModels();
+
+        if (pendingItem == null) return;
+
+        foreach (Property p in pendingItem.propertyList)
+        {
+            if (p.propertyType == PropertyType.HPValue)
+                hpPotionModel.SetActive(true);
+
+            else if (p.propertyType == PropertyType.EnergyValue)
+                eyPotionModel.SetActive(true);
+        }
+    }
+
+    // 动画中的关键帧调用：真正加属性
+    public void OnDrinkApply()
+    {
+        if (pendingItem == null) return;
+        AudioSource.PlayClipAtPoint(DrinkSound,transform.position);
+        foreach (Property p in pendingItem.propertyList)
+        {
+            AddProperty(p.propertyType, p.value);
+        }
+
+        pendingItem = null;
+    }
+
+    // 动画结束隐藏模型
+    public void HideAllDrugModels()
+    {
+        
+           hpPotionModel.SetActive(false);
+           eyPotionModel.SetActive(false);
+
     }
 }

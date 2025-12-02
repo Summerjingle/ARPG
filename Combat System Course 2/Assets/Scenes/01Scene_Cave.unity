@@ -11584,8 +11584,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 497115386}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.00006113808, y: -0.99670464, z: -0.00075124885, w: 0.08111375}
-  m_LocalPosition: {x: 0.60846543, y: 0.10246277, z: 7.0759163}
+  m_LocalRotation: {x: -0.00023386737, y: -0.99669665, z: -0.0028719876, w: 0.08116452}
+  m_LocalPosition: {x: 0.608959, y: 0.08118391, z: 7.0396824}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -32154,7 +32154,7 @@ Transform:
   m_GameObject: {fileID: 966651295}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.0913308, z: -0, w: -0.99582064}
-  m_LocalPosition: {x: -21.2718, y: 4.6559997, z: -18.266987}
+  m_LocalPosition: {x: -21.27836, y: 4.515, z: -18.231514}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -51182,6 +51182,21 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 4268081894443812884, guid: 0329ac313e7f4664696a8aba29794931,
         type: 3}
+      propertyPath: m_LocalScale.x
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4268081894443812884, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: m_LocalScale.y
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4268081894443812884, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: m_LocalScale.z
+      value: 0.9
+      objectReference: {fileID: 0}
+    - target: {fileID: 4268081894443812884, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
       propertyPath: m_LocalPosition.x
       value: -21.858036
       objectReference: {fileID: 0}
@@ -51248,7 +51263,7 @@ PrefabInstance:
     - target: {fileID: 6101705603750396947, guid: 0329ac313e7f4664696a8aba29794931,
         type: 3}
       propertyPath: groundCheckRadius
-      value: 0.3
+      value: 0.2
       objectReference: {fileID: 0}
     - target: {fileID: 6101705603750396947, guid: 0329ac313e7f4664696a8aba29794931,
         type: 3}
@@ -51290,6 +51305,11 @@ PrefabInstance:
       propertyPath: enemyTarget_Locator
       value: 
       objectReference: {fileID: 749017017}
+    - target: {fileID: 8676786389372295574, guid: 0329ac313e7f4664696a8aba29794931,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.07
+      objectReference: {fileID: 0}
     - target: {fileID: 9111229454801698064, guid: 0329ac313e7f4664696a8aba29794931,
         type: 3}
       propertyPath: m_Name
