@@ -253,6 +253,30 @@ public class PlayerController : MonoBehaviour
 
         // ====================== 应用移动 ======================
         velocity.y = ySpeed;
+
+        //爬梯子逻辑
+        Vector3 rayOrigin =
+         transform.position + Vector3.up * 0.4f+ transform.forward * (charactercontroller.radius + 0.05f);
+
+        Vector3 rayDir = transform.forward;
+
+        Debug.DrawRay(rayOrigin, rayDir *0.4f, Color.red);
+
+        if (Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, 0.4f))
+        {
+            if(hit.transform.TryGetComponent<Ladder>(out Ladder ladder)){
+                Debug.Log("碰到梯子了");
+
+                // 梯子状态下直接向上移动
+                float climbSpeed = 3f;
+                velocity = Vector3.up * climbSpeed;
+
+                // 阻止重力
+                ySpeed = 0f;
+                isGrounded = true;
+            }
+        }
+
         charactercontroller.Move(velocity * Time.deltaTime);
     }
 
@@ -525,7 +549,7 @@ public class PlayerController : MonoBehaviour
                 0.1f
             );
 
-            charactercontroller.center = new Vector3(0, charactercontroller.height * 0.5f, 0);
+            
 
             if (cameraController != null)
                 cameraController.SetCameraHeight(charactercontroller.center.y, true);
