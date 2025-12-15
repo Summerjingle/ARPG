@@ -21,7 +21,7 @@ public class CombatController : MonoBehaviour
     {
         if (Input.GetButtonDown("Attack") && !combatSystem.IsTakingHit)
         {
-            var enemy = EnemyManager.i.GetAttackingEnemy();
+            var enemy = EnemyManager.i?.GetAttackingEnemy();
             if (enemy != null && !enemy.IsUncounterable && enemy.Fighter.IsCounterable && !combatSystem.InAction)
             {
                 StartCoroutine(PerformCounterAttack(enemy));

@@ -19,6 +19,7 @@ public class ChestTrigger : MonoBehaviour
     {
         if (!isCollected&& isInTrigger && Input.GetKeyDown(KeyCode.E))
         {
+            MessageUI.Instance.Show("你打开了一个宝箱");
             MeshRenderer renderer = GetComponent<MeshRenderer>();
             if (renderer != null)
                 renderer.sharedMaterial = defaultMaterial;

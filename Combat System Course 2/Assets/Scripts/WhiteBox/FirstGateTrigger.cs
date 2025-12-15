@@ -5,7 +5,8 @@ using UnityEngine;
 public class FirstGateTrigger : MonoBehaviour
 {
     private Animator firstGateAnim;
-    private bool isInTrigger = false; 
+    private bool isInTrigger = false;
+    public GameObject lockedInfo;
     void Start()
     {
         firstGateAnim = GetComponentInParent<Animator>();
@@ -24,6 +25,7 @@ public class FirstGateTrigger : MonoBehaviour
         if (isInTrigger && Input.GetKeyDown(KeyCode.E))
         {
             firstGateAnim.SetTrigger("GateOpen");
+            Destroy(lockedInfo);
             gameObject.GetComponent<Collider>().enabled = false;
         }
     }

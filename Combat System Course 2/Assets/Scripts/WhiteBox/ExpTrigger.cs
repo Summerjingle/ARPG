@@ -8,6 +8,7 @@ public class ExpTrigger : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
+            MessageUI.Instance.Show("你获得了一点经验");
             Destroy(gameObject);
         }
     }
