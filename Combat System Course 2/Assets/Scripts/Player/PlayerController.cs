@@ -3,10 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 
 public class PlayerController : MonoBehaviour
 {
+    private PlayerInputActions inputActions;
+    private Vector2 moveInput;
+    private bool sprintHeld;
+    private bool rollRequested;
+    private bool crouchHeld;
+    private Vector2 lookInput; // 原始鼠标/摇杆输入
+    public Vector2 LookInput => lookInput;
     [Header("Movement Settings")]
     [SerializeField] private float walkSpeedMultiplier = 0.5f; // 走路速度乘数
     [SerializeField] private float crouchSpeedMultiplier = 0.3f; // 蹲走速度（30%）
@@ -60,7 +68,15 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool isLockedOn = false;
     [HideInInspector] public Vector3 lockedTargetDir;
     public ItemSO testHealthPotion;
-
+    private void OnEnable()
+    {
+        inputActions = new PlayerInputActions();
+        inputActions.Player.Enable();
+    }
+    private void OnDisable()
+    {
+        inputActions.Player.Disable();
+    }
     private void Awake()
     {
         i = this;
@@ -97,6 +113,14 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        lookInput = inputActions.Player.Look.ReadValue<Vector2>();
+        crouchHeld = inputActions.Player.Crouch.IsPressed();
+        if (inputActions.Player.Roll.WasPressedThisFrame())
+        {
+            rollRequested = true;
+        }
+        sprintHeld = inputActions.Player.Sprint.IsPressed();
+        moveInput = inputActions.Player.Move.ReadValue<Vector2>();
         if (isGrounded && !isDrinking &&!isRolling&&Input.GetKeyDown(KeyCode.Alpha1))//在地上，还没喝，没滚
         {
             PlayerProperty.Instance.UseDrag(testHealthPotion);
@@ -114,13 +138,19 @@ public class PlayerController : MonoBehaviour
         }
 
         // ====================== 空格输入，可以攀爬？攀爬：翻滚 ======================
-        if (!isDrinking&&!UIStateManager.IsAnyUIActive && Input.GetKeyDown(KeyCode.Space) && isGrounded && !isRolling)
+        if (rollRequested
+      && !isDrinking
+      && !UIStateManager.IsAnyUIActive
+      && isGrounded
+      && !isRolling)
         {
-            // 先尝试执行攀爬
-            if (parkourController != null && parkourController.TryClimb())
-                return; // 成功攀爬 → 直接 return，不进行翻滚
+            rollRequested = false; // 消费输入
 
-            // 失败 → 允许翻滚
+            // 尝试攀爬
+            if (parkourController != null && parkourController.TryClimb())
+                return;
+
+            // 再尝试翻滚
             if (Time.time >= lastRollTime + rollCooldown)
             {
                 StartRoll();
@@ -128,14 +158,26 @@ public class PlayerController : MonoBehaviour
             }
         }
         // ====================== 输入 & 能量系统 ======================
-        float h = Input.GetAxis("Horizontal");
-        float v = Input.GetAxis("Vertical");
-        Vector3 moveInput = new Vector3(h, 0, v).normalized;
+        float h = moveInput.x;
+        float v = moveInput.y;
+
+        Vector3 moveInput3D = new Vector3(h, 0, v).normalized;
         float moveAmount = Mathf.Clamp01(Mathf.Abs(h) + Mathf.Abs(v));
 
-        bool wantsToSprint = Input.GetKey(KeyCode.LeftShift) && moveAmount > 0.1f && !isRolling;
+        bool wantsToSprint =sprintHeld&& moveAmount > 0.1f&& !isRolling&& !combatSystem.InAction;
         isSprinting = wantsToSprint && PlayerProperty.Instance.EnergyValue > 15;
-
+        if (!isSprinting)
+        {
+            
+            isSprinting = wantsToSprint
+                && PlayerProperty.Instance.EnergyValue > 15;
+        }
+        else
+        {
+            
+            isSprinting = wantsToSprint
+                && PlayerProperty.Instance.EnergyValue > 5;
+        }
         if (isSprinting)
         {
             float costPerSecond = PlayerProperty.Instance.GetSprintCostPerSecond();
@@ -165,7 +207,7 @@ public class PlayerController : MonoBehaviour
         }
 
         float currentMoveSpeed = baseSpeed;
-        UpdateCrouchState(moveInput);
+        UpdateCrouchState(moveInput3D);
         // ====================== 移动方向 ======================
         Vector3 moveDir;
         if (isLockedOn)
@@ -174,16 +216,16 @@ public class PlayerController : MonoBehaviour
             if (lockedDir.sqrMagnitude > 0.001f)
             {
                 Vector3 right = Vector3.Cross(Vector3.up, lockedDir);
-                moveDir = lockedDir * moveInput.z + right * moveInput.x;
+                moveDir = lockedDir * moveInput3D.z + right * moveInput3D.x;
             }
             else
             {
-                moveDir = GetCameraPlanarRotation() * moveInput;
+                moveDir = GetCameraPlanarRotation() * moveInput3D;
             }
         }
         else
         {
-            moveDir = GetCameraPlanarRotation() * moveInput;
+            moveDir = GetCameraPlanarRotation() * moveInput3D;
         }
         InputDir = moveDir.normalized;
 
@@ -393,8 +435,8 @@ public class PlayerController : MonoBehaviour
         float rollDuration = 0.75f;
 
         // 计算翻滚方向
-        float h = Input.GetAxisRaw("Horizontal");
-        float v = Input.GetAxisRaw("Vertical");
+        float h = moveInput.x;
+        float v = moveInput.y;
         Vector3 wishDir;
 
         if (isLockedOn)
@@ -501,7 +543,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateCrouchState(Vector3 moveInput)
     {
-        bool pressingCrouch = Input.GetKey(KeyCode.LeftControl);
+        bool pressingCrouch = crouchHeld;
         if (pressingCrouch) 
         {
             headChecker.EnableHeadCheck();
@@ -533,6 +575,10 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (cameraController != null)
+        {
+            cameraController.SetLookInput(lookInput);
+        }
         // 判断目标高度
         float targetHeight = isCrouching || !headChecker.CanStandUpFromCrouch()
             ? crouchHeight

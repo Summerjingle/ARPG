@@ -1,7 +1,10 @@
+using TMPro.Examples;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class PlayerCameraController : MonoBehaviour
 {
+    
     [Header("Camera Settings")]
     public GameObject cinemachineCameraTarget;
 
@@ -20,6 +23,8 @@ public class PlayerCameraController : MonoBehaviour
     private float yaw;
     private float pitch;
 
+    private Vector2 lookInput; 
+
     private Transform lockedTarget;
     private bool isLockingOn = false;
 
@@ -35,6 +40,7 @@ public class PlayerCameraController : MonoBehaviour
 
     private void LateUpdate()
     {
+        
         if (lockCameraPosition || cinemachineCameraTarget == null) return;
 
         if (isLockingOn && lockedTarget != null)
@@ -46,12 +52,15 @@ public class PlayerCameraController : MonoBehaviour
             HandleFreeCamera();
         }
     }
-
+    public void SetLookInput(Vector2 look)
+    {
+        lookInput = look;
+    }
     // 自由移动摄像机旋转
     private void HandleFreeCamera()
     {
-        float mouseX = Input.GetAxis("Mouse X");
-        float mouseY = Input.GetAxis("Mouse Y");
+        float mouseX = lookInput.x;
+        float mouseY = lookInput.y;
 
         if (mouseX != 0f || mouseY != 0f)
         {
