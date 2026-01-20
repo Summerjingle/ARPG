@@ -28,6 +28,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float crouchHeight = 0.9f;
     [SerializeField] private float standHeight = 1.8f;
     private float currentHeightVelocity;  // 新增：用于平滑过渡
+    [SerializeField] private float fallStartDelay = 0.15f; // 离地多久才算下落
+    [SerializeField] private float minFallSpeed = -6f;     // 真正下落的速度阈值
+
+    private float notGroundedTimer = 0f;
 
 
 
@@ -38,9 +42,7 @@ public class PlayerController : MonoBehaviour
     private bool isFalling = false;
     [SerializeField] float moveSpeed = 5f;
     [SerializeField] float rotationSpeed = 500f;
-    [SerializeField] float groundCheckRadius = 0.2f;
-    [SerializeField] Vector3 groundCheckOffset;
-    [SerializeField] LayerMask groundLayer;
+
 
     public PlayerCameraController cameraController;
 
@@ -109,6 +111,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         UIStateManager.SetUIActive(false);
+        
     }
 
     private void Update()
@@ -229,15 +232,44 @@ public class PlayerController : MonoBehaviour
         }
         InputDir = moveDir.normalized;
 
-        // ====================== 重力 ======================
-        GroundCheck();
+        // ====================== 重力逻辑(2026/1/20 更新 ) ======================
 
-        ySpeed = isGrounded ? 0f : ySpeed + Physics.gravity.y * Time.deltaTime;
-        if (!isGrounded && ySpeed < -5f && !isFalling && !isRolling)   // -2f 防小台阶误触
+        isGrounded = charactercontroller.isGrounded;//先前使用Physics.CheckSphere来检测是否着地，现在使用characterrcontroller提供的API进行检测  2026/1/20
+
+        //重力逻辑
+        if (isGrounded)
+        {
+            if (ySpeed < 0f)
+            {
+                ySpeed = -1.5f;//若已经着地，赋予一个轻微的向下的力，是角色贴合地面，避免不自然的运动表现（注意：-1.5f过大？斜坡处理？）2026/1/20
+            }
+        }
+        else
+        {
+            ySpeed += Physics.gravity.y * Time.deltaTime;// 若没有落地，则基于向下的速度=初速度（ySpeed）+重力加速度（Physics.gravity.y）*时间（Time.deltaTime）2026/1/20
+        }
+        // 记录离地时间
+        if (!isGrounded)
+        {
+            notGroundedTimer += Time.deltaTime;
+        }
+        else
+        {
+            notGroundedTimer = 0f;
+        }
+
+        // 进入 Falling
+        if (!isGrounded
+            && notGroundedTimer > fallStartDelay
+            && ySpeed < minFallSpeed
+            && !isFalling
+            && !isRolling)
         {
             isFalling = true;
             animator.SetBool("Falling", true);
-        } 
+        }
+
+        // 落地
         else if (isGrounded && isFalling)
         {
             isFalling = false;
@@ -318,25 +350,22 @@ public class PlayerController : MonoBehaviour
                 isGrounded = true;
             }
         }
+        if (isGrounded)
+        {
+            ySpeed = -1f; // 只保留轻微负值
+        }
 
         charactercontroller.Move(velocity * Time.deltaTime);
     }
 
-    private void GroundCheck()
-    {
-        isGrounded = Physics.CheckSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius, groundLayer);
-    }
+    
 
     public Vector3 GetIntentDirection()
     {
         return InputDir != Vector3.zero ? InputDir : transform.forward;
     }
 
-    private void OnDrawGizmosSelected()
-    {
-        Gizmos.color = new Color(0, 1, 0, 0.5f);
-        Gizmos.DrawSphere(transform.TransformPoint(groundCheckOffset), groundCheckRadius);
-    }
+   
 
     private void RegisterToHUD()
     {
@@ -571,7 +600,7 @@ public class PlayerController : MonoBehaviour
     }
 
     // 添加蹲下条件检查方法
-
+    
 
     private void LateUpdate()
     {
