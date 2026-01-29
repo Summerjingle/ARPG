@@ -3,12 +3,12 @@ using UnityEngine;
 public class PlayerInteraction : MonoBehaviour
 {
     private NPC currentNPC; // 当前可交互的NPC
-
+    private PickableObject currentPickable;//当前可交互的Item
     void OnTriggerEnter(Collider other)
     {
        
 
-        if (other.CompareTag("NPC"))
+        if (other.CompareTag("NPC"))//碰到NPC
         {
             currentNPC = other.GetComponent<NPC>();
             if (currentNPC != null && currentNPC.isInteractable)
@@ -16,8 +16,8 @@ public class PlayerInteraction : MonoBehaviour
                 currentNPC.OnPlayerEnterRange();
                 Debug.Log("碰到npc");
             }
-        }//碰到NPC
-        else if (other.CompareTag("Interactable"))
+        }
+        else if (other.CompareTag("Interactable"))//碰到物品
         {
             Debug.Log($"检测到Interactable物体: {other.gameObject.name}");
 
@@ -33,9 +33,7 @@ public class PlayerInteraction : MonoBehaviour
             PickableObject po = other.GetComponent<PickableObject>();
             if (po != null)
             {
-                Debug.Log($"成功获取PickableObject组件，物品: {po.itemSO?.nameOfItem}");
-                InventoryManager.Instance.AddItem(po.itemSO);
-                Destroy(po.gameObject);
+                currentPickable = other.GetComponent<PickableObject>();
             }
             else
             {
@@ -58,6 +56,14 @@ public class PlayerInteraction : MonoBehaviour
                 UIManager.Instance.HideInteractPrompt();
             }
         }
+        else if (other.CompareTag("Interactable"))
+        {
+            if (currentPickable != null &&
+                other.gameObject == currentPickable.gameObject)
+            {
+                currentPickable = null;
+            }
+        }
     }
 
     void Update()
@@ -68,9 +74,21 @@ public class PlayerInteraction : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.E) && currentNPC != null && currentNPC.isInteractable)
+        if (Input.GetKeyDown(KeyCode.E))
         {
-            currentNPC.Interact();
+            if (currentPickable != null)
+            {
+                // 优先处理可拾取物品
+                InventoryManager.Instance.AddItem(currentPickable.itemSO);
+                UIManager.Instance.ShowPickupToast(currentPickable.itemSO);
+                Destroy(currentPickable.gameObject);
+                currentPickable = null;
+            }
+            else if (currentNPC != null && currentNPC.isInteractable)
+            {
+                // 没有可拾取物品时再与 NPC 交互
+                currentNPC.Interact();
+            }
         }
     }
 }

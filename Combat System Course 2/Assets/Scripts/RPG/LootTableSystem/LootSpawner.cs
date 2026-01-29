@@ -3,6 +3,7 @@ using UnityEngine;
 
 public static class LootSpawner
 {
+    [SerializeField] private static GameObject soulsLootPrefab;
     public static void SpawnLootItems(Vector3 deathPosition, LootTable lootTable, Transform parent = null)
     {
         if (lootTable == null)
@@ -30,7 +31,8 @@ public static class LootSpawner
                 spawnPosition = hit.point + Vector3.up * 0.1f;
             }
 
-            GameObject droppedItem = Object.Instantiate(dropData.item.interactablePrefab, spawnPosition, Quaternion.identity);
+            GameObject droppedItem = Object.Instantiate(soulsLootPrefab, spawnPosition, Quaternion.identity);
+
 
             // 设置父级（可选，用于组织层次结构）
             if (parent != null)
@@ -46,8 +48,6 @@ public static class LootSpawner
             }
             po.itemSO = dropData.item;
 
-            // 添加随机旋转（视觉效果）
-            droppedItem.transform.rotation = Quaternion.Euler(0f, Random.Range(0f, 360f), 0f);
 
             Debug.Log($"生成掉落物: {dropData.item.nameOfItem} 在位置 {spawnPosition}");
         }

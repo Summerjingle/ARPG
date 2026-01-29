@@ -11,7 +11,8 @@ public class UIManager : MonoBehaviour
 
     [Header("交互提示UI")]
     [SerializeField] private GameObject interactPrompt;
-    
+    public PickupToastUI pickupToast;
+
 
 
     [Header("选项按钮UI")]
@@ -106,5 +107,9 @@ public class UIManager : MonoBehaviour
         {
             choiceButtons.SetActive(false);
         }
+    }
+    public void ShowPickupToast(ItemSO item)
+    {
+        pickupToast.Show(item, 2f);
     }
 }

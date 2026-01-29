@@ -46,7 +46,10 @@ public class StaticSceneItem : MonoBehaviour
         if (InventoryManager.Instance != null)
         {
             InventoryManager.Instance.AddItem(pickableObject.itemSO);
-
+            if (UIManager.Instance != null)
+            {
+                UIManager.Instance.ShowPickupToast(pickableObject.itemSO);
+            }
             // 标记为已拾取
             if (SaveManager.Instance != null && SaveManager.Instance.currentSaveData != null)
             {
