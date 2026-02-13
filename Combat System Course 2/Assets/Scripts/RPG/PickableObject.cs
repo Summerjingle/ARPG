@@ -1,11 +1,13 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class PickableObject : InteractableObject
 {
-    protected override void Interact()
+    public override int Priority => 100;
+
+    public override void Interact()
     {
-        
+        InventoryManager.Instance.AddItem(itemSO);
+        UIManager.Instance.ShowPickupToast(itemSO);
+        Destroy(gameObject);
     }
 }

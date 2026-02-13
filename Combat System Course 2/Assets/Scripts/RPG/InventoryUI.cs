@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
+using UnityEngine.InputSystem;
 
 public class InventoryUI : MonoBehaviour
 {
@@ -17,11 +18,13 @@ public class InventoryUI : MonoBehaviour
     public Image currentLeggingsIcon;  // 护腿
     public Image currentBootsIcon;     // 靴子
 
+
     [Header("攻击提示")]
     public GameObject attackHintUI; // 攻击提示UI
     public KeyCode attackKey = KeyCode.Mouse1; // 攻击按键，默认为鼠标左键
 
     [SerializeField] private GameObject inventoryPanel;
+    private PlayerInputActions inputActions;
 
     public static bool IsInventoryOpen { get; private set; }
     
@@ -48,33 +51,32 @@ public class InventoryUI : MonoBehaviour
         // 初始化时关闭攻击提示
         if (attackHintUI != null)
             attackHintUI.SetActive(false);
+        inputActions = new PlayerInputActions();
     }
 
-    private void Update()
+    private void OnEnable()
     {
-        // 切换背包打开/关闭（快捷键I键）
-        if (Input.GetKeyDown(KeyCode.I))
-        {
-            ToggleInventory();
-        }
-        
-        // 检测攻击按键来关闭攻击提示
-        if (attackHintUI != null && attackHintUI.activeSelf && Input.GetKeyDown(attackKey))
-        {
-            attackHintUI.SetActive(false);
-            hasShownAttackHint = true;
-        }
+        // 启用输入，注册事件
+        inputActions.Global.Enable();
+        inputActions.Global.Bag.performed += OnBagPerformed;
     }
-    
 
+    private void OnDisable()
+    {
+        // 解绑事件
+        inputActions.Global.Bag.performed -= OnBagPerformed;
+        inputActions.Global.Disable();
+    }
 
-    //private void TogglePausePanel()
-    //{
-    //    isMapOpen = !isMapOpen;
-    //    PausePanel.SetActive(isMapOpen);
-    //    Time.timeScale = isMapOpen ? 0f : 1f;
+    private void OnDestroy()
+    {
+        inputActions?.Dispose();
+    }
+    private void OnBagPerformed(InputAction.CallbackContext ctx)
+    {
+        ToggleInventory();
+    }
 
-    //}
 
     public void ToggleInventory()
     {
@@ -93,6 +95,8 @@ public class InventoryUI : MonoBehaviour
             CheckAndShowAttackHint();
         }
     }
+
+    
 
    
     // 检查并显示攻击提示

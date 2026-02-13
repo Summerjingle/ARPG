@@ -1,27 +1,21 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class InteractableObject : MonoBehaviour
+public class InteractableObject : MonoBehaviour, IInteractable
 {
     public ItemSO itemSO;
-    private void Start()
-    {
-        Debug.Log($"物品生成: {name}, Tag: {tag}, Layer: {LayerMask.LayerToName(gameObject.layer)}");
+    private bool isActivated = false;
+    public bool CanInteract => !isActivated;
+    public virtual int Priority => 100;
 
-        // 检查碰撞器
+    protected virtual void Start()
+    {
         Collider col = GetComponent<Collider>();
         if (col != null)
-        {
-            Debug.Log($"碰撞器: {col.GetType().Name}, IsTrigger: {col.isTrigger}");
-        }
-        else
-        {
-            Debug.LogWarning("没有找到碰撞器！如果是装备防具请忽略");
-        }
+            col.isTrigger = true;
     }
-    protected virtual void Interact()
-    {
 
+    public virtual void Interact()
+    {
+        isActivated = true;
     }
 }

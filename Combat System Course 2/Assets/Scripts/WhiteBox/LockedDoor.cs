@@ -5,15 +5,20 @@ using UnityEngine;
 public class LockedDoor : MonoBehaviour
 {
     private bool isInTrigger=false;
+    private PlayerInputActions inputActions;
+
+  
+    
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player")&& !isInTrigger)
         {
                 isInTrigger = true;
-                Debug.Log("从里面被锁住了");
-                MessageUI.Instance.Show("这扇门只能里面打开");
+                Debug.Log("Player entered the locked door");
+                
         }
     }
+    
 
     private void OnTriggerExit(Collider other)
     {

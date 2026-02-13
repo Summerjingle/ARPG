@@ -1,16 +1,22 @@
-using TMPro;
 using UnityEngine;
+using TMPro;
 
-public class NPC : MonoBehaviour
+public class NPC : MonoBehaviour, IInteractable
 {
     [Header("NPC基础设置")]
     public string npcID;
     public TextMeshProUGUI myName;
-    [Header("位置偏移")]
-    public Vector3 positionOffset = new Vector3(0, 2f, 0);
-    public bool faceCamera = true;
-    private Camera mainCamera;
+
+    
     public bool isInteractable = true;
+
+   
+    public int Priority => 50;
+
+    
+    public bool CanInteract => isInteractable;
+
+    private Camera mainCamera;
 
     private void Start()
     {
@@ -19,19 +25,21 @@ public class NPC : MonoBehaviour
 
     private void Update()
     {
-        myName.transform.rotation = mainCamera.transform.rotation;
-    }
-
-    public virtual void OnPlayerEnterRange()
-    {
-        if (UIManager.Instance != null)
-        {
-            UIManager.Instance.ShowInteractPrompt();
-        }
+        if (myName != null)
+            myName.transform.rotation = mainCamera.transform.rotation;
     }
 
     public virtual void Interact()
     {
-       
+        if (!isInteractable) return;
+
+        // 原有对话逻辑
+        
+    }
+
+    // 可选：在对话中把 NPC 标记不可交互
+    public void SetInteractable(bool value)
+    {
+        isInteractable = value;
     }
 }

@@ -12,9 +12,10 @@ GameObject:
   - component: {fileID: 1676167764241827780}
   - component: {fileID: 1374501307966367050}
   - component: {fileID: 4002599804315311253}
+  - component: {fileID: 9046124002066855121}
   m_Layer: 0
   m_Name: SoulsLoot
-  m_TagString: Untagged
+  m_TagString: Interactable
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -144,3 +145,16 @@ CapsuleCollider:
   m_Height: 0.73
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &9046124002066855121
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7461949993653533325}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  itemSO: {fileID: 11400000, guid: 58e4c5d37c74b184f973eb451bd4b9ad, type: 2}

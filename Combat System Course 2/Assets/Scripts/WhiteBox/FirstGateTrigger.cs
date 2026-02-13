@@ -2,39 +2,27 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class FirstGateTrigger : MonoBehaviour
+public class FirstGateTrigger : MonoBehaviour, IInteractable
 {
-    private Animator firstGateAnim;
-    private bool isInTrigger = false;
-    public GameObject lockedInfo;
-    void Start()
+    public FirstGate firstGate;
+    private Animator triggerAnim;
+    private bool isActivated = false;
+    public bool CanInteract => !isActivated;
+
+    public virtual int Priority => 10;
+    private void Start()
     {
-        firstGateAnim = GetComponentInParent<Animator>();
+        triggerAnim = GetComponent<Animator>();
     }
 
-
-    private void OnTriggerEnter(Collider other)
+    public void Interact()
     {
-        if (other.CompareTag("Player"))
-        {
-            isInTrigger = true;
-        }
+        triggerAnim.SetTrigger("Activate");
+        isActivated = true;
     }
-    private void Update()
+    public void ActivateTheGate()
     {
-        if (isInTrigger && Input.GetKeyDown(KeyCode.E))
-        {
-            firstGateAnim.SetTrigger("GateOpen");
-            Destroy(lockedInfo);
-            gameObject.GetComponent<Collider>().enabled = false;
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-
-        if (other.CompareTag("Player"))
-        {
-            isInTrigger = false;
-        }
+        firstGate.OpenGate();
+        Destroy(this);
     }
 }
