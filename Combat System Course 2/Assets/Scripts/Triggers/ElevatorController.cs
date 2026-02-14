@@ -1,4 +1,4 @@
-using System.Collections;
+ï»¿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -20,12 +20,13 @@ public class ElevatorController : MonoBehaviour
         playerInsideCount++;
 
         Debug.Log($"Enter: count={playerInsideCount}, state={state}");
+        Debug.Log($"ç©å®¶è¿›å…¥è§¦å‘å™¨ - ä½ç½®: {other.transform.position}");
 
         if (state == ElevatorState.Idle && playerInsideCount == 1)
         {
             state = ElevatorState.Pressed;
             triggerAnimator.SetTrigger("Press");
-            // ÕâÀï¿ÉÒÔ²¥·Å°´¼üÒôĞ§µÈ
+            // è¿™é‡Œå¯ä»¥æ’­æ”¾æŒ‰é”®éŸ³æ•ˆç­‰
         }
     }
 
@@ -37,6 +38,8 @@ public class ElevatorController : MonoBehaviour
         if (playerInsideCount < 0) playerInsideCount = 0;
 
         Debug.Log($"Exit: count={playerInsideCount}, state={state}");
+        Debug.Log($"ç©å®¶é€€å‡ºè§¦å‘å™¨ - ä½ç½®: {other.transform.position}");
+
 
         if (!playerInside)
         {
@@ -44,13 +47,13 @@ public class ElevatorController : MonoBehaviour
             {
                 state = ElevatorState.Releasable;
                 triggerAnimator.SetTrigger("Release");
-                state = ElevatorState.Idle;          // »Øµ½³õÊ¼×´Ì¬
+                state = ElevatorState.Idle;          // å›åˆ°åˆå§‹çŠ¶æ€
             }
-            // ×¢Òâ£ºÕâÀï²»ÔÙÖ±½Ó TryRelease£¬¶øÊÇµÈ¶¯»­½áÊøÔÙ´¦Àí
+            // æ³¨æ„ï¼šè¿™é‡Œä¸å†ç›´æ¥ TryReleaseï¼Œè€Œæ˜¯ç­‰åŠ¨ç”»ç»“æŸå†å¤„ç†
         }
     }
 
-    // ÓÉ Press ¶¯»­ÊÂ¼şµ÷ÓÃ£¨¶¯»­×îºóÒ»Ö¡£©
+    // ç”± Press åŠ¨ç”»äº‹ä»¶è°ƒç”¨ï¼ˆåŠ¨ç”»æœ€åä¸€å¸§ï¼‰
     public void ActivateElevator()
     {
         if (state != ElevatorState.Pressed) return;
@@ -59,7 +62,7 @@ public class ElevatorController : MonoBehaviour
         elevatorAnimator.SetTrigger("Operate");
     }
 
-    // ÓÉµçÌİÉÏÉı¶¯»­ÊÂ¼şµ÷ÓÃ£¨µ½¶¥ÁË£©
+    // ç”±ç”µæ¢¯ä¸Šå‡åŠ¨ç”»äº‹ä»¶è°ƒç”¨ï¼ˆåˆ°é¡¶äº†ï¼‰
     public void ElevatorFinished()
     {
         Debug.Log($"ElevatorFinished, state={state}");

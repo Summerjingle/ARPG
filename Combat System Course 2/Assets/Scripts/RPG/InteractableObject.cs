@@ -3,7 +3,7 @@ using UnityEngine;
 public class InteractableObject : MonoBehaviour, IInteractable
 {
     public ItemSO itemSO;
-    private bool isActivated = false;
+    public bool isActivated = false;
     public bool CanInteract => !isActivated;
     public virtual int Priority => 100;
 
