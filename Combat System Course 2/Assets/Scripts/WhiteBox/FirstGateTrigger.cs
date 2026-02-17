@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class FirstGateTrigger : MonoBehaviour, IInteractable
 {
-    public FirstGate firstGate;
+    public LockedGate firstGate;
     private Animator triggerAnim;
     private bool isActivated = false;
     public bool CanInteract => !isActivated;

@@ -2389,84 +2389,6 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 372314340373119046}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &749242352 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 6200720779111275133, guid: 1083f87f08232f541942f4a22a00127e,
-    type: 3}
-  m_PrefabInstance: {fileID: 1294664979}
-  m_PrefabAsset: {fileID: 0}
---- !u!65 &749242355
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749242352}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 4, y: 3, z: 3}
-  m_Center: {x: 0, y: 1, z: 0}
---- !u!65 &749242356
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749242352}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 0
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Size: {x: 3, y: 2, z: 2}
-  m_Center: {x: 0, y: 1, z: 0}
---- !u!114 &749242357
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749242352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a919622eea62c63409da6eee4d5885fd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  lootTable: {fileID: 11400000, guid: 281ece1a6f4826549b47780614b45e0b, type: 2}
-  openChestTipText: {fileID: 936319520}
-  chestMechanism: {fileID: 749242358}
-  triggerCollider: {fileID: 749242355}
---- !u!114 &749242358
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 749242352}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 66b41897f770f7b4fa906ea5652d27ed, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  mechanismId: Palace_Chest01
-  persistAcrossSaves: 1
 --- !u!4 &779886604 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 3510320446048916305, guid: 77f6b3ce081f4fc469af87cc21b46075,
@@ -4622,31 +4544,11 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 5193847269176103514, guid: 1083f87f08232f541942f4a22a00127e,
+    - target: {fileID: 4415642405906214567, guid: 1083f87f08232f541942f4a22a00127e,
         type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5193847269512254201, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      propertyPath: m_IsActive
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6200720779110778461, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      propertyPath: m_LocalScale.x
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6200720779110778461, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      propertyPath: m_LocalScale.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 6200720779110778461, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      propertyPath: m_LocalScale.z
-      value: 0.5
-      objectReference: {fileID: 0}
+      propertyPath: openChestTipText
+      value: 
+      objectReference: {fileID: 936319520}
     - target: {fileID: 6200720779110778461, guid: 1083f87f08232f541942f4a22a00127e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -4697,41 +4599,15 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 6200720779110778461, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      propertyPath: m_ConstrainProportionsScale
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 6200720779111275133, guid: 1083f87f08232f541942f4a22a00127e,
         type: 3}
       propertyPath: m_Name
       value: Chest
       objectReference: {fileID: 0}
-    - target: {fileID: 6200720779120667069, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      propertyPath: m_Controller
-      value: 
-      objectReference: {fileID: 9100000, guid: 0a569f0a0f4f1f448aad9a39ca233c1c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 6200720779111275133, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 749242355}
-    - targetCorrespondingSourceObject: {fileID: 6200720779111275133, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 749242356}
-    - targetCorrespondingSourceObject: {fileID: 6200720779111275133, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 749242357}
-    - targetCorrespondingSourceObject: {fileID: 6200720779111275133, guid: 1083f87f08232f541942f4a22a00127e,
-        type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 749242358}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1083f87f08232f541942f4a22a00127e, type: 3}
 --- !u!1 &1307620608
 GameObject:

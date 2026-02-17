@@ -70,15 +70,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool isLockedOn = false;
     [HideInInspector] public Vector3 lockedTargetDir;
     public ItemSO testHealthPotion;
-    private void OnEnable()
-    {
-        inputActions = new PlayerInputActions();
-        inputActions.Player.Enable();
-    }
-    private void OnDisable()
-    {
-        inputActions.Player.Disable();
-    }
+
     private void Awake()
     {
         i = this;
@@ -88,7 +80,7 @@ public class PlayerController : MonoBehaviour
         cameraController = GetComponent<PlayerCameraController>();
         parkourController = GetComponent<ParkourController>();
         headChecker = GetComponentInChildren<HeadCollisionChecker>();
-        
+        inputActions = InputManager.Instance.Actions;
         isCrouching = false;
         StartCoroutine(DelayedRegistration());
         RegisterToHUD();

@@ -40049,7 +40049,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &2098890402
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -60358,8 +60358,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcID: Drunkard
   myName: {fileID: 420365527}
-  positionOffset: {x: 0, y: 2, z: 0}
-  faceCamera: 1
   isInteractable: 1
   quest: {fileID: 11400000, guid: 4ccf7f7776e70724e9133ac5956dc29b, type: 2}
   notAcceptedDialogue:
@@ -61823,8 +61821,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   npcID: Woman
   myName: {fileID: 2065710636}
-  positionOffset: {x: 0, y: 2, z: 0}
-  faceCamera: 1
   isInteractable: 1
   quest: {fileID: 11400000, guid: 00e24cc09f27c2741a4fcc0a27cc825d, type: 2}
   notAcceptedDialogue:
