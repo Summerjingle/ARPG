@@ -9,5 +9,6 @@ public class SurfaceDefinition : MonoBehaviour
 public enum SurfaceType
 {
     Wood,
-    Rock
+    Rock,
+    Dirt
 }

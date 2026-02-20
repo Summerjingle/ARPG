@@ -79,17 +79,10 @@ public class MainMenuState : MonoBehaviour
     {
         currentState = State.MainMenu;
         pressAnyKeyHint.SetActive(false);
-        SpawnParticleEffect();
+        
         menuRoot.SetActive(true);
         
     }
 
-    private void SpawnParticleEffect() 
-    {
-        ParticleSystem particleInstance = Instantiate(
-            pressAnyKeyParticle,
-            particleSpawnPoint.position,
-            particleSpawnPoint.rotation);
-        particleInstance.Play();
-    }
+    
 }

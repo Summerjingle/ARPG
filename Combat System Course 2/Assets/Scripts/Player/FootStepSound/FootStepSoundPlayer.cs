@@ -8,6 +8,7 @@ public class FootStepSoundPlayer : MonoBehaviour
     public AudioClip[] defaultClips;
     public AudioClip[] woodClips;
     public AudioClip[] rockClips;
+    public AudioClip[] dirtClips;
     public Animator animator;
     private float _lastFootStep;
 
@@ -45,6 +46,7 @@ public class FootStepSoundPlayer : MonoBehaviour
             {
                 if (surface.SurfaceType == SurfaceType.Wood) return woodClips;
                 if (surface.SurfaceType == SurfaceType.Rock) return rockClips;
+                if (surface.SurfaceType == SurfaceType.Dirt) return dirtClips;
             }
         }
         return defaultClips;
