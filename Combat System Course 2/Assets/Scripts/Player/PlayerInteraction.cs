@@ -72,5 +72,15 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         target?.Interact();
+        StartCoroutine(RefreshPromptNextFrame());
+    }
+    private System.Collections.IEnumerator RefreshPromptNextFrame()
+    {
+        yield return null; // µÈÒ»Ö¡
+
+        interactablesInRange.RemoveAll(i => i == null || !i.CanInteract);
+
+        if (interactablesInRange.Count == 0)
+            UIManager.Instance?.HideInteractPrompt();
     }
 }

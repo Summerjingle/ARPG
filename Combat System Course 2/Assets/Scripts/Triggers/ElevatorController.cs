@@ -24,8 +24,7 @@ public class ElevatorController : MonoBehaviour
 
         if (state == ElevatorState.Idle && playerInsideCount == 1)
         {
-            state = ElevatorState.Pressed;
-            triggerAnimator.SetTrigger("Press");
+            RequestOperate();
             // 这里可以播放按键音效等
         }
     }
@@ -76,6 +75,14 @@ public class ElevatorController : MonoBehaviour
                 triggerAnimator.SetTrigger("Release");
                 state = ElevatorState.Idle;
             }
+        }
+    }
+    public void RequestOperate()
+    {
+        if (state == ElevatorState.Idle)
+        {
+            state = ElevatorState.Pressed;
+            triggerAnimator.SetTrigger("Press");
         }
     }
 }
