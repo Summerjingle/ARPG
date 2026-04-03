@@ -1,3 +1,5 @@
+using System;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 [DefaultExecutionOrder(-100)]
@@ -6,6 +8,7 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance { get; private set; }
 
     public PlayerInputActions Actions { get; private set; }
+    
 
     private void Awake()
     {
@@ -19,6 +22,7 @@ public class InputManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         Actions = new PlayerInputActions();
+
     }
 
     private void OnEnable()
@@ -31,17 +35,27 @@ public class InputManager : MonoBehaviour
         Actions.Disable();
     }
 
-    public void SwitchToUI()
+    public void SwitchToMainMenuUI()
     {
+       
         Actions.Player.Disable();
-        Actions.UI.Enable();
+        Actions.UI_MainMenu.Enable();
         UIStateManager.SetUIActive(true); // 显示鼠标
     }
 
     public void SwitchToPlayer()
     {
-        Actions.UI.Disable();
+        Actions.UI_MainMenu.Disable();
         Actions.Player.Enable();
+        
         UIStateManager.SetUIActive(false); // 隐藏鼠标
     }
+    public void SwitchToSaveMenu()
+    {
+        Actions.UI_MainMenu.Disable();
+        Actions.Player.Disable();
+        Actions.UI_SaveMenu.Enable();
+        UIStateManager.SetUIActive(true); // 显示鼠标
+    }
+   
 }

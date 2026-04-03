@@ -7,29 +7,25 @@ public class MenuButtonController : MonoBehaviour
     public int maxIndex;
 
     public AudioSource audioSource;
-
-    private PlayerInputActions  input;
+    private PlayerInputActions input => InputManager.Instance?.Actions;
     public bool inputLocked;
 
     [SerializeField] float deadZone = 0.5f;
 
-    void Awake()
-    {
-        input = new PlayerInputActions();
-    }
+   
 
     void OnEnable()
     {
-        input.UI.Enable();
-        input.UI.Navigate.performed += OnNavigate;
-        input.UI.Navigate.canceled += OnNavigateCanceled;
+        input.UI_MainMenu.Enable();
+        input.UI_MainMenu.Navigate.performed += OnNavigate;
+        input.UI_MainMenu.Navigate.canceled += OnNavigateCanceled;
     }
 
     void OnDisable()
     {
-        input.UI.Navigate.performed -= OnNavigate;
-        input.UI.Navigate.canceled -= OnNavigateCanceled;
-        input.UI.Disable();
+        input.UI_MainMenu.Navigate.performed -= OnNavigate;
+        input.UI_MainMenu.Navigate.canceled -= OnNavigateCanceled;
+        input.UI_MainMenu.Disable();
     }
 
     void Start()

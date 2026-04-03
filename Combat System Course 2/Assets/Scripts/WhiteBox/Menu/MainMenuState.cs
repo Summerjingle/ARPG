@@ -44,14 +44,14 @@ public class MainMenuState : MonoBehaviour
 
     void OnEnable()
     {
-        input.UI.Enable();
-        input.UI.AnyKey.performed += OnAnyKey;
+        input.UI_MainMenu.Enable();
+        input.UI_MainMenu.AnyKey.performed += OnAnyKey;
     }
 
     void OnDisable()
     {
-        input.UI.AnyKey.performed -= OnAnyKey;
-        input.UI.Disable();
+        input.UI_MainMenu.AnyKey.performed -= OnAnyKey;
+        input.UI_MainMenu.Disable();
     }
 
     void OnAnyKey(InputAction.CallbackContext ctx)

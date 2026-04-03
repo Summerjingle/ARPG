@@ -337,7 +337,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""UI"",
+            ""name"": ""UI_MainMenu"",
             ""id"": ""1f66639d-b9b7-4ad2-ad55-6af1f9bc6a51"",
             ""actions"": [
                 {
@@ -680,6 +680,349 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ]
         },
         {
+            ""name"": ""UI_SaveMenu"",
+            ""id"": ""0e80f8ac-8610-465f-a970-a15142b1271f"",
+            ""actions"": [
+                {
+                    ""name"": ""Navigate"",
+                    ""type"": ""Value"",
+                    ""id"": ""27a2dde5-1e82-4cb9-8b03-eae30c11fd4a"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""9a4589c1-839b-4117-affc-0bf7e31d6b91"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""AnyKey"",
+                    ""type"": ""Button"",
+                    ""id"": ""124a7d57-6e87-4d7a-8f56-edcc13d67bb4"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""c5ed3067-4511-4cb0-bb9b-3bcd1702401f"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b1c4d8dd-d4af-4a8a-b4a6-5745edf3d1be"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""WADS"",
+                    ""id"": ""b298dd00-e4d3-486e-979f-c8d88e0a93ef"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""dbc71c1a-702b-435e-9a4a-e3353cbc0f4f"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""45142739-2f18-43c7-a917-5b8cb619d26a"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""9bb34c14-679f-4702-ae03-86037c0b725c"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""2e84239f-1668-43d3-bd36-135ebe635d4e"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""Numpad"",
+                    ""id"": ""21f82fcd-04b6-4c43-9869-5cff4d2745db"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""c4ad5c47-c3da-4009-b74e-affeb1ea75f0"",
+                    ""path"": ""<Keyboard>/upArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""b74bc07b-4d3a-4089-abd5-472ed90d6270"",
+                    ""path"": ""<Keyboard>/downArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""478481ba-7658-4e7f-8e15-fe86285764fd"",
+                    ""path"": ""<Keyboard>/leftArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""7dbf4512-2912-404f-8960-dfd5f0b78c96"",
+                    ""path"": ""<Keyboard>/rightArrow"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""04593000-78ba-49e9-80fd-d2a88e69ca0d"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=0,y=0.01)"",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0c6c37f7-3f25-4338-a9b9-39781b1ab4c6"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b36d207f-8fcf-4b4e-9365-94866b50f024"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a3e0249b-9e3f-4270-977c-1f1c66fb1766"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a5120618-1030-4a0e-b747-bc28c67cc283"",
+                    ""path"": ""<Keyboard>/numpadEnter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""92e9ea83-412d-49bd-aebd-afc596a4cebd"",
+                    ""path"": ""<Keyboard>/anyKey"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4198d118-bd60-4c60-8b09-57ccf13f38f9"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""10a23823-c522-4051-bc3f-32feeb0d0046"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""513d9094-2d29-47a0-9e20-165484868ce5"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""07f04e5f-7fd2-4146-8924-4af0ce5d670b"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a27659d0-8928-4df4-a4b1-70a10a83dbcc"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""012863b1-92ec-4eff-9963-3559ffa48786"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2648f661-9f21-45cd-9bd4-c4bec38f82aa"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b8d9dd25-c73c-446b-ad4f-b6a86095c768"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f33ee555-a96e-4bb3-8542-c479722ed418"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8d5651ab-7bd6-416c-b0eb-7cc0e9846007"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""AnyKey"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
             ""name"": ""Global"",
             ""id"": ""2837f0bb-481c-4a44-8019-8398cafead8c"",
             ""actions"": [
@@ -749,11 +1092,16 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_Look = m_Player.FindAction("Look", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
-        // UI
-        m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
-        m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
-        m_UI_Submit = m_UI.FindAction("Submit", throwIfNotFound: true);
-        m_UI_AnyKey = m_UI.FindAction("AnyKey", throwIfNotFound: true);
+        // UI_MainMenu
+        m_UI_MainMenu = asset.FindActionMap("UI_MainMenu", throwIfNotFound: true);
+        m_UI_MainMenu_Navigate = m_UI_MainMenu.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_MainMenu_Submit = m_UI_MainMenu.FindAction("Submit", throwIfNotFound: true);
+        m_UI_MainMenu_AnyKey = m_UI_MainMenu.FindAction("AnyKey", throwIfNotFound: true);
+        // UI_SaveMenu
+        m_UI_SaveMenu = asset.FindActionMap("UI_SaveMenu", throwIfNotFound: true);
+        m_UI_SaveMenu_Navigate = m_UI_SaveMenu.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_SaveMenu_Submit = m_UI_SaveMenu.FindAction("Submit", throwIfNotFound: true);
+        m_UI_SaveMenu_AnyKey = m_UI_SaveMenu.FindAction("AnyKey", throwIfNotFound: true);
         // Global
         m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
         m_Global_Bag = m_Global.FindAction("Bag", throwIfNotFound: true);
@@ -763,7 +1111,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     ~@PlayerInputActions()
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_UI.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UI_MainMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_MainMenu.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UI_SaveMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_SaveMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Global.enabled, "This will cause a leak and performance issues, PlayerInputActions.Global.Disable() has not been called.");
     }
 
@@ -988,39 +1337,39 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// </summary>
     public PlayerActions @Player => new PlayerActions(this);
 
-    // UI
-    private readonly InputActionMap m_UI;
-    private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
-    private readonly InputAction m_UI_Navigate;
-    private readonly InputAction m_UI_Submit;
-    private readonly InputAction m_UI_AnyKey;
+    // UI_MainMenu
+    private readonly InputActionMap m_UI_MainMenu;
+    private List<IUI_MainMenuActions> m_UI_MainMenuActionsCallbackInterfaces = new List<IUI_MainMenuActions>();
+    private readonly InputAction m_UI_MainMenu_Navigate;
+    private readonly InputAction m_UI_MainMenu_Submit;
+    private readonly InputAction m_UI_MainMenu_AnyKey;
     /// <summary>
-    /// Provides access to input actions defined in input action map "UI".
+    /// Provides access to input actions defined in input action map "UI_MainMenu".
     /// </summary>
-    public struct UIActions
+    public struct UI_MainMenuActions
     {
         private @PlayerInputActions m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public UIActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public UI_MainMenuActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "UI/Navigate".
+        /// Provides access to the underlying input action "UI_MainMenu/Navigate".
         /// </summary>
-        public InputAction @Navigate => m_Wrapper.m_UI_Navigate;
+        public InputAction @Navigate => m_Wrapper.m_UI_MainMenu_Navigate;
         /// <summary>
-        /// Provides access to the underlying input action "UI/Submit".
+        /// Provides access to the underlying input action "UI_MainMenu/Submit".
         /// </summary>
-        public InputAction @Submit => m_Wrapper.m_UI_Submit;
+        public InputAction @Submit => m_Wrapper.m_UI_MainMenu_Submit;
         /// <summary>
-        /// Provides access to the underlying input action "UI/AnyKey".
+        /// Provides access to the underlying input action "UI_MainMenu/AnyKey".
         /// </summary>
-        public InputAction @AnyKey => m_Wrapper.m_UI_AnyKey;
+        public InputAction @AnyKey => m_Wrapper.m_UI_MainMenu_AnyKey;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_UI; }
+        public InputActionMap Get() { return m_Wrapper.m_UI_MainMenu; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -1028,9 +1377,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="UIActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="UI_MainMenuActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(UIActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(UI_MainMenuActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -1038,11 +1387,11 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="UIActions" />
-        public void AddCallbacks(IUIActions instance)
+        /// <seealso cref="UI_MainMenuActions" />
+        public void AddCallbacks(IUI_MainMenuActions instance)
         {
-            if (instance == null || m_Wrapper.m_UIActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_UIActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_UI_MainMenuActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UI_MainMenuActionsCallbackInterfaces.Add(instance);
             @Navigate.started += instance.OnNavigate;
             @Navigate.performed += instance.OnNavigate;
             @Navigate.canceled += instance.OnNavigate;
@@ -1060,8 +1409,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="UIActions" />
-        private void UnregisterCallbacks(IUIActions instance)
+        /// <seealso cref="UI_MainMenuActions" />
+        private void UnregisterCallbacks(IUI_MainMenuActions instance)
         {
             @Navigate.started -= instance.OnNavigate;
             @Navigate.performed -= instance.OnNavigate;
@@ -1075,12 +1424,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UIActions.UnregisterCallbacks(IUIActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_MainMenuActions.UnregisterCallbacks(IUI_MainMenuActions)" />.
         /// </summary>
-        /// <seealso cref="UIActions.UnregisterCallbacks(IUIActions)" />
-        public void RemoveCallbacks(IUIActions instance)
+        /// <seealso cref="UI_MainMenuActions.UnregisterCallbacks(IUI_MainMenuActions)" />
+        public void RemoveCallbacks(IUI_MainMenuActions instance)
         {
-            if (m_Wrapper.m_UIActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_UI_MainMenuActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -1090,21 +1439,139 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="UIActions.AddCallbacks(IUIActions)" />
-        /// <seealso cref="UIActions.RemoveCallbacks(IUIActions)" />
-        /// <seealso cref="UIActions.UnregisterCallbacks(IUIActions)" />
-        public void SetCallbacks(IUIActions instance)
+        /// <seealso cref="UI_MainMenuActions.AddCallbacks(IUI_MainMenuActions)" />
+        /// <seealso cref="UI_MainMenuActions.RemoveCallbacks(IUI_MainMenuActions)" />
+        /// <seealso cref="UI_MainMenuActions.UnregisterCallbacks(IUI_MainMenuActions)" />
+        public void SetCallbacks(IUI_MainMenuActions instance)
         {
-            foreach (var item in m_Wrapper.m_UIActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_UI_MainMenuActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_UIActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_UI_MainMenuActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="UIActions" /> instance referencing this action map.
+    /// Provides a new <see cref="UI_MainMenuActions" /> instance referencing this action map.
     /// </summary>
-    public UIActions @UI => new UIActions(this);
+    public UI_MainMenuActions @UI_MainMenu => new UI_MainMenuActions(this);
+
+    // UI_SaveMenu
+    private readonly InputActionMap m_UI_SaveMenu;
+    private List<IUI_SaveMenuActions> m_UI_SaveMenuActionsCallbackInterfaces = new List<IUI_SaveMenuActions>();
+    private readonly InputAction m_UI_SaveMenu_Navigate;
+    private readonly InputAction m_UI_SaveMenu_Submit;
+    private readonly InputAction m_UI_SaveMenu_AnyKey;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "UI_SaveMenu".
+    /// </summary>
+    public struct UI_SaveMenuActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public UI_SaveMenuActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "UI_SaveMenu/Navigate".
+        /// </summary>
+        public InputAction @Navigate => m_Wrapper.m_UI_SaveMenu_Navigate;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_SaveMenu/Submit".
+        /// </summary>
+        public InputAction @Submit => m_Wrapper.m_UI_SaveMenu_Submit;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_SaveMenu/AnyKey".
+        /// </summary>
+        public InputAction @AnyKey => m_Wrapper.m_UI_SaveMenu_AnyKey;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_UI_SaveMenu; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="UI_SaveMenuActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(UI_SaveMenuActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="UI_SaveMenuActions" />
+        public void AddCallbacks(IUI_SaveMenuActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces.Add(instance);
+            @Navigate.started += instance.OnNavigate;
+            @Navigate.performed += instance.OnNavigate;
+            @Navigate.canceled += instance.OnNavigate;
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+            @AnyKey.started += instance.OnAnyKey;
+            @AnyKey.performed += instance.OnAnyKey;
+            @AnyKey.canceled += instance.OnAnyKey;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="UI_SaveMenuActions" />
+        private void UnregisterCallbacks(IUI_SaveMenuActions instance)
+        {
+            @Navigate.started -= instance.OnNavigate;
+            @Navigate.performed -= instance.OnNavigate;
+            @Navigate.canceled -= instance.OnNavigate;
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+            @AnyKey.started -= instance.OnAnyKey;
+            @AnyKey.performed -= instance.OnAnyKey;
+            @AnyKey.canceled -= instance.OnAnyKey;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_SaveMenuActions.UnregisterCallbacks(IUI_SaveMenuActions)" />.
+        /// </summary>
+        /// <seealso cref="UI_SaveMenuActions.UnregisterCallbacks(IUI_SaveMenuActions)" />
+        public void RemoveCallbacks(IUI_SaveMenuActions instance)
+        {
+            if (m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="UI_SaveMenuActions.AddCallbacks(IUI_SaveMenuActions)" />
+        /// <seealso cref="UI_SaveMenuActions.RemoveCallbacks(IUI_SaveMenuActions)" />
+        /// <seealso cref="UI_SaveMenuActions.UnregisterCallbacks(IUI_SaveMenuActions)" />
+        public void SetCallbacks(IUI_SaveMenuActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="UI_SaveMenuActions" /> instance referencing this action map.
+    /// </summary>
+    public UI_SaveMenuActions @UI_SaveMenu => new UI_SaveMenuActions(this);
 
     // Global
     private readonly InputActionMap m_Global;
@@ -1263,11 +1730,40 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_MainMenu" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="UIActions.AddCallbacks(IUIActions)" />
-    /// <seealso cref="UIActions.RemoveCallbacks(IUIActions)" />
-    public interface IUIActions
+    /// <seealso cref="UI_MainMenuActions.AddCallbacks(IUI_MainMenuActions)" />
+    /// <seealso cref="UI_MainMenuActions.RemoveCallbacks(IUI_MainMenuActions)" />
+    public interface IUI_MainMenuActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Navigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNavigate(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Submit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSubmit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "AnyKey" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnAnyKey(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_SaveMenu" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="UI_SaveMenuActions.AddCallbacks(IUI_SaveMenuActions)" />
+    /// <seealso cref="UI_SaveMenuActions.RemoveCallbacks(IUI_SaveMenuActions)" />
+    public interface IUI_SaveMenuActions
     {
         /// <summary>
         /// Method invoked when associated input action "Navigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.

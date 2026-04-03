@@ -8,27 +8,23 @@ public class MenuButton : MonoBehaviour
     [SerializeField] AnimatorFunctions animatorFunctions;
     [SerializeField] int thisIndex;
 
-    private PlayerInputActions input;
+
+
+    private PlayerInputActions input => InputManager.Instance?.Actions;
 
     
-
-    void Awake()
-    {
-        input = new PlayerInputActions();
-    }
-
     void OnEnable()
     {
-        input.UI.Enable();
-        input.UI.Submit.performed += OnSubmit;
-        input.UI.Submit.canceled += OnSubmitCanceled;
+        input.UI_MainMenu.Enable();
+        input.UI_MainMenu.Submit.performed += OnSubmit;
+        input.UI_MainMenu.Submit.canceled += OnSubmitCanceled;
     }
 
     void OnDisable()
     {
-        input.UI.Submit.performed -= OnSubmit;
-        input.UI.Submit.canceled -= OnSubmitCanceled;
-        input.UI.Disable();
+        input.UI_MainMenu.Submit.performed -= OnSubmit;
+        input.UI_MainMenu.Submit.canceled -= OnSubmitCanceled;
+        input.UI_MainMenu.Disable();
     }
 
     void Update()
@@ -44,6 +40,7 @@ public class MenuButton : MonoBehaviour
         if (menuButtonController.index != thisIndex) return;
 
         animator.SetBool("pressed", true);
+        
     }
 
     void OnSubmitCanceled(InputAction.CallbackContext ctx)
@@ -53,4 +50,5 @@ public class MenuButton : MonoBehaviour
         animator.SetBool("pressed", false);
         animatorFunctions.disableOnce = true;
     }
+    
 }

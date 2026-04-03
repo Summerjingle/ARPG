@@ -54,6 +54,13 @@ public class PlayerController : MonoBehaviour
     public ICombatSystem combatSystem;
 
     public Animator animator;
+    private int speedHash;
+    private int dirXHash;
+    private int dirYHash;
+    [Header("Locomotion Speeds")]
+    [SerializeField] private float walkSpeed = 3.5f;
+    [SerializeField] private float runSpeed = 6.0f;
+    [SerializeField] private float sprintSpeed = 9.5f;
     private CharacterController charactercontroller;
     private ParkourController parkourController;
     public CombatController combatController;
@@ -85,6 +92,9 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(DelayedRegistration());
         RegisterToHUD();
         UIStateManager.OnUIActiveStateChanged += OnUIActiveStateChanged;
+        speedHash = Animator.StringToHash("Speed");
+        dirXHash = Animator.StringToHash("DirX");
+        dirYHash = Animator.StringToHash("DirY");
     }
 
     private IEnumerator DelayedRegistration()
@@ -116,19 +126,20 @@ public class PlayerController : MonoBehaviour
         }
         sprintHeld = inputActions.Player.Sprint.IsPressed();
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        if (isGrounded && !isDrinking &&!isRolling&&Input.GetKeyDown(KeyCode.Alpha1))//在地上，还没喝，没滚
+        if (isGrounded && !isDrinking && !isRolling && Input.GetKeyDown(KeyCode.Alpha1))//在地上，还没喝，没滚
         {
             PlayerProperty.Instance.UseDrag(testHealthPotion);
             isDrinking = true;
         }
-        
+
         if (combatSystem.InAction) return;
-      
+
 
         if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
-            animator.SetFloat("forwardSpeed", 0f);
-            animator.SetFloat("strafeSpeed", 0f);
+            animator.SetFloat(speedHash, 0f);
+            animator.SetFloat(dirXHash, 0f);
+            animator.SetFloat(dirYHash, 0f);
             return;
         }
 
@@ -152,77 +163,95 @@ public class PlayerController : MonoBehaviour
                 return;
             }
         }
-        // ====================== 输入 & 能量系统 ======================
-        float h = moveInput.x;
-        float v = moveInput.y;
+        // ─────────────── 输入处理 ───────────────
+        Vector2 rawInput = moveInput;
+        rawInput = Vector2.ClampMagnitude(rawInput, 1f);
+        float inputMagnitude = rawInput.magnitude;       // 0 ~ 1
 
-        Vector3 moveInput3D = new Vector3(h, 0, v).normalized;
-        float moveAmount = Mathf.Clamp01(Mathf.Abs(h) + Mathf.Abs(v));
+        // DirX / DirY（本地相对方向）
+        Vector3 cameraForward = GetCameraPlanarRotation() * Vector3.forward;
+        Vector3 cameraRight = GetCameraPlanarRotation() * Vector3.right;
+        Vector3 worldMoveDir = (cameraRight * rawInput.x + cameraForward * rawInput.y).normalized;
+        Vector3 localMoveDir = transform.InverseTransformDirection(worldMoveDir);
 
-        bool wantsToSprint =sprintHeld&& moveAmount > 0.1f&& !isRolling&& !combatSystem.InAction;
-        isSprinting = wantsToSprint && PlayerProperty.Instance.EnergyValue > 15;
-        if (!isSprinting)
+        animator.SetFloat(dirXHash, localMoveDir.x, 0.15f, Time.deltaTime);
+        animator.SetFloat(dirYHash, localMoveDir.z, 0.15f, Time.deltaTime);
+
+        // ─────────────── Speed 计算 ───────────────
+        // 核心：用 inputMagnitude 直接映射到 0 ~ 2.0 左右区间
+        // 让轻推 → Walk，重推 → Run
+        float animSpeed = inputMagnitude * 2.0f;   // 0 → 0, 0.3 → 0.6, 0.8 → 1.6, 1.0 → 2.0
+
+        // Sprint 覆盖（最高优先级）
+        bool wantsSprint = sprintHeld && inputMagnitude > 0.1f && !isRolling && !combatSystem.InAction;
+        bool allowSprint = rawInput.y > -0.25f;  // 后退禁止
+        bool canSprint = wantsSprint && allowSprint && PlayerProperty.Instance.EnergyValue > 15;
+
+        if (canSprint)
         {
-            
-            isSprinting = wantsToSprint
-                && PlayerProperty.Instance.EnergyValue > 15;
+            animSpeed = inputMagnitude * 3.8f;   // 0.38 ~ 3.8 → 强制进入 Sprint (阈值 2.5+)
+            isSprinting = true;
         }
         else
         {
-            
-            isSprinting = wantsToSprint
-                && PlayerProperty.Instance.EnergyValue > 5;
+            isSprinting = false;
         }
+
+        // 能量消耗
         if (isSprinting)
         {
             float costPerSecond = PlayerProperty.Instance.GetSprintCostPerSecond();
             if (!PlayerProperty.Instance.ConsumeEnergy(Mathf.CeilToInt(costPerSecond * Time.deltaTime)))
+            {
                 isSprinting = false;
+                animSpeed = inputMagnitude * 2.0f;  // 能量不够 → 回到 Run 区间
+            }
         }
-        if (PlayerProperty.Instance.EnergyValue <= 15)
+
+        // 平滑设置
+        animator.SetFloat(speedHash, animSpeed, 0.18f, Time.deltaTime);
+
+        // ─────────────── 实际移动速度 ───────────────
+        float currentMoveSpeed;
+
+        if (shouldCrouch || isCrouching)
         {
-            currentRunBlend = 0f;
+            currentMoveSpeed = walkSpeed * crouchSpeedMultiplier;
+        }
+        else if (isSprinting)
+        {
+            currentMoveSpeed = sprintSpeed * inputMagnitude;
         }
         else
         {
-            currentRunBlend = Mathf.MoveTowards(currentRunBlend, isSprinting ? 1f : 0f, Time.deltaTime * 5f);
-        }
-        if (!isSprinting && !isRolling && PlayerProperty.Instance.EnergyValue < PlayerProperty.Instance.MaxEnergy)
-        {
-            float regenRate = moveAmount < 0.1f ? PlayerProperty.Instance.idleRegenRate : PlayerProperty.Instance.walkRegenRate;
-            PlayerProperty.Instance.RestoreEnergy(regenRate * Time.deltaTime);
+            // Walk → Run 丝滑过渡
+            float t = Mathf.InverseLerp(0.15f, 1.0f, inputMagnitude);
+            currentMoveSpeed = Mathf.Lerp(walkSpeed, runSpeed, t);
         }
 
-
-        float baseSpeed = Mathf.Lerp(moveSpeed * walkSpeedMultiplier, moveSpeed, currentRunBlend);
-
-        if (isCrouching)
-        {
-            baseSpeed *= crouchSpeedMultiplier;
-        }
-
-        float currentMoveSpeed = baseSpeed;
-        UpdateCrouchState(moveInput3D);
+        // moveInput3D 继续给后面用
+        Vector3 moveInput3D = worldMoveDir;
+        float moveAmount = inputMagnitude;
         // ====================== 移动方向 ======================
         Vector3 moveDir;
         if (isLockedOn)
         {
             Vector3 lockedDir = cameraController != null ? cameraController.GetLockedDirection() : lockedTargetDir;
+
             if (lockedDir.sqrMagnitude > 0.001f)
             {
                 Vector3 right = Vector3.Cross(Vector3.up, lockedDir);
-                moveDir = lockedDir * moveInput3D.z + right * moveInput3D.x;
+                moveDir = lockedDir * rawInput.y + right * rawInput.x;
             }
             else
             {
-                moveDir = GetCameraPlanarRotation() * moveInput3D;
+                moveDir = worldMoveDir;
             }
         }
         else
         {
-            moveDir = GetCameraPlanarRotation() * moveInput3D;
+            moveDir = worldMoveDir;
         }
-        InputDir = moveDir.normalized;
 
         // ====================== 重力逻辑(2026/1/20 更新 ) ======================
 
@@ -281,10 +310,8 @@ public class PlayerController : MonoBehaviour
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
             float forwardSpeed = Vector3.Dot(velocity, transform.forward);
-            animator.SetFloat("forwardSpeed", forwardSpeed / (moveSpeed / 2f), 0.2f, Time.deltaTime);
-
             float angle = Vector3.SignedAngle(transform.forward, velocity, Vector3.up);
-            animator.SetFloat("strafeSpeed", Mathf.Sin(angle * Mathf.Deg2Rad), 0.2f, Time.deltaTime);
+
         }
         else if (Armed)
         {
@@ -298,8 +325,7 @@ public class PlayerController : MonoBehaviour
             if (Mathf.Abs(strafeSpeed) > 0.1f)
                 strafeSpeed = Mathf.Sign(strafeSpeed) * Mathf.Lerp(0.2f, 1.0f, currentRunBlend);
 
-            animator.SetFloat("forwardSpeed", forwardSpeed, 0.2f, Time.deltaTime);
-            animator.SetFloat("strafeSpeed", strafeSpeed, 0.2f, Time.deltaTime);
+
 
             if (moveAmount > 0 && !LockRotation)
                 targetRotation = Quaternion.LookRotation(moveDir);
@@ -312,42 +338,40 @@ public class PlayerController : MonoBehaviour
                 targetRotation = Quaternion.LookRotation(moveDir);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
 
-            float animationSpeed = Mathf.Lerp(moveAmount * walkSpeedMultiplier, moveAmount, currentRunBlend);
-            animator.SetFloat("forwardSpeed", animationSpeed, 0.2f, Time.deltaTime);
-            animator.SetFloat("strafeSpeed", 0f, 0.2f, Time.deltaTime);
-        }
 
-        // ====================== 应用移动 ======================
-        velocity.y = ySpeed;
+            // ====================== 应用移动 ======================
+            velocity.y = ySpeed;
 
-        //爬梯子逻辑
-        Vector3 rayOrigin =
-         transform.position + Vector3.up * 0.4f+ transform.forward * (charactercontroller.radius + 0.05f);
+            //爬梯子逻辑
+            Vector3 rayOrigin =
+             transform.position + Vector3.up * 0.4f + transform.forward * (charactercontroller.radius + 0.05f);
 
-        Vector3 rayDir = transform.forward;
+            Vector3 rayDir = transform.forward;
 
-        Debug.DrawRay(rayOrigin, rayDir *0.4f, Color.red);
+            Debug.DrawRay(rayOrigin, rayDir * 0.4f, Color.red);
 
-        if (Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, 0.4f))
-        {
-            if(hit.transform.TryGetComponent<Ladder>(out Ladder ladder)){
-                Debug.Log("碰到梯子了");
+            if (Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, 0.4f))
+            {
+                if (hit.transform.TryGetComponent<Ladder>(out Ladder ladder))
+                {
+                    Debug.Log("碰到梯子了");
 
-                // 梯子状态下直接向上移动
-                float climbSpeed = 3f;
-                velocity = Vector3.up * climbSpeed;
+                    // 梯子状态下直接向上移动
+                    float climbSpeed = 3f;
+                    velocity = Vector3.up * climbSpeed;
 
-                // 阻止重力
-                ySpeed = 0f;
-                isGrounded = true;
+                    // 阻止重力
+                    ySpeed = 0f;
+                    isGrounded = true;
+                }
             }
-        }
-        if (isGrounded)
-        {
-            ySpeed = -1f; // 只保留轻微负值
-        }
+            if (isGrounded)
+            {
+                ySpeed = -1f; // 只保留轻微负值
+            }
 
-        charactercontroller.Move(velocity * Time.deltaTime);
+            charactercontroller.Move(velocity * Time.deltaTime);
+        }
     }
 
     
@@ -562,36 +586,7 @@ public class PlayerController : MonoBehaviour
         return cameraController != null ? cameraController.GetPlanarRotation() : Quaternion.identity;
     }
 
-    private void UpdateCrouchState(Vector3 moveInput)
-    {
-        bool pressingCrouch = crouchHeld;
-        if (pressingCrouch) 
-        {
-            headChecker.EnableHeadCheck();
-        }
-        else if (headChecker.CanStandUpFromCrouch())
-        {
-            headChecker.DisableHeadCheck();
-        }
-        bool canCrouchNow = isGrounded && !isRolling && !combatSystem.InAction;
-        isCrouching = pressingCrouch && canCrouchNow;
-        shouldCrouch = isCrouching || !headChecker.CanStandUpFromCrouch();
-        
-        animator.SetBool("IsCrouching", shouldCrouch);
-
-        // 蹲下时才判断是否移动
-        if (shouldCrouch)
-        {
-            bool moving = moveInput.sqrMagnitude > 0.01f;
-            animator.SetBool("CrouchMoving", moving);
-        }
-        else
-        {
-            animator.SetBool("CrouchMoving", false);
-        }
-    }
-
-    // 添加蹲下条件检查方法
+  
     
 
     private void LateUpdate()
@@ -623,14 +618,11 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-
-
     public void OnDrinkAnimationComplete()
     {
         isDrinking = false;
     }
-  
-
-
+   
     public float RotationSpeed => rotationSpeed;
+
 }

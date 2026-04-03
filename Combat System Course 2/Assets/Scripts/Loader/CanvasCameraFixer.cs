@@ -36,7 +36,7 @@ public class CanvasCameraFixer : MonoBehaviour
         if (canvas == null) return;
 
         // 只在主菜单场景中绑定摄像机
-        if (SceneManager.GetActiveScene().name != "000Scene_Menu")
+        if (SceneManager.GetActiveScene().name != "000Scene_Menu" && SceneManager.GetActiveScene().name != "WhiteBox_Menu")
         {
             Debug.Log($"当前场景不是主菜单，跳过摄像机绑定: {SceneManager.GetActiveScene().name}");
             return;
@@ -45,9 +45,9 @@ public class CanvasCameraFixer : MonoBehaviour
         Debug.Log($"在主菜单场景中绑定摄像机");
 
         // 强制设置为ScreenSpaceCamera模式
-        if (canvas.renderMode != RenderMode.ScreenSpaceCamera)
+        if (canvas.renderMode != RenderMode.WorldSpace)
         {
-            canvas.renderMode = RenderMode.ScreenSpaceCamera;
+            canvas.renderMode = RenderMode.WorldSpace;
         }
 
         Camera mainCamera = Camera.main;
