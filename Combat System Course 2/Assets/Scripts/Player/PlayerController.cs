@@ -13,30 +13,31 @@ public class PlayerController : MonoBehaviour
     private bool sprintHeld;
     private bool rollRequested;
     private bool crouchHeld;
-    private Vector2 lookInput; // Ô­Ê¼Êó±ê/Ò¡¸ËÊäÈë
+    private Vector2 lookInput; // Ô­Ê¼ï¿½ï¿½ï¿½/Ò¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public Vector2 LookInput => lookInput;
     [Header("Movement Settings")]
-    [SerializeField] private float walkSpeedMultiplier = 0.5f; // ×ßÂ·ËÙ¶È³ËÊı
-    [SerializeField] private float crouchSpeedMultiplier = 0.3f; // ¶××ßËÙ¶È£¨30%£©
-    private bool shouldCrouch;      // Êµ¼Ê¶×ÏÂ×´Ì¬
+    [SerializeField] private float walkSpeedMultiplier = 0.5f; // ï¿½ï¿½Â·ï¿½Ù¶È³ï¿½ï¿½ï¿½
+    [SerializeField] private float crouchSpeedMultiplier = 0.3f; // ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶È£ï¿½30%ï¿½ï¿½
+    private bool shouldCrouch;      // Êµï¿½Ê¶ï¿½ï¿½ï¿½×´Ì¬
     private float currentRunBlend = 0f;
     private bool isCrouching = false;
-    [SerializeField] LayerMask obstacleLayer; // Ö»¼ì²âÕÏ°­Îï
+    [SerializeField] LayerMask obstacleLayer; // Ö»ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ï¿½ï¿½
 
 
 
     [SerializeField] private float crouchHeight = 0.9f;
     [SerializeField] private float standHeight = 1.8f;
-    private float currentHeightVelocity;  // ĞÂÔö£ºÓÃÓÚÆ½»¬¹ı¶É
-    [SerializeField] private float fallStartDelay = 0.15f; // ÀëµØ¶à¾Ã²ÅËãÏÂÂä
-    [SerializeField] private float minFallSpeed = -6f;     // ÕæÕıÏÂÂäµÄËÙ¶ÈãĞÖµ
+    private float currentHeightVelocity;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private float fallStartDelay = 0.15f; // ï¿½ï¿½Ø¶ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private float minFallSpeed = -6f;     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¶ï¿½ï¿½ï¿½Öµ
 
     private float notGroundedTimer = 0f;
 
 
 
-
-    private bool isSprinting = false; // µ±Ç°ÊÇ·ñÕıÔÚ³å´Ì£¨ÏûºÄÄÜÁ¿£©
+    private float moveDuration = 0f; // ç§»åŠ¨æŒç»­æ—¶é—´
+    [SerializeField] private float timeToRun = 1.5f; // èµ°å¤šä¹…è½¬ä¸ºè·‘ï¼ˆç§’ï¼‰
+    private bool isSprinting = false; // ï¿½ï¿½Ç°ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ú³ï¿½Ì£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     [SerializeField] private bool Armed = false;
     private bool isFalling = false;
@@ -63,6 +64,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float sprintSpeed = 9.5f;
     private CharacterController charactercontroller;
     private ParkourController parkourController;
+    private GroundCheckSensor groundSensor; 
     public CombatController combatController;
     private HeadCollisionChecker headChecker;
     public bool isGrounded;
@@ -70,7 +72,7 @@ public class PlayerController : MonoBehaviour
     private float ySpeed;
     public bool isMovementEnabled = true;
     public bool isRolling = false;
-    [SerializeField] private float rollCooldown = 0.8f; // ÀäÈ´Ê±¼äÉÔ³¤ÓÚ·­¹ö³ÖĞøÊ±¼ä
+    [SerializeField] private float rollCooldown = 0.8f; // ï¿½ï¿½È´Ê±ï¿½ï¿½ï¿½Ô³ï¿½ï¿½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
     private float lastRollTime = -Mathf.Infinity;
     private Coroutine currentRollCoroutine;
 
@@ -86,6 +88,7 @@ public class PlayerController : MonoBehaviour
         combatSystem = GetComponent<ICombatSystem>();
         cameraController = GetComponent<PlayerCameraController>();
         parkourController = GetComponent<ParkourController>();
+        groundSensor=GetComponent<GroundCheckSensor>();
         headChecker = GetComponentInChildren<HeadCollisionChecker>();
         inputActions = InputManager.Instance.Actions;
         isCrouching = false;
@@ -118,6 +121,7 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ åŸºç¡€è¾“å…¥è¯»å– â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         lookInput = inputActions.Player.Look.ReadValue<Vector2>();
         crouchHeld = inputActions.Player.Crouch.IsPressed();
         if (inputActions.Player.Roll.WasPressedThisFrame())
@@ -126,94 +130,104 @@ public class PlayerController : MonoBehaviour
         }
         sprintHeld = inputActions.Player.Sprint.IsPressed();
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-        if (isGrounded && !isDrinking && !isRolling && Input.GetKeyDown(KeyCode.Alpha1))//ÔÚµØÉÏ£¬»¹Ã»ºÈ£¬Ã»¹ö
+
+        // å–è¯é€»è¾‘
+        if (isGrounded && !isDrinking && !isRolling && Input.GetKeyDown(KeyCode.Alpha1))
         {
             PlayerProperty.Instance.UseDrag(testHealthPotion);
             isDrinking = true;
         }
 
+        // çŠ¶æ€æ‰“æ–­æ£€æŸ¥
         if (combatSystem.InAction) return;
-
 
         if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
             animator.SetFloat(speedHash, 0f);
+            // å¦‚æœä¸å†ç”¨ DirX/DirYï¼Œä¸‹é¢ä¸¤è¡Œå¯ä»¥åˆ æ‰
             animator.SetFloat(dirXHash, 0f);
             animator.SetFloat(dirYHash, 0f);
             return;
         }
 
-        // ====================== ¿Õ¸ñÊäÈë£¬¿ÉÒÔÅÊÅÀ£¿ÅÊÅÀ£º·­¹ö ======================
-        if (rollRequested
-      && !isDrinking
-      && !UIStateManager.IsAnyUIActive
-      && isGrounded
-      && !isRolling)
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ æ”€çˆ¬ä¸ç¿»æ»šè¾“å…¥ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        if (rollRequested && !isDrinking && !UIStateManager.IsAnyUIActive && isGrounded && !isRolling)
         {
-            rollRequested = false; // Ïû·ÑÊäÈë
-
-            // ³¢ÊÔÅÊÅÀ
-            if (parkourController != null && parkourController.TryClimb())
-                return;
-
-            // ÔÙ³¢ÊÔ·­¹ö
+            rollRequested = false;
+            if (parkourController != null && parkourController.TryClimb()) return;
             if (Time.time >= lastRollTime + rollCooldown)
             {
                 StartRoll();
                 return;
             }
         }
-        // ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ ÊäÈë´¦Àí ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
-        Vector2 rawInput = moveInput;
-        rawInput = Vector2.ClampMagnitude(rawInput, 1f);
-        float inputMagnitude = rawInput.magnitude;       // 0 ~ 1
 
-        // DirX / DirY£¨±¾µØÏà¶Ô·½Ïò£©
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ ç§»åŠ¨å‘é‡è®¡ç®— â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        Vector2 rawInput = Vector2.ClampMagnitude(moveInput, 1f);
+        float inputMagnitude = rawInput.magnitude;
+
         Vector3 cameraForward = GetCameraPlanarRotation() * Vector3.forward;
         Vector3 cameraRight = GetCameraPlanarRotation() * Vector3.right;
         Vector3 worldMoveDir = (cameraRight * rawInput.x + cameraForward * rawInput.y).normalized;
-        Vector3 localMoveDir = transform.InverseTransformDirection(worldMoveDir);
 
-        animator.SetFloat(dirXHash, localMoveDir.x, 0.15f, Time.deltaTime);
-        animator.SetFloat(dirYHash, localMoveDir.z, 0.15f, Time.deltaTime);
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ æ ¸å¿ƒï¼šç§»åŠ¨æ—¶é—´ä¸åŠ¨é‡ç´¯ç§¯ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        // åªæœ‰åœ¨åœ°é¢ã€æ²¡è¹²ä¸‹ã€ä¸”æœ‰æœ‰æ•ˆä½ç§»è¾“å…¥æ—¶æ‰ç´¯ç§¯æ—¶é—´
+        if (inputMagnitude > 0.1f && isGrounded && !isCrouching)
+        {
+            moveDuration += Time.deltaTime;
+        }
+        else
+        {
+            if (inputMagnitude <= 0.1f || notGroundedTimer > 0.05f)
+            {
+                moveDuration = 0f;
+            }
+        }
 
-        // ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ Speed ¼ÆËã ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
-        // ºËĞÄ£ºÓÃ inputMagnitude Ö±½ÓÓ³Éäµ½ 0 ~ 2.0 ×óÓÒÇø¼ä
-        // ÈÃÇáÍÆ ¡ú Walk£¬ÖØÍÆ ¡ú Run
-        float animSpeed = inputMagnitude * 2.0f;   // 0 ¡ú 0, 0.3 ¡ú 0.6, 0.8 ¡ú 1.6, 1.0 ¡ú 2.0
+        // è®¡ç®—å½“å‰å¤„äº Walk(0) åˆ° Run(1) çš„å“ªä¸ªè¿›åº¦
+        float accelerationT = Mathf.Clamp01(moveDuration / timeToRun);
 
-        // Sprint ¸²¸Ç£¨×î¸ßÓÅÏÈ¼¶£©
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ åŠ¨ç”»å‚æ•°è®¾ç½® (1D Blend Tree) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        float animSpeed = 0f;
+        float damping = 0.075f;
+
+        // å†²åˆºåˆ¤å®š
         bool wantsSprint = sprintHeld && inputMagnitude > 0.1f && !isRolling && !combatSystem.InAction;
-        bool allowSprint = rawInput.y > -0.25f;  // ºóÍË½ûÖ¹
+        bool allowSprint = rawInput.y > -0.25f; //è¿™ä¸ªæ¡ä»¶é™åˆ¶ç©å®¶åªèƒ½æœç€å‰é¢å†²åˆº
         bool canSprint = wantsSprint && allowSprint && PlayerProperty.Instance.EnergyValue > 15;
 
         if (canSprint)
         {
-            animSpeed = inputMagnitude * 3.8f;   // 0.38 ~ 3.8 ¡ú Ç¿ÖÆ½øÈë Sprint (ãĞÖµ 2.5+)
+            animSpeed = 1.99f;
             isSprinting = true;
+        }
+        else if (inputMagnitude > 0.01f)
+        {
+            isSprinting = false;
+            animSpeed = Mathf.Lerp(0.01f, 1.0f, accelerationT);
         }
         else
         {
+            // å…³é”®ç‚¹ï¼šå½“æ²¡æœ‰è¾“å…¥æ—¶ï¼Œç›®æ ‡é€Ÿåº¦ä¸º 0ï¼Œä¸”å°†ç¼“å†²æ—¶é—´è®¾ä¸º 0
             isSprinting = false;
+            animSpeed = 0f;
+            
         }
+        // åº”ç”¨å¹³æ»‘åŠ¨ç”»è¿‡æ¸¡
+        animator.SetFloat(speedHash, animSpeed, damping,Time.deltaTime);
 
-        // ÄÜÁ¿ÏûºÄ
+        // èƒ½é‡æ¶ˆè€—
         if (isSprinting)
         {
             float costPerSecond = PlayerProperty.Instance.GetSprintCostPerSecond();
             if (!PlayerProperty.Instance.ConsumeEnergy(Mathf.CeilToInt(costPerSecond * Time.deltaTime)))
             {
                 isSprinting = false;
-                animSpeed = inputMagnitude * 2.0f;  // ÄÜÁ¿²»¹» ¡ú »Øµ½ Run Çø¼ä
             }
         }
 
-        // Æ½»¬ÉèÖÃ
-        animator.SetFloat(speedHash, animSpeed, 0.18f, Time.deltaTime);
-
-        // ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤ Êµ¼ÊÒÆ¶¯ËÙ¶È ©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤©¤
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ å®é™…ç‰©ç†é€Ÿåº¦è®¡ç®— â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         float currentMoveSpeed;
-
         if (shouldCrouch || isCrouching)
         {
             currentMoveSpeed = walkSpeed * crouchSpeedMultiplier;
@@ -224,73 +238,49 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // Walk ¡ú Run Ë¿»¬¹ı¶É
-            float t = Mathf.InverseLerp(0.15f, 1.0f, inputMagnitude);
-            currentMoveSpeed = Mathf.Lerp(walkSpeed, runSpeed, t);
+            // ç‰©ç†é€Ÿåº¦ä¹Ÿæ ¹æ®æ—¶é—´ä» walkSpeed çˆ¬å‡åˆ° runSpeed
+            float targetSpeed = Mathf.Lerp(walkSpeed, runSpeed, accelerationT);
+            currentMoveSpeed = targetSpeed * inputMagnitude;
         }
 
-        // moveInput3D ¼ÌĞø¸øºóÃæÓÃ
-        Vector3 moveInput3D = worldMoveDir;
-        float moveAmount = inputMagnitude;
-        // ====================== ÒÆ¶¯·½Ïò ======================
-        Vector3 moveDir;
-        if (isLockedOn)
-        {
-            Vector3 lockedDir = cameraController != null ? cameraController.GetLockedDirection() : lockedTargetDir;
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ æ—‹è½¬ä¸é‡åŠ›é€»è¾‘ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+        Vector3 moveDir = isLockedOn ? (cameraController != null ? cameraController.GetLockedDirection() : worldMoveDir) : worldMoveDir;
 
-            if (lockedDir.sqrMagnitude > 0.001f)
-            {
-                Vector3 right = Vector3.Cross(Vector3.up, lockedDir);
-                moveDir = lockedDir * rawInput.y + right * rawInput.x;
-            }
-            else
-            {
-                moveDir = worldMoveDir;
-            }
-        }
-        else
-        {
-            moveDir = worldMoveDir;
-        }
+        // 1. è·å–ä¼ æ„Ÿå™¨ä¿¡æ¯
+        var snapInfo = groundSensor.GetSnapInfo();
 
-        // ====================== ÖØÁ¦Âß¼­(2026/1/20 ¸üĞÂ ) ======================
+        // 2. æ ¸å¿ƒä¿®æ”¹ï¼šç»¼åˆåˆ¤å®šåœ°é¢çŠ¶æ€
+        // åªè¦ç‰©ç†æ˜¾ç¤ºåœ¨åœ°ï¼Œæˆ–è€…ä¼ æ„Ÿå™¨å»ºè®®å¸é™„ï¼Œéƒ½è§†ä¸º isGrounded
+        bool physicalGrounded = charactercontroller.isGrounded;
+        isGrounded = physicalGrounded || snapInfo.shouldSnap;
 
-        isGrounded = charactercontroller.isGrounded;//ÏÈÇ°Ê¹ÓÃPhysics.CheckSphereÀ´¼ì²âÊÇ·ñ×ÅµØ£¬ÏÖÔÚÊ¹ÓÃcharacterrcontrollerÌá¹©µÄAPI½øĞĞ¼ì²â  2026/1/20
-
-        //ÖØÁ¦Âß¼­
         if (isGrounded)
         {
-            if (ySpeed < 0f)
+            // 3. æ‰§è¡Œå¸é™„ä½ç§»ï¼šå¦‚æœç‰©ç†ç¦»åœ°ä½†ä¼ æ„Ÿå™¨å‘ç°åœ°é¢ï¼ˆä¸‹æ¥¼æ¢¯ç¬é—´ï¼‰ï¼Œå¼ºåˆ¶ä¸‹å‹
+            if (!physicalGrounded && snapInfo.shouldSnap)
             {
-                ySpeed = -1.5f;//ÈôÒÑ¾­×ÅµØ£¬¸³ÓèÒ»¸öÇáÎ¢µÄÏòÏÂµÄÁ¦£¬ÊÇ½ÇÉ«ÌùºÏµØÃæ£¬±ÜÃâ²»×ÔÈ»µÄÔË¶¯±íÏÖ£¨×¢Òâ£º-1.5f¹ı´ó£¿Ğ±ÆÂ´¦Àí£¿£©2026/1/20
+                charactercontroller.Move(Vector3.down * snapInfo.distanceToGround);
             }
-        }
-        else
-        {
-            ySpeed += Physics.gravity.y * Time.deltaTime;// ÈôÃ»ÓĞÂäµØ£¬Ôò»ùÓÚÏòÏÂµÄËÙ¶È=³õËÙ¶È£¨ySpeed£©+ÖØÁ¦¼ÓËÙ¶È£¨Physics.gravity.y£©*Ê±¼ä£¨Time.deltaTime£©2026/1/20
-        }
-        // ¼ÇÂ¼ÀëµØÊ±¼ä
-        if (!isGrounded)
-        {
-            notGroundedTimer += Time.deltaTime;
-        }
-        else
-        {
+
+            // 4. æ ¹æ®çŠ¶æ€è®¾ç½®ä¸‹å‹åŠ›
+            // å¦‚æœåœ¨å†²åˆºï¼Œç»™ -12f å¼ºåŠ›å‹åœ¨å°é˜¶ä¸Šï¼›å¦åˆ™ä¿æŒåŸæœ‰çš„ -1.5f
+            ySpeed = isSprinting ? -12f : -1.5f; 
+            
             notGroundedTimer = 0f;
         }
+        else
+        {
+            // 5. åªæœ‰å½»åº•ç¦»åœ°æ‰åº”ç”¨é‡åŠ›
+            ySpeed += Physics.gravity.y * Time.deltaTime;
+            notGroundedTimer += Time.deltaTime;
+        }
 
-        // ½øÈë Falling
-        if (!isGrounded
-            && notGroundedTimer > fallStartDelay
-            && ySpeed < minFallSpeed
-            && !isFalling
-            && !isRolling)
+        // ä¸‹è½åŠ¨ç”»åˆ‡æ¢
+        if (!isGrounded && notGroundedTimer > fallStartDelay && ySpeed < minFallSpeed && !isFalling && !isRolling)
         {
             isFalling = true;
             animator.SetBool("Falling", true);
         }
-
-        // ÂäµØ
         else if (isGrounded && isFalling)
         {
             isFalling = false;
@@ -298,82 +288,31 @@ public class PlayerController : MonoBehaviour
             animator.Play("Land", -1, 0f);
         }
 
-        // ====================== ÒÆ¶¯Âß¼­ ======================
+        // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ åº”ç”¨ä½ç§»ä¸æ—‹è½¬ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
         Vector3 velocity = moveDir * currentMoveSpeed;
 
-        if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
+        // è½¬å‘é€»è¾‘
+        if (inputMagnitude > 0 && !LockRotation)
         {
-            //  Ëø¶¨×´Ì¬[×î¸ßÓÅÏÈ¼¶]
-            velocity /= 3f;  // ¼õËÙ
-
-            targetRotation = Quaternion.LookRotation(lockedTargetDir);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-            float forwardSpeed = Vector3.Dot(velocity, transform.forward);
-            float angle = Vector3.SignedAngle(transform.forward, velocity, Vector3.up);
-
+            targetRotation = Quaternion.LookRotation(moveDir);
         }
-        else if (Armed)
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+
+        // æ¢¯å­æ£€æµ‹ (ä¿æŒä½ åŸæœ‰çš„é€»è¾‘)
+        Vector3 rayOrigin = transform.position + Vector3.up * 0.4f + transform.forward * (charactercontroller.radius + 0.05f);
+        if (Physics.Raycast(rayOrigin, transform.forward, out RaycastHit hit, 0.4f))
         {
-            //  ·ÇËø¶¨+×°±¸ÎäÆ÷ 
-            Vector3 localVelocity = transform.InverseTransformDirection(velocity);
-            float forwardSpeed = localVelocity.z / moveSpeed;
-            float strafeSpeed = localVelocity.x / moveSpeed;
-
-            if (Mathf.Abs(forwardSpeed) > 0.1f)
-                forwardSpeed = Mathf.Sign(forwardSpeed) * Mathf.Lerp(0.2f, 1.0f, currentRunBlend);
-            if (Mathf.Abs(strafeSpeed) > 0.1f)
-                strafeSpeed = Mathf.Sign(strafeSpeed) * Mathf.Lerp(0.2f, 1.0f, currentRunBlend);
-
-
-
-            if (moveAmount > 0 && !LockRotation)
-                targetRotation = Quaternion.LookRotation(moveDir);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-        }
-        else
-        {
-            // ·ÇËø¶¨+·Ç×°±¸ÎäÆ÷ 
-            if (moveAmount > 0 && !LockRotation)
-                targetRotation = Quaternion.LookRotation(moveDir);
-            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
-
-
-            // ====================== Ó¦ÓÃÒÆ¶¯ ======================
-            velocity.y = ySpeed;
-
-            //ÅÀÌİ×ÓÂß¼­
-            Vector3 rayOrigin =
-             transform.position + Vector3.up * 0.4f + transform.forward * (charactercontroller.radius + 0.05f);
-
-            Vector3 rayDir = transform.forward;
-
-            Debug.DrawRay(rayOrigin, rayDir * 0.4f, Color.red);
-
-            if (Physics.Raycast(rayOrigin, rayDir, out RaycastHit hit, 0.4f))
+            if (hit.transform.TryGetComponent<Ladder>(out Ladder ladder))
             {
-                if (hit.transform.TryGetComponent<Ladder>(out Ladder ladder))
-                {
-                    Debug.Log("Åöµ½Ìİ×ÓÁË");
-
-                    // Ìİ×Ó×´Ì¬ÏÂÖ±½ÓÏòÉÏÒÆ¶¯
-                    float climbSpeed = 3f;
-                    velocity = Vector3.up * climbSpeed;
-
-                    // ×èÖ¹ÖØÁ¦
-                    ySpeed = 0f;
-                    isGrounded = true;
-                }
+                velocity = Vector3.up * 3f;
+                ySpeed = 0f;
+                isGrounded = true;
             }
-            if (isGrounded)
-            {
-                ySpeed = -1f; // Ö»±£ÁôÇáÎ¢¸ºÖµ
-            }
-
-            charactercontroller.Move(velocity * Time.deltaTime);
         }
+
+        velocity.y = ySpeed;
+        charactercontroller.Move(velocity * Time.deltaTime);
     }
-
     
 
     public Vector3 GetIntentDirection()
@@ -479,7 +418,7 @@ public class PlayerController : MonoBehaviour
         float rollDistance = 5.5f;
         float rollDuration = 0.75f;
 
-        // ¼ÆËã·­¹ö·½Ïò
+        // ï¿½ï¿½ï¿½ã·­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         float h = moveInput.x;
         float v = moveInput.y;
         Vector3 wishDir;
@@ -505,7 +444,7 @@ public class PlayerController : MonoBehaviour
             wishDir = GetCameraPlanarRotation() * new Vector3(h, 0, v);
         }
 
-        // ÎŞÊäÈë·­¹ö
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ë·­ï¿½ï¿½
         if (wishDir.sqrMagnitude < 0.1f)
         {
             wishDir = isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f
@@ -516,7 +455,7 @@ public class PlayerController : MonoBehaviour
         wishDir.y = 0;
         wishDir = wishDir.normalized;
 
-        //ÓĞÊäÈë-·­¹öÇ°×ªÏò
+        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½-ï¿½ï¿½ï¿½ï¿½Ç°×ªï¿½ï¿½
         if (wishDir.sqrMagnitude > 0.01f)
         {
             Quaternion targetRot = Quaternion.LookRotation(wishDir);
@@ -529,7 +468,7 @@ public class PlayerController : MonoBehaviour
                 transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turnTime / turnDuration);
                 yield return null;
             }
-            transform.rotation = targetRot; // È·±£ÍêÈ«¶ÔÆë
+            transform.rotation = targetRot; // È·ï¿½ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½
         }
 
         Vector3 rollDirection = transform.forward;  
@@ -572,13 +511,13 @@ public class PlayerController : MonoBehaviour
     public void OnLandBegin()
     {
         isMovementEnabled = false;
-        LockRotation = true;  // Ëø¶¨Ğı×ª
+        LockRotation = true;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ª
         Debug.Log("Landing Begin, InAction set to true.");
     }
     public void OnLandComplete()
     {
          isMovementEnabled = true;
-        LockRotation = false;  // ½âËøĞı×ª
+        LockRotation = false;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ª
         Debug.Log("Landing completed, InAction set to false.");
     }
     private Quaternion GetCameraPlanarRotation()
@@ -595,12 +534,12 @@ public class PlayerController : MonoBehaviour
         {
             cameraController.SetLookInput(lookInput);
         }
-        // ÅĞ¶ÏÄ¿±ê¸ß¶È
+        // ï¿½Ğ¶ï¿½Ä¿ï¿½ï¿½ß¶ï¿½
         float targetHeight = isCrouching || !headChecker.CanStandUpFromCrouch()
             ? crouchHeight
             : standHeight;
 
-        // Æ½»¬µ÷Õû CharacterController ¸ß¶È
+        // Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ CharacterController ï¿½ß¶ï¿½
         if (Mathf.Abs(charactercontroller.height - targetHeight) > 0.01f)
         {
             float oldHeight = charactercontroller.height;
