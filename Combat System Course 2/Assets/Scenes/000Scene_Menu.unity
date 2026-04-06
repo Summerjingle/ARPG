@@ -5460,7 +5460,7 @@ Animator:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 608607827}
-  m_Enabled: 0
+  m_Enabled: 1
   m_Avatar: {fileID: 0}
   m_Controller: {fileID: 9100000, guid: 1ef44a08a7fbb6a4c8c23e2574294c8f, type: 2}
   m_CullingMode: 0
@@ -5601,7 +5601,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &613074668
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -12749,7 +12749,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!320 &1288173859
 PlayableDirector:
   m_ObjectHideFlags: 0
@@ -20071,6 +20071,7 @@ MonoBehaviour:
   dialoguePanel: {fileID: 1161595215}
   dialogueText: {fileID: 1769792061}
   interactPrompt: {fileID: 2058536814}
+  pickupToast: {fileID: 0}
   choiceButtons: {fileID: 58081478}
   acceptButton: {fileID: 2021298883}
   rejectButton: {fileID: 1501654811}
