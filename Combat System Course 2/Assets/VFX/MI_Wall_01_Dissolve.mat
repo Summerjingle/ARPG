@@ -68,7 +68,8 @@ Material:
     m_Ints: []
     m_Floats:
     - _0_49: 1
-    - _Edge: 1
+    - _BossPlaceDissolve: 1.0008131
+    - _Edge: 1.29
     - _QueueControl: 0
     - _QueueOffset: 0
     m_Colors: []

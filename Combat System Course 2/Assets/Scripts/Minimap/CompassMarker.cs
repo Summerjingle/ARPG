@@ -104,40 +104,5 @@ public class CompassMarker : MonoBehaviour
         markerRect.localScale = originalScale * scaleValue;
     }
     
-    // ========== 调试面板 ==========
-    void OnGUI()
-    {
-        // 获取当前实际缩放
-        float currentScale = markerRect != null ? markerRect.localScale.x / originalScale.x : 0f;
-        
-        string debugText = 
-            "=== 罗盘调试面板 ===\n" +
-            "\n--- 距离信息 ---\n" +
-            $"目标距离: {debugDistance:F2} 米\n" +
-            $"距离范围: {minDistance}米 → {maxDistance}米\n" +
-            $"映射t值: {Mathf.InverseLerp(minDistance, maxDistance, debugDistance):F3}\n" +
-            $"\n--- 缩放信息 ---\n" +
-            $"缩放范围: {maxScale} → {minScale}\n" +
-            $"计算缩放: {debugScale:F3}\n" +
-            $"实际缩放: {currentScale:F3}\n" +
-            $"\n--- 角度信息 ---\n" +
-            $"水平角度: {debugAngle:F1}°\n" +
-            $"角度范围: -{maxAngle}° → +{maxAngle}°\n" +
-            $"计算位置: {debugXPos:F1}\n" +
-            $"位置限制: -{barHalfWidth} → +{barHalfWidth}";
-        
-        // 添加状态提示
-        if (Mathf.Abs(debugAngle) > maxAngle)
-            debugText += "\n\n⚠️ 门在视野外（淡化中）";
-        else
-            debugText += "\n\n✓ 门在视野内";
-        
-        GUI.Box(new Rect(10, 10, 400, 380), debugText);
-        
-        // 添加操作提示
-        GUI.Label(new Rect(10, 400, 400, 60), 
-            "提示：\n" +
-            "- 观察距离和缩放的变化\n" +
-            "- 角度超过90°时会淡化");
-    }
+   
 }

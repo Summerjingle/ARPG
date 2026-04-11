@@ -226,7 +226,7 @@
             },
             "m_InputSlot": {
                 "m_Node": {
-                    "m_Id": "064df37d0ee340209ddcd33b7b08bd7c"
+                    "m_Id": "74187cb19af54fb5b4105442b2146a8b"
                 },
                 "m_SlotId": 0
             }
@@ -1871,7 +1871,7 @@
     "m_DefaultRefNameVersion": 1,
     "m_RefNameGeneratedByDisplayName": "Edge",
     "m_DefaultReferenceName": "_Edge",
-    "m_OverrideReferenceName": "",
+    "m_OverrideReferenceName": "_BossPlaceDissolve",
     "m_GeneratePropertyBlock": true,
     "m_UseCustomSlotLabel": false,
     "m_CustomSlotLabel": "",
