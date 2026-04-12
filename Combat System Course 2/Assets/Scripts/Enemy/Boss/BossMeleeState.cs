@@ -3,98 +3,231 @@ using UnityEngine;
 public class BossMeleeState : State<BossController>
 {
     private float attackTimer;
-    private float totalAttackDuration = 1.5f; 
-    private float trackingDuration = 0.8f;    
-    private float rotationSpeed = 10f;        
+    private float totalAttackDuration = 2.0f;
+
+    // 时间节点
+    private float windupEndTime = 0.183f;   // 前摇结束
+    private float trackingEndTime = 0.7f;   // 锁定结束（触发突进）
+    private float strikeTime = 0.9f;        // 命中帧
+
     private bool hasDealtDamage;
+
+    // 三段状态
+    private enum AttackPhase
+    {
+        Windup,
+        Tracking,
+        Strike
+    }
+
+    private AttackPhase phase;
+
+    // 锁定目标
+    private Transform lockedTarget;
+
+    // =========================
+    // ⭐ 突进（替代瞬移）
+    // =========================
+    private bool isBurstMoving;
+    private Vector3 burstStartPos;
+    private Vector3 burstTargetPos;
+    private float burstTimer;
+    private float burstDuration = 0.15f;
 
     public override void Enter(BossController owner)
     {
         base.Enter(owner);
+
         attackTimer = 0f;
         hasDealtDamage = false;
 
-        // 1. 在上半身层播放攻击动画
-        owner.PlayAnim("MeleeAttack", 0.1f, 1); 
-        
-        // 2. 暂时接管旋转权，防止导航系统与手动旋转冲突
+        phase = AttackPhase.Windup;
+
+        lockedTarget = owner.playerTarget;
+
+        isBurstMoving = false;
+
+        owner.agent.isStopped = true;
+        owner.agent.velocity = Vector3.zero;
         owner.agent.updateRotation = false;
-        
-        // 3. 初始攻击速度设为走速的一半
-        owner.agent.speed = owner.walkSpeed * 0.5f; 
+
+        owner.PlayAnim("MeleeAttack", 0.1f, 1);
+        owner.SetAnimFloat("Speed", 0f);
     }
 
     public override void Execute()
     {
+        // =========================
+        // ⭐ 突进优先执行
+        // =========================
+        if (isBurstMoving)
+        {
+            burstTimer += Time.deltaTime;
+
+            float t = burstTimer / burstDuration;
+
+            // ease-out 曲线（前快后慢）
+            float curve = 1 - Mathf.Pow(1 - t, 3);
+
+            owner.transform.position = Vector3.Lerp(burstStartPos, burstTargetPos, curve);
+
+            // 锁朝向
+            Vector3 dir = (burstTargetPos - burstStartPos).normalized;
+            if (dir != Vector3.zero)
+                owner.transform.forward = dir;
+
+            if (t >= 1f)
+            {
+                isBurstMoving = false;
+            }
+
+            return;
+        }
+
         attackTimer += Time.deltaTime;
 
-        // --- 动态移动与转向逻辑 ---
-        if (owner.playerTarget != null)
+        switch (phase)
         {
-            float distance = Vector3.Distance(owner.transform.position, owner.playerTarget.position);
-
-            // 如果玩家远离，则让 Boss 边走边砍追上去
-            if (distance > 1.5f) 
+            // =========================
+            // ① 前摇
+            // =========================
+            case AttackPhase.Windup:
             {
-                owner.agent.isStopped = false;
-                owner.agent.SetDestination(owner.playerTarget.position);
-                // 动态调整速度，距离越远速度越快（最高不超过跑步速度）
-                owner.agent.speed = Mathf.Lerp(owner.walkSpeed * 0.5f, owner.runSpeed, (distance - 1.5f) / 5f);
+                LookAtPlayerFast(30f);
+
+                if (attackTimer >= windupEndTime)
+                {
+                    phase = AttackPhase.Tracking;
+
+                    owner.agent.isStopped = false;
+
+                    Debug.Log("<color=yellow>[Melee] 进入锁定阶段</color>");
+                }
+                break;
             }
-            else
+
+            // =========================
+            // ② 锁定追踪
+            // =========================
+            case AttackPhase.Tracking:
             {
-                // 距离很近时减速，增强打击感
-                owner.agent.speed = owner.walkSpeed * 0.3f;
+                if (lockedTarget == null) return;
+
+                Vector3 dir = (lockedTarget.position - owner.transform.position);
+                dir.y = 0;
+
+                owner.agent.SetDestination(lockedTarget.position);
+                owner.SetAnimFloat("Speed", 1f);
+
+                LookAtPlayerFast(20f);
+
+                if (attackTimer >= trackingEndTime)
+                {
+                    phase = AttackPhase.Strike;
+
+                    owner.agent.isStopped = true;
+                    owner.agent.velocity = Vector3.zero;
+                    owner.SetAnimFloat("Speed", 0f);
+
+                    float distance = dir.magnitude;
+
+                    // ⭐ 触发突进（替代瞬移）
+                    if (distance > owner.attackRange * 0.7f)
+                    {
+                        Vector3 targetPos = lockedTarget.position - dir.normalized * (owner.attackRange * 0.6f);
+                        StartBurstMove(targetPos);
+
+                        Debug.Log("<color=orange>[Melee] 突进补位</color>");
+                    }
+                }
+
+                break;
             }
 
-            // 在前摇阶段执行平滑转向
-            if (attackTimer <= trackingDuration)
+            // =========================
+            // ③ 落刀
+            // =========================
+            case AttackPhase.Strike:
             {
-                LookAtPlayerSmoothly();
+                if (!hasDealtDamage && attackTimer >= strikeTime)
+                {
+                    PerformGuaranteedHit();
+                    hasDealtDamage = true;
+                }
+
+                if (attackTimer >= totalAttackDuration)
+                {
+                    owner.ChangeState(owner.chaseState);
+                }
+
+                break;
             }
-        }
-
-        // 同步速度到 Animator，驱动 Base 层的混合树（走路/跑步动画）
-        owner.SetAnimFloat("Speed", owner.agent.velocity.magnitude);
-
-        // --- 伤害判定 ---
-        if (!hasDealtDamage && attackTimer >= totalAttackDuration * 0.45f) 
-        {
-            PerformDamageCheck();
-            hasDealtDamage = true;
-        }
-
-        // --- 状态结束 ---
-        if (attackTimer >= totalAttackDuration)
-        {
-            owner.ChangeState(owner.chaseState);
         }
     }
 
-    public override void Exit() 
+    // =========================
+    // 突进逻辑
+    // =========================
+    private void StartBurstMove(Vector3 targetPos)
     {
-        owner.agent.updateRotation = true;
-        owner.agent.speed = owner.runSpeed;
-        
-        Debug.Log("攻击结束，还原导航设置");
+        isBurstMoving = true;
+        burstTimer = 0f;
+
+        burstStartPos = owner.transform.position;
+        burstTargetPos = targetPos;
+
+        owner.agent.isStopped = true;
+
+        // 可选：更快的移动动画
+        owner.SetAnimFloat("Speed", 2f);
     }
 
-    private void LookAtPlayerSmoothly()
+    // =========================
+    // 朝向
+    // =========================
+    private void LookAtPlayerFast(float speed)
     {
-        if (owner.playerTarget == null) return;
+        if (lockedTarget == null) return;
 
-        Vector3 dir = (owner.playerTarget.position - owner.transform.position).normalized;
+        Vector3 dir = (lockedTarget.position - owner.transform.position).normalized;
         dir.y = 0;
 
         if (dir != Vector3.zero)
         {
             Quaternion targetRot = Quaternion.LookRotation(dir);
-            owner.transform.rotation = Quaternion.Slerp(owner.transform.rotation, targetRot, Time.deltaTime * rotationSpeed);
+            owner.transform.rotation = Quaternion.Slerp(
+                owner.transform.rotation,
+                targetRot,
+                Time.deltaTime * speed
+            );
         }
     }
 
-    void PerformDamageCheck()
+    // =========================
+    // 必中判定
+    // =========================
+    private void PerformGuaranteedHit()
     {
-        Debug.Log("<color=red>攻击判定生效</color>");
+        if (lockedTarget == null) return;
+
+        float distance = Vector3.Distance(owner.transform.position, lockedTarget.position);
+
+        if (distance <= owner.attackRange + 1.0f)
+        {
+            var player = lockedTarget.GetComponent<PlayerController>();
+
+            if (player != null)
+            {
+               
+            }
+        }
+    }
+
+    public override void Exit()
+    {
+        owner.agent.updateRotation = true;
+        owner.agent.isStopped = false;
+
+        owner.SetAnimFloat("Speed", 0f);
     }
 }

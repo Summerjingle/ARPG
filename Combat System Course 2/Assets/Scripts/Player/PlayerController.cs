@@ -140,6 +140,8 @@ public class PlayerController : MonoBehaviour
 
         // 状态打断检查
         if (combatSystem.InAction) return;
+        if(Input.GetKeyDown(KeyCode.R)){animator.SetTrigger("drawWeapon");}
+        if(Input.GetKeyDown(KeyCode.T)){animator.SetTrigger("sheathWeapon");}
 
         if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {

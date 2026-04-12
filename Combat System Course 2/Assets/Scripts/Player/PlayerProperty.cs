@@ -7,32 +7,32 @@ public class PlayerProperty : MonoBehaviour
 
 {
     [Header("Energy System")]
-    [SerializeField] private int maxEnergy = 100;                    // ×î´óÄÜÁ¿
-    [SerializeField] public float idleRegenRate = 200f;              // Ã¿Ãë»Ö¸´£¨Õ¾Á¢²»¶¯£©
-    [SerializeField] public float walkRegenRate = 150f;              // Ã¿Ãë»Ö¸´£¨×ßÂ·£©
-    [SerializeField] private float sprintCostPerSecond = 15f;        // ³å´ÌÃ¿ÃëÏûºÄ
-    [SerializeField] private int rollEnergyCost = 20;                // Ã¿´Î·­¹öÏûºÄ
+    [SerializeField] private int maxEnergy = 100;                    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] public float idleRegenRate = 200f;              // Ã¿ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] public float walkRegenRate = 150f;              // Ã¿ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Â·ï¿½ï¿½
+    [SerializeField] private float sprintCostPerSecond = 15f;        // ï¿½ï¿½ï¿½Ã¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    [SerializeField] private int rollEnergyCost = 20;                // Ã¿ï¿½Î·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    public float EnergyValue => energyValue;                           // Ö»¶Á¶ÔÍâ±©Â¶
+    public float EnergyValue => energyValue;                           // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½â±©Â¶
     public int MaxEnergy => maxEnergy;
     public float EnergyNormalized => (float)energyValue / maxEnergy;
 
-    public System.Action<float> OnEnergyChanged; // ´«Èë 0~1 µÄ°Ù·Ö±È£¬ÓÃÓÚUI
+    public System.Action<float> OnEnergyChanged; // ï¿½ï¿½ï¿½ï¿½ 0~1 ï¿½Ä°Ù·Ö±È£ï¿½ï¿½ï¿½ï¿½ï¿½UI
 
-    // ÐÂÔö£º»ñÈ¡ÏûºÄÖµµÄ·½·¨£¬¹© PlayerController µ÷ÓÃ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½Öµï¿½Ä·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ PlayerController ï¿½ï¿½ï¿½ï¿½
     public float GetSprintCostPerSecond() => sprintCostPerSecond;
     public int GetRollEnergyCost() => rollEnergyCost;
     public static PlayerProperty Instance;
     public Dictionary<PropertyType, List<Property>> propertyDict;
     public int hpValue = 100;
     public float energyValue = 100;
-    public int armorValue => baseArmorValue + equipmentArmorBonus; // Ö»¶ÁÊôÐÔ£º×Ü»¤¼×Öµ
+    public int armorValue => baseArmorValue + equipmentArmorBonus; // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½Ü»ï¿½ï¿½ï¿½Öµ
     public int level = 1;
     public int currEXP = 0;
 
-    // ·ÖÀë»¤¼×Öµ£º»ù´¡Öµ + ×°±¸¼Ó³É
-    [SerializeField] private int baseArmorValue = 0; // »ù´¡»¤¼×Öµ£¨²»ÊÜ×°±¸Ó°Ïì£©
-    private int equipmentArmorBonus = 0; // ×°±¸¼Ó³É»¤¼×Öµ
+    // ï¿½ï¿½ï¿½ë»¤ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ + ×°ï¿½ï¿½ï¿½Ó³ï¿½
+    [SerializeField] private int baseArmorValue = 0; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½Ó°ï¿½ì£©
+    private int equipmentArmorBonus = 0; // ×°ï¿½ï¿½ï¿½Ó³É»ï¿½ï¿½ï¿½Öµ
 
    
     private HealthSystem healthSystem;
@@ -43,7 +43,7 @@ public class PlayerProperty : MonoBehaviour
     public AudioClip DrinkSound;
 
 
-    public event System.Action OnArmorChanged;//»¤¼×Öµ¸Ä±äÊÂ¼þ£¨Ôö¼Ó¡¢¼õÉÙ£©
+    public event System.Action OnArmorChanged;//ï¿½ï¿½ï¿½ï¿½Öµï¿½Ä±ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¡ï¿½ï¿½ï¿½ï¿½Ù£ï¿½
 
     private void Awake()
     {
@@ -72,7 +72,7 @@ public class PlayerProperty : MonoBehaviour
             hpValue = Mathf.RoundToInt(healthSystem.Health);
         }
 
-        // ¶©ÔÄËùÓÐÔ¤ÏÈ·ÅÖÃµÄµÐÈËµÄËÀÍöÊÂ¼þ
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¤ï¿½È·ï¿½ï¿½ÃµÄµï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
         SubscribeToAllEnemies();
     }
 
@@ -85,16 +85,16 @@ public class PlayerProperty : MonoBehaviour
             HealthSystem enemyHealth = enemy.GetComponent<HealthSystem>();
             if (enemyHealth != null)
             {
-                enemyHealth.OnDeath -= HandleEnemyDeath; // ÏÈÈ¡Ïû
-                enemyHealth.OnDeath += HandleEnemyDeath; // ÔÙ¶©ÔÄ
-                Debug.Log($"ÒÑ¶©ÔÄµÐÈË: {enemy.gameObject.name}");
+                enemyHealth.OnDeath -= HandleEnemyDeath; // ï¿½ï¿½È¡ï¿½ï¿½
+                enemyHealth.OnDeath += HandleEnemyDeath; // ï¿½Ù¶ï¿½ï¿½ï¿½
+                Debug.Log($"ï¿½Ñ¶ï¿½ï¿½Äµï¿½ï¿½ï¿½: {enemy.gameObject.name}");
             }
         }
 
-        Debug.Log($"×Ü¹²¶©ÔÄÁË {allEnemies.Length} ¸öµÐÈË");
+        Debug.Log($"ï¿½Ü¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {allEnemies.Length} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
 
-    // ´¦ÀíµÐÈËËÀÍöÊÂ¼þ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
     private void HandleEnemyDeath(HealthSystem healthSystem)
     {
         EnemyController enemyController = healthSystem.GetComponent<EnemyController>();
@@ -104,20 +104,20 @@ public class PlayerProperty : MonoBehaviour
         }
     }
 
-    // ¾­ÑéÖµ´¦Àí·½·¨
+    // ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void OnEnemyDie(EnemyController enemy)
     {
-        Debug.Log($"OnEnemyDie±»µ÷ÓÃ£¬µÐÈËID: {enemy.GetInstanceID()}, µ±Ç°Ö¡: {Time.frameCount}");
+        Debug.Log($"OnEnemyDieï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ID: {enemy.GetInstanceID()}, ï¿½ï¿½Ç°Ö¡: {Time.frameCount}");
 
         int gainedExp = enemy.EXP;
         this.currEXP += gainedExp;
 
-        Debug.Log($"µÐÈËËÀÍö£¬»ñµÃ {gainedExp} ¾­ÑéÖµ£¬µ±Ç°¾­Ñé: {currEXP}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {gainedExp} ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½: {currEXP}");
 
         bool leveledUp = false;
         int levelsGained = 0;
 
-        // ´¦Àí¿ÉÄÜµÄ¶à¼¶Á¬Éý
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÜµÄ¶à¼¶ï¿½ï¿½ï¿½ï¿½
         while (currEXP >= (level * 30) && (level * 30) > 0)
         {
             currEXP -= (level * 30);
@@ -127,31 +127,31 @@ public class PlayerProperty : MonoBehaviour
             baseArmorValue += 5;
             PlayerHUDUI.Instance.UpdateArmorDisplay();
 
-            Debug.Log($"Éý¼¶ÁË£¡µ±Ç°µÈ¼¶: {level}£¬Ê£Óà¾­Ñé: {currEXP}");
+            Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½Ë£ï¿½ï¿½ï¿½Ç°ï¿½È¼ï¿½: {level}ï¿½ï¿½Ê£ï¿½à¾­ï¿½ï¿½: {currEXP}");
         }
 
-        // ¸üÐÂUI
+        // ï¿½ï¿½ï¿½ï¿½UI
         if (PlayerHUDUI.Instance != null)
         {
             if (leveledUp)
             {
-                // Éý¼¶Ê±²¥·ÅÌØÊâ¶¯»­
+                // ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½â¶¯ï¿½ï¿½
                 PlayerHUDUI.Instance.UpdateEXPBar(true);
             }
             else
             {
-                // Ö»ÊÇ¾­ÑéÔö¼Ó
+                // Ö»ï¿½Ç¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 PlayerHUDUI.Instance.UpdateEXPBar(false);
             }
         }
 
-        Debug.Log($"×îÖÕ×´Ì¬ - µÈ¼¶: {level}, ¾­Ñé: {currEXP}/{level * 30}, Á¬Éý {levelsGained} ¼¶");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½×´Ì¬ - ï¿½È¼ï¿½: {level}, ï¿½ï¿½ï¿½ï¿½: {currEXP}/{level * 30}, ï¿½ï¿½ï¿½ï¿½ {levelsGained} ï¿½ï¿½");
     }
 
     public void UseDrag(ItemSO itemSO)
     {
-        pendingItem = itemSO;                // ¼ÇÂ¼Õâ´ÎÒªÓÃµÄÒ©
-        anim.SetTrigger("UsePotion");            // ²¥ºÈÒ©¶¯»­£¨Äã Animator ÀïµÄ trigger£©
+        pendingItem = itemSO;                // ï¿½ï¿½Â¼ï¿½ï¿½ï¿½Òªï¿½Ãµï¿½Ò©
+        anim.Play("UsePotion");            // ï¿½ï¿½ï¿½ï¿½Ò©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Animator ï¿½ï¿½ï¿½ triggerï¿½ï¿½
     }
 
     public void AddProperty(PropertyType pt, int value)
@@ -210,36 +210,36 @@ public class PlayerProperty : MonoBehaviour
         }
     }
 
-    // »ñÈ¡»ù´¡»¤¼×Öµ£¨ÓÃÓÚ´æµµ£©
+    // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ú´æµµï¿½ï¿½
     public int GetBaseArmor()
     {
         return baseArmorValue;
     }
 
-    // ÉèÖÃ»ù´¡»¤¼×Öµ£¨ÓÃÓÚ¼ÓÔØ´æµµ£©
+    // ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Ú¼ï¿½ï¿½Ø´æµµï¿½ï¿½
     public void SetBaseArmor(int value)
     {
         baseArmorValue = value;
-        Debug.Log($"ÉèÖÃ»ù´¡»¤¼×Öµ: {baseArmorValue}, ×Ü»¤¼×Öµ: {armorValue}");
+        Debug.Log($"ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ: {baseArmorValue}, ï¿½Ü»ï¿½ï¿½ï¿½Öµ: {armorValue}");
         OnArmorChanged?.Invoke();
     }
 
-    //Ôö¼Ó×°±¸»¤¼×¼Ó³É£¨×¨ÃÅÓÃÓÚ×°±¸ÏµÍ³£©
+    //ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½×¼Ó³É£ï¿½×¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ÏµÍ³ï¿½ï¿½
     public void AddArmorValue(int value)
     {
         equipmentArmorBonus += value;
-        Debug.Log($"Ôö¼Ó×°±¸»¤¼×¼Ó³É: {value}, µ±Ç°×Ü»¤¼×Öµ: {armorValue}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½×¼Ó³ï¿½: {value}, ï¿½ï¿½Ç°ï¿½Ü»ï¿½ï¿½ï¿½Öµ: {armorValue}");
         OnArmorChanged?.Invoke();
     }
 
-    // ÒÆ³ý×°±¸»¤¼×¼Ó³É£¨×¨ÃÅÓÃÓÚ×°±¸ÏµÍ³£©
+    // ï¿½Æ³ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½×¼Ó³É£ï¿½×¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ÏµÍ³ï¿½ï¿½
     public void RemoveArmorValue(int value)
     {
         equipmentArmorBonus -= value;
-        Debug.Log($"ÒÆ³ý×°±¸»¤¼×¼Ó³É: {value}, µ±Ç°×Ü»¤¼×Öµ: {armorValue}");
+        Debug.Log($"ï¿½Æ³ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½×¼Ó³ï¿½: {value}, ï¿½ï¿½Ç°ï¿½Ü»ï¿½ï¿½ï¿½Öµ: {armorValue}");
         OnArmorChanged?.Invoke();
     }
-    // ÏûºÄÄÜÁ¿£¨¿É±»Íâ²¿µ÷ÓÃ£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½ï¿½â²¿ï¿½ï¿½ï¿½Ã£ï¿½
     public bool ConsumeEnergy(float amount)
     {
         if (energyValue >= amount)
@@ -252,7 +252,7 @@ public class PlayerProperty : MonoBehaviour
         return false;
     }
 
-    // »Ö¸´ÄÜÁ¿£¨ÄÚ²¿ÓÃ£©
+    // ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú²ï¿½ï¿½Ã£ï¿½
     public void RestoreEnergy(float amount)
     {
         energyValue += amount;
@@ -260,13 +260,13 @@ public class PlayerProperty : MonoBehaviour
         OnEnergyChanged?.Invoke(EnergyNormalized);
     }
 
-    // Ç¿ÖÆÉèÖÃÄÜÁ¿£¨±ÈÈç¶Áµµ£©
+    // Ç¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public void SetEnergy(int value)
     {
         energyValue = Mathf.Clamp(value, 0, maxEnergy);
         OnEnergyChanged?.Invoke(EnergyNormalized);
     }
-    // ¶¯»­Í¾ÖÐÏÔÊ¾Ä£ÐÍ
+    // ï¿½ï¿½ï¿½ï¿½Í¾ï¿½ï¿½ï¿½ï¿½Ê¾Ä£ï¿½ï¿½
     public void OnDrinkShowModel()
     {
         HideAllDrugModels();
@@ -283,7 +283,7 @@ public class PlayerProperty : MonoBehaviour
         }
     }
 
-    // ¶¯»­ÖÐµÄ¹Ø¼üÖ¡µ÷ÓÃ£ºÕæÕý¼ÓÊôÐÔ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ¹Ø¼ï¿½Ö¡ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public void OnDrinkApply()
     {
         if (pendingItem == null) return;
@@ -296,7 +296,7 @@ public class PlayerProperty : MonoBehaviour
         pendingItem = null;
     }
 
-    // ¶¯»­½áÊøÒþ²ØÄ£ÐÍ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
     public void HideAllDrugModels()
     {
         
