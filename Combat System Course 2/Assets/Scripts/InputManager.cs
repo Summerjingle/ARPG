@@ -8,6 +8,13 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance { get; private set; }
 
     public PlayerInputActions Actions { get; private set; }
+    public event System.Action OnAttack;
+    public event System.Action OnInteract;
+    public event System.Action ToggleWeapon;
+
+
+
+    
     
 
     private void Awake()
@@ -22,6 +29,12 @@ public class InputManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         Actions = new PlayerInputActions();
+        Actions.Player.Attack.performed += _ => OnAttack?.Invoke();
+
+        Actions.Player.Interact.performed += _ => OnInteract?.Invoke();
+        
+        Actions.Player.DrawWeapon.performed += _ => ToggleWeapon?.Invoke();
+
 
     }
 
@@ -40,7 +53,7 @@ public class InputManager : MonoBehaviour
        
         Actions.Player.Disable();
         Actions.UI_MainMenu.Enable();
-        UIStateManager.SetUIActive(true); // ÏÔÊ¾Êó±ê
+        UIStateManager.SetUIActive(true); // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½
     }
 
     public void SwitchToPlayer()
@@ -48,14 +61,14 @@ public class InputManager : MonoBehaviour
         Actions.UI_MainMenu.Disable();
         Actions.Player.Enable();
         
-        UIStateManager.SetUIActive(false); // Òþ²ØÊó±ê
+        UIStateManager.SetUIActive(false); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
     public void SwitchToSaveMenu()
     {
         Actions.UI_MainMenu.Disable();
         Actions.Player.Disable();
         Actions.UI_SaveMenu.Enable();
-        UIStateManager.SetUIActive(true); // ÏÔÊ¾Êó±ê
+        UIStateManager.SetUIActive(true); // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½
     }
    
 }

@@ -9,19 +9,18 @@ public class PlayerInteraction : MonoBehaviour
 
     private void Awake()
     {
-        inputActions = new PlayerInputActions();
-        inputActions.Player.Interact.performed += OnInteract;
+        inputActions = InputManager.Instance.Actions;
     }
-
     private void OnEnable()
     {
-        inputActions.Enable();
+        InputManager.Instance.OnInteract += OnInteract;
     }
 
     private void OnDisable()
     {
-        inputActions.Disable();
+        InputManager.Instance.OnInteract -= OnInteract;
     }
+   
 
     private void OnTriggerEnter(Collider other)
     {
@@ -44,9 +43,9 @@ public class PlayerInteraction : MonoBehaviour
         }
     }
 
-    private void OnInteract(InputAction.CallbackContext ctx)
+    private void OnInteract()
     {
-        // ¶Ô»°ÖÐ½ûÖ¹½»»¥
+        
         if (DialogueManager.Instance != null &&
             DialogueManager.Instance.IsDialogueActive)
             return;
@@ -57,7 +56,7 @@ public class PlayerInteraction : MonoBehaviour
         if (interactablesInRange.Count == 0)
             UIManager.Instance?.HideInteractPrompt();
 
-        // Ñ¡È¡×î´óÓÅÏÈ¼¶¶ÔÏó
+        // Ñ¡È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½ï¿½ï¿½
         IInteractable target = null;
         int maxPriority = int.MinValue;
 
@@ -76,7 +75,7 @@ public class PlayerInteraction : MonoBehaviour
     }
     private System.Collections.IEnumerator RefreshPromptNextFrame()
     {
-        yield return null; // µÈÒ»Ö¡
+        yield return null; // ï¿½ï¿½Ò»Ö¡
 
         interactablesInRange.RemoveAll(i => i == null || !i.CanInteract);
 

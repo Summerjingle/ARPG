@@ -5,6 +5,6 @@ using UnityEngine;
 public interface IInteractable
 {
     void Interact();
-    int Priority { get; }   // 用来解决重叠时谁优先
+    int Priority { get; }   // 
     bool CanInteract { get; }
 }

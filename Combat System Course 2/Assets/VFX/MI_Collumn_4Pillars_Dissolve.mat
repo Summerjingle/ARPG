@@ -68,7 +68,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _0_49: 1
-    - _BossPlaceDissolve: 1.0035816
+    - _BossPlaceDissolve: 0
     - _Edge: 1.29
     - _QueueControl: 0
     - _QueueOffset: 0

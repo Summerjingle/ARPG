@@ -10,6 +10,10 @@ public class WeaponEquipmentManager : MonoBehaviour
     private Weapon currentWeapon;
     private bool isWeaponDrawn = false;
     
+    private Animator playerAnim;
+    private bool isPlayingAnim;
+    
+    
     private GameObject currentWeaponInHand;
     private GameObject currentWeaponInSheath;
 
@@ -22,8 +26,21 @@ public class WeaponEquipmentManager : MonoBehaviour
         }
         Instance = this;
     }
+    private void OnEnable()
+    {
+        InputManager.Instance.ToggleWeapon += ToggleWeapon;
+    }
 
-    // װ������
+    private void OnDisable()
+    {
+        InputManager.Instance.ToggleWeapon -= ToggleWeapon;
+    }
+    void Start()
+    {
+        playerAnim=GetComponent<Animator>();
+    }
+
+
     public void EquipWeapon(ItemSO weaponItem)
     {
         UnequipWeapon();
@@ -72,12 +89,31 @@ public class WeaponEquipmentManager : MonoBehaviour
             Destroy(currentWeapon.gameObject);
             currentWeapon = null;
         }
+        isWeaponDrawn = false;
+        isPlayingAnim = false;
 
         // UI更新
         InventoryUI.Instance?.ClearEquipmentIcon(ItemType.Weapon, ArmorType.NotArmor);
         //PlayerController.i.SetArmedMode(false);
     }
+    public void ToggleWeapon()
+    {
+        if (currentWeapon == null)
+        {
+            Debug.Log("没有装备武器");
+            return;
+        }
 
+        if (isPlayingAnim) return;
+
+        isPlayingAnim = true;
+
+        if (isWeaponDrawn)
+            playerAnim.SetTrigger("sheathWeapon");
+            
+        else
+            playerAnim.SetTrigger("drawWeapon");
+    }
     public void DrawWeapon() // 供动画帧事件调用
     {
         if (currentWeapon != null && !isWeaponDrawn)
@@ -90,6 +126,7 @@ public class WeaponEquipmentManager : MonoBehaviour
             currentWeapon.transform.localRotation = Quaternion.identity;
 
             isWeaponDrawn = true;
+            isPlayingAnim = false;
             Debug.Log("武器已拔出至手上");
         }
     }
@@ -105,6 +142,7 @@ public class WeaponEquipmentManager : MonoBehaviour
             currentWeapon.transform.localRotation = Quaternion.identity;
 
             isWeaponDrawn = false;
+            isPlayingAnim = false;
             Debug.Log("武器已收到腰间");
         }
     }

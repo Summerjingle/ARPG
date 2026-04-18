@@ -286,8 +286,19 @@ public class PlayerController : MonoBehaviour
         else if (isGrounded && isFalling)
         {
             isFalling = false;
+
             animator.SetBool("Falling", false);
-            animator.Play("Land", -1, 0f);
+
+            float speed = animator.GetFloat(speedHash);
+
+            if (speed < 1.9f)
+            {
+                animator.Play("Land_Idle", -1, 0f);
+            }
+            else
+            {
+                animator.Play("Land_Move", -1, 0f);
+            }
         }
 
         // ─────────────── 应用位移与旋转 ───────────────
