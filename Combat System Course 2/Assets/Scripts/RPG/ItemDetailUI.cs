@@ -13,6 +13,9 @@ public class ItemDetailUI : MonoBehaviour
     public GameObject propertyGrid; 
     public GameObject propertyTempate;
 
+    public Button useButton;
+
+
     private ItemSO itemSO;
     private ItemUI itemUI;
     private void Start()
@@ -30,16 +33,16 @@ public class ItemDetailUI : MonoBehaviour
         switch (itemSO.itemType)
         {
             case ItemType.Weapon:
-                type = "ÎäÆ÷";
+                type = "æ­¦å™¨";
                 break;
             case ItemType.Consumable:
-                type = "¿ÉÏûºÄÆ·";
+                type = "æ¶ˆè€—å“";
                 break;
             case ItemType.Armor:
-                type = "·À¾ß";
+                type = "é˜²å…·";
                 break;
             case ItemType.QuestRelated:
-                type = "ÈÎÎñµÀ¾ß";
+                type = "ä»»åŠ¡é“å…·";
                 break;
             
         }
@@ -63,16 +66,16 @@ public class ItemDetailUI : MonoBehaviour
             switch (property.propertyType)
             {
                 case PropertyType.HPValue:
-                    propertyName = "ÉúÃüÖµ+";
+                    propertyName = "ç”Ÿå‘½å€¼+";
                     break;
                 case PropertyType.EnergyValue:
-                    propertyName = "ÄÜÁ¿Öµ+";
+                    propertyName = "ç²¾åŠ›å€¼+";
                     break;
                 case PropertyType.AttackValue:
-                    propertyName = "¹¥»÷Á¦£º";
+                    propertyName = "æ”»å‡»åŠ›";
                     break;
                 case PropertyType.DefenseValue:
-                    propertyName = "»¤¼×Öµ£º";
+                    propertyName = "æŠ¤ç”²å€¼";
                     break;
                 default:
                     break;
@@ -89,15 +92,15 @@ public class ItemDetailUI : MonoBehaviour
 
     public void OnUseButtonClick()
     {
-        // ÏÈ¼ì²éÊÇ·ñÎªÈÎÎñµÀ¾ß
+        // ï¿½È¼ï¿½ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (itemSO.itemType == ItemType.QuestRelated)
         {
-            MessageUI.Instance.Show("ÈÎÎñµÀ¾ßÎŞ·¨Ö±½ÓÊ¹ÓÃ");
+            MessageUI.Instance.Show("ä»»åŠ¡é“å…·æ— æ³•è¢«ä½¿ç”¨");
             this.gameObject.SetActive(false);
             return;
         }
 
-        // Ö»ÓĞ·ÇÈÎÎñµÀ¾ß²ÅÖ´ĞĞÊ¹ÓÃÂß¼­
+        // Ö»ï¿½Ğ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß²ï¿½Ö´ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ß¼ï¿½
         InventoryUI.Instance.OnItemUse(itemSO, itemUI);
         this.gameObject.SetActive(false);
     }

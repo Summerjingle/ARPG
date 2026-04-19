@@ -2,34 +2,36 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
 
 public class InventoryUI : MonoBehaviour
 {
     public static InventoryUI Instance { get; private set; }
-    
+
     public GameObject content;
     public GameObject itemPrefab;
     public ItemDetailUI itemDetail;
-    [Header("×°±¸²ÛÎ»")]
-    public Image currentWeaponIcon;   // ÎäÆ÷
-    public Image currentHelmetIcon;   // Í·¿ø
-    public Image currentChestplateIcon; // ĞØ¼×
-    public Image currentGauntletsIcon; // »¤ÊÖ
-    public Image currentLeggingsIcon;  // »¤ÍÈ
-    public Image currentBootsIcon;     // Ñ¥×Ó
+    [Header("è£…å¤‡æ§½ä½")]
+    public Image currentWeaponIcon;   // æ­¦å™¨
+    public Image currentHelmetIcon;   // å¤´ç›”
+    public Image currentChestplateIcon; // æŠ¤ç”²
+    public Image currentGauntletsIcon; // æ‰‹å¥—
+    public Image currentLeggingsIcon;  // è…¿ç”²
+    public Image currentBootsIcon;     // é‹å­
 
+    private ItemUI currentSelectedItem;
 
-    [Header("¹¥»÷ÌáÊ¾")]
-    public GameObject attackHintUI; // ¹¥»÷ÌáÊ¾UI
-    public KeyCode attackKey = KeyCode.Mouse1; // ¹¥»÷°´¼ü£¬Ä¬ÈÏÎªÊó±ê×ó¼ü
+    [Header("æ”»å‡»æç¤º")]
+    public GameObject attackHintUI; // æ”»å‡»æç¤ºUI
+    public KeyCode attackKey = KeyCode.Mouse1; // æ”»å‡»æŒ‰é”®ï¼Œé»˜è®¤ä¸ºå³é”®
 
     [SerializeField] private GameObject inventoryPanel;
     private PlayerInputActions inputActions;
 
     public static bool IsInventoryOpen { get; private set; }
-    
 
-    // ±ê¼ÇÊÇ·ñÒÑ¾­ÏÔÊ¾¹ı¹¥»÷ÌáÊ¾
+
+    // æ˜¯å¦å·²ç»æ˜¾ç¤ºè¿‡æ”»å‡»æç¤º
     private static bool hasShownAttackHint = false;
 
     private void Awake()
@@ -43,29 +45,32 @@ public class InventoryUI : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        // ³õÊ¼»¯Ê±¹Ø±Õ±³°ü
+        // åˆå§‹åŒ–æ—¶å…³é—­èƒŒåŒ…
         if (inventoryPanel != null)
             inventoryPanel.SetActive(false);
         IsInventoryOpen = false;
 
-        // ³õÊ¼»¯Ê±¹Ø±Õ¹¥»÷ÌáÊ¾
+        // åˆå§‹åŒ–æ—¶å…³é—­æ”»å‡»æç¤º
         if (attackHintUI != null)
             attackHintUI.SetActive(false);
-        inputActions = new PlayerInputActions();
+        
     }
 
     private void OnEnable()
     {
-        // ÆôÓÃÊäÈë£¬×¢²áÊÂ¼ş
-        inputActions.Global.Enable();
-        inputActions.Global.Bag.performed += OnBagPerformed;
+        
+       
+        InputManager.Instance.OnToggleInventory += ToggleInventory;
+        InputManager.Instance.OnUISubmit += HandleSubmit;
+        InputManager.Instance.OnUICancel += HandleCancel;
     }
 
     private void OnDisable()
     {
-        // ½â°óÊÂ¼ş
-        inputActions.Global.Bag.performed -= OnBagPerformed;
-        inputActions.Global.Disable();
+        // æ³¨é”€äº‹ä»¶
+        InputManager.Instance.OnToggleInventory -= ToggleInventory;
+        InputManager.Instance.OnUISubmit -= HandleSubmit;
+        InputManager.Instance.OnUICancel -= HandleCancel;
     }
 
     private void OnDestroy()
@@ -78,7 +83,7 @@ public class InventoryUI : MonoBehaviour
     }
 
 
-    public void ToggleInventory()
+   public void ToggleInventory()
     {
         IsInventoryOpen = !IsInventoryOpen;
 
@@ -87,37 +92,72 @@ public class InventoryUI : MonoBehaviour
 
         UIStateManager.SetUIActive(IsInventoryOpen);
 
-        Debug.Log($"±³°ü {(IsInventoryOpen ? "´ò¿ª" : "¹Ø±Õ")}");
+        Debug.Log($"èƒŒåŒ… {(IsInventoryOpen ? "æ‰“å¼€" : "å…³é—­")}");
 
-        // ¹Ø±Õ±³°üÊ±¼ì²éÊÇ·ñĞèÒªÏÔÊ¾¹¥»÷ÌáÊ¾
-        if (!IsInventoryOpen)
+        if (IsInventoryOpen)
         {
+            InputManager.Instance.SwitchToInventory();   // ä½ å·²ç»åŠ äº†çš„åˆ‡æ¢æ–¹æ³•
+            SelectFirstItem();                           // æ–°å¢ï¼šè‡ªåŠ¨é€‰ä¸­ç¬¬ä¸€ä¸ªç‰©å“
+        }
+        else
+        {
+            InputManager.Instance.SwitchToPlayerFromInventory();
             CheckAndShowAttackHint();
         }
     }
+    private void HandleCancel()
+    {
+        Debug.Log("Cancel pressed");
 
-    
+       if (itemDetail.gameObject.activeSelf)
+        {
+            itemDetail.gameObject.SetActive(false);
 
-   
-    // ¼ì²é²¢ÏÔÊ¾¹¥»÷ÌáÊ¾
+            // âœ… æŠŠç„¦ç‚¹è¿˜ç»™å½“å‰é€‰ä¸­çš„ç‰©å“
+            if (currentSelectedItem != null)
+            {
+                EventSystem.current.SetSelectedGameObject(currentSelectedItem.gameObject);
+            }
+
+            return;
+        }
+
+        // âœ… å¦‚æœè¯¦æƒ…æ²¡å¼€ï¼Œæ‰å…³é—­èƒŒåŒ…
+        ToggleInventory();
+    }
+    private void HandleSubmit()
+{
+    if (itemDetail.gameObject.activeSelf)
+    {
+        itemDetail.OnUseButtonClick(); // ğŸ‘‰ ç›´æ¥è°ƒç”¨
+    }
+    else
+    {
+        OnItemClick(currentSelectedItem.itemSO, currentSelectedItem);
+    }
+}
+
+
+
+    // æ£€æŸ¥å¹¶æ˜¾ç¤ºæ”»å‡»æç¤º
     private void CheckAndShowAttackHint()
     {
-        // Èç¹ûÒÑ¾­ÏÔÊ¾¹ıÌáÊ¾£¬²»ÔÙÏÔÊ¾
+        // å¦‚æœå·²ç»æ˜¾ç¤ºè¿‡æç¤ºï¼Œåˆ™ä¸å†æ˜¾ç¤º
         if (hasShownAttackHint) return;
 
-        // Ö±½Ó¼ì²éÊÇ·ñÓĞÎäÆ÷£¬²»ÒÀÀµÍæ¼ÒÕ½¶·×é¼ş
+        // ç›´æ¥æ£€æŸ¥æ˜¯å¦å·²ç»æœ‰æ­¦å™¨å¹¶ä¸”å·²ç»è¿›å…¥æˆ˜æ–—çŠ¶æ€
         if (WeaponEquipmentManager.Instance?.GetCurrentWeapon() != null)
         {
-            // Íæ¼ÒÓĞÎäÆ÷ÇÒÎ´ÏÔÊ¾¹ıÌáÊ¾£¬ÏÔÊ¾¹¥»÷ÌáÊ¾
+            // å¦‚æœæœ‰æ­¦å™¨ä¸”è¿˜æœªæ˜¾ç¤ºè¿‡æç¤ºï¼Œåˆ™æ˜¾ç¤ºæ”»å‡»æç¤º
             if (attackHintUI != null)
             {
                 attackHintUI.SetActive(true);
-                Debug.Log("ÏÔÊ¾¹¥»÷ÌáÊ¾£º°´Êó±ê×ó¼ü½øĞĞ¹¥»÷");
+                Debug.Log("æ˜¾ç¤ºæ”»å‡»æç¤ºï¼šç©å®¶å·²ç»æŒæœ‰æ­¦å™¨");
             }
         }
     }
 
-    // ÊÖ¶¯ÖØÖÃ¹¥»÷ÌáÊ¾×´Ì¬£¨ÓÃÓÚĞÂÓÎÏ·µÈ³¡¾°£©
+    // æ‰‹åŠ¨é‡ç½®æ”»å‡»æç¤ºçŠ¶æ€ï¼ˆæ¯”å¦‚æ¸¸æˆåˆå§‹åŒ–æ—¶ï¼‰
     public void ResetAttackHint()
     {
         hasShownAttackHint = false;
@@ -125,7 +165,7 @@ public class InventoryUI : MonoBehaviour
             attackHintUI.SetActive(false);
     }
 
-    // ÎïÆ·À¸°´Å¥µã»÷£¨·½±ãUI°´Å¥´ò¿ª±³°ü£©
+    // ç‰©å“æŒ‰é’®ç‚¹å‡»ï¼Œæˆ–è€…UIæŒ‰é’®æ‰“å¼€èƒŒåŒ…çš„
     public void OnInventoryButtonClick()
     {
         ToggleInventory();
@@ -133,7 +173,7 @@ public class InventoryUI : MonoBehaviour
 
     public void AddItem(ItemSO itemSO)
     {
-        // ¼ì²éÊÇ·ñÒÑ´æÔÚ¸ÃÎïÆ·µÄUI£¨¶ÑµşÎïÆ·£©
+        // æ£€æŸ¥æ˜¯å¦å·²å­˜åœ¨è¯¥ç‰©å“UIï¼ˆå¯å †å ç‰©å“ï¼‰
         if (itemSO.IsStackable())
         {
             ItemUI existingUI = FindItemUI(itemSO);
@@ -144,14 +184,14 @@ public class InventoryUI : MonoBehaviour
             }
         }
 
-        // ²»´æÔÚ»ò·Ç¶ÑµşÎïÆ·£¬´´½¨ĞÂUI
+        // åˆ›å»ºæ–°çš„æˆ–éå †å ç‰©å“çš„UI
         GameObject itemGo = GameObject.Instantiate(itemPrefab);
         itemGo.transform.SetParent(content.transform);
         ItemUI itemUI = itemGo.GetComponent<ItemUI>();
         itemUI.InitItem(itemSO);
     }
 
-    // ²éÕÒÎïÆ·µÄUIÔªËØ
+    // æŸ¥æ‰¾ç‰©å“çš„UIå…ƒç´ 
     private ItemUI FindItemUI(ItemSO targetItem)
     {
         if (targetItem == null) return null;
@@ -163,7 +203,7 @@ public class InventoryUI : MonoBehaviour
             ItemUI itemUI = child.GetComponent<ItemUI>();
             if (itemUI != null && itemUI.itemSO != null)
             {
-                // ¸üÑÏ¸ñµÄÆ¥ÅäÌõ¼ş
+                // é€šè¿‡è¯¦ç»†åŒ¹é…ï¼ˆåç§°ï¼‰
                 if (itemUI.itemSO.nameOfItem == targetItem.nameOfItem &&
                     itemUI.itemSO.itemType == targetItem.itemType)
                 {
@@ -182,41 +222,49 @@ public class InventoryUI : MonoBehaviour
         }
         else
         {
-            // Èç¹ûÕÒ²»µ½UI£¬ËµÃ÷ĞèÒª´´½¨ĞÂµÄ
+            // å¦‚æœæ‰¾ä¸åˆ°UIè¯´æ˜éœ€è¦æ·»åŠ æ–°çš„
             AddItem(targetItem);
         }
     }
-
+    void Update()
+    {   
+        if (IsInventoryOpen)
+        {
+            DebugNavigation();
+        }
+    }
     public void OnItemClick(ItemSO itemSO, ItemUI itemUI)
     {
         itemDetail.UpdateDetailUI(itemSO, itemUI);
+         EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(itemDetail.useButton.gameObject);
     }
 
     public void OnItemUse(ItemSO itemSO, ItemUI itemUI)
     {
-        // ÏÈ´¦Àí±³°üÂß¼­£¨¼õÉÙÊıÁ¿£©
+        // å…ˆå¤„ç†æ•°é‡é€»è¾‘ï¼Œå†è°ƒç”¨æ•ˆæœ
         if (itemSO.IsStackable() && itemSO.amount > 1)
         {
-            // Ö±½Ó¼õÉÙÊıÁ¿
+            // ç›´æ¥å‡å°‘æ•°é‡
             itemSO.amount -= 1;
-            itemUI.UpdateAmountDisplay(); // ¸üĞÂUIÏÔÊ¾
+            itemUI.UpdateAmountDisplay(); // æ›´æ–°UIæ˜¾ç¤º
 
-            // ÔÙÊ¹ÓÃÎïÆ·Ğ§¹û
+            // å†ä½¿ç”¨ç‰©å“æ•ˆæœ
             ItemUsageHandler.Instance.UseItem(itemSO);
         }
         else
         {
-            // ×îºóÒ»¸öÎïÆ·»ò·Ç¶ÑµşÎïÆ·
+            // æœ€åä¸€ä¸ªç‰©å“æˆ–éå †å ç‰©å“
             Destroy(itemUI.gameObject);
             InventoryManager.Instance.itemList.Remove(itemSO);
 
-            // ÔÙÊ¹ÓÃÎïÆ·Ğ§¹û
+            // å†ä½¿ç”¨ç‰©å“æ•ˆæœ
             ItemUsageHandler.Instance.UseItem(itemSO);
         }
     }
 
 
-    // ¸üĞÂ×°±¸Í¼±êµÄ·½·¨
+    // æ›´æ–°è£…å¤‡å›¾æ ‡çš„æ–¹æ³•
     public void UpdateEquipmentIcon(ItemSO item)
     {
         if (item == null) return;
@@ -232,7 +280,7 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // ¸üĞÂ»¤¼×Í¼±ê£¨¸ù¾İArmorType·ÖÀà£©
+    // æ›´æ–°æŠ¤ç”²å›¾æ ‡ï¼ˆæ ¹æ®ArmorTypeåˆ†ç±»ï¼‰
     private void UpdateArmorIcon(ItemSO armorItem)
     {
         switch (armorItem.armorType)
@@ -255,7 +303,7 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // ¸üĞÂÍ¼±êÏÔÊ¾
+    // æ›´æ–°å›¾æ ‡æ˜¾ç¤º
     private void UpdateIcon(ref Image iconSlot, Sprite icon)
     {
         if (iconSlot != null)
@@ -265,7 +313,7 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // Çå³ıÖ¸¶¨ÀàĞÍµÄ×°±¸Í¼±ê
+    // æ¸…é™¤æŒ‡å®šç±»å‹çš„è£…å¤‡å›¾æ ‡
     public void ClearEquipmentIcon(ItemType itemType, ArmorType armorType = ArmorType.NotArmor)
     {
         switch (itemType)
@@ -299,25 +347,25 @@ public class InventoryUI : MonoBehaviour
                 UpdateIcon(ref currentBootsIcon, null);
                 break;
             default:
-                Debug.LogWarning($"Î´ÖªµÄ»¤¼×ÀàĞÍ: {armorType}");
+                Debug.LogWarning($"æœªçŸ¥çš„æŠ¤ç”²ç±»å‹: {armorType}");
                 break;
         }
     }
 
     public void UpdateInventoryUI()
     {
-        // Çå¿Õµ±Ç°UI
+        // æ¸…ç©ºå½“å‰UI
         foreach (Transform child in content.transform)
         {
             Destroy(child.gameObject);
         }
 
-        // Ö±½ÓÎªÃ¿¸öÎïÆ·´´½¨UI£¬²»½øĞĞ¶Ñµş¼ì²é
+        // ç›´æ¥ä¸ºæ¯ä¸ªç‰©å“åˆ›å»ºUIï¼ˆä¸ç®¡æ˜¯å¦å †å ï¼‰
         foreach (ItemSO item in InventoryManager.Instance.itemList)
         {
             if (item == null) continue;
 
-            // Ö±½ÓÊµÀı»¯UIÔ¤ÖÆÌå
+            // ç›´æ¥å®ä¾‹åŒ–UIé¢„åˆ¶ä½“
             GameObject itemGo = Instantiate(itemPrefab);
             itemGo.transform.SetParent(content.transform);
             itemGo.transform.localScale = Vector3.one;
@@ -330,12 +378,62 @@ public class InventoryUI : MonoBehaviour
             }
             else
             {
-                Debug.LogError("ÎïÆ·Ô¤ÖÆÌåÈ±ÉÙItemUI×é¼ş");
+                Debug.LogError("ç‰©å“é¢„åˆ¶ä½“ç¼ºå°‘ItemUIè„šæœ¬");
             }
         }
 
-        // Ç¿ÖÆË¢ĞÂ²¼¾Ö
+        // å¼ºåˆ¶åˆ·æ–°å¸ƒå±€
         LayoutRebuilder.ForceRebuildLayoutImmediate(content.GetComponent<RectTransform>());
     }
+    private void SelectFirstItem()
+{
+    if (content == null || content.transform.childCount == 0)
+    {
+        Debug.LogWarning("[Inventory] content ä¸­æ²¡æœ‰ç‰©å“ï¼Œæ— æ³•é€‰ä¸­");
+        return;
+    }
+
+    // åªä» content é‡Œæ‰¾ç¬¬ä¸€ä¸ªæœ‰æ•ˆçš„ Selectableï¼ˆItemUIï¼‰
+    Selectable firstSelectable = content.transform.GetChild(0).GetComponent<Selectable>();
+
+    if (firstSelectable != null && firstSelectable.interactable)
+    {
+        // å¼ºåˆ¶æ¸…ç©ºå½“å‰é€‰ä¸­ï¼Œå†é€‰ä¸­ content é‡Œçš„ç¬¬ä¸€ä¸ªç‰©å“
+        EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(firstSelectable.gameObject);
+
+        Debug.Log($"[Inventory] æˆåŠŸé€‰ä¸­ content é‡Œçš„ç¬¬ä¸€ä¸ªç‰©å“ â†’ {firstSelectable.name}");
+    }
+    else
+    {
+        Debug.LogWarning("[Inventory] content ç¬¬ä¸€ä¸ªå­ç‰©ä½“ä¸Šç¼ºå°‘ Selectable ç»„ä»¶ï¼ˆButtonï¼‰");
+    }
+}
+    private void DebugNavigation()
+{
+    if (EventSystem.current == null)
+    {
+        Debug.LogWarning("EventSystem.current ä¸º null");
+        return;
+    }
+
+    GameObject selectedGO = EventSystem.current.currentSelectedGameObject;
     
+    if (selectedGO != null)
+    {
+        ItemUI itemUI = selectedGO.GetComponent<ItemUI>();
+
+        if (itemUI != null && currentSelectedItem != itemUI)
+        {
+            currentSelectedItem = itemUI;
+
+            string itemName = itemUI.itemSO != null ? itemUI.itemSO.nameOfItem : "æœªçŸ¥ç‰©å“";
+            Debug.Log($"[Navigation Debug] å½“å‰é€‰ä¸­ç‰©å“: {itemName} | GameObject: {selectedGO.name}");
+        }
+    }
+    else
+    {
+        Debug.Log("[Navigation Debug] å½“å‰æ²¡æœ‰é€‰ä¸­ä»»ä½•ç‰©å“");
+    }
+}
 }

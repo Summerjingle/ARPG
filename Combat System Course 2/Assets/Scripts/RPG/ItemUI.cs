@@ -13,7 +13,7 @@ public class ItemUI : MonoBehaviour
         iconImage.sprite = itemSO.icon;
         this.itemSO = itemSO;
 
-        // ÏÔÊ¾ÊýÁ¿£¨Èç¹ûÊÇ¶ÑµþÎïÆ·£©
+        // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç¶Ñµï¿½ï¿½ï¿½Æ·ï¿½ï¿½
         if (itemSO.IsStackable() && itemSO.amount > 1)
         {
             amountText.text = itemSO.amount.ToString();
@@ -25,12 +25,9 @@ public class ItemUI : MonoBehaviour
         }
     }
 
-    public void OnClick()
-    {
-        InventoryUI.Instance.OnItemClick(itemSO, this);
-    }
+    
 
-    // ¸üÐÂÊýÁ¿ÏÔÊ¾
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
     public void UpdateAmountDisplay()
     {
         if (itemSO.IsStackable() && itemSO.amount > 1)

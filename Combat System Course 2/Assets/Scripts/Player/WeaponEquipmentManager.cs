@@ -8,10 +8,12 @@ public class WeaponEquipmentManager : MonoBehaviour
     public Transform weaponSocket; // 手部武器生成点
     public Transform weaponHolder;//腰部武器生成点
     private Weapon currentWeapon;
-    private bool isWeaponDrawn = false;
+    public bool isWeaponDrawn = false;
     
     private Animator playerAnim;
-    private bool isPlayingAnim;
+    private bool isPlayingAnim; 
+    private float lastToggleTime = 0f;
+    private float toggleCooldown = 3.3f; // 3.2秒内不能重复切换
     
     
     private GameObject currentWeaponInHand;
@@ -98,6 +100,7 @@ public class WeaponEquipmentManager : MonoBehaviour
     }
     public void ToggleWeapon()
     {
+        if (Time.time < lastToggleTime + toggleCooldown) return;
         if (currentWeapon == null)
         {
             Debug.Log("没有装备武器");
@@ -114,7 +117,7 @@ public class WeaponEquipmentManager : MonoBehaviour
         else
             playerAnim.SetTrigger("drawWeapon");
     }
-    public void DrawWeapon() // 供动画帧事件调用
+    public void DrawWeapon() //Draw2第一帧
     {
         if (currentWeapon != null && !isWeaponDrawn)
         {
@@ -125,12 +128,11 @@ public class WeaponEquipmentManager : MonoBehaviour
             currentWeapon.transform.localPosition = Vector3.zero;
             currentWeapon.transform.localRotation = Quaternion.identity;
 
-            isWeaponDrawn = true;
-            isPlayingAnim = false;
+            
             Debug.Log("武器已拔出至手上");
         }
     }
-    public void SheathWeapon() // 供动画帧事件调用
+    public void SheathWeapon() // Sheath2第一帧
     {
         if (currentWeapon != null && isWeaponDrawn)
         {
@@ -141,12 +143,21 @@ public class WeaponEquipmentManager : MonoBehaviour
             currentWeapon.transform.localPosition = Vector3.zero;
             currentWeapon.transform.localRotation = Quaternion.identity;
 
-            isWeaponDrawn = false;
-            isPlayingAnim = false;
+            
             Debug.Log("武器已收到腰间");
         }
     }
 
+    public void SetWeaponDrawState()//Draw2最后一帧
+    {
+        isWeaponDrawn = true;
+        isPlayingAnim = false;
+    }
+    public void SetWeaponSheathState()// Sheath2最后一帧
+    {
+        isWeaponDrawn = false;
+        isPlayingAnim = false;
+    }
 
 
     // ��ȡ��ǰ����
