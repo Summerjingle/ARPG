@@ -15,6 +15,9 @@ public class ItemDetailUI : MonoBehaviour
 
     public Button useButton;
 
+    private TextMeshProUGUI buttonText;
+   
+
 
     private ItemSO itemSO;
     private ItemUI itemUI;
@@ -22,6 +25,7 @@ public class ItemDetailUI : MonoBehaviour
     {
         propertyTempate.SetActive(false);
         this.gameObject.SetActive(false);
+        buttonText = useButton.GetComponentInChildren<TextMeshProUGUI>();
     }
     public void UpdateDetailUI(ItemSO itemSO,ItemUI itemUI)
     {
@@ -34,15 +38,19 @@ public class ItemDetailUI : MonoBehaviour
         {
             case ItemType.Weapon:
                 type = "武器";
+                buttonText.text="装备";
                 break;
             case ItemType.Consumable:
                 type = "消耗品";
+                buttonText.text="使用";
                 break;
             case ItemType.Armor:
                 type = "防具";
+                buttonText.text="装备";
                 break;
             case ItemType.QuestRelated:
                 type = "任务道具";
+                buttonText.text="使用";
                 break;
             
         }

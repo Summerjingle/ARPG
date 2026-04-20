@@ -19,7 +19,7 @@ public class InventoryUI : MonoBehaviour
     public Image currentLeggingsIcon;  // 腿甲
     public Image currentBootsIcon;     // 鞋子
 
-    private ItemUI currentSelectedItem;
+    public ItemUI currentSelectedItem;
 
     [Header("攻击提示")]
     public GameObject attackHintUI; // 攻击提示UI
@@ -240,26 +240,42 @@ public class InventoryUI : MonoBehaviour
         EventSystem.current.SetSelectedGameObject(itemDetail.useButton.gameObject);
     }
 
-    public void OnItemUse(ItemSO itemSO, ItemUI itemUI)
+   public void OnItemUse(ItemSO itemSO, ItemUI itemUI)
     {
         // 先处理数量逻辑，再调用效果
         if (itemSO.IsStackable() && itemSO.amount > 1)
         {
+            
             // 直接减少数量
             itemSO.amount -= 1;
             itemUI.UpdateAmountDisplay(); // 更新UI显示
 
             // 再使用物品效果
             ItemUsageHandler.Instance.UseItem(itemSO);
+            currentSelectedItem = null;
+            // 使用后重新选中当前物品（数量减少了但还在）
+            EventSystem.current.SetSelectedGameObject(itemUI.gameObject);
+            Debug.Log("使用后重新选中当前物品（数量减少了但还在）");
         }
         else
         {
             // 最后一个物品或非堆叠物品
-            Destroy(itemUI.gameObject);
+            GameObject destroyedItem = itemUI.gameObject;
+
+            // 先移除物品
+            destroyedItem.transform.SetParent(null); // 先从content移除，避免SelectFirstItem选中它
             InventoryManager.Instance.itemList.Remove(itemSO);
+
+            // 重新选中第一个物品（因为当前物品要被销毁了）
+            SelectFirstItem();
 
             // 再使用物品效果
             ItemUsageHandler.Instance.UseItem(itemSO);
+
+            // 最后销毁物体
+            Destroy(destroyedItem);
+            currentSelectedItem = null;
+            Debug.Log(" 重新选中第一个物品（因为当前物品被销毁了）");
         }
     }
 
@@ -385,7 +401,7 @@ public class InventoryUI : MonoBehaviour
         // 强制刷新布局
         LayoutRebuilder.ForceRebuildLayoutImmediate(content.GetComponent<RectTransform>());
     }
-    private void SelectFirstItem()
+    public void SelectFirstItem()
 {
     if (content == null || content.transform.childCount == 0)
     {

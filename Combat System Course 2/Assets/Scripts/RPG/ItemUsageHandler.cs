@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ItemUsageHandler : MonoBehaviour
@@ -7,7 +8,7 @@ public class ItemUsageHandler : MonoBehaviour
     public static ItemUsageHandler Instance { get; private set; }
     public ArmorEquipmentManager armorManager; 
     public PlayerProperty playerProperty;
-    [SerializeField] public Transform weapon1Socket; // Weapon1½ÚµãµÄÒýÓÃ
+    [SerializeField] public Transform weapon1Socket; // Weapon1ï¿½Úµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public WeaponEquipmentManager weaponManager;
     private void Awake()
     {
@@ -43,17 +44,17 @@ public class ItemUsageHandler : MonoBehaviour
 
             case ItemType.Consumable:
                 playerProperty.UseDrag(itemSO);
-                Debug.Log($"Ê¹ÓÃÏûºÄÆ·: {itemSO.nameOfItem}");
+                Debug.Log($"Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·: {itemSO.nameOfItem}");
                 break;
             case ItemType.Armor:
                 armorManager.EquipArmor(itemSO);
                 break;
             case ItemType.QuestRelated:
-                Debug.Log("ÈÎÎñµÀ¾ßÎÞ·¨Ö±½ÓÊ¹ÓÃ");
+                Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½Ö±ï¿½ï¿½Ê¹ï¿½ï¿½");
                 
                 break;
             default:
-                Debug.LogWarning($"Î´ÖªµÄÎïÆ·ÀàÐÍ: {itemSO.itemType}");
+                Debug.LogWarning($"Î´Öªï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½: {itemSO.itemType}");
                 break;
         }
     }
