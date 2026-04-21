@@ -11,27 +11,27 @@ public class InventoryUI : MonoBehaviour
     public GameObject content;
     public GameObject itemPrefab;
     public ItemDetailUI itemDetail;
+    
     [Header("装备槽位")]
-    public Image currentWeaponIcon;   // 武器
-    public Image currentHelmetIcon;   // 头盔
-    public Image currentChestplateIcon; // 护甲
-    public Image currentGauntletsIcon; // 手套
-    public Image currentLeggingsIcon;  // 腿甲
-    public Image currentBootsIcon;     // 鞋子
+    public Image currentWeaponIcon;
+    public Image currentHelmetIcon;
+    public Image currentChestplateIcon;
+    public Image currentGauntletsIcon;
+    public Image currentLeggingsIcon;
+    public Image currentBootsIcon;
 
     public ItemUI currentSelectedItem;
+    private ItemUI lastSelectedItem;   //记录上一次选中的物品，用于取消高亮
 
     [Header("攻击提示")]
-    public GameObject attackHintUI; // 攻击提示UI
-    public KeyCode attackKey = KeyCode.Mouse1; // 攻击按键，默认为右键
+    public GameObject attackHintUI;
+    public KeyCode attackKey = KeyCode.Mouse1;
 
     [SerializeField] private GameObject inventoryPanel;
     private PlayerInputActions inputActions;
 
     public static bool IsInventoryOpen { get; private set; }
 
-
-    // 是否已经显示过攻击提示
     private static bool hasShownAttackHint = false;
 
     private void Awake()
@@ -45,21 +45,17 @@ public class InventoryUI : MonoBehaviour
         {
             Destroy(gameObject);
         }
-        // 初始化时关闭背包
+
         if (inventoryPanel != null)
             inventoryPanel.SetActive(false);
         IsInventoryOpen = false;
 
-        // 初始化时关闭攻击提示
         if (attackHintUI != null)
             attackHintUI.SetActive(false);
-        
     }
 
     private void OnEnable()
     {
-        
-       
         InputManager.Instance.OnToggleInventory += ToggleInventory;
         InputManager.Instance.OnUISubmit += HandleSubmit;
         InputManager.Instance.OnUICancel += HandleCancel;
@@ -67,7 +63,6 @@ public class InventoryUI : MonoBehaviour
 
     private void OnDisable()
     {
-        // 注销事件
         InputManager.Instance.OnToggleInventory -= ToggleInventory;
         InputManager.Instance.OnUISubmit -= HandleSubmit;
         InputManager.Instance.OnUICancel -= HandleCancel;
@@ -77,13 +72,13 @@ public class InventoryUI : MonoBehaviour
     {
         inputActions?.Dispose();
     }
+
     private void OnBagPerformed(InputAction.CallbackContext ctx)
     {
         ToggleInventory();
     }
 
-
-   public void ToggleInventory()
+    public void ToggleInventory()
     {
         IsInventoryOpen = !IsInventoryOpen;
 
@@ -96,59 +91,59 @@ public class InventoryUI : MonoBehaviour
 
         if (IsInventoryOpen)
         {
-            InputManager.Instance.SwitchToInventory();   // 你已经加了的切换方法
-            SelectFirstItem();                           // 新增：自动选中第一个物品
+            InputManager.Instance.SwitchToInventory();
+            SelectFirstItem();
         }
         else
         {
+            // 关闭背包时，取消当前高亮并清空记录
+            if (currentSelectedItem != null)
+            {
+                currentSelectedItem.SetHighlight(false);
+                currentSelectedItem = null;
+                lastSelectedItem = null;
+            }
             InputManager.Instance.SwitchToPlayerFromInventory();
             CheckAndShowAttackHint();
         }
     }
+
     private void HandleCancel()
     {
         Debug.Log("Cancel pressed");
 
-       if (itemDetail.gameObject.activeSelf)
+        if (itemDetail.gameObject.activeSelf)
         {
             itemDetail.gameObject.SetActive(false);
 
-            // ✅ 把焦点还给当前选中的物品
             if (currentSelectedItem != null)
             {
                 EventSystem.current.SetSelectedGameObject(currentSelectedItem.gameObject);
             }
-
             return;
         }
 
-        // ✅ 如果详情没开，才关闭背包
         ToggleInventory();
     }
+
     private void HandleSubmit()
-{
-    if (itemDetail.gameObject.activeSelf)
     {
-        itemDetail.OnUseButtonClick(); // 👉 直接调用
+        if (itemDetail.gameObject.activeSelf)
+        {
+            itemDetail.OnUseButtonClick();
+        }
+        else
+        {
+            OnItemClick(currentSelectedItem.itemSO, currentSelectedItem);
+        }
     }
-    else
-    {
-        OnItemClick(currentSelectedItem.itemSO, currentSelectedItem);
-    }
-}
 
-
-
-    // 检查并显示攻击提示
     private void CheckAndShowAttackHint()
     {
-        // 如果已经显示过提示，则不再显示
         if (hasShownAttackHint) return;
 
-        // 直接检查是否已经有武器并且已经进入战斗状态
         if (WeaponEquipmentManager.Instance?.GetCurrentWeapon() != null)
         {
-            // 如果有武器且还未显示过提示，则显示攻击提示
             if (attackHintUI != null)
             {
                 attackHintUI.SetActive(true);
@@ -157,7 +152,6 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // 手动重置攻击提示状态（比如游戏初始化时）
     public void ResetAttackHint()
     {
         hasShownAttackHint = false;
@@ -165,7 +159,6 @@ public class InventoryUI : MonoBehaviour
             attackHintUI.SetActive(false);
     }
 
-    // 物品按钮点击，或者UI按钮打开背包的
     public void OnInventoryButtonClick()
     {
         ToggleInventory();
@@ -173,7 +166,6 @@ public class InventoryUI : MonoBehaviour
 
     public void AddItem(ItemSO itemSO)
     {
-        // 检查是否已存在该物品UI（可堆叠物品）
         if (itemSO.IsStackable())
         {
             ItemUI existingUI = FindItemUI(itemSO);
@@ -184,14 +176,12 @@ public class InventoryUI : MonoBehaviour
             }
         }
 
-        // 创建新的或非堆叠物品的UI
-        GameObject itemGo = GameObject.Instantiate(itemPrefab);
+        GameObject itemGo = Instantiate(itemPrefab);
         itemGo.transform.SetParent(content.transform);
         ItemUI itemUI = itemGo.GetComponent<ItemUI>();
         itemUI.InitItem(itemSO);
     }
 
-    // 查找物品的UI元素
     private ItemUI FindItemUI(ItemSO targetItem)
     {
         if (targetItem == null) return null;
@@ -203,7 +193,6 @@ public class InventoryUI : MonoBehaviour
             ItemUI itemUI = child.GetComponent<ItemUI>();
             if (itemUI != null && itemUI.itemSO != null)
             {
-                // 通过详细匹配（名称）
                 if (itemUI.itemSO.nameOfItem == targetItem.nameOfItem &&
                     itemUI.itemSO.itemType == targetItem.itemType)
                 {
@@ -213,6 +202,7 @@ public class InventoryUI : MonoBehaviour
         }
         return null;
     }
+
     public void UpdateItemAmountDisplay(ItemSO targetItem)
     {
         ItemUI existingUI = FindItemUI(targetItem);
@@ -222,65 +212,86 @@ public class InventoryUI : MonoBehaviour
         }
         else
         {
-            // 如果找不到UI说明需要添加新的
             AddItem(targetItem);
         }
     }
+
     void Update()
-    {   
+    {
         if (IsInventoryOpen)
         {
             DebugNavigation();
         }
     }
+
     public void OnItemClick(ItemSO itemSO, ItemUI itemUI)
     {
         itemDetail.UpdateDetailUI(itemSO, itemUI);
-         EventSystem.current.SetSelectedGameObject(null);
+        EventSystem.current.SetSelectedGameObject(null);
         EventSystem.current.SetSelectedGameObject(itemDetail.useButton.gameObject);
+
+        // 切换高亮
+        SwitchHighlight(itemUI);
     }
 
-   public void OnItemUse(ItemSO itemSO, ItemUI itemUI)
+    public void OnItemUse(ItemSO itemSO, ItemUI itemUI)
     {
-        // 先处理数量逻辑，再调用效果
         if (itemSO.IsStackable() && itemSO.amount > 1)
         {
-            
-            // 直接减少数量
             itemSO.amount -= 1;
-            itemUI.UpdateAmountDisplay(); // 更新UI显示
-
-            // 再使用物品效果
+            itemUI.UpdateAmountDisplay();
             ItemUsageHandler.Instance.UseItem(itemSO);
             currentSelectedItem = null;
-            // 使用后重新选中当前物品（数量减少了但还在）
+
+            // 数量减少但物品仍存在，重新高亮当前物品
+            SwitchHighlight(itemUI);
             EventSystem.current.SetSelectedGameObject(itemUI.gameObject);
             Debug.Log("使用后重新选中当前物品（数量减少了但还在）");
         }
         else
         {
-            // 最后一个物品或非堆叠物品
             GameObject destroyedItem = itemUI.gameObject;
 
-            // 先移除物品
-            destroyedItem.transform.SetParent(null); // 先从content移除，避免SelectFirstItem选中它
+            destroyedItem.transform.SetParent(null);
             InventoryManager.Instance.itemList.Remove(itemSO);
 
-            // 重新选中第一个物品（因为当前物品要被销毁了）
+            // 如果被销毁的物品正好是当前高亮的，需要清除高亮记录
+            if (currentSelectedItem == itemUI || lastSelectedItem == itemUI)
+            {
+                if (currentSelectedItem != null) currentSelectedItem.SetHighlight(false);
+                currentSelectedItem = null;
+                lastSelectedItem = null;
+            }
+
             SelectFirstItem();
 
-            // 再使用物品效果
             ItemUsageHandler.Instance.UseItem(itemSO);
-
-            // 最后销毁物体
             Destroy(destroyedItem);
-            currentSelectedItem = null;
-            Debug.Log(" 重新选中第一个物品（因为当前物品被销毁了）");
+            Debug.Log("重新选中第一个物品（因为当前物品被销毁了）");
         }
     }
 
+    // 新增：统一的高亮切换方法
+    private void SwitchHighlight(ItemUI newSelected)
+    {
+        if (newSelected == null) return;
 
-    // 更新装备图标的方法
+        // 如果选中的是同一个物品，不需要重复操作
+        if (currentSelectedItem == newSelected)
+            return;
+
+        // 取消上一个物品的高亮
+        if (lastSelectedItem != null)
+            lastSelectedItem.SetHighlight(false);
+
+        // 设置新高亮
+        newSelected.SetHighlight(true);
+
+        // 更新记录
+        currentSelectedItem = newSelected;
+        lastSelectedItem = newSelected;
+    }
+
     public void UpdateEquipmentIcon(ItemSO item)
     {
         if (item == null) return;
@@ -296,7 +307,6 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // 更新护甲图标（根据ArmorType分类）
     private void UpdateArmorIcon(ItemSO armorItem)
     {
         switch (armorItem.armorType)
@@ -319,7 +329,6 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // 更新图标显示
     private void UpdateIcon(ref Image iconSlot, Sprite icon)
     {
         if (iconSlot != null)
@@ -329,7 +338,6 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    // 清除指定类型的装备图标
     public void ClearEquipmentIcon(ItemType itemType, ArmorType armorType = ArmorType.NotArmor)
     {
         switch (itemType)
@@ -370,18 +378,15 @@ public class InventoryUI : MonoBehaviour
 
     public void UpdateInventoryUI()
     {
-        // 清空当前UI
         foreach (Transform child in content.transform)
         {
             Destroy(child.gameObject);
         }
 
-        // 直接为每个物品创建UI（不管是否堆叠）
         foreach (ItemSO item in InventoryManager.Instance.itemList)
         {
             if (item == null) continue;
 
-            // 直接实例化UI预制体
             GameObject itemGo = Instantiate(itemPrefab);
             itemGo.transform.SetParent(content.transform);
             itemGo.transform.localScale = Vector3.one;
@@ -398,58 +403,60 @@ public class InventoryUI : MonoBehaviour
             }
         }
 
-        // 强制刷新布局
         LayoutRebuilder.ForceRebuildLayoutImmediate(content.GetComponent<RectTransform>());
     }
+
     public void SelectFirstItem()
-{
-    if (content == null || content.transform.childCount == 0)
     {
-        Debug.LogWarning("[Inventory] content 中没有物品，无法选中");
-        return;
-    }
-
-    // 只从 content 里找第一个有效的 Selectable（ItemUI）
-    Selectable firstSelectable = content.transform.GetChild(0).GetComponent<Selectable>();
-
-    if (firstSelectable != null && firstSelectable.interactable)
-    {
-        // 强制清空当前选中，再选中 content 里的第一个物品
-        EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(firstSelectable.gameObject);
-
-        Debug.Log($"[Inventory] 成功选中 content 里的第一个物品 → {firstSelectable.name}");
-    }
-    else
-    {
-        Debug.LogWarning("[Inventory] content 第一个子物体上缺少 Selectable 组件（Button）");
-    }
-}
-    private void DebugNavigation()
-{
-    if (EventSystem.current == null)
-    {
-        Debug.LogWarning("EventSystem.current 为 null");
-        return;
-    }
-
-    GameObject selectedGO = EventSystem.current.currentSelectedGameObject;
-    
-    if (selectedGO != null)
-    {
-        ItemUI itemUI = selectedGO.GetComponent<ItemUI>();
-
-        if (itemUI != null && currentSelectedItem != itemUI)
+        if (content == null || content.transform.childCount == 0)
         {
-            currentSelectedItem = itemUI;
+            Debug.LogWarning("[Inventory] content 中没有物品，无法选中");
+            return;
+        }
 
-            string itemName = itemUI.itemSO != null ? itemUI.itemSO.nameOfItem : "未知物品";
-            Debug.Log($"[Navigation Debug] 当前选中物品: {itemName} | GameObject: {selectedGO.name}");
+        Selectable firstSelectable = content.transform.GetChild(0).GetComponent<Selectable>();
+
+        if (firstSelectable != null && firstSelectable.interactable)
+        {
+            EventSystem.current.SetSelectedGameObject(null);
+            EventSystem.current.SetSelectedGameObject(firstSelectable.gameObject);
+
+            ItemUI firstItemUI = firstSelectable.GetComponent<ItemUI>();
+            SwitchHighlight(firstItemUI);   // 使用统一的高亮切换
+
+            Debug.Log($"[Inventory] 成功选中 content 里的第一个物品 → {firstSelectable.name}");
+        }
+        else
+        {
+            Debug.LogWarning("[Inventory] content 第一个子物体上缺少 Selectable 组件（Button）");
         }
     }
-    else
+
+    private void DebugNavigation()
     {
-        Debug.Log("[Navigation Debug] 当前没有选中任何物品");
+        if (EventSystem.current == null)
+        {
+            Debug.LogWarning("EventSystem.current 为 null");
+            return;
+        }
+
+        GameObject selectedGO = EventSystem.current.currentSelectedGameObject;
+
+        if (selectedGO != null)
+        {
+            ItemUI itemUI = selectedGO.GetComponent<ItemUI>();
+
+            if (itemUI != null && currentSelectedItem != itemUI)
+            {
+                SwitchHighlight(itemUI);   // 键盘/手柄导航时切换高亮
+
+                string itemName = itemUI.itemSO != null ? itemUI.itemSO.nameOfItem : "未知物品";
+                Debug.Log($"[Navigation Debug] 当前选中物品: {itemName} | GameObject: {selectedGO.name}");
+            }
+        }
+        else
+        {
+            Debug.Log("[Navigation Debug] 当前没有选中任何物品");
+        }
     }
-}
 }

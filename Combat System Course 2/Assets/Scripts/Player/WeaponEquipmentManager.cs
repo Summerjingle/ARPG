@@ -82,6 +82,13 @@ public class WeaponEquipmentManager : MonoBehaviour
     {
         if (currentWeapon != null)
         {
+
+            // 如果武器在手上，先触发放回腰间的逻辑
+            if (isWeaponDrawn)
+            {                                                                                             
+                playerAnim.SetTrigger("sheathWeapon");
+                Debug.Log("收回武器");
+            }                                         
             // ���������ӻر���
             if (InventoryManager.Instance != null && currentWeapon.itemSO != null)
             {

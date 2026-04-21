@@ -7,6 +7,7 @@ public class ItemUI : MonoBehaviour
     public Image iconImage;
     public TextMeshProUGUI amountText; 
     public ItemSO itemSO;
+    public GameObject highlightObject;
 
     public void InitItem(ItemSO itemSO)
     {
@@ -23,6 +24,7 @@ public class ItemUI : MonoBehaviour
         {
             amountText.gameObject.SetActive(false);
         }
+        SetHighlight(false);
     }
 
     
@@ -39,5 +41,10 @@ public class ItemUI : MonoBehaviour
         {
             amountText.gameObject.SetActive(false);
         }
+    }
+      public void SetHighlight(bool active)
+    {
+        if (highlightObject != null)
+            highlightObject.SetActive(active);
     }
 }

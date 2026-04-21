@@ -1,30 +1,32 @@
 using UnityEngine;
 using System.Collections.Generic;
+using System;
 
 public class ArmorEquipmentManager : MonoBehaviour
 {
     [System.Serializable]
+    
     public class EquipmentSocket
     {
 
-        public ArmorType armorType; // »¤¼×ÀàÐÍ
+        public ArmorType armorType; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        [Header("µ¥²¿Î»×°±¸ÅäÖÃ")]
-        public Transform socketTransform; // µ¥²¿Î»×°±¸Ê¹ÓÃ
+        [Header("ï¿½ï¿½ï¿½ï¿½Î»×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+        public Transform socketTransform; // ï¿½ï¿½ï¿½ï¿½Î»×°ï¿½ï¿½Ê¹ï¿½ï¿½
 
-        [Header("¶Ô³Æ²¿Î»×°±¸ÅäÖÃ")]
-        public bool isSymmetric = false;  // ÊÇ·ñÎª¶Ô³Æ×°±¸
-        public Transform leftSocket;      // ×ó²à¹ÒÔØµã£¨isSymmetricÎªtrueÊ±Ê¹ÓÃ£©
-        public Transform rightSocket;     // ÓÒ²à¹ÒÔØµã£¨isSymmetricÎªtrueÊ±Ê¹ÓÃ£©
+        [Header("ï¿½Ô³Æ²ï¿½Î»×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+        public bool isSymmetric = false;  // ï¿½Ç·ï¿½Îªï¿½Ô³ï¿½×°ï¿½ï¿½
+        public Transform leftSocket;      // ï¿½ï¿½ï¿½ï¿½ï¿½Øµã£¨isSymmetricÎªtrueÊ±Ê¹ï¿½Ã£ï¿½
+        public Transform rightSocket;     // ï¿½Ò²ï¿½ï¿½ï¿½Øµã£¨isSymmetricÎªtrueÊ±Ê¹ï¿½Ã£ï¿½
 
-        [HideInInspector] public GameObject currentEquipment; // µ¥²¿Î»×°±¸ÊµÀý
-        [HideInInspector] public GameObject leftEquipment;    // ¶Ô³Æ²¿Î»×ó×°±¸ÊµÀý
-        [HideInInspector] public GameObject rightEquipment;   // ¶Ô³Æ²¿Î»ÓÒ×°±¸ÊµÀý
+        [HideInInspector] public GameObject currentEquipment; // ï¿½ï¿½ï¿½ï¿½Î»×°ï¿½ï¿½Êµï¿½ï¿½
+        [HideInInspector] public GameObject leftEquipment;    // ï¿½Ô³Æ²ï¿½Î»ï¿½ï¿½×°ï¿½ï¿½Êµï¿½ï¿½
+        [HideInInspector] public GameObject rightEquipment;   // ï¿½Ô³Æ²ï¿½Î»ï¿½ï¿½×°ï¿½ï¿½Êµï¿½ï¿½
     }
 
     [SerializeField] private EquipmentSocket[] equipmentSockets;
     public static ArmorEquipmentManager Instance { get; private set; }
-
+    public event Action OnEquipmentChanged;//è£…å¤‡äº‹ä»¶
     private PlayerProperty playerProperty;
 
     private void Awake()
@@ -39,13 +41,15 @@ public class ArmorEquipmentManager : MonoBehaviour
         playerProperty = GetComponent<PlayerProperty>();
     }
 
-    // ×°±¸»¤¼×£¨±©Â¶¸øÍâ²¿µ÷ÓÃµÄÎ¨Ò»½Ó¿Ú£©
+    // ×°ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½Â¶ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½Ãµï¿½Î¨Ò»ï¿½Ó¿Ú£ï¿½
     public void EquipArmor(ItemSO armorItem)
     {
         EquipmentSocket targetSocket = GetSocketByType(armorItem.armorType);
         if (targetSocket == null) return;
 
-        // ¸ù¾Ý×°±¸ÀàÐÍÑ¡Ôñ¹ÒÔØÂß¼­
+        UnequipArmor(targetSocket, false);
+
+        // ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½
         if (targetSocket.isSymmetric)
         {
             EquipSymmetricArmor(armorItem, targetSocket);
@@ -54,28 +58,29 @@ public class ArmorEquipmentManager : MonoBehaviour
         {
             EquipSingleArmor(armorItem, targetSocket);
         }
-
+        OnEquipmentChanged?.Invoke();
         InventoryUI.Instance.UpdateEquipmentIcon(armorItem);
+        
     }
 
-    // ¸ù¾Ý»¤¼×ÀàÐÍÕÒµ½¶ÔÓ¦µÄ¹ÒÔØµã
+    // ï¿½ï¿½ï¿½Ý»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ó¦ï¿½Ä¹ï¿½ï¿½Øµï¿½
     public EquipmentSocket GetSocketByType(ArmorType armorType)
     {
         foreach (var socket in equipmentSockets)
         {
             if (socket.armorType == armorType) return socket;
         }
-        Debug.LogError($"Î´ÅäÖÃ {armorType} ÀàÐÍµÄ¹ÒÔØµã£¡");
+        Debug.LogError($"Î´ï¿½ï¿½ï¿½ï¿½ {armorType} ï¿½ï¿½ï¿½ÍµÄ¹ï¿½ï¿½Øµã£¡");
         return null;
     }
 
-    // Ð¶ÏÂÖ¸¶¨ÀàÐÍµÄ»¤¼×
-    public  void UnequipArmor(EquipmentSocket socket)
+    // Ð¶ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ÍµÄ»ï¿½ï¿½ï¿½
+    public  void UnequipArmor(EquipmentSocket socket, bool sendNotification = true)
     {
-        // ÏÈ»ñÈ¡µ±Ç°×°±¸µÄItemSO£¨¿ÉÄÜÎªnull£©
+        // ï¿½È»ï¿½È¡ï¿½ï¿½Ç°×°ï¿½ï¿½ï¿½ï¿½ItemSOï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªnullï¿½ï¿½
         ItemSO equippedItem = GetEquippedItem(socket.armorType);
 
-        // ¸ù¾Ý×°±¸ÀàÐÍÑ¡ÔñÐ¶ÔØÂß¼­
+        // ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½Ð¶ï¿½ï¿½ï¿½ß¼ï¿½
         if (socket.isSymmetric)
         {
             UnequipSymmetricArmor(socket);
@@ -85,42 +90,48 @@ public class ArmorEquipmentManager : MonoBehaviour
             UnequipSingleArmor(socket);
         }
 
-        // Çå³ýUIÍ¼±ê£¨ÎÞÂÛÊÇ·ñÓÐ×°±¸¶¼ÒªÖ´ÐÐ£©
+        // ï¿½ï¿½ï¿½UIÍ¼ï¿½ê£¨ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ÒªÖ´ï¿½Ð£ï¿½
         if (InventoryUI.Instance != null)
         {
             InventoryUI.Instance.ClearEquipmentIcon(ItemType.Armor, socket.armorType);
         }
 
-        // Ö»ÓÐÈ·ÊµÓÐ×°±¸Ê±²ÅÌí¼Ó»Ø±³°ü
+        // Ö»ï¿½ï¿½È·Êµï¿½ï¿½×°ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ó»Ø±ï¿½ï¿½ï¿½
         if (equippedItem != null && InventoryManager.Instance != null)
         {
             InventoryManager.Instance.ReAddItem(equippedItem);
         }
+        if (sendNotification)
+        {
+            OnEquipmentChanged?.Invoke();
+        }
+        
     }
 
-    // ×°±¸µ¥²¿Î»»¤¼×£¨Í·¿ø¡¢ÐØ¼×µÈ£©
+    // ×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½ï¿½×£ï¿½Í·ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼×µÈ£ï¿½
     private void EquipSingleArmor(ItemSO armorItem, EquipmentSocket socket)
     {
         UnequipArmor(socket);
 
         if (socket.socketTransform == null)
         {
-            Debug.LogError($"µ¥²¿Î»×°±¸ {armorItem.armorType} µÄ¹ÒÔØµãÎ´ÉèÖÃ£¡");
+            Debug.LogError($"ï¿½ï¿½ï¿½ï¿½Î»×°ï¿½ï¿½ {armorItem.armorType} ï¿½Ä¹ï¿½ï¿½Øµï¿½Î´ï¿½ï¿½ï¿½Ã£ï¿½");
             return;
         }
 
         socket.currentEquipment = InstantiateArmorModel(armorItem, socket.socketTransform);
         ApplyArmorProperties(armorItem);
+        
     }
 
-    // ×°±¸¶Ô³Æ²¿Î»»¤¼×£¨»¤±Û¡¢»¤ÍÈ¡¢Ñ¥×ÓµÈ£©
+    // ×°ï¿½ï¿½ï¿½Ô³Æ²ï¿½Î»ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½ï¿½Û¡ï¿½ï¿½ï¿½ï¿½È¡ï¿½Ñ¥ï¿½ÓµÈ£ï¿½
     private void EquipSymmetricArmor(ItemSO armorItem, EquipmentSocket socket)
     {
         UnequipArmor(socket);
 
         if (socket.leftSocket == null || socket.rightSocket == null)
         {
-            Debug.LogError($"¶Ô³Æ×°±¸ {armorItem.armorType} µÄ×óÓÒ¹ÒÔØµãÎ´ÉèÖÃÍêÕû£¡");
+            Debug.LogError($"ï¿½Ô³ï¿½×°ï¿½ï¿½ {armorItem.armorType} ï¿½ï¿½ï¿½ï¿½ï¿½Ò¹ï¿½ï¿½Øµï¿½Î´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
@@ -129,15 +140,16 @@ public class ArmorEquipmentManager : MonoBehaviour
         socket.rightEquipment = InstantiateArmorModel(armorItem, socket.rightSocket);
 
         ApplyArmorProperties(armorItem);
+        
     }
 
 
-    // ÊµÀý»¯»¤¼×Ä£ÐÍ
+    // Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä£ï¿½ï¿½
     private GameObject InstantiateArmorModel(ItemSO armorItem, Transform socketTransform)
     {
         if (armorItem.weaponPrefab == null)
         {
-            Debug.LogError($"»¤¼× {armorItem.name} µÄPrefabÎ´ÉèÖÃ£¡");
+            Debug.LogError($"ï¿½ï¿½ï¿½ï¿½ {armorItem.name} ï¿½ï¿½PrefabÎ´ï¿½ï¿½ï¿½Ã£ï¿½");
             return null;
         }
 
@@ -155,7 +167,7 @@ public class ArmorEquipmentManager : MonoBehaviour
 
    
 
-    // Ð¶ÏÂµ¥²¿Î»×°±¸
+    // Ð¶ï¿½Âµï¿½ï¿½ï¿½Î»×°ï¿½ï¿½
     private void UnequipSingleArmor(EquipmentSocket socket)
     {
         if (socket.currentEquipment != null)
@@ -163,13 +175,14 @@ public class ArmorEquipmentManager : MonoBehaviour
             RemoveArmorPropertiesFromInstance(socket.currentEquipment);
             Destroy(socket.currentEquipment);
             socket.currentEquipment = null;
+            
         }
     }
 
-    // Ð¶ÏÂ¶Ô³Æ²¿Î»×°±¸
+    // Ð¶ï¿½Â¶Ô³Æ²ï¿½Î»×°ï¿½ï¿½
     private void UnequipSymmetricArmor(EquipmentSocket socket)
     {
-        // Ö»ÐèÒªÒÆ³ýÒ»´ÎÊôÐÔ£¨×óÓÒ×°±¸¹²ÏíÊôÐÔ£©
+        // Ö»ï¿½ï¿½Òªï¿½Æ³ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô£ï¿½
         bool propertiesRemoved = false;
 
         if (socket.leftEquipment != null)
@@ -185,14 +198,15 @@ public class ArmorEquipmentManager : MonoBehaviour
 
         if (socket.rightEquipment != null)
         {
-            // ÓÒ²à×°±¸²»ÐèÒªÔÙ´ÎÒÆ³ýÊôÐÔ
+            // ï¿½Ò²ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ù´ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½
             
             Destroy(socket.rightEquipment);
             socket.rightEquipment = null;
         }
+        
     }
 
-    // ´Ó×°±¸ÊµÀý»ñÈ¡ItemSO²¢ÒÆ³ýÊôÐÔ
+    // ï¿½ï¿½×°ï¿½ï¿½Êµï¿½ï¿½ï¿½ï¿½È¡ItemSOï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½
     private void RemoveArmorPropertiesFromInstance(GameObject equipmentInstance)
     {
         PickableObject po = equipmentInstance.GetComponent<PickableObject>();
@@ -202,7 +216,7 @@ public class ArmorEquipmentManager : MonoBehaviour
         }
     }
 
-    // Ó¦ÓÃ»¤¼×ÊôÐÔ
+    // Ó¦ï¿½Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void ApplyArmorProperties(ItemSO armorItem)
     {
         if (playerProperty == null) return;
@@ -222,7 +236,7 @@ public class ArmorEquipmentManager : MonoBehaviour
         }
     }
 
-    // ÒÆ³ý»¤¼×ÊôÐÔ
+    // ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void RemoveArmorProperties(ItemSO armorItem)
     {
         if (playerProperty == null) return;
@@ -242,7 +256,7 @@ public class ArmorEquipmentManager : MonoBehaviour
         }
     }
 
-    // »ñÈ¡µ±Ç°×°±¸µÄItemSO£¨ÓÃÓÚ´æµµµÈ£©
+    // ï¿½ï¿½È¡ï¿½ï¿½Ç°×°ï¿½ï¿½ï¿½ï¿½ItemSOï¿½ï¿½ï¿½ï¿½ï¿½Ú´æµµï¿½È£ï¿½
     public ItemSO GetEquippedItem(ArmorType armorType)
     {
         EquipmentSocket socket = GetSocketByType(armorType);
@@ -260,7 +274,7 @@ public class ArmorEquipmentManager : MonoBehaviour
         return null;
     }
 
-    // Ð¶ÏÂËùÓÐ×°±¸£¨ÓÃÓÚ½ÇÉ«ËÀÍö¡¢ÖØÖÃµÈ£©
+    // Ð¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÃµÈ£ï¿½
     public void UnequipAll()
     {
         foreach (EquipmentSocket socket in equipmentSockets)
