@@ -15,6 +15,8 @@ public class InputManager : MonoBehaviour
     public event System.Action<Vector2> OnUINavigate;
     public event System.Action OnUISubmit;   
     public event System.Action OnUICancel;
+    public event Action OnUISwitchLeft;
+    public event Action OnUISwitchRight;
 
 
 
@@ -41,8 +43,13 @@ public class InputManager : MonoBehaviour
 
         Actions.Global.Bag.performed += _ => OnToggleInventory?.Invoke();
         Actions.UI_Inventory.Navigate.performed += ctx => OnUINavigate?.Invoke(ctx.ReadValue<Vector2>());
+
         Actions.UI_Inventory.Submit.performed += _ => OnUISubmit?.Invoke();
         Actions.UI_Inventory.Cancel.performed += _ => OnUICancel?.Invoke();
+
+        Actions.UI_Inventory.SwitchLeft.performed+=ctx =>OnUISwitchLeft?.Invoke();
+        Actions.UI_Inventory.SwitchRight.performed+=ctx =>OnUISwitchRight?.Invoke();
+
 
 
     }

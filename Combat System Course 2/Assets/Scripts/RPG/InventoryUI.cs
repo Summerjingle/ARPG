@@ -3,25 +3,32 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
+using System.Collections.Generic;
+
 
 public class InventoryUI : MonoBehaviour
 {
-    public static InventoryUI Instance { get; private set; }
+    private enum InventoryFocus
+    {
+        Items,
+        Equipment
+    }
+    [Header("区域隔离 (CanvasGroup)")]
+    public CanvasGroup itemsCanvasGroup;     // 拖入物品栏的父级 CanvasGroup
+    public CanvasGroup equipmentCanvasGroup; // 拖入装备栏的父级 CanvasGroup
+    
 
+    public static InventoryUI Instance { get; private set; }
+    private InventoryFocus currentFocus = InventoryFocus.Items;
     public GameObject content;
     public GameObject itemPrefab;
     public ItemDetailUI itemDetail;
     
     [Header("装备槽位")]
-    public Image currentWeaponIcon;
-    public Image currentHelmetIcon;
-    public Image currentChestplateIcon;
-    public Image currentGauntletsIcon;
-    public Image currentLeggingsIcon;
-    public Image currentBootsIcon;
-
+    [SerializeField] private List<EquipmentSlotUI> equipmentSlots = new List<EquipmentSlotUI>();
     public ItemUI currentSelectedItem;
     private ItemUI lastSelectedItem;   //记录上一次选中的物品，用于取消高亮
+    private GameObject lastSelectedGO;  
 
     [Header("攻击提示")]
     public GameObject attackHintUI;
@@ -59,6 +66,8 @@ public class InventoryUI : MonoBehaviour
         InputManager.Instance.OnToggleInventory += ToggleInventory;
         InputManager.Instance.OnUISubmit += HandleSubmit;
         InputManager.Instance.OnUICancel += HandleCancel;
+        InputManager.Instance.OnUISwitchLeft += SwitchToEquipment;
+        InputManager.Instance.OnUISwitchRight += SwitchToItems;
     }
 
     private void OnDisable()
@@ -66,6 +75,8 @@ public class InventoryUI : MonoBehaviour
         InputManager.Instance.OnToggleInventory -= ToggleInventory;
         InputManager.Instance.OnUISubmit -= HandleSubmit;
         InputManager.Instance.OnUICancel -= HandleCancel;
+        InputManager.Instance.OnUISwitchLeft -= SwitchToEquipment;
+        InputManager.Instance.OnUISwitchRight -= SwitchToItems;
     }
 
     private void OnDestroy()
@@ -77,7 +88,12 @@ public class InventoryUI : MonoBehaviour
     {
         ToggleInventory();
     }
-
+    public Selectable GetFirstEquipmentSlot()
+    {
+        return equipmentSlots.Count > 0
+            ? equipmentSlots[0].GetComponent<Selectable>()
+            : null;
+    }
     public void ToggleInventory()
     {
         IsInventoryOpen = !IsInventoryOpen;
@@ -91,8 +107,14 @@ public class InventoryUI : MonoBehaviour
 
         if (IsInventoryOpen)
         {
-            InputManager.Instance.SwitchToInventory();
-            SelectFirstItem();
+           InputManager.Instance.SwitchToInventory();
+        
+            //每次打开背包，重置为物品栏状态
+            currentFocus = InventoryFocus.Items;
+            if (itemsCanvasGroup != null) itemsCanvasGroup.interactable = true;
+            if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = false;
+
+        SelectFirstItem();
         }
         else
         {
@@ -125,19 +147,97 @@ public class InventoryUI : MonoBehaviour
 
         ToggleInventory();
     }
+    private EquipmentSlotUI GetSlot(ItemSO item)
+    {
+        if (item == null) return null;
 
+        for (int i = 0; i < equipmentSlots.Count; i++)
+        {
+            var slot = equipmentSlots[i];
+
+            if (item.itemType == ItemType.Weapon &&
+                slot.itemType == ItemType.Weapon)
+            {
+                return slot;
+            }
+
+            if (item.itemType == ItemType.Armor &&
+                slot.itemType == ItemType.Armor &&
+                slot.armorType == item.armorType)
+            {
+                return slot;
+            }
+        }
+
+        return null;
+    }
     private void HandleSubmit()
     {
+        GameObject selected = EventSystem.current.currentSelectedGameObject;
+
+        if (selected == null) return;
+
+        // 👉 如果当前打开的是详情UI
         if (itemDetail.gameObject.activeSelf)
         {
             itemDetail.OnUseButtonClick();
+            return;
         }
-        else
+
+        // 👉 1. 物品
+        ItemUI itemUI = selected.GetComponent<ItemUI>();
+        if (itemUI != null)
         {
-            OnItemClick(currentSelectedItem.itemSO, currentSelectedItem);
+            OnItemClick(itemUI.itemSO, itemUI);
+            return;
+        }
+
+        // 👉 2. 装备槽（你后面要实现）
+        EquipmentSlotUI slot = selected.GetComponent<EquipmentSlotUI>();
+        if (slot != null)
+        {
+            slot.OnSubmit();
+            return;
+        }
+
+        Debug.Log("当前选中对象没有可处理的Submit逻辑: " + selected.name);
+    }
+    private void SwitchToEquipment()
+    {
+        if (!IsInventoryOpen) return;
+
+        currentFocus = InventoryFocus.Equipment;
+
+        // 【新增】打开装备区交互，关闭物品区交互（阻断 D-pad 乱串）
+        if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = true;
+        if (itemsCanvasGroup != null) itemsCanvasGroup.interactable = false;
+
+        if (currentSelectedItem != null)
+        {
+            currentSelectedItem.SetHighlight(false);
+            currentSelectedItem = null;
+            lastSelectedItem = null;
+        }
+
+        var firstSlot = GetFirstEquipmentSlot();
+        if (firstSlot != null)
+        {
+            EventSystem.current.SetSelectedGameObject(firstSlot.gameObject);
+            Debug.Log("切换到装备槽: " + firstSlot.name);
         }
     }
+   private void SwitchToItems()
+    {
+        if (!IsInventoryOpen) return;
 
+        currentFocus = InventoryFocus.Items;
+
+        // 【新增】打开物品区交互，关闭装备区交互
+        if (itemsCanvasGroup != null) itemsCanvasGroup.interactable = true;
+        if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = false;
+
+        SelectFirstItem();
+    }
     private void CheckAndShowAttackHint()
     {
         if (hasShownAttackHint) return;
@@ -294,87 +394,33 @@ public class InventoryUI : MonoBehaviour
 
     public void UpdateEquipmentIcon(ItemSO item)
     {
-        if (item == null) return;
-
-        switch (item.itemType)
+        var slot = GetSlot(item);
+        if (slot == null)
         {
-            case ItemType.Weapon:
-                UpdateIcon(ref currentWeaponIcon, item.icon);
-                break;
-            case ItemType.Armor:
-                UpdateArmorIcon(item);
-                break;
+            Debug.LogWarning($"未找到对应装备槽: {item.nameOfItem}");
+            return;
         }
-    }
 
-    private void UpdateArmorIcon(ItemSO armorItem)
-    {
-        switch (armorItem.armorType)
-        {
-            case ArmorType.Helmet:
-                UpdateIcon(ref currentHelmetIcon, armorItem.icon);
-                break;
-            case ArmorType.Chestplate:
-                UpdateIcon(ref currentChestplateIcon, armorItem.icon);
-                break;
-            case ArmorType.Gauntlets:
-                UpdateIcon(ref currentGauntletsIcon, armorItem.icon);
-                break;
-            case ArmorType.Leggings:
-                UpdateIcon(ref currentLeggingsIcon, armorItem.icon);
-                break;
-            case ArmorType.Boots:
-                UpdateIcon(ref currentBootsIcon, armorItem.icon);
-                break;
-        }
-    }
-
-    private void UpdateIcon(ref Image iconSlot, Sprite icon)
-    {
-        if (iconSlot != null)
-        {
-            iconSlot.sprite = icon;
-            iconSlot.enabled = icon != null;
-        }
+        slot.UpdateIcon(item.icon);
     }
 
     public void ClearEquipmentIcon(ItemType itemType, ArmorType armorType = ArmorType.NotArmor)
     {
-        switch (itemType)
+        for (int i = 0; i < equipmentSlots.Count; i++)
         {
-            case ItemType.Weapon:
-                UpdateIcon(ref currentWeaponIcon, null);
-                break;
-            case ItemType.Armor:
-                ClearArmorIcon(armorType);
-                break;
+            var slot = equipmentSlots[i];
+
+            if (slot.itemType != itemType) continue;
+
+            if (itemType == ItemType.Armor && slot.armorType != armorType)
+                continue;
+
+            slot.UpdateIcon(null);
+            return;
         }
     }
 
-    private void ClearArmorIcon(ArmorType armorType)
-    {
-        switch (armorType)
-        {
-            case ArmorType.Helmet:
-                UpdateIcon(ref currentHelmetIcon, null);
-                break;
-            case ArmorType.Chestplate:
-                UpdateIcon(ref currentChestplateIcon, null);
-                break;
-            case ArmorType.Gauntlets:
-                UpdateIcon(ref currentGauntletsIcon, null);
-                break;
-            case ArmorType.Leggings:
-                UpdateIcon(ref currentLeggingsIcon, null);
-                break;
-            case ArmorType.Boots:
-                UpdateIcon(ref currentBootsIcon, null);
-                break;
-            default:
-                Debug.LogWarning($"未知的护甲类型: {armorType}");
-                break;
-        }
-    }
+   
 
     public void UpdateInventoryUI()
     {
@@ -432,26 +478,32 @@ public class InventoryUI : MonoBehaviour
         }
     }
 
-    private void DebugNavigation()
-    {
-        if (EventSystem.current == null)
-        {
-            Debug.LogWarning("EventSystem.current 为 null");
-            return;
-        }
+private void DebugNavigation()
+{
+    if (EventSystem.current == null) return;
 
-        GameObject selectedGO = EventSystem.current.currentSelectedGameObject;
+    GameObject selectedGO = EventSystem.current.currentSelectedGameObject;
+
+    // 只在选中对象变化时打印
+    if (selectedGO != lastSelectedGO)
+    {
+        lastSelectedGO = selectedGO;
 
         if (selectedGO != null)
         {
-            ItemUI itemUI = selectedGO.GetComponent<ItemUI>();
-
-            if (itemUI != null && currentSelectedItem != itemUI)
+            if (currentFocus == InventoryFocus.Items)
             {
-                SwitchHighlight(itemUI);   // 键盘/手柄导航时切换高亮
-
-                string itemName = itemUI.itemSO != null ? itemUI.itemSO.nameOfItem : "未知物品";
-                Debug.Log($"[Navigation Debug] 当前选中物品: {itemName} | GameObject: {selectedGO.name}");
+                ItemUI itemUI = selectedGO.GetComponent<ItemUI>();
+                if (itemUI != null && currentSelectedItem != itemUI)
+                {
+                    SwitchHighlight(itemUI);
+                    string itemName = itemUI.itemSO != null ? itemUI.itemSO.nameOfItem : "未知物品";
+                    Debug.Log($"[Navigation Debug] 当前选中物品: {itemName}");
+                }
+            }
+            else if (currentFocus == InventoryFocus.Equipment)
+            {
+                Debug.Log($"[Navigation Debug] 当前选中装备槽: {selectedGO.name}");
             }
         }
         else
@@ -459,4 +511,5 @@ public class InventoryUI : MonoBehaviour
             Debug.Log("[Navigation Debug] 当前没有选中任何物品");
         }
     }
+}
 }

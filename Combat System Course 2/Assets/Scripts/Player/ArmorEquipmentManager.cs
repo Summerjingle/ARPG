@@ -107,6 +107,13 @@ public class ArmorEquipmentManager : MonoBehaviour
         }
         
     }
+    public void UnequipArmor(ArmorType armorType)//重载卸载武器，入参为武器类型
+    {
+        EquipmentSocket socket = GetSocketByType(armorType);
+        if (socket == null) return;
+
+        UnequipArmor(socket);
+    }
 
     // װ������λ���ף�ͷ�����ؼ׵ȣ�
     private void EquipSingleArmor(ItemSO armorItem, EquipmentSocket socket)

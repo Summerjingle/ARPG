@@ -1114,6 +1114,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchLeft"",
+                    ""type"": ""Button"",
+                    ""id"": ""e49814f9-f775-469d-9987-e2a3f3c3ef3d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SwitchRight"",
+                    ""type"": ""Button"",
+                    ""id"": ""df3d1c20-1db2-465f-adf9-895dbdd6af90"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -1259,6 +1277,50 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""223271a0-2139-492e-bda2-5325a29e8dc2"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""2bf28339-8dd4-4d26-ad94-b448c1cab7c9"",
+                    ""path"": ""<Keyboard>/q"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchLeft"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fb34877d-961c-46a4-ad90-c473499e0b4f"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""964f5cd7-2adb-4b81-a0ab-b639cbff4f0d"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SwitchRight"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         },
@@ -1349,6 +1411,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_Inventory_Navigate = m_UI_Inventory.FindAction("Navigate", throwIfNotFound: true);
         m_UI_Inventory_Submit = m_UI_Inventory.FindAction("Submit", throwIfNotFound: true);
         m_UI_Inventory_Cancel = m_UI_Inventory.FindAction("Cancel", throwIfNotFound: true);
+        m_UI_Inventory_SwitchLeft = m_UI_Inventory.FindAction("SwitchLeft", throwIfNotFound: true);
+        m_UI_Inventory_SwitchRight = m_UI_Inventory.FindAction("SwitchRight", throwIfNotFound: true);
         // Global
         m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
         m_Global_Bag = m_Global.FindAction("Bag", throwIfNotFound: true);
@@ -1849,6 +1913,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_Inventory_Navigate;
     private readonly InputAction m_UI_Inventory_Submit;
     private readonly InputAction m_UI_Inventory_Cancel;
+    private readonly InputAction m_UI_Inventory_SwitchLeft;
+    private readonly InputAction m_UI_Inventory_SwitchRight;
     /// <summary>
     /// Provides access to input actions defined in input action map "UI_Inventory".
     /// </summary>
@@ -1872,6 +1938,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "UI_Inventory/Cancel".
         /// </summary>
         public InputAction @Cancel => m_Wrapper.m_UI_Inventory_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_Inventory/SwitchLeft".
+        /// </summary>
+        public InputAction @SwitchLeft => m_Wrapper.m_UI_Inventory_SwitchLeft;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_Inventory/SwitchRight".
+        /// </summary>
+        public InputAction @SwitchRight => m_Wrapper.m_UI_Inventory_SwitchRight;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1907,6 +1981,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Cancel.started += instance.OnCancel;
             @Cancel.performed += instance.OnCancel;
             @Cancel.canceled += instance.OnCancel;
+            @SwitchLeft.started += instance.OnSwitchLeft;
+            @SwitchLeft.performed += instance.OnSwitchLeft;
+            @SwitchLeft.canceled += instance.OnSwitchLeft;
+            @SwitchRight.started += instance.OnSwitchRight;
+            @SwitchRight.performed += instance.OnSwitchRight;
+            @SwitchRight.canceled += instance.OnSwitchRight;
         }
 
         /// <summary>
@@ -1927,6 +2007,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Cancel.started -= instance.OnCancel;
             @Cancel.performed -= instance.OnCancel;
             @Cancel.canceled -= instance.OnCancel;
+            @SwitchLeft.started -= instance.OnSwitchLeft;
+            @SwitchLeft.performed -= instance.OnSwitchLeft;
+            @SwitchLeft.canceled -= instance.OnSwitchLeft;
+            @SwitchRight.started -= instance.OnSwitchRight;
+            @SwitchRight.performed -= instance.OnSwitchRight;
+            @SwitchRight.canceled -= instance.OnSwitchRight;
         }
 
         /// <summary>
@@ -2217,6 +2303,20 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnCancel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SwitchLeft" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchLeft(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SwitchRight" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSwitchRight(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Global" which allows adding and removing callbacks.
