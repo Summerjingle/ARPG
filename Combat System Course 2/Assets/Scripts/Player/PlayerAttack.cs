@@ -32,6 +32,7 @@ public class PlayerAttack : MonoBehaviour
             float animSpeed=animator.GetFloat("Speed");
             if (animSpeed < 1.9f)
             {
+                animator.SetTrigger("MeleeAttack");
                 Debug.Log("MeleeAttack!");
             }
             else
