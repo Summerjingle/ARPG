@@ -21,5 +21,6 @@ public class Attack : MonoBehaviour
     {
         get=>animator.GetInteger(hasAttackCount);
         set=>animator.SetInteger(hasAttackCount,value);
+        
     }
 }

@@ -62,6 +62,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float walkSpeed = 3.5f;
     [SerializeField] private float runSpeed = 6.0f;
     [SerializeField] private float sprintSpeed = 9.5f;
+    [Header("Smooth Locomotion & Root Motion")]
+    private float currentPhysicalSpeed; // 替代原本局部的 currentMoveSpeed
+    private float speedSmoothVelocity;  
+    [SerializeField] private float speedSmoothTime = 0.1f; 
+    private bool wasInActionLastFrame;  // 用于检测动量接力的时机
     private CharacterController charactercontroller;
     private ParkourController parkourController;
     private GroundCheckSensor groundSensor; 
@@ -138,9 +143,7 @@ public class PlayerController : MonoBehaviour
             isDrinking = true;
         }
 
-        // 状态打断检查
-        if (combatSystem.InAction) return;
-
+       
         if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
             animator.SetFloat(speedHash, 0f);
@@ -196,7 +199,12 @@ public class PlayerController : MonoBehaviour
         bool allowSprint = rawInput.y > -0.25f; //这个条件限制玩家只能朝着前面冲刺
         bool canSprint = wantsSprint && allowSprint && PlayerProperty.Instance.EnergyValue > 15;
 
-        if (canSprint)
+        if (combatSystem.InAction)
+        {
+            animSpeed = 0f;
+            isSprinting = false;
+        }
+        else if (canSprint)
         {
             animSpeed = 1.99f;
             isSprinting = true;
@@ -208,13 +216,10 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            // 关键点：当没有输入时，目标速度为 0，且将缓冲时间设为 0
             isSprinting = false;
             animSpeed = 0f;
-            
         }
-        // 应用平滑动画过渡
-        animator.SetFloat(speedHash, animSpeed, damping,Time.deltaTime);
+        animator.SetFloat(speedHash, animSpeed, damping, Time.deltaTime);
 
         // 能量消耗
         if (isSprinting)
@@ -226,22 +231,30 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        // ─────────────── 实际物理速度计算 ───────────────
-        float currentMoveSpeed;
-        if (shouldCrouch || isCrouching)
+        // ─────────────── 动量接力与目标速度计算 ───────────────
+        if (wasInActionLastFrame && !combatSystem.InAction)
         {
-            currentMoveSpeed = walkSpeed * crouchSpeedMultiplier;
+            if (inputMagnitude > 0.1f)
+            {
+                // 攻击结束瞬间如果推着摇杆，给予初速度，避免从0起步的顿挫
+                currentPhysicalSpeed = isSprinting ? (sprintSpeed * 0.6f) : walkSpeed; 
+                moveDuration = timeToRun; // 瞬间填满加速时间
+            }
         }
-        else if (isSprinting)
+        wasInActionLastFrame = combatSystem.InAction;
+
+        float targetMoveSpeed = 0f;
+        
+        // 只有非动作状态，才产生 WASD 目标速度
+        if (!combatSystem.InAction)
         {
-            currentMoveSpeed = sprintSpeed * inputMagnitude;
+            if (shouldCrouch || isCrouching) targetMoveSpeed = walkSpeed * crouchSpeedMultiplier;
+            else if (isSprinting) targetMoveSpeed = sprintSpeed * inputMagnitude;
+            else targetMoveSpeed = Mathf.Lerp(walkSpeed, runSpeed, accelerationT) * inputMagnitude;
         }
-        else
-        {
-            // 物理速度也根据时间从 walkSpeed 爬升到 runSpeed
-            float targetSpeed = Mathf.Lerp(walkSpeed, runSpeed, accelerationT);
-            currentMoveSpeed = targetSpeed * inputMagnitude;
-        }
+
+        // 平滑过渡到目标速度
+        currentPhysicalSpeed = Mathf.SmoothDamp(currentPhysicalSpeed, targetMoveSpeed, ref speedSmoothVelocity, speedSmoothTime);
 
         // ─────────────── 旋转与重力逻辑 ───────────────
         Vector3 moveDir = isLockedOn ? (cameraController != null ? cameraController.GetLockedDirection() : worldMoveDir) : worldMoveDir;
@@ -300,16 +313,17 @@ public class PlayerController : MonoBehaviour
         }
 
         // ─────────────── 应用位移与旋转 ───────────────
-        Vector3 velocity = moveDir * currentMoveSpeed;
+        Vector3 velocity = moveDir * currentPhysicalSpeed;
 
         // 转向逻辑
         if (inputMagnitude > 0 && !LockRotation)
         {
             targetRotation = Quaternion.LookRotation(moveDir);
         }
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotationSpeed * Time.deltaTime);
+        float activeRotSpeed = combatSystem.InAction ? rotationSpeed * 0.5f : rotationSpeed;
+        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, activeRotSpeed * Time.deltaTime);
 
-        // 梯子检测 (保持你原有的逻辑)
+        // 梯子检测 
         Vector3 rayOrigin = transform.position + Vector3.up * 0.4f + transform.forward * (charactercontroller.radius + 0.05f);
         if (Physics.Raycast(rayOrigin, transform.forward, out RaycastHit hit, 0.4f))
         {
@@ -322,9 +336,26 @@ public class PlayerController : MonoBehaviour
         }
         InputDir = worldMoveDir;
         velocity.y = ySpeed;
-        charactercontroller.Move(velocity * Time.deltaTime);
+        if (!animator.applyRootMotion)
+        {
+            charactercontroller.Move(velocity * Time.deltaTime);
+        }
     }
-    
+
+    private void OnAnimatorMove()
+    {
+        if (combatSystem != null && combatSystem.InAction && animator != null && animator.applyRootMotion)
+        {
+            // 获取本帧动画自带的位移
+            Vector3 rootMotionDeltaPosition = animator.deltaPosition;
+            
+            // 将系统计算的重力/下压力叠加进去，防止播放攻击动画时角色浮空
+            rootMotionDeltaPosition.y = ySpeed * Time.deltaTime; 
+            
+            // 使用 CharacterController 移动，确保攻击突进会吃物理碰撞（不会穿墙）
+            charactercontroller.Move(rootMotionDeltaPosition);
+        }
+    }
 
     public Vector3 GetIntentDirection()
     {
