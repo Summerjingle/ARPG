@@ -1,23 +1,26 @@
+using TMPro;
 using UnityEngine;
 
 public class PickableObject : InteractableObject
 {
     public override int Priority => 100;
+    
 
+    
     public override void Interact()
     {
-        if (!CanInteract) return; // ·ÀÖ¹ÖØ¸´½»»¥
+        if (!CanInteract) return; // ï¿½ï¿½Ö¹ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½
 
-        base.Interact(); // ÉèÖÃ isActivated = true
+        base.Interact(); // ï¿½ï¿½ï¿½ï¿½ isActivated = true
 
         InventoryManager.Instance.AddItem(itemSO);
         UIManager.Instance.ShowPickupToast(itemSO);
 
-        // ¹Ø¼ü£º½ûÓÃÅö×²Æ÷£¬´¥·¢ OnTriggerExit
+        // ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ OnTriggerExit
         Collider col = GetComponent<Collider>();
         if (col != null)
         {
-            col.enabled = false; // Õâ»á´¥·¢ OnTriggerExit
+            col.enabled = false; // ï¿½ï¿½á´¥ï¿½ï¿½ OnTriggerExit
         }
 
         Destroy(gameObject);
@@ -25,7 +28,7 @@ public class PickableObject : InteractableObject
 
     private void OnDestroy()
     {
-        // È·±£±êÖ¾±»ÉèÖÃ
+        // È·ï¿½ï¿½ï¿½ï¿½Ö¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         isActivated = true;
     }
 }

@@ -28,7 +28,7 @@ public class PlayerInteraction : MonoBehaviour
         if (interactable != null && !interactablesInRange.Contains(interactable))
         {
             interactablesInRange.Add(interactable);
-            UIManager.Instance?.ShowInteractPrompt();
+            UpdatePromptTarget(); // 刷新目标
         }
     }
 
@@ -37,9 +37,8 @@ public class PlayerInteraction : MonoBehaviour
         var interactable = other.GetComponentInParent<IInteractable>();
         if (interactable != null)
         {
-            interactablesInRange.Remove(interactable);
-            if (interactablesInRange.Count == 0)
-                UIManager.Instance?.HideInteractPrompt();
+           interactablesInRange.Remove(interactable);
+           UpdatePromptTarget(); // 刷新目标
         }
     }
 
@@ -79,7 +78,31 @@ public class PlayerInteraction : MonoBehaviour
 
         interactablesInRange.RemoveAll(i => i == null || !i.CanInteract);
 
-        if (interactablesInRange.Count == 0)
+        UpdatePromptTarget(); // 交互完刷新目标
+    }
+    private void UpdatePromptTarget()
+    {
+        if (interactablesInRange.Count > 0)
+        {
+            var targetComponent = interactablesInRange[interactablesInRange.Count - 1] as Component;
+            if (targetComponent != null)
+            {
+                // 【新增逻辑】：尝试去拿目标身上的 ItemSO
+                ItemSO targetItem = null;
+                var interactableObj = targetComponent.GetComponent<InteractableObject>();
+                if (interactableObj != null)
+                {
+                    targetItem = interactableObj.itemSO; // 如果是战利品，这里就能拿到数据
+                }
+
+                // 把 Transform 和 ItemSO 一起传过去
+                UIManager.Instance?.ShowInteractPrompt(targetComponent.transform, targetItem);
+            }
+        }
+        else
+        {
             UIManager.Instance?.HideInteractPrompt();
+        }
     }
 }
+

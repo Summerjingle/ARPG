@@ -8,24 +8,27 @@ public class PlayerHUDUI : MonoBehaviour
 {
     public static PlayerHUDUI Instance { get; private set; }
 
-    // Íâ²¿×é¼þ
+    // ï¿½â²¿ï¿½ï¿½ï¿½
     private PlayerProperty playerProperty;
     private HealthSystem healthSystem;
 
-    // ËùÓÐÌî³äÌõ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public Image playerHealthBarFill;
     public Image playerEnergyBarFill;
     public Image playerEXPBarFill;
+    public TextMeshProUGUI hpText;
+    public TextMeshProUGUI enText;
+    
 
-    // ¾­ÑéÖµÏà¹Ø
+    // ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½
     public TextMeshProUGUI levelText;
     [SerializeField] private float expFillSpeed = 1f;
-    [SerializeField] private float energyFillSpeed = 4f;  // ÐÂÔö£ºÄÜÁ¿ÌõÆ½»¬ËÙ¶È
+    [SerializeField] private float energyFillSpeed = 4f;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½Ù¶ï¿½
 
-    // »¤¼×ÖµÏà¹Ø
+    // ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½
     public TextMeshProUGUI armorText;
 
-    private Coroutine energyCoroutine;  // ÓÃÓÚÆ½»¬ÄÜÁ¿Ìõ
+    private Coroutine energyCoroutine;  // ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
     private void Awake()
     {
@@ -47,7 +50,7 @@ public class PlayerHUDUI : MonoBehaviour
         SubscribeToEvents();
         InitializeUI();
 
-        Debug.Log("Íæ¼Ò×é¼þ×¢²áµ½ PlayerHUDUI");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¢ï¿½áµ½ PlayerHUDUI");
     }
 
     public void UnregisterPlayerComponents()
@@ -55,7 +58,7 @@ public class PlayerHUDUI : MonoBehaviour
         UnsubscribeFromEvents();
         playerProperty = null;
         healthSystem = null;
-        Debug.Log("Íæ¼Ò×é¼þ´Ó PlayerHUDUI È¡Ïû×¢²á");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ PlayerHUDUI È¡ï¿½ï¿½×¢ï¿½ï¿½");
     }
 
     private void SubscribeToEvents()
@@ -68,7 +71,7 @@ public class PlayerHUDUI : MonoBehaviour
         if (playerProperty != null)
         {
             playerProperty.OnArmorChanged += UpdateArmorDisplay;
-            playerProperty.OnEnergyChanged += OnEnergyChanged;  // ÐÂÔö£º¶©ÔÄÄÜÁ¿±ä»¯
+            playerProperty.OnEnergyChanged += OnEnergyChanged;  // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ä»¯
         }
     }
 
@@ -82,7 +85,7 @@ public class PlayerHUDUI : MonoBehaviour
         if (playerProperty != null)
         {
             playerProperty.OnArmorChanged -= UpdateArmorDisplay;
-            playerProperty.OnEnergyChanged -= OnEnergyChanged;  // È¡Ïû¶©ÔÄ
+            playerProperty.OnEnergyChanged -= OnEnergyChanged;  // È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         }
     }
 
@@ -90,15 +93,16 @@ public class PlayerHUDUI : MonoBehaviour
     {
         if (playerProperty != null)
         {
-            // ¾­ÑéÌõ
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             int expRequired = playerProperty.level * 30;
             playerEXPBarFill.fillAmount = expRequired > 0 ? (float)playerProperty.currEXP / expRequired : 0f;
             levelText.text = playerProperty.level.ToString();
 
-            // ÄÜÁ¿Ìõ£¨Ö±½ÓÉè³õÊ¼Öµ£¬ºóÐøÓÃÊÂ¼þÆ½»¬£©
+            
             if (playerEnergyBarFill != null)
                 playerEnergyBarFill.fillAmount = playerProperty.EnergyNormalized;
-
+                
+            enText.text = $"{playerProperty.energyValue:F0} / {playerProperty.MaxEnergy}";
             UpdateArmorDisplay();
         }
 
@@ -115,27 +119,29 @@ public class PlayerHUDUI : MonoBehaviour
         if (healthSystem != null && playerHealthBarFill != null)
         {
             playerHealthBarFill.fillAmount = healthSystem.Health / healthSystem.MaxHealth;
+            hpText.text = $"{healthSystem.Health:F0} / {healthSystem.MaxHealth:F0}";
         }
     }
 
-    // ==================== ÄÜÁ¿ÌõÊÂ¼þÇý¶¯¸üÐÂ£¨ÍÆ¼ö·½Ê½£© ====================
+    // ==================== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â£ï¿½ï¿½Æ¼ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ ====================
     private void OnEnergyChanged(float normalizedValue)
     {
         if (playerEnergyBarFill == null) return;
 
-        // Í£Ö¹¾ÉµÄÐ­³Ì
+        // Í£Ö¹ï¿½Éµï¿½Ð­ï¿½ï¿½
         if (energyCoroutine != null)
             StopCoroutine(energyCoroutine);
 
-        // Æô¶¯Æ½»¬¶¯»­
+        // ï¿½ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         energyCoroutine = StartCoroutine(SmoothFillEnergyBar(normalizedValue));
+        enText.text = $"{playerProperty.energyValue:F0} / {playerProperty.MaxEnergy:F0}";
     }
 
     private IEnumerator SmoothFillEnergyBar(float target)
     {
         float current = playerEnergyBarFill.fillAmount;
         float timer = 0f;
-        float duration = 1f / energyFillSpeed;  // Ê¹ÓÃÄã¶¨ÒåµÄ speed£¡
+        float duration = 1f / energyFillSpeed;  // Ê¹ï¿½ï¿½ï¿½ã¶¨ï¿½ï¿½ï¿½ speedï¿½ï¿½
 
         while (timer < duration)
         {
@@ -147,7 +153,7 @@ public class PlayerHUDUI : MonoBehaviour
         playerEnergyBarFill.fillAmount = target;
         energyCoroutine = null;
     }
-    // ==================== ¾­ÑéÌõÏµÍ³£¨ÄãÔ­À´µÄÍêÃÀ±£Áô£© ====================
+    // ==================== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ====================
     public void UpdateEXPBar(bool levelUp = false)
     {
         if (levelUp)
@@ -204,7 +210,7 @@ public class PlayerHUDUI : MonoBehaviour
         }
     }
 
-    // ==================== »¤¼×ÏÔÊ¾ ====================
+    // ==================== ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ ====================
     public void UpdateArmorDisplay()
     {
         if (playerProperty != null && armorText != null)
@@ -213,12 +219,12 @@ public class PlayerHUDUI : MonoBehaviour
         }
     }
 
-    // ==================== ÊÖ¶¯Ë¢ÐÂ£¨µ÷ÊÔÓÃ£© ====================
+    // ==================== ï¿½Ö¶ï¿½Ë¢ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ ====================
     public void RefreshUI()
     {
         UpdateHealthBar();
         if (playerProperty != null)
-            OnEnergyChanged(playerProperty.EnergyNormalized); // Ç¿ÖÆË¢ÐÂÄÜÁ¿Ìõ
+            OnEnergyChanged(playerProperty.EnergyNormalized); // Ç¿ï¿½ï¿½Ë¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         UpdateArmorDisplay();
         UpdateEXPBar();
         UpdateEXPText();

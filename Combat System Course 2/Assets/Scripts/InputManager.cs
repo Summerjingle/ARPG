@@ -8,6 +8,8 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance { get; private set; }
 
     public PlayerInputActions Actions { get; private set; }
+    public event Action<bool> OnDeviceChanged;//设备切换：手柄、键鼠
+    public bool IsUsingGamepad { get; private set; }
     public event System.Action OnAttack;
     public event System.Action OnInteract;
     public event System.Action ToggleWeapon;
@@ -57,13 +59,37 @@ public class InputManager : MonoBehaviour
     private void OnEnable()
     {
         Actions.Enable();
+        InputSystem.onActionChange += DetectDeviceChange;
     }
 
     private void OnDisable()
     {
         Actions.Disable();
+        InputSystem.onActionChange -= DetectDeviceChange;
     }
+    private void DetectDeviceChange(object obj, InputActionChange change)
+    {
+        // 只有当有按键被按下/触发时，才检测设备
+        if (change == InputActionChange.ActionPerformed)
+        {
+            InputAction action = (InputAction)obj;
+            InputDevice device = action.activeControl?.device;
 
+            if (device != null)
+            {
+                // 判断当前触发的设备是不是手柄
+                bool isGamepad = device is Gamepad;
+
+                // 如果设备状态发生了变化，就触发事件
+                if (isGamepad != IsUsingGamepad)
+                {
+                    IsUsingGamepad = isGamepad;
+                    OnDeviceChanged?.Invoke(IsUsingGamepad);
+                    Debug.Log("输入设备已切换，当前是否为手柄：" + IsUsingGamepad);
+                }
+            }
+        }
+    }
     public void SwitchToMainMenuUI()
     {
        
@@ -76,6 +102,7 @@ public class InputManager : MonoBehaviour
     {
         Actions.UI_MainMenu.Disable();
         Actions.Player.Enable();
+        Actions.UI_Inventory.Disable();
         
         UIStateManager.SetUIActive(false); // �������
     }

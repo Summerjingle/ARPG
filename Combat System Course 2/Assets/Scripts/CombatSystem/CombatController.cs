@@ -17,22 +17,7 @@ public class CombatController : MonoBehaviour
         lockSystem = GetComponent<EnemyLockSystem>();
     }
 
-    private void Update()
-    {
-        if (Input.GetButtonDown("Attack") && !combatSystem.IsTakingHit)
-        {
-            var enemy = EnemyManager.i?.GetAttackingEnemy();
-            if (enemy != null && !enemy.IsUncounterable && enemy.Fighter.IsCounterable && !combatSystem.InAction)
-            {
-                StartCoroutine(PerformCounterAttack(enemy));
-            }
-            else
-            {
-                ICombatSystem target = lockSystem?.currentTarget?.GetComponent<EnemyController>()?.Fighter;
-                combatSystem?.TryToAttack(target);
-            }
-        }
-    }
+  
 
     private void OnAnimatorMove()
     {

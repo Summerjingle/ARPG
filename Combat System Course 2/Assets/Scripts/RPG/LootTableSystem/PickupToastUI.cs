@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PickupToastUI : MonoBehaviour
 {
-    public TextMeshProUGUI typeText;
+    
     public TextMeshProUGUI nameText;
     
     public CanvasGroup canvasGroup;
@@ -15,24 +15,7 @@ public class PickupToastUI : MonoBehaviour
 
     public void Show(ItemSO item, float duration = 2f)
     {
-        string type = "";
-        switch (item.itemType)
-        {
-            case ItemType.Weapon:
-                type = "武器";
-                break;
-            case ItemType.Consumable:
-                type = "可消耗品";
-                break;
-            case ItemType.Armor:
-                type = "防具";
-                break;
-            case ItemType.QuestRelated:
-                type = "任务道具";
-                break;
-
-        }
-        typeText.text = type;
+       
         nameText.text = item.nameOfItem;
         if (currentRoutine != null)
             StopCoroutine(currentRoutine);

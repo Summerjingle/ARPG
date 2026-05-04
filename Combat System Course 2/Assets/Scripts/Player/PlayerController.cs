@@ -52,7 +52,8 @@ public class PlayerController : MonoBehaviour
     public bool LockRotation { get; set; } = false;
 
     public Quaternion targetRotation;
-    public ICombatSystem combatSystem;
+    public ICombatSystem 
+    combatSystem;
 
     public Animator animator;
     private int speedHash;
@@ -121,6 +122,7 @@ public class PlayerController : MonoBehaviour
     private void Start()
     {
         UIStateManager.SetUIActive(false);
+        InputManager.Instance.SwitchToPlayer();
         
     }
 
@@ -224,8 +226,9 @@ public class PlayerController : MonoBehaviour
         // 能量消耗
         if (isSprinting)
         {
-            float costPerSecond = PlayerProperty.Instance.GetSprintCostPerSecond();
-            if (!PlayerProperty.Instance.ConsumeEnergy(Mathf.CeilToInt(costPerSecond * Time.deltaTime)))
+           float costPerSecond = PlayerProperty.Instance.GetSprintCostPerSecond();
+            // 移除 Mathf.CeilToInt，直接传入 float 进行精确计算
+            if (!PlayerProperty.Instance.ConsumeEnergy(costPerSecond * Time.deltaTime))
             {
                 isSprinting = false;
             }
@@ -339,6 +342,23 @@ public class PlayerController : MonoBehaviour
         if (!animator.applyRootMotion)
         {
             charactercontroller.Move(velocity * Time.deltaTime);
+        }
+        if (!isSprinting && !isRolling && PlayerProperty.Instance.energyValue < PlayerProperty.Instance.MaxEnergy)
+        {
+            float regenRate = 0f;
+
+            // 根据是否在地面移动来决定恢复速率[cite: 4, 5]
+            if (isGrounded && moveInput.magnitude > 0.1f)
+            {
+                regenRate = PlayerProperty.Instance.walkRegenRate; // 使用行走恢复率
+            }
+            else
+            {
+                regenRate = PlayerProperty.Instance.idleRegenRate; // 使用静止恢复率[cite: 4]
+            }
+
+            // 执行恢复
+            PlayerProperty.Instance.RestoreEnergy(regenRate * Time.deltaTime);
         }
     }
 

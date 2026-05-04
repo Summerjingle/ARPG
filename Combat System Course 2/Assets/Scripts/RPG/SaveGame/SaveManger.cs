@@ -12,7 +12,7 @@ public class SaveManager : MonoBehaviour
     public static bool shouldLoadFromSave = false;
     public static bool isNewGame = true;
     public static string currentSaveId;
-    public static bool shouldLoadPosition = false; // ÐÂÔö£º¿ØÖÆÊÇ·ñ¼ÓÔØÎ»ÖÃ
+    public static bool shouldLoadPosition = false; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 
     private string savePath;
     private string savesDirectory;
@@ -27,19 +27,19 @@ public class SaveManager : MonoBehaviour
 
     private void Awake()
     {
-        Debug.Log($"SaveManager Awake ±»µ÷ÓÃ£¬µ±Ç°ÊµÀý: {GetInstanceID()}");
+        Debug.Log($"SaveManager Awake ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½Ç°Êµï¿½ï¿½: {GetInstanceID()}");
 
-        // ¼ì²éÊÇ·ñÓÐÆäËûÊµÀý
+        // ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½ï¿½
         var allInstances = FindObjectsOfType<SaveManager>();
-        Debug.Log($"µ±Ç°³¡¾°ÖÐ SaveManager ÊµÀýÊýÁ¿: {allInstances.Length}");
+        Debug.Log($"ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ SaveManager Êµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {allInstances.Length}");
 
         foreach (var instance in allInstances)
         {
-            Debug.Log($"ÊµÀýID: {instance.GetInstanceID()}, ÓÎÏ·¶ÔÏó: {instance.gameObject.name}");
+            Debug.Log($"Êµï¿½ï¿½ID: {instance.GetInstanceID()}, ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½: {instance.gameObject.name}");
         }
         if (Instance != null && Instance != this)
         {
-            // ÏÈÈ¡ÏûÊÂ¼þ×¢²áÔÙÏú»Ù
+            // ï¿½ï¿½È¡ï¿½ï¿½ï¿½Â¼ï¿½×¢ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             SceneManager.sceneLoaded -= OnSceneLoaded;
             Destroy(gameObject);
             return;
@@ -54,18 +54,18 @@ public class SaveManager : MonoBehaviour
             Directory.CreateDirectory(savesDirectory);
         }
 
-        // È·±£Ö»×¢²áÒ»´Î
-        SceneManager.sceneLoaded -= OnSceneLoaded; // ÏÈÒÆ³ý¿ÉÄÜ´æÔÚµÄÖØ¸´×¢²á
+        // È·ï¿½ï¿½Ö»×¢ï¿½ï¿½Ò»ï¿½ï¿½
+        SceneManager.sceneLoaded -= OnSceneLoaded; // ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½Ü´ï¿½ï¿½Úµï¿½ï¿½Ø¸ï¿½×¢ï¿½ï¿½
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
     private void OnDestroy()
     {
-        // È·±£³¹µ×È¡Ïû×¢²á
+        // È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¡ï¿½ï¿½×¢ï¿½ï¿½
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    #region ´æµµ¹ÜÀí
+    #region ï¿½æµµï¿½ï¿½ï¿½ï¿½
 
     public void ResetSaveManagerState()
     {
@@ -80,47 +80,47 @@ public class SaveManager : MonoBehaviour
         isApplySaveDataAfterFrameRunning = false;
         hasSaveDataBeenAppliedInCurrentScene = false;
 
-        // Çå¿ÕÏµÍ³
+        // ï¿½ï¿½ï¿½ÏµÍ³
         InventoryManager.Instance?.ClearInventory();
         QuestManager.Instance?.ResetAllQuests();
         WeaponEquipmentManager.Instance?.UnequipWeapon();
         ArmorEquipmentManager.Instance?.UnequipAll();
         CurrencySystem.Instance?.SetCurrentCoins(0);
 
-        Debug.Log("SaveManager ×´Ì¬ºÍËùÓÐµ¥ÀýÊý¾ÝÒÑÖØÖÃ");
+        Debug.Log("SaveManager ×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
     public void CreateNewGame(int slot)
     {
         ResetSaveManagerState();
         isNewGame = true;
         shouldLoadFromSave = false;
-        shouldLoadPosition = false; // ÐÂÓÎÏ·²»¼ÓÔØÎ»ÖÃ
+        shouldLoadPosition = false; // ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
 
-        // ²éÕÒ¿ÉÓÃµÄ¿Õ²ÛÎ»£¨²»¸²¸ÇÏÖÓÐ´æµµ£©
+        // ï¿½ï¿½ï¿½Ò¿ï¿½ï¿½ÃµÄ¿Õ²ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´æµµï¿½ï¿½
         int availableSlot = FindEmptySaveSlot();
 
-        // ´´½¨È«ÐÂµÄ´æµµ£¨²»¸²¸ÇÏÖÓÐ´æµµ£©
+        // ï¿½ï¿½ï¿½ï¿½È«ï¿½ÂµÄ´æµµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´æµµï¿½ï¿½
         currentSaveData = new GameSaveData(availableSlot);
         currentSaveId = currentSaveData.saveId;
 
-        Debug.Log($"´´½¨ÐÂÓÎÏ·£¬Ê¹ÓÃ¿Õ²ÛÎ»: {availableSlot}, ´æµµID: {currentSaveId}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½Ê¹ï¿½Ã¿Õ²ï¿½Î»: {availableSlot}, ï¿½æµµID: {currentSaveId}");
     }
 
-    // ÐÂÔö·½·¨£º²éÕÒ¿Õ²ÛÎ»
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò¿Õ²ï¿½Î»
     private int FindEmptySaveSlot()
     {
         var existingSaves = GetAllSaves();
 
-        // ²éÕÒµÚÒ»¸ö¿Õ²ÛÎ»£¨0-9£©
+        // ï¿½ï¿½ï¿½Òµï¿½Ò»ï¿½ï¿½ï¿½Õ²ï¿½Î»ï¿½ï¿½0-9ï¿½ï¿½
         for (int i = 0; i < MAX_SAVE_SLOTS; i++)
         {
             if (!existingSaves.Any(save => save.saveSlot == i))
             {
-                return i; // ÕÒµ½¿Õ²ÛÎ»
+                return i; // ï¿½Òµï¿½ï¿½Õ²ï¿½Î»
             }
         }
 
-        // Èç¹ûÃ»ÓÐ¿Õ²ÛÎ»£¬Ê¹ÓÃÐÂµÄ²ÛÎ»±àºÅ£¨²»¸²¸ÇÏÖÓÐ´æµµ£©
+        // ï¿½ï¿½ï¿½Ã»ï¿½Ð¿Õ²ï¿½Î»ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ÂµÄ²ï¿½Î»ï¿½ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð´æµµï¿½ï¿½
         return existingSaves.Count;
     }
 
@@ -128,10 +128,10 @@ public class SaveManager : MonoBehaviour
     {
         isNewGame = false;
         shouldLoadFromSave = true;
-        shouldLoadPosition = true; // ´ÓÖ÷²Ëµ¥¼ÓÔØ´æµµÊ±ÐèÒª¼ÓÔØÎ»ÖÃ
+        shouldLoadPosition = true; // ï¿½ï¿½ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½Ø´æµµÊ±ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
         currentSaveId = saveId;
         LoadGameData(saveId);
-        Debug.Log($"×¼±¸¼ÓÔØ´æµµ: {saveId}");
+        Debug.Log($"×¼ï¿½ï¿½ï¿½ï¿½ï¿½Ø´æµµ: {saveId}");
     }
 
     public void DeleteSave(string saveId)
@@ -140,10 +140,10 @@ public class SaveManager : MonoBehaviour
         if (File.Exists(savePath))
         {
             File.Delete(savePath);
-            Debug.Log($"ÒÑÉ¾³ý´æµµ: {saveId}");
+            Debug.Log($"ï¿½ï¿½É¾ï¿½ï¿½ï¿½æµµ: {saveId}");
         }
 
-        // Èç¹ûÉ¾³ýµÄÊÇµ±Ç°´æµµ£¬ÖØÖÃ×´Ì¬
+        // ï¿½ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½Çµï¿½Ç°ï¿½æµµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
         if (currentSaveId == saveId)
         {
             currentSaveId = null;
@@ -172,11 +172,11 @@ public class SaveManager : MonoBehaviour
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"¼ÓÔØ´æµµÎÄ¼þÊ§°Ü {filePath}: {e.Message}");
+                Debug.LogError($"ï¿½ï¿½ï¿½Ø´æµµï¿½Ä¼ï¿½Ê§ï¿½ï¿½ {filePath}: {e.Message}");
             }
         }
 
-        // °´±£´æÊ±¼äÅÅÐò£¬×îÐÂµÄÔÚÇ°
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½Ç°
         return saves.OrderByDescending(s => s.saveTime).ToList();
     }
 
@@ -192,7 +192,7 @@ public class SaveManager : MonoBehaviour
             }
             catch (System.Exception e)
             {
-                Debug.LogError($"¼ÓÔØ´æµµÊ§°Ü: {e.Message}");
+                Debug.LogError($"ï¿½ï¿½ï¿½Ø´æµµÊ§ï¿½ï¿½: {e.Message}");
             }
         }
         return null;
@@ -203,12 +203,12 @@ public class SaveManager : MonoBehaviour
         currentSaveData = GetSaveData(saveId);
         if (currentSaveData == null)
         {
-            Debug.LogWarning($"´æµµ²»´æÔÚ: {saveId}");
+            Debug.LogWarning($"ï¿½æµµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {saveId}");
             currentSaveData = new GameSaveData();
         }
         else
         {
-            Debug.Log("ÓÎÏ·Êý¾ÝÒÑ¼ÓÔØ");
+            Debug.Log("ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¼ï¿½ï¿½ï¿½");
         }
     }
 
@@ -218,29 +218,29 @@ public class SaveManager : MonoBehaviour
     }
     #endregion
 
-    #region ±£´æÓÎÏ·
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·
     public void SaveGame()
     {
         if (currentSaveData == null)
         {
-            Debug.LogWarning("Ã»ÓÐµ±Ç°´æµµÊý¾Ý£¬ÎÞ·¨±£´æ");
+            Debug.LogWarning("Ã»ï¿½Ðµï¿½Ç°ï¿½æµµï¿½ï¿½ï¿½Ý£ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
-        // ¼ì²éÊÇ·ñÎªÐÂÓÎÏ·ÇÒ»¹Ã»ÓÐ±£´æ¹ý
+        // ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½ï¿½Ï·ï¿½Ò»ï¿½Ã»ï¿½Ð±ï¿½ï¿½ï¿½ï¿½
         if (isNewGame && !HasBeenSavedBefore())
         {
-            // ÐÂÓÎÏ·µÚÒ»´Î±£´æ£¬Ê¹ÓÃ¿Õ²ÛÎ»
+            // ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½Ò»ï¿½Î±ï¿½ï¿½æ£¬Ê¹ï¿½Ã¿Õ²ï¿½Î»
             int availableSlot = FindEmptySaveSlot();
             currentSaveData.saveSlot = availableSlot;
-            currentSaveData.saveName = $"´æµµ {availableSlot + 1}";
-            Debug.Log($"ÐÂÓÎÏ·µÚÒ»´Î±£´æ£¬Ê¹ÓÃ²ÛÎ»: {availableSlot}");
+            currentSaveData.saveName = $"ï¿½æµµ {availableSlot + 1}";
+            Debug.Log($"ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½Ò»ï¿½Î±ï¿½ï¿½æ£¬Ê¹ï¿½Ã²ï¿½Î»: {availableSlot}");
         }
 
         GameObject player = registeredPlayer ?? GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogWarning("ÕÒ²»µ½Íæ¼Ò¶ÔÏó£¬ÎÞ·¨±£´æÓÎÏ·");
+            Debug.LogWarning("ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·");
             return;
         }
 
@@ -250,13 +250,13 @@ public class SaveManager : MonoBehaviour
 
         if (playerProperty == null || healthSystem == null)
         {
-            Debug.LogWarning("Íæ¼ÒÈ±ÉÙ±ØÒªµÄ×é¼þ£¬ÎÞ·¨±£´æÓÎÏ·");
+            Debug.LogWarning("ï¿½ï¿½ï¿½È±ï¿½Ù±ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·");
             return;
         }
 
-        Debug.Log($"±£´æÍæ¼ÒÊôÐÔ - µÈ¼¶: {playerProperty.level}, ¾­Ñé: {playerProperty.currEXP}, ÑªÁ¿: {playerProperty.hpValue}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½È¼ï¿½: {playerProperty.level}, ï¿½ï¿½ï¿½ï¿½: {playerProperty.currEXP}, ");
 
-        // ¸üÐÂ´æµµÊý¾Ý - ±£´æÎ»ÖÃºÍ³¡¾°
+        // ï¿½ï¿½ï¿½Â´æµµï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½Î»ï¿½ÃºÍ³ï¿½ï¿½ï¿½
         currentSaveData.currentScene = SceneManager.GetActiveScene().name;
         currentSaveData.playerPosition = player.transform.position;
         currentSaveData.playerRotation = player.transform.rotation;
@@ -270,7 +270,7 @@ public class SaveManager : MonoBehaviour
         currentSaveData.currCoins=CurrencySystem.Instance.GetCurrentCoins();
         currentSaveData.saveTime = System.DateTime.Now;
 
-        // Çå¿Õ¾ÉÊý¾Ý
+        // ï¿½ï¿½Õ¾ï¿½ï¿½ï¿½ï¿½ï¿½
         currentSaveData.inventoryItems.Clear();
         currentSaveData.questProgress.Clear();
 
@@ -283,11 +283,11 @@ public class SaveManager : MonoBehaviour
             string savePath = GetSavePath(currentSaveData.saveId);
             string jsonData = JsonConvert.SerializeObject(currentSaveData, Newtonsoft.Json.Formatting.Indented);
             File.WriteAllText(savePath, jsonData);
-            Debug.Log($"ÓÎÏ·ÒÑ±£´æµ½²ÛÎ»: {currentSaveData.saveSlot}");
+            Debug.Log($"ï¿½ï¿½Ï·ï¿½Ñ±ï¿½ï¿½æµ½ï¿½ï¿½Î»: {currentSaveData.saveSlot}");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"±£´æÓÎÏ·Ê§°Ü: {e.Message}");
+            Debug.LogError($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·Ê§ï¿½ï¿½: {e.Message}");
         }
     }
 
@@ -329,7 +329,7 @@ public class SaveManager : MonoBehaviour
     {
         if (InventoryManager.Instance == null)
         {
-            Debug.LogWarning("¿â´æ¹ÜÀíÆ÷Î´³õÊ¼»¯£¬ÎÞ·¨±£´æ¿â´æ");
+            Debug.LogWarning("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
@@ -339,28 +339,28 @@ public class SaveManager : MonoBehaviour
         var itemStacks = InventoryManager.Instance.GetAllItemStacks();
         currentSaveData.inventoryItems.AddRange(itemStacks);
 
-        Debug.Log($"ÒÑ±£´æ {currentSaveData.inventoryItems.Count} ¸öÎïÆ·¶Ñµþ");
+        Debug.Log($"ï¿½Ñ±ï¿½ï¿½ï¿½ {currentSaveData.inventoryItems.Count} ï¿½ï¿½ï¿½ï¿½Æ·ï¿½Ñµï¿½");
     }
 
     private void SaveQuests()
     {
         if (QuestManager.Instance == null || QuestDBManager.Instance == null)
         {
-            Debug.LogWarning("ÈÎÎñ¹ÜÀíÆ÷Î´³õÊ¼»¯£¬ÎÞ·¨±£´æÈÎÎñ");
+            Debug.LogWarning("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
         currentSaveData.questProgress = new List<QuestSaveData>();
 
-        // ±£´æËùÓÐÈÎÎñµÄ×´Ì¬ºÍ½ø¶È
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½Í½ï¿½ï¿½ï¿½
         foreach (Quest quest in QuestDBManager.Instance.questDatabase.allQuests)
         {
             if (quest != null)
             {
                 QuestState state = QuestManager.Instance.GetQuestState(quest);
                 QuestSaveData questSaveData = new QuestSaveData(quest.questID, state);
-                Debug.Log($"±£´æÈÎÎñ: {quest.questName}, ×´Ì¬: {state}");
-                // ±£´æÈÎÎñÄ¿±ê½ø¶È
+                Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {quest.questName}, ×´Ì¬: {state}");
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (quest.objectives != null)
                 {
                     for (int i = 0; i < quest.objectives.Count; i++)
@@ -372,7 +372,7 @@ public class SaveManager : MonoBehaviour
                             currentAmount = objective.currentAmount,
                             isCompleted = objective.isCompleted
                         });
-                        Debug.Log($"±£´æÄ¿±ê{i}: ÀàÐÍ={objective.objectiveType}, Ä¿±êID={objective.targetID}, Íê³É={objective.isCompleted}");
+                        Debug.Log($"ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½{i}: ï¿½ï¿½ï¿½ï¿½={objective.objectiveType}, Ä¿ï¿½ï¿½ID={objective.targetID}, ï¿½ï¿½ï¿½={objective.isCompleted}");
                     }
                 }
 
@@ -380,22 +380,22 @@ public class SaveManager : MonoBehaviour
             }
         }
 
-        Debug.Log($"ÒÑ±£´æ {currentSaveData.questProgress.Count} ¸öÈÎÎñ½ø¶È");
+        Debug.Log($"ï¿½Ñ±ï¿½ï¿½ï¿½ {currentSaveData.questProgress.Count} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
     #endregion
 
-    #region ¼ÓÔØ´æµµ
+    #region ï¿½ï¿½ï¿½Ø´æµµ
     public void ApplySaveData()
     {
-        Debug.Log($"ApplySaveData ±»µ÷ÓÃ£¬µ÷ÓÃ¶ÑÕ»: {System.Environment.StackTrace}");
-        // ·ÀÖ¹ÖØ¸´Ó¦ÓÃ
+        Debug.Log($"ApplySaveData ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½Ã¶ï¿½Õ»: {System.Environment.StackTrace}");
+        // ï¿½ï¿½Ö¹ï¿½Ø¸ï¿½Ó¦ï¿½ï¿½
         if (hasSaveDataBeenAppliedInCurrentScene)
         {
-            Debug.LogWarning("´æµµÊý¾ÝÒÑ¾­ÔÚµ±Ç°³¡¾°Ó¦ÓÃ¹ý£¬Ìø¹ý");
+            Debug.LogWarning("ï¿½æµµï¿½ï¿½ï¿½ï¿½ï¿½Ñ¾ï¿½ï¿½Úµï¿½Ç°ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
-        // ÉèÖÃ±êÖ¾
+        // ï¿½ï¿½ï¿½Ã±ï¿½Ö¾
         hasSaveDataBeenAppliedInCurrentScene = true;
         if (isApplyingSaveData) return;
         StartCoroutine(ApplySaveDataWithRetry());
@@ -405,14 +405,14 @@ public class SaveManager : MonoBehaviour
     {
         if (isNewGame)
         {
-            Debug.Log("ÐÂÓÎÏ·¿ªÊ¼£¬Ê¹ÓÃ³¡¾°Ä¬ÈÏÉèÖÃ");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½Ê¼ï¿½ï¿½Ê¹ï¿½Ã³ï¿½ï¿½ï¿½Ä¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             isApplyingSaveData = false;
             yield break;
         }
 
         if (currentSaveData == null)
         {
-            Debug.LogWarning("Ã»ÓÐ¿ÉÓ¦ÓÃµÄ´æµµÊý¾Ý");
+            Debug.LogWarning("Ã»ï¿½Ð¿ï¿½Ó¦ï¿½ÃµÄ´æµµï¿½ï¿½ï¿½ï¿½");
             isApplyingSaveData = false;
             yield break;
         }
@@ -432,27 +432,27 @@ public class SaveManager : MonoBehaviour
                 if (playerProperty != null && healthSystem != null)
                 {
                     ApplySaveDataToPlayer(player);
-                    Debug.Log("´æµµÊý¾ÝÒÑÓ¦ÓÃ");
+                    Debug.Log("ï¿½æµµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½");
                     isApplyingSaveData = false;
                     yield break;
                 }
                 else
                 {
-                    Debug.Log($"ÕÒµ½Íæ¼Ò¶ÔÏó£¬µ«×é¼þÎ´ÍêÈ«³õÊ¼»¯£¬ÖØÊÔµÚ {i + 1} ´Î");
+                    Debug.Log($"ï¿½Òµï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ó£¬µï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½È«ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ôµï¿½ {i + 1} ï¿½ï¿½");
                 }
             }
 
-            Debug.Log($"µÚ {i + 1} ´Î³¢ÊÔÑ°ÕÒÍæ¼Ò¶ÔÏó...");
+            Debug.Log($"ï¿½ï¿½ {i + 1} ï¿½Î³ï¿½ï¿½ï¿½Ñ°ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½...");
             yield return new WaitForSeconds(retryInterval);
         }
 
-        Debug.LogError($"ÔÚ {maxRetries} ´ÎÖØÊÔºóÈÔÈ»ÕÒ²»µ½Íæ¼Ò¶ÔÏó£¬ÎÞ·¨Ó¦ÓÃ´æµµÊý¾Ý");
+        Debug.LogError($"ï¿½ï¿½ {maxRetries} ï¿½ï¿½ï¿½ï¿½ï¿½Ôºï¿½ï¿½ï¿½È»ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½ï¿½Þ·ï¿½Ó¦ï¿½Ã´æµµï¿½ï¿½ï¿½ï¿½");
         isApplyingSaveData = false;
     }
 
     private void ApplySaveDataToPlayer(GameObject player)
     {
-        // Ö»ÓÐÔÚÐèÒªÊ±²ÅÓ¦ÓÃÎ»ÖÃÊý¾Ý
+        // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÊ±ï¿½ï¿½Ó¦ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (shouldLoadPosition)
         {
             ApplyPlayerPosition(player);
@@ -463,22 +463,22 @@ public class SaveManager : MonoBehaviour
         ApplyQuests();
         ApplyEquipment();
 
-        Debug.Log($"Ó¦ÓÃ´æµµÍê³É - µÈ¼¶: {currentSaveData.level}, ¾­Ñé: {currentSaveData.currEXP}, ÑªÁ¿: {currentSaveData.hpValue}");
+        Debug.Log($"Ó¦ï¿½Ã´æµµï¿½ï¿½ï¿½ - ï¿½È¼ï¿½: {currentSaveData.level}, ï¿½ï¿½ï¿½ï¿½: {currentSaveData.currEXP}, Ñªï¿½ï¿½: {currentSaveData.hpValue}");
         RefreshHUDUI();
     }
 
-    // ÐÂÔö·½·¨£ºÓ¦ÓÃÍæ¼ÒÎ»ÖÃ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½
     private void ApplyPlayerPosition(GameObject player)
     {
         if (currentSaveData.playerPosition.ToVector3() != Vector3.zero)
         {
             player.transform.position = currentSaveData.playerPosition.ToVector3();
             player.transform.rotation = currentSaveData.playerRotation.ToQuaternion();
-            Debug.Log($"Ó¦ÓÃÍæ¼ÒÎ»ÖÃ: {player.transform.position}, Ðý×ª: {player.transform.rotation}");
+            Debug.Log($"Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½Î»ï¿½ï¿½: {player.transform.position}, ï¿½ï¿½×ª: {player.transform.rotation}");
         }
         else
         {
-            Debug.Log("´æµµÖÐÃ»ÓÐÎ»ÖÃÊý¾Ý£¬Ê¹ÓÃÄ¬ÈÏ³öÉúµã");
+            Debug.Log("ï¿½æµµï¿½ï¿½Ã»ï¿½ï¿½Î»ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½Ê¹ï¿½ï¿½Ä¬ï¿½Ï³ï¿½ï¿½ï¿½ï¿½ï¿½");
         }
     }
 
@@ -489,22 +489,21 @@ public class SaveManager : MonoBehaviour
 
         if (playerProperty == null || healthSystem == null)
         {
-            Debug.LogWarning("Íæ¼ÒÈ±ÉÙ±ØÒªµÄÊôÐÔ×é¼þ");
+            Debug.LogWarning("ï¿½ï¿½ï¿½È±ï¿½Ù±ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
 
-        Debug.Log($"Ó¦ÓÃÇ°ÊôÐÔ - µÈ¼¶: {playerProperty.level} -> {currentSaveData.level}, ¾­Ñé: {playerProperty.currEXP} -> {currentSaveData.currEXP}");
+        Debug.Log($"Ó¦ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½ - ï¿½È¼ï¿½: {playerProperty.level} -> {currentSaveData.level}, ï¿½ï¿½ï¿½ï¿½: {playerProperty.currEXP} -> {currentSaveData.currEXP}");
 
         playerProperty.level = currentSaveData.level;
         playerProperty.currEXP = currentSaveData.currEXP;
-        playerProperty.hpValue = currentSaveData.hpValue;
         playerProperty.energyValue = currentSaveData.energyValue;
         playerProperty.SetBaseArmor(currentSaveData.armorValue);
 
         healthSystem.MaxHealth = currentSaveData.maxHealth;
         healthSystem.Health = currentSaveData.hpValue;
         CurrencySystem.Instance.SetCurrentCoins(currentSaveData.currCoins);
-        Debug.Log($"Ó¦ÓÃºóÊôÐÔ - µÈ¼¶: {playerProperty.level}, ¾­Ñé: {playerProperty.currEXP}, ÑªÁ¿: {healthSystem.Health}");
+        Debug.Log($"Ó¦ï¿½Ãºï¿½ï¿½ï¿½ï¿½ï¿½ - ï¿½È¼ï¿½: {playerProperty.level}, ï¿½ï¿½ï¿½ï¿½: {playerProperty.currEXP}, Ñªï¿½ï¿½: {healthSystem.Health}");
         RefreshHUDUI();
     }
 
@@ -512,25 +511,25 @@ public class SaveManager : MonoBehaviour
     {
         if (InventoryManager.Instance == null || ItemDBManager.Instance == null)
         {
-            Debug.LogWarning("¿â´æ¹ÜÀíÆ÷Î´³õÊ¼»¯£¬ÎÞ·¨¼ÓÔØ¿â´æ");
+            Debug.LogWarning("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½");
             return;
         }
 
-        // Çå¿ÕÇ°ÏÈ¼ÇÂ¼µ±Ç°×´Ì¬
-        Debug.Log($"Ó¦ÓÃ´æµµÇ° - ÄÚ´æÖÐÎïÆ·ÊýÁ¿: {InventoryManager.Instance.itemList.Count}");
+        // ï¿½ï¿½ï¿½Ç°ï¿½È¼ï¿½Â¼ï¿½ï¿½Ç°×´Ì¬
+        Debug.Log($"Ó¦ï¿½Ã´æµµÇ° - ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½: {InventoryManager.Instance.itemList.Count}");
         foreach (var item in InventoryManager.Instance.itemList)
         {
-            Debug.Log($"Ó¦ÓÃÇ°´æÔÚµÄÎïÆ·: {item.nameOfItem}, ÊýÁ¿: {item.amount}");
+            Debug.Log($"Ó¦ï¿½ï¿½Ç°ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Æ·: {item.nameOfItem}, ï¿½ï¿½ï¿½ï¿½: {item.amount}");
         }
 
-        // Ê¹ÓÃÇå¿Õ·½·¨
+        // Ê¹ï¿½ï¿½ï¿½ï¿½Õ·ï¿½ï¿½ï¿½
         InventoryManager.Instance.ClearInventory();
 
-        // ¼ÇÂ¼´æµµÖÐµÄÊý¾Ý
-        Debug.Log($"´æµµÖÐµÄÎïÆ·ÊýÁ¿: {currentSaveData.inventoryItems.Count}");
+        // ï¿½ï¿½Â¼ï¿½æµµï¿½Ðµï¿½ï¿½ï¿½ï¿½ï¿½
+        Debug.Log($"ï¿½æµµï¿½Ðµï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½: {currentSaveData.inventoryItems.Count}");
         foreach (var itemData in currentSaveData.inventoryItems)
         {
-            Debug.Log($"´æµµÎïÆ·: {itemData.itemId}, ÊýÁ¿: {itemData.quantity}");
+            Debug.Log($"ï¿½æµµï¿½ï¿½Æ·: {itemData.itemId}, ï¿½ï¿½ï¿½ï¿½: {itemData.quantity}");
         }
 
         foreach (InventoryItemData itemData in currentSaveData.inventoryItems)
@@ -541,31 +540,31 @@ public class SaveManager : MonoBehaviour
                 ItemSO newItem = Instantiate(itemTemplate);
                 newItem.amount = itemData.quantity;
                 InventoryManager.Instance.ReAddItem(newItem);
-                Debug.Log($"´Ó´æµµ¼ÓÔØÎïÆ·: {newItem.nameOfItem}, ÊýÁ¿: {newItem.amount}");
+                Debug.Log($"ï¿½Ó´æµµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·: {newItem.nameOfItem}, ï¿½ï¿½ï¿½ï¿½: {newItem.amount}");
             }
         }
 
         InventoryUI.Instance?.UpdateInventoryUI();
-        Debug.Log($"Ó¦ÓÃ´æµµºó - ÄÚ´æÖÐÎïÆ·ÊýÁ¿: {InventoryManager.Instance.itemList.Count}");
+        Debug.Log($"Ó¦ï¿½Ã´æµµï¿½ï¿½ - ï¿½Ú´ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½: {InventoryManager.Instance.itemList.Count}");
     }
     private void ApplyQuests()
     {
         if (QuestManager.Instance == null || QuestDBManager.Instance == null) return;
 
-        // ÖØÖÃËùÓÐÈÎÎñ×´Ì¬
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
         QuestManager.Instance.ResetAllQuests();
 
         foreach (QuestSaveData questData in currentSaveData.questProgress)
         {
-            // Í¨¹ýID²éÕÒÈÎÎñ
+            // Í¨ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             Quest quest = QuestDBManager.Instance.questDatabase.GetQuestByID(questData.questID);
             if (quest != null)
             {
-                Debug.Log($"¼ÓÔØÈÎÎñ: {quest.questName}, ×´Ì¬: {questData.questState}");
-                // »Ö¸´ÈÎÎñ×´Ì¬
+                Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {quest.questName}, ×´Ì¬: {questData.questState}");
+                // ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
                 QuestManager.Instance.SetQuestState(quest, questData.questState);
 
-                // »Ö¸´ÈÎÎñÄ¿±ê½ø¶È
+                // ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (questData.objectiveProgress != null && quest.objectives != null)
                 {
                     foreach (var objectiveProgress in questData.objectiveProgress)
@@ -573,14 +572,14 @@ public class SaveManager : MonoBehaviour
                         if (objectiveProgress.objectiveIndex < quest.objectives.Count)
                         {
                             var objective = quest.objectives[objectiveProgress.objectiveIndex];
-                            Debug.Log($"¼ÓÔØÄ¿±ê{objectiveProgress.objectiveIndex}: Íê³É×´Ì¬={objectiveProgress.isCompleted}");
+                            Debug.Log($"ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½{objectiveProgress.objectiveIndex}: ï¿½ï¿½ï¿½×´Ì¬={objectiveProgress.isCompleted}");
                             objective.currentAmount = objectiveProgress.currentAmount;
                             objective.isCompleted = objectiveProgress.isCompleted;
                         }
                     }
                 }
 
-                //ÈôÎª¡°½øÐÐÖÐ¡±»ò¡°¿ÉÍê³É¡±µÄÈÎÎñ£¬ÖØÐÂÏÔÊ¾ÔÚ½çÃæÉÏ
+                //ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð¡ï¿½ï¿½ò¡°¿ï¿½ï¿½ï¿½É¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ú½ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (questData.questState == QuestState.InProgress || questData.questState == QuestState.CanComplete)
                 {
                     if (QuestPanelController.Instance != null)
@@ -598,13 +597,13 @@ public class SaveManager : MonoBehaviour
             }
             else
             {
-                Debug.LogWarning($"ÕÒ²»µ½IDÎª {questData.questID} µÄÈÎÎñ");
+                Debug.LogWarning($"ï¿½Ò²ï¿½ï¿½ï¿½IDÎª {questData.questID} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             }
         }
 
-        // ¸üÐÂÈÎÎñUI
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UI
         QuestPanelController.Instance?.UpdateAllPanels();
-        Debug.Log($"ÒÑ¼ÓÔØ {currentSaveData.questProgress.Count} ¸öÈÎÎñ½ø¶È");
+        Debug.Log($"ï¿½Ñ¼ï¿½ï¿½ï¿½ {currentSaveData.questProgress.Count} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
 
     private void ApplyEquipment()
@@ -616,34 +615,34 @@ public class SaveManager : MonoBehaviour
     {
         yield return null;
 
-        Debug.Log("=== ¿ªÊ¼×°±¸Á÷³Ì ===");
+        Debug.Log("=== ï¿½ï¿½Ê¼×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ===");
         GameObject player = registeredPlayer ?? GameObject.FindGameObjectWithTag("Player");
 
         if (player == null)
         {
-            Debug.LogError("ÕÒ²»µ½Íæ¼Ò¶ÔÏó£¡");
+            Debug.LogError("ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½Ò¶ï¿½ï¿½ï¿½");
             yield break;
         }
 
-        Debug.Log($"ÕÒµ½Íæ¼Ò: {player.name}");
+        Debug.Log($"ï¿½Òµï¿½ï¿½ï¿½ï¿½: {player.name}");
 
         ArmorEquipmentManager equipmentManager = player.GetComponent<ArmorEquipmentManager>();
         ItemUsageHandler itemUsageHandler = player.GetComponent<ItemUsageHandler>();
 
         if (equipmentManager != null)
         {
-            Debug.Log("¿ªÊ¼×°±¸»¤¼×...");
+            Debug.Log("ï¿½ï¿½Ê¼×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½...");
             EquipArmorItem(currentSaveData.equippedHelmet, ArmorType.Helmet, equipmentManager);
             EquipArmorItem(currentSaveData.equippedChestplate, ArmorType.Chestplate, equipmentManager);
             EquipArmorItem(currentSaveData.equippedGauntlets, ArmorType.Gauntlets, equipmentManager);
             EquipArmorItem(currentSaveData.equippedLeggings, ArmorType.Leggings, equipmentManager);
             EquipArmorItem(currentSaveData.equippedBoots, ArmorType.Boots, equipmentManager);
-            Debug.Log("»¤¼××°±¸Íê³É");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½×°ï¿½ï¿½ï¿½ï¿½ï¿½");
         }
 
         if (!string.IsNullOrEmpty(currentSaveData.equippedWeapon))
         {
-            Debug.Log($"¿ªÊ¼×°±¸ÎäÆ÷: {currentSaveData.equippedWeapon}");
+            Debug.Log($"ï¿½ï¿½Ê¼×°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {currentSaveData.equippedWeapon}");
             ItemSO weaponItem = ItemDBManager.Instance?.itemDB?.itemList?.Find(i => i != null && i.name == currentSaveData.equippedWeapon);
 
             if (weaponItem != null)
@@ -653,11 +652,11 @@ public class SaveManager : MonoBehaviour
                 else if (ItemUsageHandler.Instance != null)
                     ItemUsageHandler.Instance.UseItem(weaponItem);
                 else
-                    Debug.LogError("ÕÒ²»µ½¿ÉÓÃµÄ ItemUsageHandler");
+                    Debug.LogError("ï¿½Ò²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ãµï¿½ ItemUsageHandler");
             }
         }
 
-        Debug.Log("=== ×°±¸Á÷³Ì½áÊø ===");
+        Debug.Log("=== ×°ï¿½ï¿½ï¿½ï¿½ï¿½Ì½ï¿½ï¿½ï¿½ ===");
     }
 
     private void EquipArmorItem(string itemName, ArmorType armorType, ArmorEquipmentManager equipmentManager)
@@ -671,56 +670,56 @@ public class SaveManager : MonoBehaviour
     }
     #endregion
 
-    #region ³¡¾°ºÍUI¹ÜÀí
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½UIï¿½ï¿½ï¿½ï¿½
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
         hasSaveDataBeenAppliedInCurrentScene = false;
 
-        // ¹Ø¼üÐÞ¸´£ºÍ£Ö¹ËùÓÐÕýÔÚÔËÐÐµÄÐ­³Ì
+        // ï¿½Ø¼ï¿½ï¿½Þ¸ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ðµï¿½Ð­ï¿½ï¿½
         StopAllCoroutines();
         isApplySaveDataAfterFrameRunning = false;
         isApplyingSaveData = false;
 
-        Debug.Log($"=== OnSceneLoaded ±»µ÷ÓÃ === Scene: {scene.name}, Mode: {mode}");
+        Debug.Log($"=== OnSceneLoaded ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ === Scene: {scene.name}, Mode: {mode}");
 
-        // Ö»ÓÐÔÚÌØ¶¨Ìõ¼þÏÂ²Å´¦Àí³¡¾°¼ÓÔØ
+        // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â²Å´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (shouldLoadFromSave && !string.IsNullOrEmpty(currentSaveId))
         {
-            // ·ÀÖ¹ÖØ¸´Æô¶¯Ð­³Ì
+            // ï¿½ï¿½Ö¹ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½
             if (!isApplySaveDataAfterFrameRunning && !hasSaveDataBeenAppliedInCurrentScene)
             {
-                Debug.Log("¿ªÊ¼ ApplySaveDataAfterFrame Ð­³Ì");
+                Debug.Log("ï¿½ï¿½Ê¼ ApplySaveDataAfterFrame Ð­ï¿½ï¿½");
                 StartCoroutine(ApplySaveDataAfterFrame());
             }
             else
             {
-                Debug.LogWarning($"Ìø¹ý´æµµÓ¦ÓÃ£ºisApplySaveDataAfterFrameRunning={isApplySaveDataAfterFrameRunning}, hasSaveDataBeenAppliedInCurrentScene={hasSaveDataBeenAppliedInCurrentScene}");
+                Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ï¿½æµµÓ¦ï¿½Ã£ï¿½isApplySaveDataAfterFrameRunning={isApplySaveDataAfterFrameRunning}, hasSaveDataBeenAppliedInCurrentScene={hasSaveDataBeenAppliedInCurrentScene}");
             }
         }
         else
         {
-            Debug.Log($"Ìø¹ý´æµµÓ¦ÓÃ£ºshouldLoadFromSave={shouldLoadFromSave}, currentSaveId={currentSaveId}");
+            Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½æµµÓ¦ï¿½Ã£ï¿½shouldLoadFromSave={shouldLoadFromSave}, currentSaveId={currentSaveId}");
         }
     }
 
     private IEnumerator ApplySaveDataAfterFrame()
     {
-        // ÉèÖÃÔËÐÐ±êÖ¾
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð±ï¿½Ö¾
         if (isApplySaveDataAfterFrameRunning)
         {
-            Debug.LogWarning("ApplySaveDataAfterFrame ÒÑ¾­ÔÚÔËÐÐÖÐ£¬Ìø¹ý");
+            Debug.LogWarning("ApplySaveDataAfterFrame ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð£ï¿½ï¿½ï¿½ï¿½ï¿½");
             yield break;
         }
 
         isApplySaveDataAfterFrameRunning = true;
-        Debug.Log("ApplySaveDataAfterFrame Ð­³Ì¿ªÊ¼");
+        Debug.Log("ApplySaveDataAfterFrame Ð­ï¿½Ì¿ï¿½Ê¼");
 
         yield return new WaitForSeconds(0.5f);
 
-        Debug.Log("ApplySaveDataAfterFrame Ð­³Ì½áÊø£¬µ÷ÓÃ ApplySaveData");
+        Debug.Log("ApplySaveDataAfterFrame Ð­ï¿½Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ApplySaveData");
         ApplySaveData();
 
-        // ÖØÖÃ±êÖ¾
+        // ï¿½ï¿½ï¿½Ã±ï¿½Ö¾
         isApplySaveDataAfterFrameRunning = false;
     }
 
@@ -730,7 +729,7 @@ public class SaveManager : MonoBehaviour
         if (PlayerHUDUI.Instance != null)
         {
             PlayerHUDUI.Instance.RefreshUI();
-            Debug.Log("HUDUIÒÑË¢ÐÂ");
+            Debug.Log("HUDUIï¿½ï¿½Ë¢ï¿½ï¿½");
         }
         else
         {
@@ -738,13 +737,13 @@ public class SaveManager : MonoBehaviour
             if (hudUI != null)
             {
                 hudUI.RefreshUI();
-                Debug.Log("Í¨¹ý²éÕÒË¢ÐÂHUDUI");
+                Debug.Log("Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë¢ï¿½ï¿½HUDUI");
             }
         }
     }
     #endregion
 
-    #region Ó¦ÓÃÉúÃüÖÜÆÚ
+    #region Ó¦ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void OnApplicationQuit()
     {
         SaveGame();

@@ -5,17 +5,17 @@ public class UIManager : MonoBehaviour
 {
     public static UIManager Instance;
 
-    [Header("¶Ô»°UI")]
+    [Header("ï¿½Ô»ï¿½UI")]
     [SerializeField] private GameObject dialoguePanel;
     [SerializeField] private TMP_Text dialogueText;
 
-    [Header("½»»¥ÌáÊ¾UI")]
-    [SerializeField] private GameObject interactPrompt;
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾UI")]
+   [SerializeField] private LootUIPollower lootUIFollower;
     public PickupToastUI pickupToast;
 
 
 
-    [Header("Ñ¡Ïî°´Å¥UI")]
+    [Header("Ñ¡ï¿½î°´Å¥UI")]
     [SerializeField] private GameObject choiceButtons;
     [SerializeField] private UnityEngine.UI.Button acceptButton;
     [SerializeField] private UnityEngine.UI.Button rejectButton;
@@ -31,7 +31,7 @@ public class UIManager : MonoBehaviour
         Instance = this;
     }
 
-    // ÏÔÊ¾¶Ô»°
+    // ï¿½ï¿½Ê¾ï¿½Ô»ï¿½
     public void ShowDialogue(string text)
     {
         if (dialoguePanel != null)
@@ -45,7 +45,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // Òþ²Ø¶Ô»°
+    // ï¿½ï¿½ï¿½Ø¶Ô»ï¿½
     public void HideDialogue()
     {
         if (dialoguePanel != null)
@@ -54,32 +54,32 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // ÏÔÊ¾½»»¥ÌáÊ¾
-    public void ShowInteractPrompt()
+    // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
+    public void ShowInteractPrompt(Transform targetTransform,ItemSO item = null)
     {
-        if (interactPrompt != null)
+        if (lootUIFollower != null)
         {
-            interactPrompt.SetActive(true);
+            lootUIFollower.SetTarget(targetTransform,item);
         }
     }
 
-    // Òþ²Ø½»»¥ÌáÊ¾
+    // ï¿½ï¿½ï¿½Ø½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
     public void HideInteractPrompt()
     {
-        if (interactPrompt != null)
+        if (lootUIFollower != null)
         {
-            interactPrompt.SetActive(false);
+            lootUIFollower.SetTarget(null,null);
         }
     }
 
-    // ÏÔÊ¾Ñ¡Ïî°´Å¥
+    // ï¿½ï¿½Ê¾Ñ¡ï¿½î°´Å¥
     public void ShowChoiceButtons(System.Action onAccept, System.Action onReject)
     {
         if (choiceButtons != null)
         {
             choiceButtons.SetActive(true);
 
-            // ÉèÖÃ°´Å¥µã»÷ÊÂ¼þ
+            // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
             if (acceptButton != null)
             {
                 acceptButton.onClick.RemoveAllListeners();
@@ -100,7 +100,7 @@ public class UIManager : MonoBehaviour
         }
     }
 
-    // Òþ²ØÑ¡Ïî°´Å¥
+    // ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½î°´Å¥
     public void HideChoiceButtons()
     {
         if (choiceButtons != null)

@@ -19,49 +19,49 @@ public class InventoryManager : MonoBehaviour
     {
         if (item.IsStackable())
         {
-            // ²éÕÒ±³°üÖÐÊÇ·ñÒÑÓÐÏàÍ¬ÎïÆ·
+            // ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½Æ·
             ItemSO existingItem = FindStackableItem(item);
 
             if (existingItem != null)
             {
-                // ¿ÉÒÔ¶Ñµþ£¬Ôö¼ÓÊýÁ¿
+                // ï¿½ï¿½ï¿½Ô¶Ñµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 int remainingSpace = existingItem.maxStackSize - existingItem.amount;
                 int amountToAdd = Mathf.Min(item.amount, remainingSpace);
 
                 existingItem.amount += amountToAdd;
-                MessageUI.Instance.Show($"{item.nameOfItem} ÊýÁ¿Ôö¼ÓÖÁ {existingItem.amount}");
+                
 
-                // Èç¹û»¹ÓÐÊ£ÓàÎïÆ·£¬µÝ¹éÌí¼Ó
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (item.amount > amountToAdd)
                 {
                     item.amount -= amountToAdd;
-                    AddItem(item); // µÝ¹é´¦ÀíÊ£ÓàÎïÆ·
+                    AddItem(item); // ï¿½Ý¹é´¦ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½Æ·
                 }
 
                 InventoryUI.Instance.UpdateItemAmountDisplay(existingItem);
             }
             else
             {
-                // Ã»ÓÐÕÒµ½¿É¶ÑµþµÄÎïÆ·£¬Ìí¼ÓÐÂÎïÆ·
-                ItemSO newItem = Instantiate(item); // ´´½¨¸±±¾ÒÔ±ÜÃâÐÞ¸ÄÔ­Ê¼SO
+                // Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½É¶Ñµï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·
+                ItemSO newItem = Instantiate(item); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½Ô­Ê¼SO
                 newItem.amount = item.amount;
                 itemList.Add(newItem);
                 InventoryUI.Instance.AddItem(newItem);
-                MessageUI.Instance.Show($"{item.nameOfItem} ±»·ÅÈëÁË±³°ü");
+                
             }
         }
         else
         {
-            // ·Ç¶ÑµþÎïÆ·Ö±½ÓÌí¼Ó
+            // ï¿½Ç¶Ñµï¿½ï¿½ï¿½Æ·Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             ItemSO newItem = Instantiate(item);
             newItem.amount = 1;
             itemList.Add(newItem);
             InventoryUI.Instance.AddItem(newItem);
-            MessageUI.Instance.Show($"{item.nameOfItem} ±»·ÅÈëÁË±³°ü");
+            
         }
     }
 
-    // ²éÕÒ¿É¶ÑµþµÄÎïÆ·
+    // ï¿½ï¿½ï¿½Ò¿É¶Ñµï¿½ï¿½ï¿½ï¿½ï¿½Æ·
     private ItemSO FindStackableItem(ItemSO targetItem)
     {
         foreach (ItemSO item in itemList)
@@ -75,10 +75,10 @@ public class InventoryManager : MonoBehaviour
     }
 
 
-    //´Ó±³°üÖÐÒÆ³ýÖ¸¶¨ÎïÆ·
+    //ï¿½Ó±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½Æ·
     public void RemoveItem(ItemSO targetItem, int amountToRemove = 1)
     {
-        // ÔÚ±³°üÖÐÕÒµ½¶ÔÓ¦µÄÎïÆ·£¨Í¨¹ýÃû³ÆÆ¥Åä£©
+        // ï¿½Ú±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ä£©
         ItemSO inventoryItem = null;
         foreach (ItemSO item in itemList)
         {
@@ -91,35 +91,35 @@ public class InventoryManager : MonoBehaviour
 
         if (inventoryItem == null)
         {
-            Debug.LogWarning($"³¢ÊÔÒÆ³ý²»´æÔÚµÄÎïÆ·: {targetItem.nameOfItem}");
+            Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ï¿½Æ³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½ï¿½Æ·: {targetItem.nameOfItem}");
             return;
         }
 
-        // Ô­ÓÐµÄÒÆ³ýÂß¼­±£³Ö²»±ä
+        // Ô­ï¿½Ðµï¿½ï¿½Æ³ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ï¿½
         if (inventoryItem.IsStackable())
         {
             inventoryItem.amount -= amountToRemove;
             if (inventoryItem.amount <= 0)
             {
                 itemList.Remove(inventoryItem);
-                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} ÒÑ´Ó±³°üÒÆ³ý");
+                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} ï¿½Ñ´Ó±ï¿½ï¿½ï¿½ï¿½Æ³ï¿½");
             }
             else
             {
-                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} ÊýÁ¿¼õÉÙÖÁ {inventoryItem.amount}");
+                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ {inventoryItem.amount}");
             }
         }
         else
         {
             itemList.Remove(inventoryItem);
-            MessageUI.Instance.Show($"{inventoryItem.nameOfItem} ÒÑ´Ó±³°üÒÆ³ý");
+            MessageUI.Instance.Show($"{inventoryItem.nameOfItem} ï¿½Ñ´Ó±ï¿½ï¿½ï¿½ï¿½Æ³ï¿½");
         }
 
         InventoryUI.Instance.UpdateInventoryUI();
     }
 
 
-    // ¼ì²éÎïÆ·ÊýÁ¿
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½
     public int GetItemCount(string itemName)
     {
         int totalCount = 0;
@@ -133,36 +133,36 @@ public class InventoryManager : MonoBehaviour
         return totalCount;
     }
 
-    // ²»´øÌáÊ¾ÏûÏ¢µÄÎïÆ·Ôö¼Ó£¨ÒÑ´æÔÚ£©
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½Ï¢ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½Ó£ï¿½ï¿½Ñ´ï¿½ï¿½Ú£ï¿½
     public void ReAddItem(ItemSO item)
     {
         if (item.IsStackable())
         {
-            // ²éÕÒ±³°üÖÐÊÇ·ñÒÑÓÐÏàÍ¬ÎïÆ·
+            // ï¿½ï¿½ï¿½Ò±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½Æ·
             ItemSO existingItem = FindStackableItem(item);
 
             if (existingItem != null)
             {
-                // ¿ÉÒÔ¶Ñµþ£¬Ôö¼ÓÊýÁ¿
+                // ï¿½ï¿½ï¿½Ô¶Ñµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
                 int remainingSpace = existingItem.maxStackSize - existingItem.amount;
                 int amountToAdd = Mathf.Min(item.amount, remainingSpace);
 
                 existingItem.amount += amountToAdd;
                
 
-                // Èç¹û»¹ÓÐÊ£ÓàÎïÆ·£¬µÝ¹éÌí¼Ó
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½Ý¹ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (item.amount > amountToAdd)
                 {
                     item.amount -= amountToAdd;
-                    ReAddItem(item); // µÝ¹é´¦ÀíÊ£ÓàÎïÆ·
+                    ReAddItem(item); // ï¿½Ý¹é´¦ï¿½ï¿½Ê£ï¿½ï¿½ï¿½ï¿½Æ·
                 }
 
                 InventoryUI.Instance.UpdateItemAmountDisplay(existingItem);
             }
             else
             {
-                // Ã»ÓÐÕÒµ½¿É¶ÑµþµÄÎïÆ·£¬Ìí¼ÓÐÂÎïÆ·
-                ItemSO newItem = Instantiate(item); // ´´½¨¸±±¾ÒÔ±ÜÃâÐÞ¸ÄÔ­Ê¼SO
+                // Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½É¶Ñµï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·
+                ItemSO newItem = Instantiate(item); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô±ï¿½ï¿½ï¿½ï¿½Þ¸ï¿½Ô­Ê¼SO
                 newItem.amount = item.amount;
                 itemList.Add(newItem);
                 InventoryUI.Instance.AddItem(newItem);
@@ -171,7 +171,7 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            // ·Ç¶ÑµþÎïÆ·Ö±½ÓÌí¼Ó
+            // ï¿½Ç¶Ñµï¿½ï¿½ï¿½Æ·Ö±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             ItemSO newItem = Instantiate(item);
             newItem.amount = 1;
             itemList.Add(newItem);
@@ -196,7 +196,7 @@ public class InventoryManager : MonoBehaviour
     }
 
 
-    // ÐÂÔö£º¼ì²éÊÇ·ñÓÐÖ¸¶¨ÊýÁ¿µÄÎïÆ·
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·
     public bool HasEnoughItems(ItemSO targetItem, int requiredAmount)
     {
         return GetItemCount(targetItem.nameOfItem) >= requiredAmount;
@@ -207,18 +207,18 @@ public class InventoryManager : MonoBehaviour
         if (itemList != null)
         {
             itemList.Clear();
-            Debug.Log("¿â´æÊý¾ÝÒÑÇå¿Õ");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         }
 
-        // ¹Ø¼ü£ºÍ¬Ê±¸üÐÂ UI£¬Çå¿ÕÏÔÊ¾µÄÎïÆ·
+        // ï¿½Ø¼ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½ UIï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½Æ·
         if (InventoryUI.Instance != null)
         {
             InventoryUI.Instance.UpdateInventoryUI();
-            Debug.Log("¿â´æUIÒÑ¸üÐÂ");
+            Debug.Log("ï¿½ï¿½ï¿½UIï¿½Ñ¸ï¿½ï¿½ï¿½");
         }
     }
 
-    // Ìí¼Ó»ñÈ¡ËùÓÐÎïÆ·¶ÑµþÊý¾ÝµÄ·½·¨£¨ÓÃÓÚ´æµµ£©
+    // ï¿½ï¿½ï¿½Ó»ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½Ñµï¿½ï¿½ï¿½ï¿½ÝµÄ·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú´æµµï¿½ï¿½
     public List<InventoryItemData> GetAllItemStacks()
     {
         List<InventoryItemData> stacks = new List<InventoryItemData>();

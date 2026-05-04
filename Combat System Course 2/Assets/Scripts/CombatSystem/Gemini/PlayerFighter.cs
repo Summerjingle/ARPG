@@ -129,8 +129,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         HealthSystem.TakeDamage(damage, currentArmor);
         OnGotHit?.Invoke(this);  // this ���� ICombatSystem
 
-        // ͬ����������е�����ֵ
-        SyncPlayerHealth(HealthSystem.Health);
+       
 
         Debug.Log($"����ܵ��˺�: {damage}, ���׼���: {currentArmor}, ʣ������: {HealthSystem.Health}");
     }
@@ -156,13 +155,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
 
         return nearest;
     }
-    public void SyncPlayerHealth(float health)
-    {
-        if (playerProperty != null)
-        {
-            playerProperty.hpValue = Mathf.RoundToInt(health);
-        }
-    }
+    
     public int GetPlayerArmor()
     {
         return playerProperty?.armorValue ?? 0;

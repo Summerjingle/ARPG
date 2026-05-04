@@ -1250,15 +1250,6 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
-                },
-                {
-                    "name": "ESC",
-                    "type": "Button",
-                    "id": "e12bed7b-ef89-423d-b078-ae02f4fedcd8",
-                    "expectedControlType": "",
-                    "processors": "",
-                    "interactions": "",
-                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -1276,22 +1267,11 @@
                 {
                     "name": "",
                     "id": "f049bdbd-2e93-402c-80d1-efc13e275671",
-                    "path": "<Gamepad>/select",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "Bag",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "abe4e51c-ae2b-4ca9-8b58-8124756f792e",
                     "path": "<Gamepad>/start",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "ESC",
+                    "action": "Bag",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

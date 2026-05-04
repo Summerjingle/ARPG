@@ -7,7 +7,7 @@ public class PlayerProperty : MonoBehaviour
 
 {
     [Header("Energy System")]
-    [SerializeField] private int maxEnergy = 100;                    // �������
+    [SerializeField] private int maxEnergy ;                   // �������
     [SerializeField] public float idleRegenRate = 200f;              // ÿ��ָ���վ��������
     [SerializeField] public float walkRegenRate = 150f;              // ÿ��ָ�����·��
     [SerializeField] private float sprintCostPerSecond = 15f;        // ���ÿ������
@@ -24,8 +24,7 @@ public class PlayerProperty : MonoBehaviour
     public int GetRollEnergyCost() => rollEnergyCost;
     public static PlayerProperty Instance;
     public Dictionary<PropertyType, List<Property>> propertyDict;
-    public int hpValue = 100;
-    public float energyValue = 100;
+    public float energyValue ;
     public int armorValue => baseArmorValue + equipmentArmorBonus; // ֻ�����ԣ��ܻ���ֵ
     public int level = 1;
     public int currEXP = 0;
@@ -63,15 +62,7 @@ public class PlayerProperty : MonoBehaviour
         propertyDict.Add(PropertyType.HPValue, new List<Property>());
         propertyDict.Add(PropertyType.EnergyValue, new List<Property>());
         HideAllDrugModels();
-
-
-
         healthSystem = GetComponent<HealthSystem>();    
-        if (healthSystem != null)
-        {
-            hpValue = Mathf.RoundToInt(healthSystem.Health);
-        }
-
         // ��������Ԥ�ȷ��õĵ��˵������¼�
         SubscribeToAllEnemies();
     }
@@ -159,11 +150,9 @@ public class PlayerProperty : MonoBehaviour
         switch (pt)
         {
             case PropertyType.HPValue:
-                hpValue = Mathf.Clamp(hpValue + value, 0, 100);
                 if (healthSystem != null)
                 {
                     healthSystem.RestoreHealth(value);
-                    hpValue = Mathf.RoundToInt(healthSystem.Health);
                 }
                 return;
             case PropertyType.EnergyValue:
@@ -183,7 +172,7 @@ public class PlayerProperty : MonoBehaviour
         switch (pt)
         {
             case PropertyType.HPValue:
-                hpValue -= value;
+                 Debug.LogWarning("HPValue 不应通过 RemoveProperty 修改，请使用战斗系统造成伤害");
                 return;
             case PropertyType.EnergyValue:
                 energyValue -= value;
