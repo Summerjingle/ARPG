@@ -1,0 +1,41 @@
+using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
+
+public class PausePanelCtrl : MonoBehaviour
+{
+    public GameObject pausePanel;
+    public AudioClip pauseSound;
+    public bool isGamePaused=false;
+    void OnEnable()
+    {
+        InputManager.Instance.OnGamePause+= TogglePauseMenu;
+    }
+    void OnDisable()
+    {
+        InputManager.Instance.OnGamePause-=TogglePauseMenu;
+    }
+    // Start is called before the first frame update
+    void Start()
+    {
+        
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+    public void TogglePauseMenu()
+    {   
+        InputManager.Instance.SwitchToPauseMenu();
+        if (pauseSound != null)
+            AudioSource.PlayClipAtPoint(pauseSound, Camera.main.transform.position);
+        
+        isGamePaused = !isGamePaused;
+        pausePanel.SetActive(isGamePaused);
+        
+        
+        Time.timeScale = isGamePaused ? 0 : 1;
+    }
+}

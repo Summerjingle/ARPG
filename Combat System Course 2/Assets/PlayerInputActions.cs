@@ -1325,6 +1325,34 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ]
         },
         {
+            ""name"": ""UI_PauseMenu"",
+            ""id"": ""b00099d1-d21e-45d3-8389-b02ac59fe89f"",
+            ""actions"": [
+                {
+                    ""name"": ""New action"",
+                    ""type"": ""Button"",
+                    ""id"": ""7ceff00e-3f48-4cb4-9ba4-739328e63079"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""5f861d80-0733-4d8d-b278-a4cd34ab4bdf"",
+                    ""path"": """",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""New action"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
             ""name"": ""Global"",
             ""id"": ""2837f0bb-481c-4a44-8019-8398cafead8c"",
             ""actions"": [
@@ -1332,6 +1360,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""name"": ""Bag"",
                     ""type"": ""Button"",
                     ""id"": ""94bb1f50-9a27-4b34-a062-cc19792bf243"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Pause"",
+                    ""type"": ""Button"",
+                    ""id"": ""a3f0ddbd-5c7b-4556-9968-c7ff174e3170"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -1358,6 +1395,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Bag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8cc5b3df-c102-4dd6-a9cd-ab9346fea41c"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9c89e71f-6e10-429c-9261-7f8a3c9c9c7c"",
+                    ""path"": ""<Gamepad>/select"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Pause"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1393,9 +1452,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_Inventory_Cancel = m_UI_Inventory.FindAction("Cancel", throwIfNotFound: true);
         m_UI_Inventory_SwitchLeft = m_UI_Inventory.FindAction("SwitchLeft", throwIfNotFound: true);
         m_UI_Inventory_SwitchRight = m_UI_Inventory.FindAction("SwitchRight", throwIfNotFound: true);
+        // UI_PauseMenu
+        m_UI_PauseMenu = asset.FindActionMap("UI_PauseMenu", throwIfNotFound: true);
+        m_UI_PauseMenu_Newaction = m_UI_PauseMenu.FindAction("New action", throwIfNotFound: true);
         // Global
         m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
         m_Global_Bag = m_Global.FindAction("Bag", throwIfNotFound: true);
+        m_Global_Pause = m_Global.FindAction("Pause", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -1404,6 +1467,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_UI_MainMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_MainMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_SaveMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_SaveMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_Inventory.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_Inventory.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UI_PauseMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_PauseMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Global.enabled, "This will cause a leak and performance issues, PlayerInputActions.Global.Disable() has not been called.");
     }
 
@@ -2026,10 +2090,107 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// </summary>
     public UI_InventoryActions @UI_Inventory => new UI_InventoryActions(this);
 
+    // UI_PauseMenu
+    private readonly InputActionMap m_UI_PauseMenu;
+    private List<IUI_PauseMenuActions> m_UI_PauseMenuActionsCallbackInterfaces = new List<IUI_PauseMenuActions>();
+    private readonly InputAction m_UI_PauseMenu_Newaction;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "UI_PauseMenu".
+    /// </summary>
+    public struct UI_PauseMenuActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public UI_PauseMenuActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "UI_PauseMenu/Newaction".
+        /// </summary>
+        public InputAction @Newaction => m_Wrapper.m_UI_PauseMenu_Newaction;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_UI_PauseMenu; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="UI_PauseMenuActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(UI_PauseMenuActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="UI_PauseMenuActions" />
+        public void AddCallbacks(IUI_PauseMenuActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UI_PauseMenuActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UI_PauseMenuActionsCallbackInterfaces.Add(instance);
+            @Newaction.started += instance.OnNewaction;
+            @Newaction.performed += instance.OnNewaction;
+            @Newaction.canceled += instance.OnNewaction;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="UI_PauseMenuActions" />
+        private void UnregisterCallbacks(IUI_PauseMenuActions instance)
+        {
+            @Newaction.started -= instance.OnNewaction;
+            @Newaction.performed -= instance.OnNewaction;
+            @Newaction.canceled -= instance.OnNewaction;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_PauseMenuActions.UnregisterCallbacks(IUI_PauseMenuActions)" />.
+        /// </summary>
+        /// <seealso cref="UI_PauseMenuActions.UnregisterCallbacks(IUI_PauseMenuActions)" />
+        public void RemoveCallbacks(IUI_PauseMenuActions instance)
+        {
+            if (m_Wrapper.m_UI_PauseMenuActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="UI_PauseMenuActions.AddCallbacks(IUI_PauseMenuActions)" />
+        /// <seealso cref="UI_PauseMenuActions.RemoveCallbacks(IUI_PauseMenuActions)" />
+        /// <seealso cref="UI_PauseMenuActions.UnregisterCallbacks(IUI_PauseMenuActions)" />
+        public void SetCallbacks(IUI_PauseMenuActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UI_PauseMenuActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UI_PauseMenuActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="UI_PauseMenuActions" /> instance referencing this action map.
+    /// </summary>
+    public UI_PauseMenuActions @UI_PauseMenu => new UI_PauseMenuActions(this);
+
     // Global
     private readonly InputActionMap m_Global;
     private List<IGlobalActions> m_GlobalActionsCallbackInterfaces = new List<IGlobalActions>();
     private readonly InputAction m_Global_Bag;
+    private readonly InputAction m_Global_Pause;
     /// <summary>
     /// Provides access to input actions defined in input action map "Global".
     /// </summary>
@@ -2045,6 +2206,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Global/Bag".
         /// </summary>
         public InputAction @Bag => m_Wrapper.m_Global_Bag;
+        /// <summary>
+        /// Provides access to the underlying input action "Global/Pause".
+        /// </summary>
+        public InputAction @Pause => m_Wrapper.m_Global_Pause;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2074,6 +2239,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Bag.started += instance.OnBag;
             @Bag.performed += instance.OnBag;
             @Bag.canceled += instance.OnBag;
+            @Pause.started += instance.OnPause;
+            @Pause.performed += instance.OnPause;
+            @Pause.canceled += instance.OnPause;
         }
 
         /// <summary>
@@ -2088,6 +2256,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Bag.started -= instance.OnBag;
             @Bag.performed -= instance.OnBag;
             @Bag.canceled -= instance.OnBag;
+            @Pause.started -= instance.OnPause;
+            @Pause.performed -= instance.OnPause;
+            @Pause.canceled -= instance.OnPause;
         }
 
         /// <summary>
@@ -2287,6 +2458,21 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnSwitchRight(InputAction.CallbackContext context);
     }
     /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_PauseMenu" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="UI_PauseMenuActions.AddCallbacks(IUI_PauseMenuActions)" />
+    /// <seealso cref="UI_PauseMenuActions.RemoveCallbacks(IUI_PauseMenuActions)" />
+    public interface IUI_PauseMenuActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "New action" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNewaction(InputAction.CallbackContext context);
+    }
+    /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Global" which allows adding and removing callbacks.
     /// </summary>
     /// <seealso cref="GlobalActions.AddCallbacks(IGlobalActions)" />
@@ -2300,5 +2486,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBag(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Pause" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnPause(InputAction.CallbackContext context);
     }
 }

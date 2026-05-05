@@ -20,6 +20,8 @@ public class InputManager : MonoBehaviour
     public event Action OnUISwitchLeft;
     public event Action OnUISwitchRight;
 
+    public event Action OnGamePause;
+
 
 
     
@@ -37,20 +39,21 @@ public class InputManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
 
         Actions = new PlayerInputActions();
-        Actions.Player.Attack.performed += _ => OnAttack?.Invoke();
 
+        Actions.Player.Attack.performed += _ => OnAttack?.Invoke();
         Actions.Player.Interact.performed += _ => OnInteract?.Invoke();
-        
         Actions.Player.DrawWeapon.started += _ => ToggleWeapon?.Invoke();
 
         Actions.Global.Bag.performed += _ => OnToggleInventory?.Invoke();
-        Actions.UI_Inventory.Navigate.performed += ctx => OnUINavigate?.Invoke(ctx.ReadValue<Vector2>());
+        Actions.Global.Pause.performed += _ => OnGamePause?.Invoke();
 
+        Actions.UI_Inventory.Navigate.performed += ctx => OnUINavigate?.Invoke(ctx.ReadValue<Vector2>());
         Actions.UI_Inventory.Submit.performed += _ => OnUISubmit?.Invoke();
         Actions.UI_Inventory.Cancel.performed += _ => OnUICancel?.Invoke();
 
         Actions.UI_Inventory.SwitchLeft.performed+=ctx =>OnUISwitchLeft?.Invoke();
         Actions.UI_Inventory.SwitchRight.performed+=ctx =>OnUISwitchRight?.Invoke();
+        
 
 
 
@@ -124,10 +127,7 @@ public class InputManager : MonoBehaviour
         
         // 启用背包专用的UI输入（如果你以后要做Navigate/Submit/Cancel）
         Actions.UI_Inventory.Enable();
-        
-        // Global 通常保持启用（因为Bag键还在Global里）
-        Actions.Global.Enable();
-
+        Actions.Global.Disable();
         UIStateManager.SetUIActive(true);
         
         Debug.Log("已切换到 Inventory UI 输入模式");
@@ -138,11 +138,18 @@ public class InputManager : MonoBehaviour
     {
         Actions.UI_Inventory.Disable();
         Actions.Player.Enable();
-        Actions.Global.Enable();     // 保持Global可用
-        
+        Actions.Global.Enable();     
         UIStateManager.SetUIActive(false);
-        
         Debug.Log("已切换回 Player 输入模式");
     }
-   
+    public void SwitchToPauseMenu()
+    {
+        Actions.Player.Disable();
+        Actions.Global.Disable();
+        Actions.UI_MainMenu.Disable();
+        Actions.UI_SaveMenu.Disable();
+        Actions.UI_Inventory.Disable();
+        
+        Actions.UI_PauseMenu.Enable();
+    }
 }

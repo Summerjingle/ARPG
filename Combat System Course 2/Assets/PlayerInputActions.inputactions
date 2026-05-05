@@ -1239,6 +1239,34 @@
             ]
         },
         {
+            "name": "UI_PauseMenu",
+            "id": "b00099d1-d21e-45d3-8389-b02ac59fe89f",
+            "actions": [
+                {
+                    "name": "New action",
+                    "type": "Button",
+                    "id": "7ceff00e-3f48-4cb4-9ba4-739328e63079",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "5f861d80-0733-4d8d-b278-a4cd34ab4bdf",
+                    "path": "",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "New action",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "Global",
             "id": "2837f0bb-481c-4a44-8019-8398cafead8c",
             "actions": [
@@ -1246,6 +1274,15 @@
                     "name": "Bag",
                     "type": "Button",
                     "id": "94bb1f50-9a27-4b34-a062-cc19792bf243",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Pause",
+                    "type": "Button",
+                    "id": "a3f0ddbd-5c7b-4556-9968-c7ff174e3170",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1272,6 +1309,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Bag",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8cc5b3df-c102-4dd6-a9cd-ab9346fea41c",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "9c89e71f-6e10-429c-9261-7f8a3c9c9c7c",
+                    "path": "<Gamepad>/select",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Pause",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

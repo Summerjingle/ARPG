@@ -4,6 +4,7 @@ using UnityEngine.UI;
 using UnityEngine.InputSystem;
 using UnityEngine.EventSystems;
 using System.Collections.Generic;
+using UnityEngine.Video;
 
 
 public class InventoryUI : MonoBehaviour
@@ -16,7 +17,12 @@ public class InventoryUI : MonoBehaviour
     [Header("区域隔离 (CanvasGroup)")]
     public CanvasGroup itemsCanvasGroup;     // 拖入物品栏的父级 CanvasGroup
     public CanvasGroup equipmentCanvasGroup; // 拖入装备栏的父级 CanvasGroup
-    
+    public Transform itemsSwitchButton;
+    public Transform equipmentSwitchButton;
+    private Vector3 originV3=new Vector3(1,1,1);
+    private Vector3 selectV3=new Vector3(1.2f,1.2f,1.2f);
+
+
 
     public static InventoryUI Instance { get; private set; }
     private InventoryFocus currentFocus = InventoryFocus.Items;
@@ -59,7 +65,11 @@ public class InventoryUI : MonoBehaviour
 
         if (attackHintUI != null)
             attackHintUI.SetActive(false);
+        equipmentSwitchButton.localScale=originV3;
+        itemsSwitchButton.localScale=selectV3;
     }
+
+
 
     private void OnEnable()
     {
@@ -207,7 +217,8 @@ public class InventoryUI : MonoBehaviour
         if (!IsInventoryOpen) return;
 
         currentFocus = InventoryFocus.Equipment;
-
+        itemsSwitchButton.localScale=originV3;
+        equipmentSwitchButton.localScale=selectV3;
         // 【新增】打开装备区交互，关闭物品区交互（阻断 D-pad 乱串）
         if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = true;
         if (itemsCanvasGroup != null) itemsCanvasGroup.interactable = false;
@@ -231,7 +242,9 @@ public class InventoryUI : MonoBehaviour
         if (!IsInventoryOpen) return;
 
         currentFocus = InventoryFocus.Items;
-
+        equipmentSwitchButton.localScale=originV3;
+        itemsSwitchButton.localScale=selectV3;
+        
         // 【新增】打开物品区交互，关闭装备区交互
         if (itemsCanvasGroup != null) itemsCanvasGroup.interactable = true;
         if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = false;
