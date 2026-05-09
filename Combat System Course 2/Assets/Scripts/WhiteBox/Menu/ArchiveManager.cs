@@ -7,24 +7,24 @@ using System.Collections;
 
 public class ArchiveManager : MonoBehaviour
 {
-    [Header("UIÒýÓÃ")]
+    [Header("UIï¿½ï¿½ï¿½ï¿½")]
     public GameObject archivePanel;
     public Transform archiveContent;
     public GameObject archivePrefab;
     public GameObject loadConfirmPanel;
     public GameObject deleteConfirmPanel;
    public CanvasGroup menuCanvas;
-    [Header("³¡¾°ÉèÖÃ")]
-    public string gameSceneName = "00Scene_Village";
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    public string gameSceneName = "WhiteBox_Village";
     public string loadingSceneName = "LoadingScene";
 
     private string selectedSaveId;
     private string deleteSaveId;
 
-    // »ñÈ¡Ñ¡ÖÐµÄ´æµµID
+    // ï¿½ï¿½È¡Ñ¡ï¿½ÐµÄ´æµµID
     public string GetSelectedSaveId() => selectedSaveId;
 
-    // ÏÔÊ¾´æµµÃæ°å
+    // ï¿½ï¿½Ê¾ï¿½æµµï¿½ï¿½ï¿½
     public void ShowPanel()
     {
         
@@ -39,7 +39,7 @@ public class ArchiveManager : MonoBehaviour
         PopulateArchiveList();
     }
 
-    // Òþ²Ø´æµµÃæ°å
+    // ï¿½ï¿½ï¿½Ø´æµµï¿½ï¿½ï¿½
     public void HidePanel()
     {
 
@@ -60,14 +60,14 @@ public class ArchiveManager : MonoBehaviour
         }
     }
 
-    // Çå¿Õ¾ÉÁÐ±í
+    // ï¿½ï¿½Õ¾ï¿½ï¿½Ð±ï¿½
     private void ClearArchiveContent()
     {
         foreach (Transform child in archiveContent)
             Destroy(child.gameObject);
     }
 
-    // Ë¢ÐÂ´æµµÁÐ±í
+    // Ë¢ï¿½Â´æµµï¿½Ð±ï¿½
     public void PopulateArchiveList()
     {
         List<GameSaveData> saves = SaveManager.Instance.GetAllSaves();
@@ -85,11 +85,11 @@ public class ArchiveManager : MonoBehaviour
 
         itemUI.SetArchiveData(saveData);
 
-        // °ó¶¨¼ÓÔØÊÂ¼þ
+        // ï¿½ó¶¨¼ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
         itemUI.onClick.RemoveAllListeners();
         itemUI.onClick.AddListener(() => SelectLoadArchive(saveData.saveId));
 
-        // °ó¶¨É¾³ýÊÂ¼þ
+        // ï¿½ï¿½É¾ï¿½ï¿½ï¿½Â¼ï¿½
         if (itemUI.deleteButton != null)
         {
             itemUI.deleteButton.onClick.RemoveAllListeners();
@@ -135,7 +135,8 @@ public class ArchiveManager : MonoBehaviour
         if (!string.IsNullOrEmpty(deleteSaveId))
         {
             SaveManager.Instance.DeleteSave(deleteSaveId);
-            PopulateArchiveList(); // Ë¢ÐÂÁÐ±í
+            ClearArchiveContent();
+            PopulateArchiveList();
         }
         if (deleteConfirmPanel != null) deleteConfirmPanel.SetActive(false);
         deleteSaveId = null;

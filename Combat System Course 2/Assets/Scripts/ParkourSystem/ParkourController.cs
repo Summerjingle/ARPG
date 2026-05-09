@@ -26,7 +26,7 @@ public class ParkourController : MonoBehaviour
 
         animator.CrossFade(action.AnimName, 0.2f);
 
-        // µÈ´ý¹ý¶ÉÍê³É
+        // ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         yield return new WaitUntil(() => !animator.IsInTransition(0));
 
         var animState = animator.GetCurrentAnimatorStateInfo(0);
@@ -43,7 +43,7 @@ public class ParkourController : MonoBehaviour
 
             if (action.EnableTargetMatching && !hasMatched)
             {
-                // Ö»ÔÚÌØ¶¨Ê±¼ä´°¿ÚÄÚÆ¥Åä£¬ÇÒÈ·±£²»ÔÚ¹ý¶ÉÖÐ
+                // Ö»ï¿½ï¿½ï¿½Ø¶ï¿½Ê±ï¿½ä´°ï¿½ï¿½ï¿½ï¿½Æ¥ï¿½ä£¬ï¿½ï¿½È·ï¿½ï¿½ï¿½ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½ï¿½
                 if (normalizedTime >= action.MacthStartTime && normalizedTime <= action.MacthTargetTime)
                 {
                     if (!animator.IsInTransition(0) && !animator.isMatchingTarget)
@@ -78,11 +78,11 @@ public class ParkourController : MonoBehaviour
             if (action.CheckIfPossible(hitData, transform))
             {
                 StartCoroutine(DoParkourAction(action));
-                return true; // ³É¹¦ÅÊÅÀ
+                return true; // ï¿½É¹ï¿½ï¿½ï¿½ï¿½ï¿½
             }
         }
 
-        return false; // Ã»ÕÒµ½¶¯×÷ ¡ú ²»ÅÊÅÀ
+        return false; // Ã»ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
     private void MatchTarget(ParkourAction action)
     {

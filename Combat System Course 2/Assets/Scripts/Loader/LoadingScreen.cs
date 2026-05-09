@@ -19,19 +19,19 @@ public class LoadingScreen : MonoBehaviour
 
     private IEnumerator LoadSceneAsync()
     {
-        // È·¶¨Ä¿±ê³¡¾°£ºÈç¹ûÊÇ´Ó´æµµ¼ÓÔØÇÒÓÐ³¡¾°Êý¾Ý£¬ÔòÊ¹ÓÃ´æµµ³¡¾°
+        // È·ï¿½ï¿½Ä¿ï¿½ê³¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç´Ó´æµµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý£ï¿½ï¿½ï¿½Ê¹ï¿½Ã´æµµï¿½ï¿½ï¿½ï¿½
         string targetScene;
         if (SaveManager.shouldLoadFromSave && SaveManager.Instance != null &&
             SaveManager.Instance.currentSaveData != null &&
             !string.IsNullOrEmpty(SaveManager.Instance.currentSaveData.currentScene))
         {
             targetScene = SaveManager.Instance.currentSaveData.currentScene;
-            Debug.Log($"´Ó´æµµ¼ÓÔØ³¡¾°: {targetScene}");
+            Debug.Log($"ï¿½Ó´æµµï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½: {targetScene}");
         }
         else
         {
-            targetScene = PlayerPrefs.GetString("TargetScene", "00Scene_Village");
-            Debug.Log($"´ÓPlayerPrefs¼ÓÔØ³¡¾°: {targetScene}");
+            targetScene = PlayerPrefs.GetString("TargetScene", "WhiteBox_Village");
+            Debug.Log($"ï¿½ï¿½PlayerPrefsï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½: {targetScene}");
         }
 
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetScene);

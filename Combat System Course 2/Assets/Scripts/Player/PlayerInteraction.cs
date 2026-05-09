@@ -104,5 +104,6 @@ public class PlayerInteraction : MonoBehaviour
             UIManager.Instance?.HideInteractPrompt();
         }
     }
+    
 }
 

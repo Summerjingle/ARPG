@@ -8,22 +8,22 @@ using System.Linq;
 
 public class MenuSceneController : MonoBehaviour
 {
-    [Header("Íæ¼ÒÒýÓÃ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public Animator playerAnimator;
     public Transform portalTransform;
 
-    [Header("UIÒýÓÃ")]
+    [Header("UIï¿½ï¿½ï¿½ï¿½")]
     public Button playButton;
     public Button loadButton;
     public Button settingButton;
     public Button quitButton;
     public TextMeshProUGUI heading;
 
-    [Header("³¡¾°ÉèÖÃ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public string gameSceneName = "00Scene_Village";
     public string loadingSceneName = "LoadingScene";
 
-    [Header("´æµµÏµÍ³")]
+    [Header("ï¿½æµµÏµÍ³")]
     public GameObject archivePanel;
     public Transform archiveContent;
     public GameObject archivePrefab;
@@ -39,16 +39,16 @@ public class MenuSceneController : MonoBehaviour
     {
         
 
-    // Ç¿ÖÆÏÔÊ¾ºÍ½âËøÊó±ê
+    // Ç¿ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Í½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     Cursor.lockState = CursorLockMode.None;
     Cursor.visible = true;
     
-    Debug.Log("Ö÷²Ëµ¥£º½âËøÊó±ê£¬ÏÔÊ¾¹â±ê");
+    Debug.Log("ï¿½ï¿½ï¿½Ëµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê£¬ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½");
 
         InitializeUI();
         playerAnimator.SetBool("IsSitting", true);
 
-        // È·±£60FPSÔËÐÐ
+        // È·ï¿½ï¿½60FPSï¿½ï¿½ï¿½ï¿½
         Application.targetFrameRate = 60;
         QualitySettings.vSyncCount = 0;
     }
@@ -69,7 +69,7 @@ public class MenuSceneController : MonoBehaviour
         }
     }
 
-    #region UI³õÊ¼»¯
+    #region UIï¿½ï¿½Ê¼ï¿½ï¿½
     private void InitializeUI()
     {
         playButton.onClick.AddListener(StartNewGame);
@@ -81,7 +81,7 @@ public class MenuSceneController : MonoBehaviour
 
         if (settingButton != null)
         {
-            // ÉèÖÃ°´Å¥¹¦ÄÜ¿ÉÒÔÔÚÕâÀïÌí¼Ó
+            // ï¿½ï¿½ï¿½Ã°ï¿½Å¥ï¿½ï¿½ï¿½Ü¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         }
 
         if (quitButton != null)
@@ -91,14 +91,14 @@ public class MenuSceneController : MonoBehaviour
     }
     #endregion
 
-    #region ÓÎÏ·Á÷³Ì·½·¨
+    #region ï¿½ï¿½Ï·ï¿½ï¿½ï¿½Ì·ï¿½ï¿½ï¿½
     public void StartNewGame()
     {
         if (!isStartingGame)
         {
-            Debug.Log("¿ªÊ¼ÐÂÓÎÏ· - ´´½¨ÐÂ´æµµ");
+            Debug.Log("ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ï· - ï¿½ï¿½ï¿½ï¿½ï¿½Â´æµµ");
 
-            // ÉèÖÃÐÂÓÎÏ·±êÖ¾
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½Ö¾
             if (SaveManager.Instance != null)
             {
                 SaveManager.Instance.CreateNewGame(-1);
@@ -112,9 +112,9 @@ public class MenuSceneController : MonoBehaviour
 
     public void QuitGame()
     {
-        Debug.Log("ÍË³öÓÎÏ·");
+        Debug.Log("ï¿½Ë³ï¿½ï¿½ï¿½Ï·");
 
-        // ÔÚ±à¼­Æ÷ÖÐÍ£Ö¹²¥·Å£¬ÔÚ¹¹½¨°æ±¾ÖÐÍË³öÓ¦ÓÃ
+        // ï¿½Ú±à¼­ï¿½ï¿½ï¿½ï¿½Í£Ö¹ï¿½ï¿½ï¿½Å£ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½æ±¾ï¿½ï¿½ï¿½Ë³ï¿½Ó¦ï¿½ï¿½
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #else
@@ -154,19 +154,19 @@ public class MenuSceneController : MonoBehaviour
     {
         playerAnimator.SetBool("IsWalking", false);
 
-        // ±£´æÓÎÏ·×´Ì¬
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·×´Ì¬
         if (SaveManager.Instance != null)
         {
             SaveManager.Instance.SaveGame();
         }
 
-        // ÉèÖÃÄ¿±ê³¡¾°²¢¼ÓÔØ
+        // ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê³¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         PlayerPrefs.SetString("TargetScene", gameSceneName);
         SceneManager.LoadScene(loadingSceneName);
     }
     #endregion
 
-    #region ´æµµÏµÍ³·½·¨
+    #region ï¿½æµµÏµÍ³ï¿½ï¿½ï¿½ï¿½
     public void ShowLoadPanel()
     {
         if (archivePanel != null)
@@ -217,11 +217,11 @@ public class MenuSceneController : MonoBehaviour
 
         itemUI.SetArchiveData(saveData);
 
-        // °ó¶¨¼ÓÔØÊÂ¼þ
+        // ï¿½ó¶¨¼ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
         itemUI.onClick.RemoveAllListeners();
         itemUI.onClick.AddListener(() => SelectLoadArchive(saveData.saveId));
 
-        // °ó¶¨É¾³ýÊÂ¼þ
+        // ï¿½ï¿½É¾ï¿½ï¿½ï¿½Â¼ï¿½
         if (itemUI.deleteButton != null)
         {
             itemUI.deleteButton.onClick.RemoveAllListeners();
@@ -271,7 +271,8 @@ public class MenuSceneController : MonoBehaviour
         if (!string.IsNullOrEmpty(deleteSaveId))
         {
             SaveManager.Instance.DeleteSave(deleteSaveId);
-            ShowLoadPanel(); // Ë¢ÐÂ´æµµÁÐ±í
+            ClearArchiveContent();
+            PopulateArchiveList();
         }
         if (deleteConfirmPanel != null) deleteConfirmPanel.SetActive(false);
         deleteSaveId = null;
@@ -306,7 +307,7 @@ public class MenuSceneController : MonoBehaviour
     }
     #endregion
 
-    #region ¹¤¾ß·½·¨
+    #region ï¿½ï¿½ï¿½ß·ï¿½ï¿½ï¿½
     private void HideAllUI()
     {
         playButton.gameObject.SetActive(false);

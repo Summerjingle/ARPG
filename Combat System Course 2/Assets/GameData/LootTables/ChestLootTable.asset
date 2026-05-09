@@ -18,5 +18,7 @@ MonoBehaviour:
     minCount: 1
     maxCount: 1
     spawnOffsetRange: {x: 0, y: 0}
+  lootPrefab: {fileID: 7461949993653533325, guid: 5d3d12015c273a544ba20916155baee3,
+    type: 3}
   useRandomSpawnOffset: 0
   spawnRadius: 1

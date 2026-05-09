@@ -1,8 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Threading;
 using UnityEngine;
-using static UnityEngine.UI.GridLayoutGroup;
 
 public enum AICombatStates { Idle, Chase, Circling }
 public class CombatMovementState : State<EnemyController>
@@ -22,12 +20,13 @@ public class CombatMovementState : State<EnemyController>
     {
         enemyController = owner;
         enemyController.NavAgent.stoppingDistance = distanceToStand;
+        enemyController.NavAgent.updateRotation = false;
         enemyController.combatMovementTimer = 0;
         enemyController.Animator.SetBool("combatMode", true);
     }
     public override void Execute()
     {
-        // Ê×ÏÈ¼ì²éÊÇ·ñËÀÍö
+        // ï¿½ï¿½ï¿½È¼ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
         if (enemyController.Fighter.HealthSystem.IsDead)
         {
             enemyController.ChangerState(EnemyStates.Dead);
@@ -48,14 +47,14 @@ public class CombatMovementState : State<EnemyController>
                 return;
             }
         }
-        //Ö»ÒªÍæ¼Ò³¬³öÎ§À§×´Ì¬µÄ¾àÀëÍâ£¬Ö±½Ó¿ªÊ¼×·Öð
+        //Ö»Òªï¿½ï¿½Ò³ï¿½ï¿½ï¿½Î§ï¿½ï¿½×´Ì¬ï¿½Ä¾ï¿½ï¿½ï¿½ï¿½â£¬Ö±ï¿½Ó¿ï¿½Ê¼×·ï¿½ï¿½
         if (Vector3.Distance(enemyController.Target.transform.position, enemyController.transform.position) > distanceToStand + adjustDistanceThreshold)
         {
             StartChase();
         }
 
-        //×´Ì¬ÇÐ»»
-        if (state == AICombatStates.Idle)//1.´ý»ú×´Ì¬
+        //×´Ì¬ï¿½Ð»ï¿½
+        if (state == AICombatStates.Idle)//1.ï¿½ï¿½ï¿½ï¿½×´Ì¬
         {
             if (timer <= 0)
             {
@@ -69,17 +68,17 @@ public class CombatMovementState : State<EnemyController>
                 }
             }
         }
-        else if (state == AICombatStates.Chase) //2.×·Öð×´Ì¬
+        else if (state == AICombatStates.Chase) //2.×·ï¿½ï¿½×´Ì¬
         {
 
             if (Vector3.Distance(enemyController.Target.transform.position, enemyController.transform.position) <= distanceToStand + 0.03f)
             {
-                StartIdle();//Ö»ÒªÍæ¼Ò³¬³ö×·Öð×´Ì¬µÄ·¶Î§ÄÚ£¬Ö±½Ó½øÈë´ý»ú×´Ì¬
+                StartIdle();//Ö»Òªï¿½ï¿½Ò³ï¿½ï¿½ï¿½×·ï¿½ï¿½×´Ì¬ï¿½Ä·ï¿½Î§ï¿½Ú£ï¿½Ö±ï¿½Ó½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
             }
 
             enemyController.NavAgent.SetDestination(enemyController.Target.transform.position);
         }
-        else if (state == AICombatStates.Circling)//3.Î§À§×´Ì¬
+        else if (state == AICombatStates.Circling)//3.Î§ï¿½ï¿½×´Ì¬
         {
             if (timer <= 0)
             {
@@ -90,8 +89,15 @@ public class CombatMovementState : State<EnemyController>
             var vecToTarget = enemyController.transform.position - enemyController.Target.transform.position;
             var rotatedPos = Quaternion.Euler(0, circlingSpeed * circlingDir * Time.deltaTime, 0) * vecToTarget;
 
-            enemyController.NavAgent.Move(rotatedPos - vecToTarget);
+            Vector3 movement = rotatedPos - vecToTarget;
+            movement.y = 0f;
+
+            enemyController.NavAgent.Move(movement);
             enemyController.transform.rotation = Quaternion.LookRotation(-rotatedPos);
+
+            float horizontalSpeed = movement.magnitude / Time.deltaTime;
+            enemyController.Animator.SetFloat("forwardSpeed", horizontalSpeed / enemyController.NavAgent.speed);
+            enemyController.Animator.SetFloat("strafeSpeed", circlingDir);
         }
 
         if (timer > 0)
@@ -112,9 +118,8 @@ public class CombatMovementState : State<EnemyController>
     {
         state = AICombatStates.Idle;
         timer = Random.Range(idleTimeRange.x, idleTimeRange.y);
-
-
-
+        enemyController.Animator.SetFloat("forwardSpeed", 0f);
+        enemyController.Animator.SetFloat("strafeSpeed", 0f);
     }
 
     private void StartCircling()
@@ -129,6 +134,9 @@ public class CombatMovementState : State<EnemyController>
 
     public override void Exit()
     {
+        enemyController.NavAgent.updateRotation = true;
         enemyController.combatMovementTimer = 0f;
+        enemyController.Animator.SetFloat("forwardSpeed", 0f);
+        enemyController.Animator.SetFloat("strafeSpeed", 0f);
     }
 }

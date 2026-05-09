@@ -161,11 +161,13 @@ public class WeaponEquipmentManager : MonoBehaviour
     {
         isWeaponDrawn = true;
         isPlayingAnim = false;
+        playerAnim.SetBool("Armed", true);
     }
     public void SetWeaponSheathState()// Sheath2最后一帧
     {
         isWeaponDrawn = false;
         isPlayingAnim = false;
+        playerAnim.SetBool("Armed", false);
     }
 
 

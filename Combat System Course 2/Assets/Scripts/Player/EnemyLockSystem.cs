@@ -1,6 +1,4 @@
 using Cinemachine;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class EnemyLockSystem : MonoBehaviour
@@ -10,7 +8,6 @@ public class EnemyLockSystem : MonoBehaviour
     [SerializeField] float noticeAngle = 60f;
     [SerializeField] LayerMask enemyLayer;
 
-   
     [SerializeField] Transform enemyTarget_Locator;
 
     [Header("UI Indicator")]
@@ -21,12 +18,22 @@ public class EnemyLockSystem : MonoBehaviour
     public CinemachineVirtualCamera lockCam;
 
     public Transform currentTarget { get; private set; }
+    public bool IsLocked { get; private set; }
+
     private Transform cam;
     private PlayerController player;
     private Animator animator;
-
-    public bool IsLocked { get; private set; }
     private float yOffset = 1f;
+
+    void OnEnable()
+    {
+        InputManager.Instance.OnLock += ToggleLock;
+    }
+
+    void OnDisable()
+    {
+        InputManager.Instance.OnLock -= ToggleLock;
+    }
 
     void Start()
     {
@@ -40,25 +47,63 @@ public class EnemyLockSystem : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Q))
+        if (!IsLocked) return;
+
+        if (!TargetStillValid())
         {
-            if (!IsLocked)
-                TryLockTarget();
-            else
-                Unlock();
+            Unlock();
+            return;
         }
 
+        UpdateUI();
+        RotatePlayer();
+    }
+
+    void ToggleLock()
+    {
         if (IsLocked)
-        {
-            if (!TargetStillValid())
-            {
-                Unlock();
-                return;
-            }
+            Unlock();
+        else
+            LockOn();
+    }
 
-            UpdateUI();
-            RotatePlayer();
-        }
+    void LockOn()
+    {
+        Transform target = ScanForTargets();
+        if (target == null) return;
+
+        currentTarget = target;
+        IsLocked = true;
+
+        if (lockUICanvas != null)
+            lockUICanvas.gameObject.SetActive(true);
+
+        player.cameraController.LockOnTarget(target);
+        player.ResetMovementBase();
+
+        followCam.Priority = 10;
+        lockCam.Priority = 20;
+
+        player.isLockedOn = true;
+        animator.SetBool("IsLocked", true);
+    }
+
+    public void Unlock()
+    {
+        IsLocked = false;
+        currentTarget = null;
+
+        player.LockRotation = false;
+        player.isLockedOn = false;
+        player.lockedTargetDir = Vector3.zero;
+        player.cameraController.UnlockCamera();
+        animator.SetBool("IsLocked", false);
+
+        if (lockUICanvas != null)
+            lockUICanvas.gameObject.SetActive(false);
+
+        followCam.Priority = 20;
+        lockCam.Priority = 10;
     }
 
     Transform ScanForTargets()
@@ -73,7 +118,6 @@ public class EnemyLockSystem : MonoBehaviour
         {
             Vector3 dir = h.transform.position - cam.position;
             dir.y = 0;
-
             float ang = Vector3.Angle(cam.forward, dir);
 
             if (ang < bestAngle)
@@ -83,62 +127,13 @@ public class EnemyLockSystem : MonoBehaviour
             }
         }
 
-        if (!best) return null;
+        if (best == null) return null;
 
         CapsuleCollider col = best.GetComponent<CapsuleCollider>();
         if (col)
-        {
             yOffset = (col.height * best.localScale.y) * 0.66f;
-        }
 
         return best;
-    }
-
-    void TryLockTarget()
-    {
-        Transform target = ScanForTargets();
-        if (target == null) return;
-
-        currentTarget = target;
-        IsLocked = true;
-        player.LockRotation = true;
-
-        if (lockUICanvas != null)
-            lockUICanvas.gameObject.SetActive(true);
-
-        player.cameraController.LockOnTarget(target);
-        animator.SetBool("combatMode", true); 
-
-        
-        player.ResetMovementBase();
-
-        followCam.Priority = 10;
-        lockCam.Priority = 20;    // ¿ªÆôËø¶¨
-
-        player.isLockedOn = true;
-    }
-
-    public void Unlock()
-    {
-        IsLocked = false;
-        currentTarget = null;
-        player.LockRotation = false;
-
-        Vector3 dir = transform.forward;
-        dir.y = 0;
-        player.targetRotation = Quaternion.LookRotation(dir);
-        animator.SetBool("combatMode", false); 
-
-        if (lockUICanvas != null)
-            lockUICanvas.gameObject.SetActive(false);
-
-        player.isLockedOn = false;
-        player.lockedTargetDir = Vector3.zero;
-        player.cameraController.UnlockCamera();
-        player.targetRotation = player.transform.rotation;
-
-        followCam.Priority = 20;
-        lockCam.Priority = 10;
     }
 
     void UpdateUI()
@@ -174,9 +169,7 @@ public class EnemyLockSystem : MonoBehaviour
         var enemyController = currentTarget.GetComponent<EnemyController>();
         if (enemyController != null &&
             (enemyController.Fighter.HealthSystem.IsDead || !enemyController.gameObject.activeInHierarchy))
-        {
             return false;
-        }
 
         float dis = Vector3.Distance(transform.position, currentTarget.position);
         return dis <= noticeRadius * 1.5f;

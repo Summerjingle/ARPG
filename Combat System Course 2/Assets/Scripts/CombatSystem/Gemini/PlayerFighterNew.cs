@@ -128,13 +128,9 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         InAction = true;
         IsTakingHit = true;
 
-        var dispVec = attacker.transform.position - transform.position;
-        dispVec.y = 0f;
-        transform.rotation = Quaternion.LookRotation(dispVec);
-
-        animator.CrossFade("SwordImpact", 0.2f, 1);
+        animator.CrossFade("hit_light_B_body", 0.2f, 4);
         yield return null;
-        var animstate = animator.GetNextAnimatorStateInfo(1);
+        var animstate = animator.GetNextAnimatorStateInfo(4);
         yield return new WaitForSeconds(animstate.length * 0.8f);
 
         OnHitComplete?.Invoke();

@@ -28,14 +28,22 @@ public class PausePanelCtrl : MonoBehaviour
     }
     public void TogglePauseMenu()
     {   
-        InputManager.Instance.SwitchToPauseMenu();
+         
         if (pauseSound != null)
             AudioSource.PlayClipAtPoint(pauseSound, Camera.main.transform.position);
         
         isGamePaused = !isGamePaused;
         pausePanel.SetActive(isGamePaused);
-        
-        
         Time.timeScale = isGamePaused ? 0 : 1;
+        if (isGamePaused)
+            {
+                // 暂停时切换到暂停菜单输入模式
+                InputManager.Instance.SwitchToPauseMenu();
+            }
+            else
+            {
+                // 恢复时切换回玩家输入模式
+                InputManager.Instance.SwitchToPlayer();
+            }
     }
 }

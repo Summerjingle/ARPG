@@ -9,18 +9,18 @@ using UnityEngine.UI;
 public enum EnemyStates { Idle, CombatMovement, Attack, RetreatAfterAttack, Dead, GettingHit }
 public class EnemyController : MonoBehaviour
 {
-    [Header("µôÂäÉèÖÃ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public LootTable lootTable;
-    public string enemyTypeID = "Enemy"; // ÓÃÓÚÈÎÎñÏµÍ³
+    public string enemyTypeID = "Enemy"; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÏµÍ³
 
-    [Header("ËÀÍöÉèÖÃ")]
-    public float lootSpawnDelay = 1f; // µôÂäÑÓ³ÙÊ±¼ä
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    public float lootSpawnDelay = 1f; // ï¿½ï¿½ï¿½ï¿½ï¿½Ó³ï¿½Ê±ï¿½ï¿½
     public int EXP = 20;
     public EnemyHeathBar healthBar;
     public bool IsUncounterable= false;
 
     [field: SerializeField] public float Fov { get; private set; } = 180f;
-    public List<PlayerFighter> TargetsInRange { get; set; } = new List<PlayerFighter>();
+    public List<ICombatSystem> TargetsInRange { get; set; } = new List<ICombatSystem>();
     public ICombatSystem Target { get; set; }
     public float combatMovementTimer { get; set; } = 0F;
     public StateMachine<EnemyController> StateMachine { get; private set; }
@@ -53,13 +53,13 @@ public class EnemyController : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning("EnemyController ÕÒ²»µ½ HealthSystem ×é¼þ");
+            Debug.LogWarning("EnemyController ï¿½Ò²ï¿½ï¿½ï¿½ HealthSystem ï¿½ï¿½ï¿½");
         }
 
-        // 1. ÏÈ´´½¨×Öµä
+        // 1. ï¿½È´ï¿½ï¿½ï¿½ï¿½Öµï¿½
         stateDict = new Dictionary<EnemyStates, State<EnemyController>>();
 
-        // 2. ÔÙÌí¼Ó×´Ì¬
+        // 2. ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
         stateDict[EnemyStates.Idle] = GetComponent<IdleState>();
         stateDict[EnemyStates.CombatMovement] = GetComponent<CombatMovementState>();
         stateDict[EnemyStates.Attack] = GetComponent<AttackState>();
@@ -67,7 +67,7 @@ public class EnemyController : MonoBehaviour
         stateDict[EnemyStates.Dead] = GetComponent<DeadState>();
         stateDict[EnemyStates.GettingHit] = GetComponent<GettingHitState>();
 
-        // ¼ì²é×´Ì¬×é¼þ
+        // ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½
         bool allStatesValid = true;
         foreach (var statePair in stateDict)
         {
@@ -80,7 +80,7 @@ public class EnemyController : MonoBehaviour
 
         if (!allStatesValid)
         {
-            Debug.LogError("²¿·Ö×´Ì¬×é¼þÈ±Ê§£¬ÎÞ·¨³õÊ¼»¯×´Ì¬»ú");
+            Debug.LogError("ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½È±Ê§ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½×´Ì¬ï¿½ï¿½");
             return;
         }
 
@@ -120,14 +120,14 @@ public class EnemyController : MonoBehaviour
     public void ChangerState(EnemyStates enemyStates)
     {
         
-        // ·ÀÖ¹ÔÚËÀÍö×´Ì¬ÏÂÇÐ»»µ½ÆäËû×´Ì¬
+        // ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
         if (IsInState(EnemyStates.Dead) && enemyStates != EnemyStates.Dead)
         {
-            Debug.LogWarning($"µÐÈË {gameObject.name} ÒÑËÀÍö£¬²»ÔÊÐíÇÐ»»µ½ {enemyStates} ×´Ì¬");
+            Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ {gameObject.name} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ {enemyStates} ×´Ì¬");
             return;
         }
 
-        // ·ÀÖ¹ÖØ¸´½øÈëÏàÍ¬×´Ì¬
+        // ï¿½ï¿½Ö¹ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬×´Ì¬
         if (IsInState(enemyStates))
         {
             return;
@@ -135,19 +135,19 @@ public class EnemyController : MonoBehaviour
 
 
         StateMachine.ChangeState(stateDict[enemyStates]);
-        Debug.Log($"{gameObject.name} ³É¹¦ÇÐ»»µ½ {enemyStates}");
+        Debug.Log($"{gameObject.name} ï¿½É¹ï¿½ï¿½Ð»ï¿½ï¿½ï¿½ {enemyStates}");
     }
 
     public bool IsInState(EnemyStates state)
     {
-        // Ìí¼Ó¿Õ¼ì²é
+        // ï¿½ï¿½ï¿½Ó¿Õ¼ï¿½ï¿½
         if (StateMachine == null || stateDict == null || !stateDict.ContainsKey(state))
         {
-            // Èç¹ûÊÇÀÇ£¬·µ»Ø false£¨ÀÇÓÐ×Ô¼ºµÄ×´Ì¬ÏµÍ³£©
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç£ï¿½ï¿½ï¿½ï¿½ï¿½ falseï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½×´Ì¬ÏµÍ³ï¿½ï¿½
             if (GetComponent<WolfController>() != null)
                 return false;
 
-            Debug.LogWarning($"{gameObject.name} ×´Ì¬»úÎ´³õÊ¼»¯£¬ÎÞ·¨¼ì²é×´Ì¬ {state}");
+            Debug.LogWarning($"{gameObject.name} ×´Ì¬ï¿½ï¿½Î´ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½Þ·ï¿½ï¿½ï¿½ï¿½×´Ì¬ {state}");
             return false;
         }
 
@@ -156,14 +156,14 @@ public class EnemyController : MonoBehaviour
     Vector3 prePos;
     private void Update()
     {
-        // Ìí¼Ó¿Õ¼ì²é
+        // ï¿½ï¿½ï¿½Ó¿Õ¼ï¿½ï¿½
         if (StateMachine == null || StateMachine.CurrentState == null)
             return;
 
         
         StateMachine.Execute();
 
-        // Ö»ÔÚÓÐÏàÓ¦²ÎÊýÊ±ÉèÖÃ¶¯»­²ÎÊý
+        // Ö»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         bool hasForwardSpeed = AnimatorHasParameter("forwardSpeed");
         bool hasStrafeSpeed = AnimatorHasParameter("strafeSpeed");
 
@@ -193,8 +193,8 @@ public class EnemyController : MonoBehaviour
     {
         foreach (var target in TargetsInRange)
         {
-            // ÅÅ³ýËÀÍöÄ¿±êºÍÎÞÐ§Ä¿±ê
-            if (target == null || target.HealthSystem.IsDead || !target.isActiveAndEnabled)
+            // ï¿½Å³ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½Ð§Ä¿ï¿½ï¿½
+            if (target == null || target.HealthSystem.IsDead || target.gameObject == null || !target.gameObject.activeInHierarchy)
                 continue;
 
             var vecToTarget = target.transform.position - transform.position;

@@ -4,31 +4,28 @@ using UnityEngine;
 public class PickableObject : InteractableObject
 {
     public override int Priority => 100;
-    
+    public System.Action onInteract;
 
-    
     public override void Interact()
     {
-        if (!CanInteract) return; // ��ֹ�ظ�����
+        if (!CanInteract) return;
 
-        base.Interact(); // ���� isActivated = true
+        base.Interact();
+
+        onInteract?.Invoke();
 
         InventoryManager.Instance.AddItem(itemSO);
         UIManager.Instance.ShowPickupToast(itemSO);
 
-        // �ؼ���������ײ�������� OnTriggerExit
         Collider col = GetComponent<Collider>();
         if (col != null)
-        {
-            col.enabled = false; // ��ᴥ�� OnTriggerExit
-        }
+            col.enabled = false;
 
         Destroy(gameObject);
     }
 
     private void OnDestroy()
     {
-        // ȷ����־������
         isActivated = true;
     }
 }

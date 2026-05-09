@@ -61,6 +61,7 @@ public class PlayerController : MonoBehaviour
     private int dirYHash;
     [Header("Locomotion Speeds")]
     [SerializeField] private float walkSpeed = 3.5f;
+    [SerializeField] private float lockWalkSpeed = 2.5f;
     [SerializeField] private float runSpeed = 6.0f;
     [SerializeField] private float sprintSpeed = 9.5f;
     [Header("Smooth Locomotion & Root Motion")]
@@ -77,13 +78,22 @@ public class PlayerController : MonoBehaviour
     private bool isDrinking;
     private float ySpeed;
     public bool isMovementEnabled = true;
-    public bool isRolling = false;
-    [SerializeField] private float rollCooldown = 0.8f; // ��ȴʱ���Գ��ڷ�������ʱ��
+
+    [Header("Roll")]
+    [SerializeField] private string rollAnimFront = "Esc_Roll_Front_Root";
+    [SerializeField] private string rollAnimBack = "Esc_Roll_Back_Root";
+    [SerializeField] private string rollAnimLeft = "Esc_Roll_Left_Root";
+    [SerializeField] private string rollAnimRight = "Esc_Roll_Right_Root";
+    [SerializeField] private float rollCooldown = 0.8f;
+    [SerializeField] private int rollEnergyCost = 15;
+    [SerializeField] private float rollExitTime = 0.75f;
+    private bool isRolling = false;
     private float lastRollTime = -Mathf.Infinity;
-    private Coroutine currentRollCoroutine;
+    private int rollLayerIndex;
 
     [HideInInspector] public bool isLockedOn = false;
     [HideInInspector] public Vector3 lockedTargetDir;
+    private bool wasLockedOnLastFrame;
     public ItemSO testHealthPotion;
 
     private void Awake()
@@ -104,6 +114,7 @@ public class PlayerController : MonoBehaviour
         speedHash = Animator.StringToHash("Speed");
         dirXHash = Animator.StringToHash("DirX");
         dirYHash = Animator.StringToHash("DirY");
+        rollLayerIndex = animator.GetLayerIndex("Roll");
     }
 
     private IEnumerator DelayedRegistration()
@@ -139,7 +150,7 @@ public class PlayerController : MonoBehaviour
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
         // 喝药逻辑
-        if (isGrounded && !isDrinking && !isRolling && Input.GetKeyDown(KeyCode.Alpha1))
+        if (isGrounded && !isDrinking && Input.GetKeyDown(KeyCode.Alpha1))
         {
             PlayerProperty.Instance.UseDrag(testHealthPotion);
             isDrinking = true;
@@ -155,25 +166,50 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
+        // ─────────────── 下蹲逻辑 ───────────────
+        if (crouchHeld && isGrounded && !combatSystem.InAction)
+        {
+            isCrouching = true;
+        }
+        else if (!crouchHeld && isCrouching && headChecker != null && headChecker.CanStandUpFromCrouch())
+        {
+            isCrouching = false;
+        }
+
+        animator.SetBool("IsCrouching", isCrouching);
+        animator.SetBool("CrouchMoving", isCrouching && moveInput.magnitude > 0.1f);
+
         // ─────────────── 攀爬与翻滚输入 ───────────────
         if (rollRequested && !isDrinking && !UIStateManager.IsAnyUIActive && isGrounded && !isRolling)
         {
             rollRequested = false;
             if (parkourController != null && parkourController.TryClimb()) return;
-            if (Time.time >= lastRollTime + rollCooldown)
-            {
-                StartRoll();
-                return;
-            }
+            StartRoll();
+            return;
         }
 
         // ─────────────── 移动向量计算 ───────────────
         Vector2 rawInput = Vector2.ClampMagnitude(moveInput, 1f);
         float inputMagnitude = rawInput.magnitude;
 
-        Vector3 cameraForward = GetCameraPlanarRotation() * Vector3.forward;
-        Vector3 cameraRight = GetCameraPlanarRotation() * Vector3.right;
-        Vector3 worldMoveDir = (cameraRight * rawInput.x + cameraForward * rawInput.y).normalized;
+        
+        Vector3 refForward;
+        Vector3 refRight;
+
+        if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
+        {
+            // 【锁定状态】：彻底无视摇晃过渡的相机！强制使用“敌人方向”作为输入参考系
+            refForward = lockedTargetDir.normalized;
+            refRight = Vector3.Cross(Vector3.up, refForward).normalized;
+        }
+        else
+        {
+            // 【非锁定状态】：使用相机的平面朝向作为输入参考系
+            refForward = GetCameraPlanarRotation() * Vector3.forward;
+            refRight = GetCameraPlanarRotation() * Vector3.right;
+        }
+
+        Vector3 worldMoveDir = (refRight * rawInput.x + refForward * rawInput.y).normalized;
 
         // ─────────────── 核心：移动时间与动量累积 ───────────────
         // 只有在地面、没蹲下、且有有效位移输入时才累积时间
@@ -197,40 +233,91 @@ public class PlayerController : MonoBehaviour
         float damping = 0.075f;
 
         // 冲刺判定
-        bool wantsSprint = sprintHeld && inputMagnitude > 0.1f && !isRolling && !combatSystem.InAction;
-        bool allowSprint = rawInput.y > -0.25f; //这个条件限制玩家只能朝着前面冲刺
-        bool canSprint = wantsSprint && allowSprint && PlayerProperty.Instance.EnergyValue > 15;
+        bool wantsSprint = sprintHeld && inputMagnitude > 0.1f && !combatSystem.InAction;
+        bool wasSprinting = isSprinting;
+        isSprinting = false;
 
-        if (combatSystem.InAction)
+        if (wantsSprint && !isRolling)
+        {
+            float costPerSecond = PlayerProperty.Instance.GetSprintCostPerSecond();
+            float threshold = wasSprinting ? 0f : 15f;
+            if (PlayerProperty.Instance.EnergyValue > threshold
+                && PlayerProperty.Instance.ConsumeEnergy(costPerSecond * Time.deltaTime))
+            {
+                isSprinting = true;
+            }
+        }
+
+        if (combatSystem.InAction || isRolling)
         {
             animSpeed = 0f;
             isSprinting = false;
         }
-        else if (canSprint)
+        else if (isSprinting)
         {
             animSpeed = 1.99f;
-            isSprinting = true;
         }
         else if (inputMagnitude > 0.01f)
         {
-            isSprinting = false;
             animSpeed = Mathf.Lerp(0.01f, 1.0f, accelerationT);
         }
         else
         {
-            isSprinting = false;
             animSpeed = 0f;
         }
-        animator.SetFloat(speedHash, animSpeed, damping, Time.deltaTime);
+        // ─────────────── 动画参数设置 (新增 2D 锁敌移动逻辑) ───────────────
+        bool lockJustToggled = isLockedOn != wasLockedOnLastFrame;
+        wasLockedOnLastFrame = isLockedOn;
 
-        // 能量消耗
-        if (isSprinting)
+        if (isLockedOn)
         {
-           float costPerSecond = PlayerProperty.Instance.GetSprintCostPerSecond();
-            // 移除 Mathf.CeilToInt，直接传入 float 进行精确计算
-            if (!PlayerProperty.Instance.ConsumeEnergy(costPerSecond * Time.deltaTime))
+            // 1. 将世界位移方向转为相对于玩家的本地坐标
+            Vector3 localMove = transform.InverseTransformDirection(worldMoveDir);
+            if (localMove.magnitude > 1f) localMove.Normalize();
+
+            // 2. 确定振幅：走是 0.1，跑是 1.0
+            float targetAmplitude = 0f;
+            if (inputMagnitude > 0.01f)
+                targetAmplitude = isSprinting ? 1.0f : 0.1f;
+
+            // 3. 计算最终传递给 Animator 的坐标
+            float finalX = localMove.x * targetAmplitude;
+            float finalY = localMove.z * targetAmplitude;
+
+            // 4. Speed 必须在 Blend Tree 阈值范围 [0, 0.64] 内
+            //    walk 阈值区间 ~0.08~0.32 / run 阈值区间 ~0.40~0.64
+            //    之前用 1.0 越界，Unity clamp 到 0.64 永远指向 Run Right → 方向错乱
+            float lockSpeed = targetAmplitude > 0.5f ? 0.5f : (targetAmplitude > 0.01f ? 0.2f : 0f);
+
+            if (lockJustToggled)
             {
-                isSprinting = false;
+                // 切换帧：立即设置，不用阻尼，避免过渡期新旧数值混用
+                animator.SetFloat(dirXHash, finalX);
+                animator.SetFloat(dirYHash, finalY);
+                animator.SetFloat(speedHash, lockSpeed);
+            }
+            else
+            {
+                animator.SetFloat(dirXHash, finalX, 0.1f, Time.deltaTime);
+                animator.SetFloat(dirYHash, finalY, 0.1f, Time.deltaTime);
+                animator.SetFloat(speedHash, lockSpeed, damping, Time.deltaTime);
+            }
+        }
+        else
+        {
+            // --- 非锁定状态：保持原本的 1D 逻辑 ---
+            animator.SetFloat(speedHash, animSpeed, damping, Time.deltaTime);
+
+            if (lockJustToggled)
+            {
+                // 解锁帧：立即重置 DirX/DirY，避免 2D 残留值混入 1D 过渡
+                animator.SetFloat(dirXHash, 0f);
+                animator.SetFloat(dirYHash, 0f);
+            }
+            else
+            {
+                animator.SetFloat(dirXHash, 0f, 0.1f, Time.deltaTime);
+                animator.SetFloat(dirYHash, 0f, 0.1f, Time.deltaTime);
             }
         }
 
@@ -251,8 +338,9 @@ public class PlayerController : MonoBehaviour
         // 只有非动作状态，才产生 WASD 目标速度
         if (!combatSystem.InAction)
         {
-            if (shouldCrouch || isCrouching) targetMoveSpeed = walkSpeed * crouchSpeedMultiplier;
+            if (isCrouching) targetMoveSpeed = walkSpeed * crouchSpeedMultiplier;
             else if (isSprinting) targetMoveSpeed = sprintSpeed * inputMagnitude;
+            else if (isLockedOn) targetMoveSpeed = lockWalkSpeed * inputMagnitude;
             else targetMoveSpeed = Mathf.Lerp(walkSpeed, runSpeed, accelerationT) * inputMagnitude;
         }
 
@@ -260,7 +348,7 @@ public class PlayerController : MonoBehaviour
         currentPhysicalSpeed = Mathf.SmoothDamp(currentPhysicalSpeed, targetMoveSpeed, ref speedSmoothVelocity, speedSmoothTime);
 
         // ─────────────── 旋转与重力逻辑 ───────────────
-        Vector3 moveDir = isLockedOn ? (cameraController != null ? cameraController.GetLockedDirection() : worldMoveDir) : worldMoveDir;
+        Vector3 moveDir = worldMoveDir;
 
         // 1. 获取传感器信息
         var snapInfo = groundSensor.GetSnapInfo();
@@ -292,7 +380,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // 下落动画切换
-        if (!isGrounded && notGroundedTimer > fallStartDelay && ySpeed < minFallSpeed && !isFalling && !isRolling)
+        if (!isGrounded && notGroundedTimer > fallStartDelay && ySpeed < minFallSpeed && !isFalling)
         {
             isFalling = true;
             animator.SetBool("Falling", true);
@@ -318,10 +406,18 @@ public class PlayerController : MonoBehaviour
         // ─────────────── 应用位移与旋转 ───────────────
         Vector3 velocity = moveDir * currentPhysicalSpeed;
 
-        // 转向逻辑
-        if (inputMagnitude > 0 && !LockRotation)
+        if (!LockRotation)
         {
-            targetRotation = Quaternion.LookRotation(moveDir);
+            if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
+            {
+                // 锁定状态：身体强制面向敌人 (EnemyLockSystem 已经在更新 lockedTargetDir)
+                targetRotation = Quaternion.LookRotation(lockedTargetDir);
+            }
+            else if (inputMagnitude > 0)
+            {
+                // 非锁定状态：身体面向移动方向
+                targetRotation = Quaternion.LookRotation(moveDir);
+            }
         }
         float activeRotSpeed = combatSystem.InAction ? rotationSpeed * 0.5f : rotationSpeed;
         transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, activeRotSpeed * Time.deltaTime);
@@ -343,7 +439,7 @@ public class PlayerController : MonoBehaviour
         {
             charactercontroller.Move(velocity * Time.deltaTime);
         }
-        if (!isSprinting && !isRolling && PlayerProperty.Instance.energyValue < PlayerProperty.Instance.MaxEnergy)
+        if (!isSprinting && PlayerProperty.Instance.energyValue < PlayerProperty.Instance.MaxEnergy)
         {
             float regenRate = 0f;
 
@@ -401,162 +497,61 @@ public class PlayerController : MonoBehaviour
 
         if (isUIActive)
         {
-            animator.SetFloat("forwardSpeed", 0f);
+            animator.SetFloat("Speed", 0f);
             animator.SetFloat("strafeSpeed", 0f);
-        }
-    }
-
-    private void ToggleArmedMode()
-    {
-        Armed = !Armed;
-        animator.SetBool("Armed", Armed);
-
-        if (!Armed)
-        {
-            animator.SetFloat("forwardSpeed", 0f);
-            animator.SetFloat("strafeSpeed", 0f);
-        }
-    }
-
-    public void SetArmedMode(bool armed)
-    {
-        if (Armed != armed)
-        {
-            ToggleArmedMode();
         }
     }
 
     private void StartRoll()
     {
-        if (Input.GetKey(KeyCode.LeftControl)) return;
-        if (isRolling || Time.time < lastRollTime + rollCooldown)
+        if (isRolling || Time.time < lastRollTime + rollCooldown) return;
+        if (!PlayerProperty.Instance.ConsumeEnergy(rollEnergyCost)) return;
+        if (rollLayerIndex < 0)
         {
+            Debug.LogError("Roll layer not found in Animator. Create a layer named 'Roll'.");
             return;
         }
-
-        if (PlayerProperty.Instance == null)
-        {
-           
-            return;
-        }
-
-        int rollCost = PlayerProperty.Instance.GetRollEnergyCost();
-        
-
-        if (!PlayerProperty.Instance.ConsumeEnergy(rollCost))
-        {
-            
-            return;  
-        }
-
 
         isRolling = true;
         isMovementEnabled = false;
         lastRollTime = Time.time;
+        combatSystem.InAction = true;
+        isCrouching = false;
 
-        InputDir = Vector3.zero;
-
-        if (combatSystem != null)
-        {
-            combatSystem.InAction = true;
-        }
-
-        animator.SetFloat("forwardSpeed", 0f);
-        animator.SetFloat("strafeSpeed", 0f);
-
-        string rollAnimation = Armed ? "ArmedRoll" : "Rolling";
-        animator.Play(rollAnimation);
-
-        if (currentRollCoroutine != null)
-        {
-            StopCoroutine(currentRollCoroutine);
-        }
-
-        currentRollCoroutine = StartCoroutine(PerformRoll());
+        animator.SetLayerWeight(rollLayerIndex, 1f);
+        string animName = GetRollDirection();
+        animator.CrossFade(animName, 0.1f, rollLayerIndex, 0f);
+        StartCoroutine(WaitForRollEnd(animName));
     }
 
-    private IEnumerator PerformRoll()
+    private string GetRollDirection()
     {
-        float rollDistance = 5.5f;
-        float rollDuration = 0.75f;
+        Quaternion camRot = GetCameraPlanarRotation();
+        Vector3 worldDir = camRot * new Vector3(moveInput.x, 0, moveInput.y);
+        Vector3 localDir = transform.InverseTransformDirection(worldDir);
 
-        // ���㷭������
-        float h = moveInput.x;
-        float v = moveInput.y;
-        Vector3 wishDir;
-
-        if (isLockedOn)
-        {
-            Vector3 lockedDir = cameraController != null
-                ? cameraController.GetLockedDirection()
-                : lockedTargetDir;
-
-            if (lockedDir.sqrMagnitude > 0.001f)
-            {
-                Vector3 right = Vector3.Cross(Vector3.up, lockedDir);
-                wishDir = lockedDir * v + right * h;
-            }
-            else
-            {
-                wishDir = GetCameraPlanarRotation() * new Vector3(h, 0, v);
-            }
-        }
-        else
-        {
-            wishDir = GetCameraPlanarRotation() * new Vector3(h, 0, v);
-        }
-
-        // �����뷭��
-        if (wishDir.sqrMagnitude < 0.1f)
-        {
-            wishDir = isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f
-                ? lockedTargetDir
-                : transform.forward;
-        }
-
-        wishDir.y = 0;
-        wishDir = wishDir.normalized;
-
-        //������-����ǰת��
-        if (wishDir.sqrMagnitude > 0.01f)
-        {
-            Quaternion targetRot = Quaternion.LookRotation(wishDir);
-            float turnTime = 0f;
-            float turnDuration = 0.1f;   
-
-            while (turnTime < turnDuration)
-            {
-                turnTime += Time.deltaTime;
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, turnTime / turnDuration);
-                yield return null;
-            }
-            transform.rotation = targetRot; // ȷ����ȫ����
-        }
-
-        Vector3 rollDirection = transform.forward;  
-
-        Vector3 startPosition = transform.position;
-        float timer = 0f;
-
-        while (timer < rollDuration)
-        {
-            timer += Time.deltaTime;
-            float t = timer / rollDuration;
-
-            Vector3 targetPos = startPosition + rollDirection * rollDistance;
-            Vector3 newPos = Vector3.Lerp(startPosition, targetPos, t);
-
-            charactercontroller.Move(newPos - transform.position);
-            yield return null;
-        }
-        yield return new WaitForSeconds(0.15f);
-
-        isRolling = false;
-        if (combatSystem != null) combatSystem.InAction = false;
-        if (!UIStateManager.IsAnyUIActive) isMovementEnabled = true;
-
-        currentRollCoroutine = null;
+        if (localDir.z > 0.3f) return rollAnimFront;
+        if (localDir.z < -0.3f) return rollAnimBack;
+        if (localDir.x < -0.3f) return rollAnimLeft;
+        if (localDir.x > 0.3f) return rollAnimRight;
+        return rollAnimFront;
     }
+
+    private IEnumerator WaitForRollEnd(string animName)
+    {
+        yield return null;
+        yield return new WaitUntil(() =>
+        {
+            var state = animator.GetCurrentAnimatorStateInfo(rollLayerIndex);
+            return state.IsName(animName) && state.normalizedTime >= rollExitTime;
+        });
+
+        animator.SetLayerWeight(rollLayerIndex, 0f);
+        combatSystem.InAction = false;
+        isRolling = false;
+        if (!UIStateManager.IsAnyUIActive) isMovementEnabled = true;
+    }
+
     private void OnDestroy()
     {
         UIStateManager.OnUIActiveStateChanged -= OnUIActiveStateChanged;
@@ -605,14 +600,19 @@ public class PlayerController : MonoBehaviour
         if (Mathf.Abs(charactercontroller.height - targetHeight) > 0.01f)
         {
             float oldHeight = charactercontroller.height;
-            charactercontroller.height = Mathf.SmoothDamp(
+            float newHeight = Mathf.SmoothDamp(
                 charactercontroller.height,
                 targetHeight,
                 ref currentHeightVelocity,
                 0.1f
             );
 
-            
+            float heightDelta = newHeight - oldHeight;
+            Vector3 curCenter = charactercontroller.center;
+            curCenter.y += heightDelta * 0.5f;
+            charactercontroller.center = curCenter;
+
+            charactercontroller.height = newHeight;
 
             if (cameraController != null)
                 cameraController.SetCameraHeight(charactercontroller.center.y, true);

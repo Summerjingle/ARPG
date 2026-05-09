@@ -3,12 +3,17 @@ using UnityEngine;
 
 public static class LootSpawner
 {
-    [SerializeField] private static GameObject soulsLootPrefab;
     public static void SpawnLootItems(Vector3 deathPosition, LootTable lootTable, Transform parent = null)
     {
         if (lootTable == null)
         {
-            Debug.LogWarning("LootTableÎª¿Õ£¬ÎŞ·¨Éú³ÉÎïÆ·");
+            Debug.LogWarning("LootTableä¸ºç©ºï¼Œæ— æ³•ç”Ÿæˆæ‰è½ç‰©å“");
+            return;
+        }
+
+        if (lootTable.lootPrefab == null)
+        {
+            Debug.LogWarning($"LootTable {lootTable.name} æ²¡æœ‰è®¾ç½® lootPrefab");
             return;
         }
 
@@ -16,42 +21,27 @@ public static class LootSpawner
 
         foreach (var dropData in lootItems)
         {
-            if (dropData.item?.interactablePrefab == null)
-            {
-                Debug.LogWarning("ÎïÆ·»òÔ¤ÖÆÌåÎª¿Õ£¬Ìø¹ıÉú³É");
-                continue;
-            }
-
             Vector3 spawnPosition = deathPosition + dropData.spawnOffset;
 
-            // È·±£Éú³ÉÎ»ÖÃÔÚµØÃæÉÏ
             if (Physics.Raycast(spawnPosition + Vector3.up * 2f, Vector3.down, out RaycastHit hit, 3f,
                 LayerMask.GetMask("Ground", "Default")))
             {
                 spawnPosition = hit.point + Vector3.up * 0.1f;
             }
 
-            GameObject droppedItem = Object.Instantiate(soulsLootPrefab, spawnPosition, Quaternion.identity);
+            GameObject droppedItem = Object.Instantiate(lootTable.lootPrefab, spawnPosition, Quaternion.identity);
 
-
-            // ÉèÖÃ¸¸¼¶£¨¿ÉÑ¡£¬ÓÃÓÚ×éÖ¯²ã´Î½á¹¹£©
             if (parent != null)
-            {
                 droppedItem.transform.SetParent(parent);
-            }
 
-            // È·±£ÓĞPickableObject×é¼ş
             PickableObject po = droppedItem.GetComponent<PickableObject>();
             if (po == null)
-            {
                 po = droppedItem.AddComponent<PickableObject>();
-            }
             po.itemSO = dropData.item;
 
-
-            Debug.Log($"Éú³ÉµôÂäÎï: {dropData.item.nameOfItem} ÔÚÎ»ÖÃ {spawnPosition}");
+            Debug.Log($"ç”Ÿæˆçš„æ‰è½: {dropData.item.nameOfItem} åœ¨ä½ç½® {spawnPosition}");
         }
 
-        Debug.Log($"´Ó {lootTable.name} Éú³ÉÁË {lootItems.Count} ¸öÎïÆ·");
+        Debug.Log($"ä» {lootTable.name} ç”Ÿæˆäº† {lootItems.Count} ä¸ªç‰©å“");
     }
 }

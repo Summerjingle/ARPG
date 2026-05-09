@@ -21,6 +21,8 @@ public class InputManager : MonoBehaviour
     public event Action OnUISwitchRight;
 
     public event Action OnGamePause;
+    public event Action OnLock;
+    
 
 
 
@@ -43,6 +45,7 @@ public class InputManager : MonoBehaviour
         Actions.Player.Attack.performed += _ => OnAttack?.Invoke();
         Actions.Player.Interact.performed += _ => OnInteract?.Invoke();
         Actions.Player.DrawWeapon.started += _ => ToggleWeapon?.Invoke();
+        Actions.Player.Lock.performed += _ => OnLock?.Invoke();
 
         Actions.Global.Bag.performed += _ => OnToggleInventory?.Invoke();
         Actions.Global.Pause.performed += _ => OnGamePause?.Invoke();
@@ -53,6 +56,8 @@ public class InputManager : MonoBehaviour
 
         Actions.UI_Inventory.SwitchLeft.performed+=ctx =>OnUISwitchLeft?.Invoke();
         Actions.UI_Inventory.SwitchRight.performed+=ctx =>OnUISwitchRight?.Invoke();
+
+        Actions.UI_PauseMenu.Cancel.performed+= _ =>OnGamePause?.Invoke();
         
 
 
@@ -98,16 +103,19 @@ public class InputManager : MonoBehaviour
        
         Actions.Player.Disable();
         Actions.UI_MainMenu.Enable();
-        UIStateManager.SetUIActive(true); // ��ʾ���
+        UIStateManager.SetUIActive(true); 
     }
 
     public void SwitchToPlayer()
     {
-        Actions.UI_MainMenu.Disable();
-        Actions.Player.Enable();
         Actions.UI_Inventory.Disable();
-        
-        UIStateManager.SetUIActive(false); // �������
+        Actions.UI_PauseMenu.Disable();
+        Actions.UI_MainMenu.Disable();
+        Actions.UI_SaveMenu.Disable();
+    
+        Actions.Player.Enable();
+        Actions.Global.Enable();
+        UIStateManager.SetUIActive(false);
     }
     public void SwitchToSaveMenu()
     {
@@ -124,6 +132,7 @@ public class InputManager : MonoBehaviour
         // 禁用其他UI（防止冲突）
         Actions.UI_MainMenu.Disable();
         Actions.UI_SaveMenu.Disable();
+        Actions.UI_PauseMenu.Disable();
         
         // 启用背包专用的UI输入（如果你以后要做Navigate/Submit/Cancel）
         Actions.UI_Inventory.Enable();
@@ -133,23 +142,22 @@ public class InputManager : MonoBehaviour
         Debug.Log("已切换到 Inventory UI 输入模式");
     }
 
-    // 新增：从背包切换回玩家模式（推荐和ToggleInventory配合使用）
-    public void SwitchToPlayerFromInventory()
-    {
-        Actions.UI_Inventory.Disable();
-        Actions.Player.Enable();
-        Actions.Global.Enable();     
-        UIStateManager.SetUIActive(false);
-        Debug.Log("已切换回 Player 输入模式");
-    }
     public void SwitchToPauseMenu()
     {
+        // 禁用所有游戏相关输入
         Actions.Player.Disable();
         Actions.Global.Disable();
+        
+        // 禁用其他UI（确保不会干扰）
         Actions.UI_MainMenu.Disable();
         Actions.UI_SaveMenu.Disable();
         Actions.UI_Inventory.Disable();
         
+        // 启用暂停菜单UI输入
         Actions.UI_PauseMenu.Enable();
+        
+        UIStateManager.SetUIActive(true);
+        Debug.Log("已切换到 Pause Menu 输入模式");
+
     }
 }

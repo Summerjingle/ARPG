@@ -3,20 +3,20 @@ using UnityEngine.SceneManagement;
 
 public class AnimatorFunctions : MonoBehaviour
 {
-    [Header("ÒýÓÃ")]
+    [Header("ï¿½ï¿½ï¿½ï¿½")]
     [SerializeField] private ArchiveManager archiveManager;
     [SerializeField] private AudioSource audioSource;
 
 
-    [Header("³¡¾°ÉèÖÃ")]
-    [SerializeField] private string gameSceneName = "00Scene_Village";
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    [SerializeField] private string gameSceneName = "WhiteBox_Village";
     [SerializeField] private string loadingSceneName = "LoadingScene";
 
     public bool disableOnce;
    
     
 
-    // ÒôÐ§
+    // ï¿½ï¿½Ð§
     public void PlaySound(AudioClip clip)
     {
         if (!disableOnce && audioSource != null)
@@ -35,7 +35,7 @@ public class AnimatorFunctions : MonoBehaviour
 
     public void ExecuteButton()
     {
-        Debug.Log("Ö´ÐÐ°´Å¥");
+        Debug.Log("Ö´ï¿½Ð°ï¿½Å¥");
         Debug.Log("ExecuteButton called on " + gameObject.name + ", index = " + menuButtonController.index);
         int index = menuButtonController.index;
 
@@ -43,17 +43,17 @@ public class AnimatorFunctions : MonoBehaviour
         {
             case 0:
                 StartNewGame();
-                Debug.Log("¿ªÊ¼ÐÂÓÎÏ·");
+                Debug.Log("ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ï·");
                 break;
 
             case 1:
                 OpenLoadPanel();
-                Debug.Log("´ò¿ª´æµµÃæ°å");
+                Debug.Log("ï¿½ò¿ª´æµµï¿½ï¿½ï¿½");
                 break;
 
             case 2:
                 QuitGame();
-                Debug.Log("ÍË³öÓÎÏ·");
+                Debug.Log("ï¿½Ë³ï¿½ï¿½ï¿½Ï·");
                 break;
         }
     }
@@ -68,7 +68,7 @@ public class AnimatorFunctions : MonoBehaviour
 
     void OpenLoadPanel()
     {
-        Debug.Log("´ò¿ª´æµµÃæ°å");
+        Debug.Log("ï¿½ò¿ª´æµµï¿½ï¿½ï¿½");
  
         FindObjectOfType<ArchiveManager>().ShowPanel();
     }

@@ -7,7 +7,6 @@ public class CanvasCameraFixer : MonoBehaviour
 
     void Start()
     {
-        // 获取所有Canvas组件
         Canvas[] canvases = GetComponents<Canvas>();
 
         for (int i = 0; i < canvases.Length; i++)
@@ -15,7 +14,6 @@ public class CanvasCameraFixer : MonoBehaviour
             Debug.Log($"Canvas[{i}]: {canvases[i].name}, RenderMode: {canvases[i].renderMode}, WorldCamera: {canvases[i].worldCamera != null}");
         }
 
-        // 使用第一个Canvas
         if (canvases.Length > 0)
         {
             canvas = canvases[0];
@@ -27,7 +25,7 @@ public class CanvasCameraFixer : MonoBehaviour
 
     private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"场景切换: {scene.name}");
+        Debug.Log($"鍦烘櫙鍒囨崲: {scene.name}");
         FixCamera();
     }
 
@@ -35,36 +33,27 @@ public class CanvasCameraFixer : MonoBehaviour
     {
         if (canvas == null) return;
 
-        // 只在主菜单场景中绑定摄像机
-        if (SceneManager.GetActiveScene().name != "000Scene_Menu" && SceneManager.GetActiveScene().name != "WhiteBox_Menu")
-        {
-            Debug.Log($"当前场景不是主菜单，跳过摄像机绑定: {SceneManager.GetActiveScene().name}");
-            return;
-        }
+        string sceneName = SceneManager.GetActiveScene().name;
+        bool isMenu = sceneName == "000Scene_Menu" || sceneName == "WhiteBox_Menu";
 
-        Debug.Log($"在主菜单场景中绑定摄像机");
-
-        // 强制设置为ScreenSpaceCamera模式
-        if (canvas.renderMode != RenderMode.WorldSpace)
+        if (isMenu)
         {
-            canvas.renderMode = RenderMode.WorldSpace;
-        }
+            if (canvas.renderMode != RenderMode.WorldSpace)
+                canvas.renderMode = RenderMode.WorldSpace;
 
-        Camera mainCamera = Camera.main;
-        if (mainCamera == null)
-        {
-            mainCamera = FindObjectOfType<Camera>();
-            Debug.Log($"通过FindObjectOfType找到摄像机: {mainCamera != null}");
-        }
+            Camera mainCamera = Camera.main;
+            if (mainCamera == null)
+                mainCamera = FindObjectOfType<Camera>();
 
-        if (mainCamera != null)
-        {
-            canvas.worldCamera = mainCamera;
-            Debug.Log($"已为Canvas绑定摄像机: {mainCamera.name}");
+            if (mainCamera != null)
+                canvas.worldCamera = mainCamera;
+            else
+                Debug.LogError("娌℃湁鎵惧埌浠讳綍鐩告満");
         }
         else
         {
-            Debug.LogError("没有找到任何摄像机！");
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvas.worldCamera = null;
         }
     }
 

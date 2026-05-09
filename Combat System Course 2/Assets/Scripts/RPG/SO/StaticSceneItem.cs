@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class StaticSceneItem : MonoBehaviour
 {
-    [Header("¾²Ì¬³¡¾°ÎïÆ·ÉèÖÃ")]
-    [Tooltip("ÎïÆ·Î¨Ò»ID£¬±ØĞëÊÖ¶¯ÉèÖÃ£¡½¨Òé¸ñÊ½£º³¡¾°Ãû_ÎïÆ·Ãû_Î»ÖÃ")]
+    [Header("é™æ€åœºæ™¯ç‰©å“é…ç½®")]
+    [Tooltip("ç‰©å“å”¯ä¸€ID / å»ºè®®æ ¼å¼ï¼šåœºæ™¯å_ç‰©å“å_ä½ç½®")]
     public string itemId;
 
     private PickableObject pickableObject;
@@ -13,14 +13,16 @@ public class StaticSceneItem : MonoBehaviour
     {
         if (string.IsNullOrEmpty(itemId))
         {
-            Debug.LogError($"¾²Ì¬ÎïÆ· {gameObject.name} Ã»ÓĞÉèÖÃitemId£¡", this);
+            Debug.LogError($"é™æ€ç‰©å“ {gameObject.name} æ²¡æœ‰è®¾ç½®itemIdï¼", this);
             return;
         }
 
         pickableObject = GetComponent<PickableObject>();
         currentSceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
 
-        // ¼ì²é´æµµÖĞÊÇ·ñÒÑÊ°È¡
+        if (pickableObject != null)
+            pickableObject.onInteract += OnPickUp;
+
         CheckIfAlreadyPicked();
     }
 
@@ -31,44 +33,28 @@ public class StaticSceneItem : MonoBehaviour
 
         if (SaveManager.Instance.currentSaveData.IsSceneItemPicked(currentSceneName, itemId))
         {
-            // ´æµµÖĞÒÑÊ°È¡£¬Á¢¼´Ïú»ÙÎïÆ·
-            Debug.Log($"ÎïÆ· {itemId} ÒÑÔÚ´æµµÖĞÊ°È¡£¬×Ô¶¯Ïú»Ù");
+            Debug.Log($"ç‰©å“ {itemId} å·²åœ¨å­˜æ¡£ä¸­è¢«æ‹¾å–ï¼Œè‡ªåŠ¨ç§»é™¤");
             Destroy(gameObject);
         }
     }
 
-    public void PickUp()
+    private void OnPickUp()
     {
-        if (pickableObject == null || pickableObject.itemSO == null)
-            return;
-
-        // Ìí¼Óµ½±³°ü
-        if (InventoryManager.Instance != null)
+        if (SaveManager.Instance != null && SaveManager.Instance.currentSaveData != null)
         {
-            InventoryManager.Instance.AddItem(pickableObject.itemSO);
-            if (UIManager.Instance != null)
-            {
-                UIManager.Instance.ShowPickupToast(pickableObject.itemSO);
-            }
-            // ±ê¼ÇÎªÒÑÊ°È¡
-            if (SaveManager.Instance != null && SaveManager.Instance.currentSaveData != null)
-            {
-                SaveManager.Instance.currentSaveData.MarkSceneItemAsPicked(currentSceneName, itemId);
-                SaveManager.Instance.SaveGame();
-            }
-
-            Debug.Log($"Ê°È¡¾²Ì¬ÎïÆ·: {itemId}");
-            Destroy(gameObject);
+            SaveManager.Instance.currentSaveData.MarkSceneItemAsPicked(currentSceneName, itemId);
+            SaveManager.Instance.SaveGame();
         }
+
+        Debug.Log($"æ‹¾å–é™æ€ç‰©å“: {itemId}");
     }
 
-    
-    [ContextMenu("Éú³ÉÎ¨Ò»ID")]
+    [ContextMenu("ç”Ÿæˆå”¯ä¸€ID")]
     private void GenerateUniqueId()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         Vector3 pos = transform.position;
         itemId = $"{sceneName}_{gameObject.name}_{pos.x:F0}_{pos.y:F0}_{pos.z:F0}";
-        Debug.Log($"Éú³ÉµÄID: {itemId}");
+        Debug.Log($"ç”Ÿæˆçš„ID: {itemId}");
     }
 }

@@ -5,24 +5,15 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/000Scene_Menu.unity
-    guid: 95060a2f1a9f2c640848e44244569ce5
   - enabled: 1
-    path: Assets/Scenes/00Scene_Village.unity
-    guid: 8f6745c91d8b30d4fad20f86ec6da5c2
-  - enabled: 0
-    path: Assets/Scenes/01Scene_Cave.unity
-    guid: 84e973c5129773f4d801bca538e641a7
-  - enabled: 0
-    path: Assets/Scenes/02Scene_HighPlace.unity
-    guid: 0c359cfbd0bf17d4bbdbc7c87182fbe2
-  - enabled: 1
-    path: Assets/Scenes/LoadingScene.unity
-    guid: 36b757fbb177d8a43b81bc302bc5d32a
+    path: Assets/Scenes/WhiteBoxes/WhiteBox_Menu.unity
+    guid: d23bc5937c3c2104a9b1ca5065a4c58c
   - enabled: 1
     path: Assets/Scenes/WhiteBoxes/WhiteBox_Village.unity
     guid: ab4160bf3166b1e47a327255dfd12c3e
+  - enabled: 1
+    path: Assets/Scenes/LoadingScene.unity
+    guid: 36b757fbb177d8a43b81bc302bc5d32a
   m_configObjects:
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: b24d4150e88249d4584c8174bb43993d,
       type: 3}

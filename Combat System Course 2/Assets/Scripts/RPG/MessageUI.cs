@@ -22,7 +22,7 @@ public class MessageUI : MonoBehaviour
 
     public void Update()
     {
-        //回到主菜单（快捷键esc键）
+        //锟截碉拷锟斤拷锟剿碉拷锟斤拷锟斤拷菁锟絜sc锟斤拷锟斤拷
         if (Input.GetKeyDown(KeyCode.H))
         {
             
@@ -56,20 +56,15 @@ public class MessageUI : MonoBehaviour
     }
     public void BackToMenuYes()
     {
-        PortalConfirm.SetActive(false);
         UIStateManager.SetUIActive(false);
-
-        // 保存当前存档（如果在游戏中）
+        Time.timeScale = 1f;
         if (IsInGameScene())
             SaveManager.Instance.SaveGame();
 
-        // 关键：真正重置所有状态
         SaveManager.Instance.ResetSaveManagerState();
-
-        // 不加载存档，走默认流程
         SaveManager.shouldLoadFromSave = false;
 
-        PlayerPrefs.SetString("TargetScene", "000Scene_Menu");
+        PlayerPrefs.SetString("TargetScene", "WhiteBox_Menu");
         PlayerPrefs.Save();
 
         SceneManager.LoadScene("LoadingScene");
@@ -77,9 +72,9 @@ public class MessageUI : MonoBehaviour
     private bool IsInGameScene()
     {
         string currentScene = SceneManager.GetActiveScene().name;
-        return currentScene != "000Scene_Menu" && currentScene != "LoadingScene";
+        return currentScene != "WhiteBox_Menu" && currentScene != "LoadingScene";
     }
-    public void BackToMenuNo()//供No按钮绑定
+    public void BackToMenuNo()//锟斤拷No锟斤拷钮锟斤拷
     {
         PortalConfirm.SetActive(false);
         UIStateManager.SetUIActive(false);

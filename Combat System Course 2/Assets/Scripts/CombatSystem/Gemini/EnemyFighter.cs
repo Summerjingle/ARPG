@@ -245,11 +245,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
             var attackerDamage = attacker.GetWeaponDamage();
             TakeDamage(attackerDamage);
-            HitEffect.Instance.PlaySound(hitSound, transform.position);
-            HitEffect.Instance.PlayFX(hitFxPrefab,
-                other.ClosestPointOnBounds(transform.position),
-                Quaternion.LookRotation(attacker.transform.forward)
-            );
+
+   
 
             // 顿帧（攻击者 + 自己）
             Animator attackerAnimator = (attacker as MonoBehaviour)?.GetComponent<Animator>();

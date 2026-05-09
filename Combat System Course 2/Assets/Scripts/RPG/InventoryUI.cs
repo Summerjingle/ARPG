@@ -101,7 +101,7 @@ public class InventoryUI : MonoBehaviour
     public Selectable GetFirstEquipmentSlot()
     {
         return equipmentSlots.Count > 0
-            ? equipmentSlots[0].GetComponent<Selectable>()
+            ? equipmentSlots[0].GetComponentInChildren<Selectable>()
             : null;
     }
     public void ToggleInventory()
@@ -135,7 +135,7 @@ public class InventoryUI : MonoBehaviour
                 currentSelectedItem = null;
                 lastSelectedItem = null;
             }
-            InputManager.Instance.SwitchToPlayerFromInventory();
+            InputManager.Instance.SwitchToPlayer();
             CheckAndShowAttackHint();
         }
     }
@@ -181,20 +181,19 @@ public class InventoryUI : MonoBehaviour
 
         return null;
     }
-    private void HandleSubmit()
+   private void HandleSubmit()
     {
         GameObject selected = EventSystem.current.currentSelectedGameObject;
-
         if (selected == null) return;
 
-        // 👉 如果当前打开的是详情UI
+        // 1. 详情页处理
         if (itemDetail.gameObject.activeSelf)
         {
             itemDetail.OnUseButtonClick();
             return;
         }
 
-        // 👉 1. 物品
+        // 2. 物品栏逻辑
         ItemUI itemUI = selected.GetComponent<ItemUI>();
         if (itemUI != null)
         {
@@ -202,40 +201,56 @@ public class InventoryUI : MonoBehaviour
             return;
         }
 
-        // 👉 2. 装备槽（你后面要实现）
-        EquipmentSlotUI slot = selected.GetComponent<EquipmentSlotUI>();
+        // 3. 装备槽逻辑 (修正：直接调用并刷新)
+        EquipmentSlotUI slot = selected.GetComponentInParent<EquipmentSlotUI>();
         if (slot != null)
         {
             slot.OnSubmit();
+            // 联动关键：卸装后立即刷新背包列表和高光
+            UpdateInventoryUI();
             return;
         }
 
-        Debug.Log("当前选中对象没有可处理的Submit逻辑: " + selected.name);
-    }
-    private void SwitchToEquipment()
+        // 4. 普通按钮
+        Button button = selected.GetComponent<Button>();
+        if (button != null) button.onClick.Invoke();
+    }    
+   private void SwitchToEquipment()
     {
         if (!IsInventoryOpen) return;
 
         currentFocus = InventoryFocus.Equipment;
-        itemsSwitchButton.localScale=originV3;
-        equipmentSwitchButton.localScale=selectV3;
-        // 【新增】打开装备区交互，关闭物品区交互（阻断 D-pad 乱串）
+        itemsSwitchButton.localScale = originV3;
+        equipmentSwitchButton.localScale = selectV3;
+
+        // 区域交互隔离
         if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = true;
         if (itemsCanvasGroup != null) itemsCanvasGroup.interactable = false;
 
-        if (currentSelectedItem != null)
+        // 清除物品栏高亮
+        ClearAllHighlights();
+
+        // 强行对齐导航逻辑 (防止 D-Pad 乱跳)
+        var sorted = GetSortedSlots();
+        for (int i = 0; i < sorted.Count; i++)
         {
-            currentSelectedItem.SetHighlight(false);
-            currentSelectedItem = null;
-            lastSelectedItem = null;
+            var sel = sorted[i].GetComponentInChildren<Selectable>();
+            if (sel == null) continue;
+
+            Navigation nav = sel.navigation;
+            nav.mode = Navigation.Mode.Explicit;
+            nav.selectOnUp = i > 0 ? sorted[i - 1].GetComponentInChildren<Selectable>() : null;
+            nav.selectOnDown = i < sorted.Count - 1 ? sorted[i + 1].GetComponentInChildren<Selectable>() : null;
+            // 锁定左右，必须通过 Tab/肩键 切换区域
+            nav.selectOnLeft = null;
+            nav.selectOnRight = null;
+            sel.navigation = nav;
         }
 
-        var firstSlot = GetFirstEquipmentSlot();
-        if (firstSlot != null)
-        {
-            EventSystem.current.SetSelectedGameObject(firstSlot.gameObject);
-            Debug.Log("切换到装备槽: " + firstSlot.name);
-        }
+        // 自动选中
+        Selectable target = GetPrioritySlot(sorted);
+        if (target != null)
+            EventSystem.current.SetSelectedGameObject(target.gameObject);
     }
    private void SwitchToItems()
     {
@@ -250,6 +265,39 @@ public class InventoryUI : MonoBehaviour
         if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = false;
 
         SelectFirstItem();
+    }
+private void ClearAllHighlights()
+    {
+        if (currentSelectedItem != null)
+            currentSelectedItem.SetHighlight(false);
+        
+        currentSelectedItem = null;
+        lastSelectedItem = null;
+        
+        // 如果装备槽也需要逻辑清除，可以在这里遍历清除
+    }
+private List<EquipmentSlotUI> GetSortedSlots()
+    {
+        var list = new List<EquipmentSlotUI>(equipmentSlots);
+        list.Sort((a, b) => {
+            int GetOrder(EquipmentSlotUI s) {
+                if (s.itemType == ItemType.Weapon) return 3;
+                return s.armorType switch {
+                    ArmorType.Helmet => 0, ArmorType.Chestplate => 1,
+                    ArmorType.Gauntlets => 2, ArmorType.Leggings => 4,
+                    ArmorType.Boots => 5, _ => 99
+                };
+            }
+            return GetOrder(a).CompareTo(GetOrder(b));
+        });
+        return list;
+    }
+    private Selectable GetPrioritySlot(List<EquipmentSlotUI> sorted)
+    {
+        foreach (var slot in sorted)
+            if (slot.iconImage != null && slot.iconImage.enabled) 
+                return slot.GetComponentInChildren<Selectable>();
+        return sorted[0].GetComponentInChildren<Selectable>();
     }
     private void CheckAndShowAttackHint()
     {

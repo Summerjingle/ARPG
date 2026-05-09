@@ -8,18 +8,18 @@ public class LootTable : ScriptableObject
     public class LootEntry
     {
         public ItemSO item;
-        [Range(0f, 1f)] public float probability = 0.5f;//物品掉落概率
+        [Range(0f, 1f)] public float probability = 0.5f;
         public int minCount = 1;
         public int maxCount = 1;
 
-        // 掉落位置偏移（可选）
         public Vector2 spawnOffsetRange = new Vector2(0.5f, 1.5f);
     }
 
-    [Header("掉落设置")]
+    [Header("鎺夎惤鍒楄〃")]
     public List<LootEntry> lootEntries = new List<LootEntry>();
 
-    [Header("全局设置")]
+    [Header("鍏ㄥ眬璁剧疆")]
+    public GameObject lootPrefab;
     public bool useRandomSpawnOffset = true;
     public float spawnRadius = 1f;
 

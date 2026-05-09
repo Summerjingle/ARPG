@@ -7,7 +7,7 @@ using UnityEngine;
 public class EnemyManager : MonoBehaviour
 {
     [SerializeField] Vector2 timeRangeBetweenAttacks = new Vector2(1, 4);
-    [SerializeField] CombatController player;
+    [SerializeField] PlayerController player;
     public static EnemyManager i { get; private set; }
 
     private List<EnemyController> enemiesIsRange = new List<EnemyController>();
