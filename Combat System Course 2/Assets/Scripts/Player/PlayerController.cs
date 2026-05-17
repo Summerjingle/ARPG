@@ -87,6 +87,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float rollCooldown = 0.8f;
     [SerializeField] private int rollEnergyCost = 15;
     [SerializeField] private float rollExitTime = 0.75f;
+    [SerializeField] private float rollSpeed = 8f;
+    [SerializeField] private AnimationCurve rollSpeedCurve =
+        AnimationCurve.EaseInOut(0, 1, 1, 0);
+    private Vector3 rollDirection;
     private bool isRolling = false;
     private float lastRollTime = -Mathf.Infinity;
     private int rollLayerIndex;
@@ -156,8 +160,8 @@ public class PlayerController : MonoBehaviour
             isDrinking = true;
         }
 
-       
-        if (!isMovementEnabled || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
+
+        if ((!isMovementEnabled && !isRolling) || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
             animator.SetFloat(speedHash, 0f);
             // 如果不再用 DirX/DirY，下面两行可以删掉
@@ -404,9 +408,31 @@ public class PlayerController : MonoBehaviour
         }
 
         // ─────────────── 应用位移与旋转 ───────────────
-        Vector3 velocity = moveDir * currentPhysicalSpeed;
+        Vector3 velocity;
 
-        if (!LockRotation)
+        if (isRolling)
+        {
+            float curveValue = 1f;
+
+            AnimatorStateInfo state =
+                animator.GetCurrentAnimatorStateInfo(rollLayerIndex);
+
+            if (state.IsName(rollAnimFront) ||
+                state.IsName(rollAnimBack) ||
+                state.IsName(rollAnimLeft) ||
+                state.IsName(rollAnimRight))
+            {
+                curveValue = rollSpeedCurve.Evaluate(state.normalizedTime);
+            }
+
+            velocity = rollDirection * rollSpeed * curveValue;
+        }
+        else
+        {
+            velocity = moveDir * currentPhysicalSpeed;
+        }
+
+        if (!LockRotation && !isRolling)
         {
             if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
             {
@@ -435,7 +461,7 @@ public class PlayerController : MonoBehaviour
         }
         InputDir = worldMoveDir;
         velocity.y = ySpeed;
-        if (!animator.applyRootMotion)
+        if (!animator.applyRootMotion || isRolling)
         {
             charactercontroller.Move(velocity * Time.deltaTime);
         }
@@ -460,14 +486,18 @@ public class PlayerController : MonoBehaviour
 
     private void OnAnimatorMove()
     {
-        if (combatSystem != null && combatSystem.InAction && animator != null && animator.applyRootMotion)
+        if (!isRolling &&
+            combatSystem != null &&
+            combatSystem.InAction &&
+            animator != null &&
+            animator.applyRootMotion)
         {
             // 获取本帧动画自带的位移
             Vector3 rootMotionDeltaPosition = animator.deltaPosition;
-            
+
             // 将系统计算的重力/下压力叠加进去，防止播放攻击动画时角色浮空
-            rootMotionDeltaPosition.y = ySpeed * Time.deltaTime; 
-            
+            rootMotionDeltaPosition.y = ySpeed * Time.deltaTime;
+
             // 使用 CharacterController 移动，确保攻击突进会吃物理碰撞（不会穿墙）
             charactercontroller.Move(rootMotionDeltaPosition);
         }
@@ -504,23 +534,43 @@ public class PlayerController : MonoBehaviour
 
     private void StartRoll()
     {
-        if (isRolling || Time.time < lastRollTime + rollCooldown) return;
-        if (!PlayerProperty.Instance.ConsumeEnergy(rollEnergyCost)) return;
+        if (isRolling || Time.time < lastRollTime + rollCooldown)
+            return;
+
+        if (!PlayerProperty.Instance.ConsumeEnergy(rollEnergyCost))
+            return;
+
         if (rollLayerIndex < 0)
         {
-            Debug.LogError("Roll layer not found in Animator. Create a layer named 'Roll'.");
+            Debug.LogError("Roll layer not found in Animator.");
             return;
         }
 
         isRolling = true;
         isMovementEnabled = false;
         lastRollTime = Time.time;
+
         combatSystem.InAction = true;
         isCrouching = false;
 
+        // 记录翻滚方向
+        if (moveInput.magnitude > 0.1f)
+        {
+            Quaternion camRot = GetCameraPlanarRotation();
+            rollDirection = camRot * new Vector3(moveInput.x, 0, moveInput.y);
+            rollDirection.y = 0f;
+            rollDirection.Normalize();
+        }
+        else
+        {
+            rollDirection = transform.forward;
+        }
+
         animator.SetLayerWeight(rollLayerIndex, 1f);
+
         string animName = GetRollDirection();
-        animator.CrossFade(animName, 0.1f, rollLayerIndex, 0f);
+        animator.CrossFade(animName, 0.05f, rollLayerIndex, 0f);
+
         StartCoroutine(WaitForRollEnd(animName));
     }
 

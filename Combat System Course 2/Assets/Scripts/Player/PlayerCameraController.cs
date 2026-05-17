@@ -56,7 +56,7 @@ public class PlayerCameraController : MonoBehaviour
     {
         lookInput = look;
     }
-    // ×ÔÓÉÒÆ¶¯ÉãÏñ»úÐý×ª
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ª
     private void HandleFreeCamera()
     {
         float mouseX = lookInput.x;
@@ -75,7 +75,7 @@ public class PlayerCameraController : MonoBehaviour
             Quaternion.Euler(pitch + cameraAngleOverride, yaw, 0f);
     }
 
-    // ËøµÐÊ±ÉãÏñ»úË²Ê±¶ÔÆëµÐÈË
+    // ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½Ë²Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     private void HandleLockOnCamera()
     {
         Vector3 dir = lockedTarget.position - transform.position;
@@ -83,13 +83,13 @@ public class PlayerCameraController : MonoBehaviour
         if (dir.sqrMagnitude < 0.001f) return;
 
         yaw = Quaternion.LookRotation(dir).eulerAngles.y;
-        pitch = 10f; // ¿É×Ô¶¨Òå´¹Ö±½Ç¶È
+        pitch = 10f; // ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½å´¹Ö±ï¿½Ç¶ï¿½
 
         cinemachineCameraTarget.transform.rotation =
             Quaternion.Euler(pitch + cameraAngleOverride, yaw, 0f);
     }
 
-    // ËøµÐÄ¿±êÉèÖÃ
+    // ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public void LockOnTarget(Transform target)
     {
         lockedTarget = target;
@@ -99,12 +99,19 @@ public class PlayerCameraController : MonoBehaviour
 
     public void UnlockCamera()
     {
+        // åŒæ­¥ yaw/pitch åˆ°å½“å‰ç›¸æœºæœå‘ï¼Œé¿å…è§£é”çž¬é—´å¤§å¹…åº¦æ‘†åŠ¨
+        if (cinemachineCameraTarget != null)
+        {
+            yaw = cinemachineCameraTarget.transform.rotation.eulerAngles.y;
+            pitch = cinemachineCameraTarget.transform.rotation.eulerAngles.x;
+        }
+
         isLockingOn = false;
         lockedTarget = null;
         lockCameraPosition = false;
     }
 
-    // Íâ²¿»ñÈ¡ÉãÏñ»úË®Æ½·½ÏòÐý×ª£¨ÓÃÓÚÒÆ¶¯·½Ïò£©
+    // ï¿½â²¿ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×ªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
     public Quaternion GetPlanarRotation()
     {
         if (cinemachineCameraTarget != null)
@@ -116,7 +123,7 @@ public class PlayerCameraController : MonoBehaviour
         return Quaternion.identity;
     }
 
-    // Íâ²¿»ñÈ¡Ëø¶¨·½Ïò£¨ÓÃÓÚÒÆ¶¯·½Ïò£©
+    // ï¿½â²¿ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½
     public Vector3 GetLockedDirection()
     {
         if (isLockingOn && lockedTarget != null)
@@ -138,10 +145,10 @@ public class PlayerCameraController : MonoBehaviour
 
     private void HandleUIStateChanged(bool isUIActive)
     {
-        // UI ´ò¿ª ¡ú ÉãÏñ»úËø×¡
+        // UI ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×¡
         lockCameraPosition = isUIActive;
 
-        // UI ´ò¿ªÊ±£¬×èÖ¹ÊäÈë¸ÉÈÅÊýÖµ
+        // UI ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
         if (isUIActive)
         {
             Input.ResetInputAxes();
@@ -155,7 +162,7 @@ public class PlayerCameraController : MonoBehaviour
 
         if (smooth)
         {
-            // Æ½»¬¹ý¶É
+            // Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             pos.y = Mathf.Lerp(pos.y, height, Time.deltaTime * 10f);
         }
         else

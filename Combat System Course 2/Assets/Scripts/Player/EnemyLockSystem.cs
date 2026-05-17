@@ -109,7 +109,9 @@ public class EnemyLockSystem : MonoBehaviour
     Transform ScanForTargets()
     {
         Collider[] hits = Physics.OverlapSphere(transform.position, noticeRadius, enemyLayer);
-        if (hits.Length == 0) return null;
+        if (hits.Length == 0) {
+            Debug.Log("视角内没有捕捉到敌人");
+            return null;}
 
         Transform best = null;
         float bestAngle = noticeAngle;
