@@ -16,10 +16,8 @@ public class PlayerController : MonoBehaviour
     private Vector2 lookInput; // ԭʼ���/ҡ������
     public Vector2 LookInput => lookInput;
     [Header("Movement Settings")]
-    [SerializeField] private float walkSpeedMultiplier = 0.5f; // ��·�ٶȳ���
     [SerializeField] private float crouchSpeedMultiplier = 0.3f; // �����ٶȣ�30%��
     private bool shouldCrouch;      // ʵ�ʶ���״̬
-    private float currentRunBlend = 0f;
     private bool isCrouching = false;
     [SerializeField] LayerMask obstacleLayer; // ֻ����ϰ���
 
@@ -39,9 +37,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float timeToRun = 1.5f; // 走多久转为跑（秒）
     private bool isSprinting = false; // ��ǰ�Ƿ����ڳ�̣�����������
 
-    [SerializeField] private bool Armed = false;
     private bool isFalling = false;
-    [SerializeField] float moveSpeed = 5f;
     [SerializeField] float rotationSpeed = 500f;
 
 

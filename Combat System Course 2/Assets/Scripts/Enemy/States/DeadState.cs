@@ -8,17 +8,19 @@ public class DeadState : State<EnemyController>
     {
         if (owner.GetComponent<WolfController>() != null)
         {
-            Debug.Log($"ÀÇ {owner.gameObject.name} Ìø¹ýÆÕÍ¨µÐÈËËÀÍö´¦Àí");
+            Debug.Log($"ï¿½ï¿½ {owner.gameObject.name} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             return;
         }
-        // 1. È¡Ïû¸ßÁÁ
+        // 1. È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (owner.MeshHighlighter != null)
         {
             owner.MeshHighlighter.HighlightMesh(false);
         }
 
-        // 2. Í£Ö¹ËùÓÐÐ­³Ì
+        // 2. Í£Ö¹ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½
         owner.StopAllCoroutines();
+        if (owner.Fighter is MonoBehaviour fighterMb)
+            fighterMb.StopAllCoroutines();  // EnemyFighter ï¿½Ïµï¿½ ExecuteEnemyAttack Ð­ï¿½ï¿½
 
         // 3. Í£Ö¹NavAgent
         if (owner.NavAgent != null && owner.NavAgent.isActiveAndEnabled)
@@ -27,41 +29,46 @@ public class DeadState : State<EnemyController>
             owner.NavAgent.ResetPath();
         }
 
-        // 4. ½ûÓÃ´«¸ÐÆ÷
+        // 4. ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½
         owner.VisionSensor.gameObject.SetActive(false);
         EnemyManager.i.RemoveEnemyInRange(owner);
 
-        // 5. ½ûÓÃCharacterController
+        // 5. ï¿½ï¿½ï¿½ï¿½CharacterController
         if (owner.CharacterController != null)
         {
             owner.CharacterController.enabled = false;
         }
 
-        // 6. Í¨ÖªÈÎÎñÏµÍ³
+        // 6. Í¨Öªï¿½ï¿½ï¿½ï¿½ÏµÍ³
         if (!string.IsNullOrEmpty(owner.enemyTypeID))
         {
             QuestManager.Instance.OnEnemyKilled(owner.gameObject.name, owner.enemyTypeID);
-            Debug.Log($"Í¨ÖªÈÎÎñÏµÍ³: {owner.gameObject.name}, {owner.enemyTypeID}");
+            Debug.Log($"Í¨Öªï¿½ï¿½ï¿½ï¿½ÏµÍ³: {owner.gameObject.name}, {owner.enemyTypeID}");
         }
 
-        // 7. Éú³ÉµôÂäÎïÆ·
+        // 7. ï¿½ï¿½ï¿½Éµï¿½ï¿½ï¿½ï¿½ï¿½Æ·
         owner.StartCoroutine(SpawnLootWithDelay(owner));
 
-        // 8. ÑÓ³Ù½ûÓÃNavAgent
+        // 8. ï¿½Ó³Ù½ï¿½ï¿½ï¿½NavAgent
         if (owner.NavAgent != null)
         {
             owner.StartCoroutine(DisableNavAgentAfterFrame(owner.NavAgent));
         }
+
+        // 9. ï¿½Ø±ï¿½MapEntityï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¼Í¼ï¿½ï¿½
+        MapEntity mapEntity = owner.GetComponent<MapEntity>();
+        if (mapEntity != null)
+            mapEntity.enabled = false;
     }
 
     private IEnumerator SpawnLootWithDelay(EnemyController enemy)
     {
-        // µÈ´ýÖ¸¶¨ÑÓ³ÙÊ±¼ä
+        // ï¿½È´ï¿½Ö¸ï¿½ï¿½ï¿½Ó³ï¿½Ê±ï¿½ï¿½
         yield return new WaitForSeconds(enemy.lootSpawnDelay);
 
         if (enemy != null && enemy.lootTable != null)
         {
-            // ´´½¨µôÂäÎïÈÝÆ÷£¨¿ÉÑ¡£¬ÓÃÓÚ×éÖ¯²ã´Î½á¹¹£©
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¯ï¿½ï¿½Î½á¹¹ï¿½ï¿½
             GameObject lootContainer = new GameObject($"Loot_{enemy.gameObject.name}");
             lootContainer.transform.position = enemy.transform.position;
 
@@ -69,7 +76,7 @@ public class DeadState : State<EnemyController>
         }
         else
         {
-            Debug.LogWarning($"µÐÈË {enemy.gameObject.name} Ã»ÓÐÉèÖÃLootTable");
+            Debug.LogWarning($"ï¿½ï¿½ï¿½ï¿½ {enemy.gameObject.name} Ã»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½LootTable");
         }
     }
 

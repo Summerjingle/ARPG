@@ -35,6 +35,7 @@ public class MapManager : MonoBehaviour
         mapImage.anchoredPosition=-mapPosition;
         foreach(var icon in _icons)
         {
+            if (icon == null || icon.Entity == null) continue;
             var position=WorldToMapPosition(icon.Entity.transform.position);
             icon.SetPosition(position);
         }
@@ -55,6 +56,8 @@ public class MapManager : MonoBehaviour
     public void UnregisterMapEntity(MapIcon mapIcon)
     {
         _icons.Remove(mapIcon);
+        if (mapIcon != null)
+            Destroy(mapIcon.gameObject);
     }
     Vector2 WorldToMapPosition(Vector3 worldPosition)
     {

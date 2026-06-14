@@ -25,13 +25,14 @@ public class PlayerProperty : MonoBehaviour
     public static PlayerProperty Instance;
     public Dictionary<PropertyType, List<Property>> propertyDict;
     public float energyValue ;
-    public int armorValue => baseArmorValue + equipmentArmorBonus; // ֻ�����ԣ��ܻ���ֵ
+    public int armorValue => baseArmorValue + equipmentArmorBonus; 
     public int level = 1;
     public int currEXP = 0;
+    public int currSoulAmount=0;
 
-    // ���뻤��ֵ������ֵ + װ���ӳ�
-    [SerializeField] private int baseArmorValue = 0; // ��������ֵ������װ��Ӱ�죩
-    private int equipmentArmorBonus = 0; // װ���ӳɻ���ֵ
+    
+    [SerializeField] private int baseArmorValue = 0; 
+    private int equipmentArmorBonus = 0; 
 
    
     private HealthSystem healthSystem;
@@ -42,8 +43,7 @@ public class PlayerProperty : MonoBehaviour
     public AudioClip DrinkSound;
 
 
-    public event System.Action OnArmorChanged;//����ֵ�ı��¼������ӡ����٣�
-
+    public event System.Action OnArmorChanged;
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -63,7 +63,7 @@ public class PlayerProperty : MonoBehaviour
         propertyDict.Add(PropertyType.EnergyValue, new List<Property>());
         HideAllDrugModels();
         healthSystem = GetComponent<HealthSystem>();    
-        // ��������Ԥ�ȷ��õĵ��˵������¼�
+        
         SubscribeToAllEnemies();
     }
 
@@ -95,48 +95,13 @@ public class PlayerProperty : MonoBehaviour
         }
     }
 
-    // ����ֵ��������
-    private void OnEnemyDie(EnemyController enemy)
+   
+    private void OnEnemyDie(EnemyController enemy)//敌人死亡获得SoulAmount
     {
-        Debug.Log($"OnEnemyDie�����ã�����ID: {enemy.GetInstanceID()}, ��ǰ֡: {Time.frameCount}");
-
-        int gainedExp = enemy.EXP;
-        this.currEXP += gainedExp;
-
-        Debug.Log($"������������� {gainedExp} ����ֵ����ǰ����: {currEXP}");
-
-        bool leveledUp = false;
-        int levelsGained = 0;
-
-        // �������ܵĶ༶����
-        while (currEXP >= (level * 30) && (level * 30) > 0)
-        {
-            currEXP -= (level * 30);
-            level++;
-            leveledUp = true;
-            levelsGained++;
-            baseArmorValue += 5;
-            PlayerHUDUI.Instance.UpdateArmorDisplay();
-
-            Debug.Log($"�����ˣ���ǰ�ȼ�: {level}��ʣ�ྭ��: {currEXP}");
-        }
-
-        // ����UI
-        if (PlayerHUDUI.Instance != null)
-        {
-            if (leveledUp)
-            {
-                // ����ʱ�������⶯��
-                PlayerHUDUI.Instance.UpdateEXPBar(true);
-            }
-            else
-            {
-                // ֻ�Ǿ�������
-                PlayerHUDUI.Instance.UpdateEXPBar(false);
-            }
-        }
-
-        Debug.Log($"����״̬ - �ȼ�: {level}, ����: {currEXP}/{level * 30}, ���� {levelsGained} ��");
+        Debug.Log($"OnEnemyDie触发，死亡敌人ID: {enemy.GetInstanceID()}, 死亡帧：{Time.frameCount}");
+        int gainedSoulAmount = enemy.provideSoulAmount;
+        currSoulAmount += gainedSoulAmount;
+        PlayerHUDUI.Instance.UpdateSoulAmount();
     }
 
     public void UseDrag(ItemSO itemSO)

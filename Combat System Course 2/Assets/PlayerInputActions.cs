@@ -1620,6 +1620,45 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ]
         },
         {
+            ""name"": ""UI_BonfireMenu"",
+            ""id"": ""7ef1a69b-0425-4e2d-b79c-1ce78a11a6ef"",
+            ""actions"": [
+                {
+                    ""name"": ""Exit"",
+                    ""type"": ""Button"",
+                    ""id"": ""496fae96-4491-4b25-b39e-ebb248a1e6ce"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""b627f0c8-5300-4ec5-9af6-a0c9a0ecc692"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Exit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a5f2abfc-3988-4329-a81b-8755424437b8"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Exit"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
             ""name"": ""Global"",
             ""id"": ""2837f0bb-481c-4a44-8019-8398cafead8c"",
             ""actions"": [
@@ -1688,6 +1727,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""isPartOfComposite"": false
                 }
             ]
+        },
+        {
+            ""name"": ""Empty"",
+            ""id"": ""e0ea0405-1ed8-4d05-b3ea-9f1fbc6f8242"",
+            ""actions"": [],
+            ""bindings"": []
         }
     ],
     ""controlSchemes"": []
@@ -1726,10 +1771,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_PauseMenu_Navigate = m_UI_PauseMenu.FindAction("Navigate", throwIfNotFound: true);
         m_UI_PauseMenu_Submit = m_UI_PauseMenu.FindAction("Submit", throwIfNotFound: true);
         m_UI_PauseMenu_Cancel = m_UI_PauseMenu.FindAction("Cancel", throwIfNotFound: true);
+        // UI_BonfireMenu
+        m_UI_BonfireMenu = asset.FindActionMap("UI_BonfireMenu", throwIfNotFound: true);
+        m_UI_BonfireMenu_Exit = m_UI_BonfireMenu.FindAction("Exit", throwIfNotFound: true);
         // Global
         m_Global = asset.FindActionMap("Global", throwIfNotFound: true);
         m_Global_Bag = m_Global.FindAction("Bag", throwIfNotFound: true);
         m_Global_Pause = m_Global.FindAction("Pause", throwIfNotFound: true);
+        // Empty
+        m_Empty = asset.FindActionMap("Empty", throwIfNotFound: true);
     }
 
     ~@PlayerInputActions()
@@ -1739,7 +1789,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_UI_SaveMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_SaveMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_Inventory.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_Inventory.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_PauseMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_PauseMenu.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UI_BonfireMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_BonfireMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Global.enabled, "This will cause a leak and performance issues, PlayerInputActions.Global.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_Empty.enabled, "This will cause a leak and performance issues, PlayerInputActions.Empty.Disable() has not been called.");
     }
 
     /// <summary>
@@ -2501,6 +2553,102 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// </summary>
     public UI_PauseMenuActions @UI_PauseMenu => new UI_PauseMenuActions(this);
 
+    // UI_BonfireMenu
+    private readonly InputActionMap m_UI_BonfireMenu;
+    private List<IUI_BonfireMenuActions> m_UI_BonfireMenuActionsCallbackInterfaces = new List<IUI_BonfireMenuActions>();
+    private readonly InputAction m_UI_BonfireMenu_Exit;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "UI_BonfireMenu".
+    /// </summary>
+    public struct UI_BonfireMenuActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public UI_BonfireMenuActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "UI_BonfireMenu/Exit".
+        /// </summary>
+        public InputAction @Exit => m_Wrapper.m_UI_BonfireMenu_Exit;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_UI_BonfireMenu; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="UI_BonfireMenuActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(UI_BonfireMenuActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="UI_BonfireMenuActions" />
+        public void AddCallbacks(IUI_BonfireMenuActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UI_BonfireMenuActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UI_BonfireMenuActionsCallbackInterfaces.Add(instance);
+            @Exit.started += instance.OnExit;
+            @Exit.performed += instance.OnExit;
+            @Exit.canceled += instance.OnExit;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="UI_BonfireMenuActions" />
+        private void UnregisterCallbacks(IUI_BonfireMenuActions instance)
+        {
+            @Exit.started -= instance.OnExit;
+            @Exit.performed -= instance.OnExit;
+            @Exit.canceled -= instance.OnExit;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_BonfireMenuActions.UnregisterCallbacks(IUI_BonfireMenuActions)" />.
+        /// </summary>
+        /// <seealso cref="UI_BonfireMenuActions.UnregisterCallbacks(IUI_BonfireMenuActions)" />
+        public void RemoveCallbacks(IUI_BonfireMenuActions instance)
+        {
+            if (m_Wrapper.m_UI_BonfireMenuActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="UI_BonfireMenuActions.AddCallbacks(IUI_BonfireMenuActions)" />
+        /// <seealso cref="UI_BonfireMenuActions.RemoveCallbacks(IUI_BonfireMenuActions)" />
+        /// <seealso cref="UI_BonfireMenuActions.UnregisterCallbacks(IUI_BonfireMenuActions)" />
+        public void SetCallbacks(IUI_BonfireMenuActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UI_BonfireMenuActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UI_BonfireMenuActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="UI_BonfireMenuActions" /> instance referencing this action map.
+    /// </summary>
+    public UI_BonfireMenuActions @UI_BonfireMenu => new UI_BonfireMenuActions(this);
+
     // Global
     private readonly InputActionMap m_Global;
     private List<IGlobalActions> m_GlobalActionsCallbackInterfaces = new List<IGlobalActions>();
@@ -2607,6 +2755,91 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="GlobalActions" /> instance referencing this action map.
     /// </summary>
     public GlobalActions @Global => new GlobalActions(this);
+
+    // Empty
+    private readonly InputActionMap m_Empty;
+    private List<IEmptyActions> m_EmptyActionsCallbackInterfaces = new List<IEmptyActions>();
+    /// <summary>
+    /// Provides access to input actions defined in input action map "Empty".
+    /// </summary>
+    public struct EmptyActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public EmptyActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_Empty; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="EmptyActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(EmptyActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="EmptyActions" />
+        public void AddCallbacks(IEmptyActions instance)
+        {
+            if (instance == null || m_Wrapper.m_EmptyActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_EmptyActionsCallbackInterfaces.Add(instance);
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="EmptyActions" />
+        private void UnregisterCallbacks(IEmptyActions instance)
+        {
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="EmptyActions.UnregisterCallbacks(IEmptyActions)" />.
+        /// </summary>
+        /// <seealso cref="EmptyActions.UnregisterCallbacks(IEmptyActions)" />
+        public void RemoveCallbacks(IEmptyActions instance)
+        {
+            if (m_Wrapper.m_EmptyActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="EmptyActions.AddCallbacks(IEmptyActions)" />
+        /// <seealso cref="EmptyActions.RemoveCallbacks(IEmptyActions)" />
+        /// <seealso cref="EmptyActions.UnregisterCallbacks(IEmptyActions)" />
+        public void SetCallbacks(IEmptyActions instance)
+        {
+            foreach (var item in m_Wrapper.m_EmptyActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_EmptyActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="EmptyActions" /> instance referencing this action map.
+    /// </summary>
+    public EmptyActions @Empty => new EmptyActions(this);
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Player" which allows adding and removing callbacks.
     /// </summary>
@@ -2816,6 +3049,21 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnCancel(InputAction.CallbackContext context);
     }
     /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_BonfireMenu" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="UI_BonfireMenuActions.AddCallbacks(IUI_BonfireMenuActions)" />
+    /// <seealso cref="UI_BonfireMenuActions.RemoveCallbacks(IUI_BonfireMenuActions)" />
+    public interface IUI_BonfireMenuActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Exit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnExit(InputAction.CallbackContext context);
+    }
+    /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Global" which allows adding and removing callbacks.
     /// </summary>
     /// <seealso cref="GlobalActions.AddCallbacks(IGlobalActions)" />
@@ -2836,5 +3084,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnPause(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "Empty" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="EmptyActions.AddCallbacks(IEmptyActions)" />
+    /// <seealso cref="EmptyActions.RemoveCallbacks(IEmptyActions)" />
+    public interface IEmptyActions
+    {
     }
 }

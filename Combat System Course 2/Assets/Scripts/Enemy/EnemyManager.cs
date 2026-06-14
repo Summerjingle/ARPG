@@ -64,10 +64,15 @@ public class EnemyManager : MonoBehaviour
     }
     public void RemoveEnemyInRange(EnemyController enemyController)
     {
-        
+
 
         enemiesIsRange.Remove(enemyController);
 
+    }
+
+    public List<EnemyController> GetEnemiesInRange()
+    {
+        return enemiesIsRange;
     }
 
     public EnemyController GetAttackingEnemy()

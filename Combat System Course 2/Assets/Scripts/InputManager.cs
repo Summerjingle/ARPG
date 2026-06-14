@@ -22,6 +22,7 @@ public class InputManager : MonoBehaviour
 
     public event Action OnGamePause;
     public event Action OnLock;
+    public event Action OnBonfireExit;
     
 
 
@@ -58,6 +59,8 @@ public class InputManager : MonoBehaviour
         Actions.UI_Inventory.SwitchRight.performed+=ctx =>OnUISwitchRight?.Invoke();
 
         Actions.UI_PauseMenu.Cancel.performed+= _ =>OnGamePause?.Invoke();
+
+        Actions.UI_BonfireMenu.Exit.performed += _ => OnBonfireExit?.Invoke();
         
 
 
@@ -100,10 +103,11 @@ public class InputManager : MonoBehaviour
     }
     public void SwitchToMainMenuUI()
     {
-       
         Actions.Player.Disable();
+        Actions.UI_BonfireMenu.Disable();
+        Actions.Empty.Disable();
         Actions.UI_MainMenu.Enable();
-        UIStateManager.SetUIActive(true); 
+        UIStateManager.SetUIActive(true);
     }
 
     public void SwitchToPlayer()
@@ -112,7 +116,9 @@ public class InputManager : MonoBehaviour
         Actions.UI_PauseMenu.Disable();
         Actions.UI_MainMenu.Disable();
         Actions.UI_SaveMenu.Disable();
-    
+        Actions.UI_BonfireMenu.Disable();
+        Actions.Empty.Disable();
+
         Actions.Player.Enable();
         Actions.Global.Enable();
         UIStateManager.SetUIActive(false);
@@ -121,6 +127,8 @@ public class InputManager : MonoBehaviour
     {
         Actions.UI_MainMenu.Disable();
         Actions.Player.Disable();
+        Actions.UI_BonfireMenu.Disable();
+        Actions.Empty.Disable();
         Actions.UI_SaveMenu.Enable();
         UIStateManager.SetUIActive(true); // ��ʾ���
     }
@@ -133,7 +141,9 @@ public class InputManager : MonoBehaviour
         Actions.UI_MainMenu.Disable();
         Actions.UI_SaveMenu.Disable();
         Actions.UI_PauseMenu.Disable();
-        
+        Actions.UI_BonfireMenu.Disable();
+        Actions.Empty.Disable();
+
         // 启用背包专用的UI输入（如果你以后要做Navigate/Submit/Cancel）
         Actions.UI_Inventory.Enable();
         Actions.Global.Disable();
@@ -152,12 +162,41 @@ public class InputManager : MonoBehaviour
         Actions.UI_MainMenu.Disable();
         Actions.UI_SaveMenu.Disable();
         Actions.UI_Inventory.Disable();
-        
+        Actions.UI_BonfireMenu.Disable();
+        Actions.Empty.Disable();
+
         // 启用暂停菜单UI输入
         Actions.UI_PauseMenu.Enable();
         
         UIStateManager.SetUIActive(true);
-        Debug.Log("已切换到 Pause Menu 输入模式");
+        Debug.Log("已切换到 Pause Menu 输入模式.");
 
+    }
+
+    public void SwitchToBonfireMenu()
+    {
+        Actions.Player.Disable();
+        Actions.Global.Disable();
+        Actions.UI_MainMenu.Disable();
+        Actions.UI_SaveMenu.Disable();
+        Actions.UI_Inventory.Disable();
+        Actions.UI_PauseMenu.Disable();
+        Actions.Empty.Disable();
+
+        Actions.UI_BonfireMenu.Enable();
+        UIStateManager.SetUIActive(true);
+    }
+
+    public void SwitchToEmpty()
+    {
+        Actions.Player.Disable();
+        Actions.Global.Disable();
+        Actions.UI_MainMenu.Disable();
+        Actions.UI_SaveMenu.Disable();
+        Actions.UI_Inventory.Disable();
+        Actions.UI_PauseMenu.Disable();
+        Actions.UI_BonfireMenu.Disable();
+        Actions.Empty.Enable();
+        UIStateManager.SetUIActive(true);
     }
 }

@@ -1534,6 +1534,45 @@
             ]
         },
         {
+            "name": "UI_BonfireMenu",
+            "id": "7ef1a69b-0425-4e2d-b79c-1ce78a11a6ef",
+            "actions": [
+                {
+                    "name": "Exit",
+                    "type": "Button",
+                    "id": "496fae96-4491-4b25-b39e-ebb248a1e6ce",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "b627f0c8-5300-4ec5-9af6-a0c9a0ecc692",
+                    "path": "<Gamepad>/buttonEast",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "a5f2abfc-3988-4329-a81b-8755424437b8",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Exit",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
             "name": "Global",
             "id": "2837f0bb-481c-4a44-8019-8398cafead8c",
             "actions": [
@@ -1602,6 +1641,12 @@
                     "isPartOfComposite": false
                 }
             ]
+        },
+        {
+            "name": "Empty",
+            "id": "e0ea0405-1ed8-4d05-b3ea-9f1fbc6f8242",
+            "actions": [],
+            "bindings": []
         }
     ],
     "controlSchemes": []

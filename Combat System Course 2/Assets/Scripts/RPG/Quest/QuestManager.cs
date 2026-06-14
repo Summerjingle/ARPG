@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class QuestManager : MonoBehaviour
 {
-    // µ¥ÀýÄ£Ê½
+    // ï¿½ï¿½ï¿½ï¿½Ä£Ê½
     public static QuestManager Instance { get; private set; }
 
-    [Header("ÈÎÎñÍê³É±ê¼Ç")]
+    [Header("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½ï¿½")]
     [SerializeField] private GameObject mainQuestCompletedMark;
     [SerializeField] private GameObject sideQuestCompletedMark;
 
-    // ÈÎÎñ×´Ì¬×Öµä
+    // ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½Öµï¿½
     private Dictionary<Quest, QuestState> questProgress = new Dictionary<Quest, QuestState>();
 
-    // ÐÂÔö£ºÈÎÎñÄ¿±êÔËÐÐÊ±×´Ì¬×Öµä
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±×´Ì¬ï¿½Öµï¿½
     private Dictionary<Quest, List<ObjectiveRuntimeData>> objectiveRuntimeData = new Dictionary<Quest, List<ObjectiveRuntimeData>>();
 
     [System.Serializable]
@@ -29,7 +29,7 @@ public class QuestManager : MonoBehaviour
         InitializeSingleton();
     }
 
-    #region ³õÊ¼»¯
+    #region ï¿½ï¿½Ê¼ï¿½ï¿½
     private void InitializeSingleton()
     {
         if (Instance == null)
@@ -44,9 +44,9 @@ public class QuestManager : MonoBehaviour
     }
     #endregion
 
-    #region ÔËÐÐÊ±×´Ì¬¹ÜÀí
+    #region ï¿½ï¿½ï¿½ï¿½Ê±×´Ì¬ï¿½ï¿½ï¿½ï¿½
     /// <summary>
-    /// »ñÈ¡Ä¿±êÔËÐÐÊ±×´Ì¬
+    /// ï¿½ï¿½È¡Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±×´Ì¬
     /// </summary>
     public bool IsObjectiveCompleted(Quest quest, int objectiveIndex)
     {
@@ -55,17 +55,17 @@ public class QuestManager : MonoBehaviour
             return objectiveRuntimeData[quest][objectiveIndex].isCompleted;
         }
 
-        // Èç¹ûÔËÐÐÊ±Êý¾Ý²»´æÔÚ£¬Ê¹ÓÃScriptableObjectµÄÄ¬ÈÏÖµ£¨µ«Ó¦¸Ã±ÜÃâ£©
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ý²ï¿½ï¿½ï¿½ï¿½Ú£ï¿½Ê¹ï¿½ï¿½ScriptableObjectï¿½ï¿½Ä¬ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½Ó¦ï¿½Ã±ï¿½ï¿½â£©
         return quest.objectives != null && objectiveIndex < quest.objectives.Count ?
                quest.objectives[objectiveIndex].isCompleted : false;
     }
 
     /// <summary>
-    /// ÉèÖÃÄ¿±êÍê³É×´Ì¬
+    /// ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
     /// </summary>
     public void SetObjectiveCompleted(Quest quest, int objectiveIndex, bool completed)
     {
-        // È·±£ÔËÐÐÊ±Êý¾Ý´æÔÚ
+        // È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ý´ï¿½ï¿½ï¿½
         if (!objectiveRuntimeData.ContainsKey(quest))
         {
             InitializeObjectiveRuntimeData(quest);
@@ -74,12 +74,12 @@ public class QuestManager : MonoBehaviour
         if (objectiveIndex < objectiveRuntimeData[quest].Count)
         {
             objectiveRuntimeData[quest][objectiveIndex].isCompleted = completed;
-            Debug.Log($"ÉèÖÃÄ¿±êÍê³É×´Ì¬: {quest.questName} Ä¿±ê{objectiveIndex} -> {completed}");
+            Debug.Log($"ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬: {quest.questName} Ä¿ï¿½ï¿½{objectiveIndex} -> {completed}");
         }
     }
 
     /// <summary>
-    /// ÉèÖÃÄ¿±êµ±Ç°ÊýÁ¿
+    /// ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½êµ±Ç°ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void SetObjectiveCurrentAmount(Quest quest, int objectiveIndex, int amount)
     {
@@ -95,7 +95,7 @@ public class QuestManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Ôö¼ÓÄ¿±ê½ø¶È
+    /// ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void AddObjectiveProgress(Quest quest, int objectiveIndex, int amount)
     {
@@ -111,18 +111,18 @@ public class QuestManager : MonoBehaviour
 
             runtimeData.currentAmount = Mathf.Min(runtimeData.currentAmount + amount, objective.requiredAmount);
 
-            // ¼ì²éÄ¿±êÊÇ·ñÍê³É
+            // ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
             if (runtimeData.currentAmount >= objective.requiredAmount)
             {
                 runtimeData.isCompleted = true;
-                Debug.Log($"Ä¿±ê×Ô¶¯Íê³É: {quest.questName} Ä¿±ê{objectiveIndex}");
+                Debug.Log($"Ä¿ï¿½ï¿½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½: {quest.questName} Ä¿ï¿½ï¿½{objectiveIndex}");
                 CheckQuestCompletion(quest);
             }
         }
     }
 
     /// <summary>
-    /// ³õÊ¼»¯ÔËÐÐÊ±Êý¾Ý
+    /// ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private void InitializeObjectiveRuntimeData(Quest quest)
     {
@@ -142,24 +142,24 @@ public class QuestManager : MonoBehaviour
     }
     #endregion
 
-    #region É±µÐÈÎÎñÖ§³Ö
+    #region É±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½
     /// <summary>
-    /// µÐÈË±»É±ËÀÊ±µ÷ÓÃ
+    /// ï¿½ï¿½ï¿½Ë±ï¿½É±ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void OnEnemyKilled(string targetID, string enemyTypeID)
     {
-        Debug.Log($"OnEnemyKilled ±»µ÷ÓÃ: targetID='{targetID}', enemyTypeID='{enemyTypeID}'");
+        Debug.Log($"OnEnemyKilled ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: targetID='{targetID}', enemyTypeID='{enemyTypeID}'");
         UpdateKillQuests(targetID, enemyTypeID);
     }
 
     /// <summary>
-    /// ¸üÐÂËùÓÐÏà¹ØµÄÉ±µÐÈÎÎñ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½É±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private void UpdateKillQuests(string targetID, string enemyTypeID)
     {
         if (QuestDBManager.Instance == null || QuestDBManager.Instance.questDatabase == null)
         {
-            Debug.LogError("ÈÎÎñÊý¾Ý¿âÎ´³õÊ¼»¯");
+            Debug.LogError("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½Î´ï¿½ï¿½Ê¼ï¿½ï¿½");
             return;
         }
 
@@ -177,40 +177,40 @@ public class QuestManager : MonoBehaviour
 
                 if (objective.objectiveType == ObjectiveType.Kill &&
                     (objective.targetID == targetID || objective.targetID == enemyTypeID) &&
-                    !IsObjectiveCompleted(quest, i))  // Ê¹ÓÃÔËÐÐÊ±×´Ì¬¼ì²é
+                    !IsObjectiveCompleted(quest, i))  // Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±×´Ì¬ï¿½ï¿½ï¿½
                 {
                     AddObjectiveProgress(quest, i, 1);
                     foundMatchingQuest = true;
-                    Debug.Log($"É±µÐÈÎÎñ½ø¶È¸üÐÂ: {quest.questName} - {objective.targetID}");
+                    Debug.Log($"É±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È¸ï¿½ï¿½ï¿½: {quest.questName} - {objective.targetID}");
                 }
             }
         }
 
         if (!foundMatchingQuest)
         {
-            Debug.LogWarning($"Ã»ÓÐÕÒµ½Æ¥ÅäµÄÉ±µÐÈÎÎñ: targetID='{targetID}', enemyTypeID='{enemyTypeID}'");
+            Debug.LogWarning($"Ã»ï¿½ï¿½ï¿½Òµï¿½Æ¥ï¿½ï¿½ï¿½É±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: targetID='{targetID}', enemyTypeID='{enemyTypeID}'");
         }
     }
     #endregion
 
-    #region Ì¸»°ÈÎÎñÖ§³Ö
+    #region Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö§ï¿½ï¿½
     /// <summary>
-    /// NPC¶Ô»°Ê±µ÷ÓÃ - ÓÃÓÚËùÓÐNPC
+    /// NPCï¿½Ô»ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ - ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½NPC
     /// </summary>
     public void OnNPCTalked(string npcID)
     {
-        Debug.Log($"OnNPCTalked ±»µ÷ÓÃ: npcID='{npcID}'");
+        Debug.Log($"OnNPCTalked ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: npcID='{npcID}'");
         UpdateTalkQuests(npcID);
     }
 
     /// <summary>
-    /// ¸üÐÂËùÓÐÏà¹ØµÄÌ¸»°ÈÎÎñ
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private void UpdateTalkQuests(string npcID)
     {
         if (QuestDBManager.Instance == null || QuestDBManager.Instance.questDatabase == null)
         {
-            Debug.LogError("ÈÎÎñÊý¾Ý¿âÎ´³õÊ¼»¯");
+            Debug.LogError("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ý¿ï¿½Î´ï¿½ï¿½Ê¼ï¿½ï¿½");
             return;
         }
 
@@ -228,16 +228,16 @@ public class QuestManager : MonoBehaviour
 
                 if (objective.objectiveType == ObjectiveType.Talk &&
                     objective.targetID == npcID &&
-                    !IsObjectiveCompleted(quest, i))  // Ê¹ÓÃÔËÐÐÊ±×´Ì¬¼ì²é
+                    !IsObjectiveCompleted(quest, i))  // Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±×´Ì¬ï¿½ï¿½ï¿½
                 {
-                    // Ê¹ÓÃÔËÐÐÊ±×´Ì¬£¬¶ø²»ÊÇÖ±½ÓÐÞ¸ÄScriptableObject
+                    // Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö±ï¿½ï¿½ï¿½Þ¸ï¿½ScriptableObject
                     SetObjectiveCompleted(quest, i, true);
                     SetObjectiveCurrentAmount(quest, i, objective.requiredAmount);
 
                     foundMatchingQuest = true;
-                    Debug.Log($"Ì¸»°ÈÎÎñÍê³É: {quest.questName} - Óë {npcID} ¶Ô»°Íê³É");
+                    Debug.Log($"Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {quest.questName} - ï¿½ï¿½ {npcID} ï¿½Ô»ï¿½ï¿½ï¿½ï¿½");
 
-                    // ¼ì²éÕû¸öÈÎÎñÊÇ·ñ¿ÉÍê³É
+                    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
                     CheckQuestCompletion(quest);
                 }
             }
@@ -245,12 +245,12 @@ public class QuestManager : MonoBehaviour
 
         if (!foundMatchingQuest)
         {
-            Debug.Log($"Ã»ÓÐÕÒµ½ÓëNPC {npcID} Ïà¹ØµÄ½øÐÐÖÐÌ¸»°ÈÎÎñ");
+            Debug.Log($"Ã»ï¿½ï¿½ï¿½Òµï¿½ï¿½ï¿½NPC {npcID} ï¿½ï¿½ØµÄ½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         }
     }
 
     /// <summary>
-    /// ¼ì²éÊÇ·ñÓÐÒÔ´ËNPCÎªÄ¿±êµÄ½øÐÐÖÐÌ¸»°ÈÎÎñ
+    /// ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ô´ï¿½NPCÎªÄ¿ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public bool HasActiveTalkQuestForNPC(string npcID)
     {
@@ -268,7 +268,7 @@ public class QuestManager : MonoBehaviour
                 var objective = quest.objectives[i];
                 if (objective.objectiveType == ObjectiveType.Talk &&
                     objective.targetID == npcID &&
-                    !IsObjectiveCompleted(quest, i))  // Ê¹ÓÃÔËÐÐÊ±×´Ì¬¼ì²é
+                    !IsObjectiveCompleted(quest, i))  // Ê¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±×´Ì¬ï¿½ï¿½ï¿½
                 {
                     return true;
                 }
@@ -278,9 +278,9 @@ public class QuestManager : MonoBehaviour
     }
     #endregion
 
-    #region ÈÎÎñ×´Ì¬¹ÜÀí
+    #region ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½
     /// <summary>
-    /// ÉèÖÃÈÎÎñ×´Ì¬
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
     /// </summary>
     public void SetQuestState(Quest quest, QuestState newState)
     {
@@ -295,11 +295,11 @@ public class QuestManager : MonoBehaviour
             questProgress.Add(quest, newState);
         }
 
-        Debug.Log($"ÈÎÎñ×´Ì¬¸üÐÂ: {quest.questName} -> {newState}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½: {quest.questName} -> {newState}");
 
         if (newState == QuestState.CanComplete && quest.autoComplete)
         {
-            Debug.Log($"¼ì²âµ½×Ô¶¯Íê³ÉÈÎÎñ: {quest.questName}£¬Á¢¼´Íê³É");
+            Debug.Log($"ï¿½ï¿½âµ½ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {quest.questName}ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
             CompleteQuest(quest);
         }
         else
@@ -309,7 +309,7 @@ public class QuestManager : MonoBehaviour
     }
 
     /// <summary>
-    /// »ñÈ¡µ±Ç°ÈÎÎñ×´Ì¬
+    /// ï¿½ï¿½È¡ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½×´Ì¬
     /// </summary>
     public QuestState GetQuestState(Quest quest)
     {
@@ -317,16 +317,16 @@ public class QuestManager : MonoBehaviour
     }
     #endregion
 
-    #region ÈÎÎñ×´Ì¬¼ì²é
+    #region ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½
     public bool IsQuestAccepted(Quest quest) => GetQuestState(quest) != QuestState.NotAccepted;
     public bool IsQuestInProgress(Quest quest) => GetQuestState(quest) == QuestState.InProgress;
     public bool IsQuestCanComplete(Quest quest) => GetQuestState(quest) == QuestState.CanComplete;
     public bool IsQuestCompleted(Quest quest) => GetQuestState(quest) == QuestState.Completed;
     #endregion
 
-    #region ÈÎÎñÍê³É¼ì²é
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¼ï¿½ï¿½
     /// <summary>
-    /// ¼ì²éÈÎÎñÊÇ·ñ¿ÉÍê³É
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private void CheckQuestCompletion(Quest quest)
     {
@@ -351,37 +351,37 @@ public class QuestManager : MonoBehaviour
    
     #endregion
 
-    #region ÈÎÎñÍê³ÉÓë½±Àø
+    #region ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë½±ï¿½ï¿½
     /// <summary>
-    /// Íê³ÉÈÎÎñ²¢¸øÓè½±Àø
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ñ²¢¸ï¿½ï¿½è½±ï¿½ï¿½
     /// </summary>
     public void CompleteQuest(Quest quest)
     {
-        if (quest == null) { Debug.Log("ÎÞ·¨·¢·Å½±Àø"); return; }
+        if (quest == null) { Debug.Log("ï¿½Þ·ï¿½ï¿½ï¿½ï¿½Å½ï¿½ï¿½ï¿½"); return; }
 
-        // ¸øÓè½±Àø
+        // ï¿½ï¿½ï¿½è½±ï¿½ï¿½
         GiveQuestRewards(quest);
 
-        // ÉèÖÃÈÎÎñ×´Ì¬ÎªÒÑÍê³É
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬Îªï¿½ï¿½ï¿½ï¿½ï¿½
         SetQuestState(quest, QuestState.Completed);
 
-        Debug.Log($"ÈÎÎñÍê³É: {quest.questName}");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {quest.questName}");
     }
 
     /// <summary>
-    /// ¸øÓèÈÎÎñ½±Àø
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     public void GiveQuestRewards(Quest quest)
     {
         if (quest.rewardCoins > 0)
         {
             CurrencySystem.Instance.AddCoins(quest.rewardCoins);
-            Debug.Log($"»ñµÃ½ð±Ò½±Àø: {quest.rewardCoins}");
+            Debug.Log($"ï¿½ï¿½Ã½ï¿½Ò½ï¿½ï¿½ï¿½: {quest.rewardCoins}");
         }
 
         if (quest.rewardExp > 0)
         {
-            Debug.Log($"»ñµÃ¾­Ñé½±Àø: {quest.rewardExp}");
+            Debug.Log($"ï¿½ï¿½Ã¾ï¿½ï¿½é½±ï¿½ï¿½: {quest.rewardExp}");
         }
 
         if (quest.rewardItems != null)
@@ -391,19 +391,19 @@ public class QuestManager : MonoBehaviour
                 if (item != null)
                 {
                     InventoryManager.Instance?.AddItem(item);
-                    Debug.Log($"»ñµÃÎïÆ·½±Àø: {item.nameOfItem}");
+                    Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½Æ·ï¿½ï¿½ï¿½ï¿½: {item.nameOfItem}");
                 }
             }
         }
 
-        // ×Ô¶¯±£´æÓÎÏ·
-        SaveManager.Instance?.SaveGame();
+        // ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·
+        SaveManager.Instance?.SaveGame(updatePosition: false);
     }
     #endregion
 
-    #region UI±ê¼Ç¹ÜÀí
+    #region UIï¿½ï¿½Ç¹ï¿½ï¿½ï¿½
     /// <summary>
-    /// ´¦ÀíÈÎÎñ×´Ì¬±ä»¯µÄUIÐ§¹û
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ä»¯ï¿½ï¿½UIÐ§ï¿½ï¿½
     /// </summary>
     private void HandleQuestStateChange(Quest quest, QuestState newState)
     {
@@ -415,7 +415,7 @@ public class QuestManager : MonoBehaviour
     }
 
     /// <summary>
-    /// ÏÔÊ¾ÈÎÎñÍê³É±ê¼Ç
+    /// ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½ï¿½
     /// </summary>
     private void ShowCompletionMark(Quest quest)
     {
@@ -435,14 +435,14 @@ public class QuestManager : MonoBehaviour
         if (markAnimator != null)
         {
             markAnimator.SetTrigger("IsCompleted");
-            Debug.Log($"´¥·¢Íê³É±ê¼Ç¶¯»­: {quest.questName}");
+            Debug.Log($"ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É±ï¿½Ç¶ï¿½ï¿½ï¿½: {quest.questName}");
         }
     }
     #endregion
 
-    #region ÏµÍ³ÖØÖÃ
+    #region ÏµÍ³ï¿½ï¿½ï¿½ï¿½
     /// <summary>
-    /// ÖØÖÃËùÓÐÈÎÎñ×´Ì¬
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬
     /// </summary>
     public void ResetAllQuests()
     {
@@ -450,29 +450,29 @@ public class QuestManager : MonoBehaviour
         objectiveRuntimeData.Clear();
         ResetAllQuestObjectives();
 
-        // ÖØÖÃ UI Ãæ°å×´Ì¬
+        // ï¿½ï¿½ï¿½ï¿½ UI ï¿½ï¿½ï¿½×´Ì¬
         if (QuestPanelController.Instance != null)
         {
             QuestPanelController.Instance.RemoveMainQuest();
             QuestPanelController.Instance.RemoveSideQuest();
             QuestPanelController.Instance.StopAllAnimations();
-            Debug.Log("ÈÎÎñÃæ°åÒÑÖØÖÃ");
+            Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
         }
 
         if (mainQuestCompletedMark != null) mainQuestCompletedMark.SetActive(false);
         if (sideQuestCompletedMark != null) sideQuestCompletedMark.SetActive(false);
 
-        Debug.Log("ËùÓÐÈÎÎñ×´Ì¬ÒÑÖØÖÃ");
+        Debug.Log("ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
 
     /// <summary>
-    /// ÖØÖÃËùÓÐÈÎÎñÄ¿±ê½ø¶È
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½
     /// </summary>
     private void ResetAllQuestObjectives()
     {
         if (QuestDBManager.Instance == null) return;
 
-        // ÖØÖÃScriptableObject×´Ì¬£¨È·±£±à¼­Æ÷×´Ì¬ÕýÈ·£©
+        // ï¿½ï¿½ï¿½ï¿½ScriptableObject×´Ì¬ï¿½ï¿½È·ï¿½ï¿½ï¿½à¼­ï¿½ï¿½×´Ì¬ï¿½ï¿½È·ï¿½ï¿½
         foreach (var quest in QuestDBManager.Instance.questDatabase.allQuests)
         {
             if (quest.objectives != null)

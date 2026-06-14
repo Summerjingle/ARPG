@@ -12,11 +12,20 @@ public class SaveManager : MonoBehaviour
     public static bool shouldLoadFromSave = false;
     public static bool isNewGame = true;
     public static string currentSaveId;
-    public static bool shouldLoadPosition = false; // �����������Ƿ����λ��
+    public static bool shouldLoadPosition = false;
+
+    public event System.Action OnAutoSaveStart;
+    public event System.Action OnAutoSaveComplete;
 
     private string savePath;
     private string savesDirectory;
     private const int MAX_SAVE_SLOTS = 10;
+
+    [Header("Auto Save")]
+    [SerializeField] private float autoSaveInterval = 300f; // 5分钟自动存档间隔
+    private float autoSaveTimer = 0f;
+    private float lastAutoSaveTime = -999f;
+    [SerializeField] private float autoSaveCooldown = 120f; // 最小间隔2分钟
 
     private GameObject registeredPlayer;
     public GameSaveData currentSaveData;
@@ -218,29 +227,29 @@ public class SaveManager : MonoBehaviour
     }
     #endregion
 
-    #region ������Ϸ
-    public void SaveGame()
+    #region 保存游戏
+    public void SaveGame(bool updatePosition = true)
     {
         if (currentSaveData == null)
         {
-            Debug.LogWarning("û�е�ǰ�浵���ݣ��޷�����");
+            Debug.LogWarning("No current save data, cannot save");
             return;
         }
 
-        // ����Ƿ�Ϊ����Ϸ�һ�û�б����
+        OnAutoSaveStart?.Invoke();
+
+        // Check if new game and hasn't been saved yet
         if (isNewGame && !HasBeenSavedBefore())
         {
-            // ����Ϸ��һ�α��棬ʹ�ÿղ�λ
             int availableSlot = FindEmptySaveSlot();
             currentSaveData.saveSlot = availableSlot;
-            currentSaveData.saveName = $"�浵 {availableSlot + 1}";
-            Debug.Log($"����Ϸ��һ�α��棬ʹ�ò�λ: {availableSlot}");
+            currentSaveData.saveName = $"Save {availableSlot + 1}";
         }
 
         GameObject player = registeredPlayer ?? GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogWarning("�Ҳ�����Ҷ����޷�������Ϸ");
+            Debug.LogWarning("Player not found, cannot save");
             return;
         }
 
@@ -250,27 +259,34 @@ public class SaveManager : MonoBehaviour
 
         if (playerProperty == null || healthSystem == null)
         {
-            Debug.LogWarning("���ȱ�ٱ�Ҫ��������޷�������Ϸ");
+            Debug.LogWarning("Player missing required components, cannot save");
             return;
         }
 
-        Debug.Log($"����������� - �ȼ�: {playerProperty.level}, ����: {playerProperty.currEXP}, ");
+        if (healthSystem.IsDead)
+        {
+            Debug.LogWarning("Player is dead, cannot save");
+            return;
+        }
 
-        // ���´浵���� - ����λ�úͳ���
-        currentSaveData.currentScene = SceneManager.GetActiveScene().name;
-        currentSaveData.playerPosition = player.transform.position;
-        currentSaveData.playerRotation = player.transform.rotation;
+        // Only update position on manual/checkpoint saves, not auto-save
+        if (updatePosition)
+        {
+            currentSaveData.currentScene = SceneManager.GetActiveScene().name;
+            currentSaveData.playerPosition = player.transform.position;
+            currentSaveData.playerRotation = player.transform.rotation;
+        }
 
-        currentSaveData.level = playerProperty.level;
-        currentSaveData.currEXP = playerProperty.currEXP;
-        currentSaveData.hpValue = Mathf.RoundToInt(healthSystem.Health);
-        currentSaveData.maxHealth = Mathf.RoundToInt(healthSystem.MaxHealth);
-        currentSaveData.energyValue = playerProperty.energyValue;
-        currentSaveData.armorValue = playerProperty.GetBaseArmor();
-        currentSaveData.currCoins=CurrencySystem.Instance.GetCurrentCoins();
-        currentSaveData.saveTime = System.DateTime.Now;
+        currentSaveData.level = playerProperty.level;//等级
+        currentSaveData.currEXP = playerProperty.currEXP;//经验值（即将弃用）
+        currentSaveData.currSoulAmount=playerProperty.currSoulAmount;//灵魂值
+        currentSaveData.hpValue = Mathf.RoundToInt(healthSystem.Health);//当前血量
+        currentSaveData.maxHealth = Mathf.RoundToInt(healthSystem.MaxHealth);//最大血量
+        currentSaveData.energyValue = playerProperty.energyValue;//当前精力
+        currentSaveData.armorValue = playerProperty.GetBaseArmor();//当前护甲
+        currentSaveData.currCoins=CurrencySystem.Instance.GetCurrentCoins();//当前钱币
+        currentSaveData.saveTime = System.DateTime.Now;//保存事件
 
-        // ��վ�����
         currentSaveData.inventoryItems.Clear();
         currentSaveData.questProgress.Clear();
 
@@ -283,12 +299,24 @@ public class SaveManager : MonoBehaviour
             string savePath = GetSavePath(currentSaveData.saveId);
             string jsonData = JsonConvert.SerializeObject(currentSaveData, Newtonsoft.Json.Formatting.Indented);
             File.WriteAllText(savePath, jsonData);
-            Debug.Log($"��Ϸ�ѱ��浽��λ: {currentSaveData.saveSlot}");
+            isNewGame = false;
+            Debug.Log($"Game saved to slot: {currentSaveData.saveSlot}");
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"������Ϸʧ��: {e.Message}");
+            Debug.LogError($"Save failed: {e.Message}");
         }
+
+        OnAutoSaveComplete?.Invoke();
+    }
+
+    public void SetCheckpoint(Vector3 position, Quaternion rotation)
+    {
+        if (currentSaveData == null) return;
+
+        currentSaveData.currentScene = SceneManager.GetActiveScene().name;
+        currentSaveData.playerPosition = position;
+        currentSaveData.playerRotation = rotation;
     }
 
     private bool HasBeenSavedBefore()
@@ -463,7 +491,7 @@ public class SaveManager : MonoBehaviour
         ApplyQuests();
         ApplyEquipment();
 
-        Debug.Log($"Ӧ�ô浵��� - �ȼ�: {currentSaveData.level}, ����: {currentSaveData.currEXP}, Ѫ��: {currentSaveData.hpValue}");
+        Debug.Log($"Applied save - Level: {currentSaveData.level}, EXP: {currentSaveData.currEXP}, HP: {currentSaveData.hpValue}");
         RefreshHUDUI();
     }
 
@@ -497,9 +525,10 @@ public class SaveManager : MonoBehaviour
 
         playerProperty.level = currentSaveData.level;
         playerProperty.currEXP = currentSaveData.currEXP;
+        playerProperty.currSoulAmount=currentSaveData.currSoulAmount;
         playerProperty.energyValue = currentSaveData.energyValue;
         playerProperty.SetBaseArmor(currentSaveData.armorValue);
-
+        
         healthSystem.MaxHealth = currentSaveData.maxHealth;
         healthSystem.Health = currentSaveData.hpValue;
         CurrencySystem.Instance.SetCurrentCoins(currentSaveData.currCoins);
@@ -743,15 +772,54 @@ public class SaveManager : MonoBehaviour
     }
     #endregion
 
-    #region Ӧ����������
+    #region 自动存档
+    private void Update()
+    {
+        autoSaveTimer += Time.deltaTime;
+        if (autoSaveTimer >= autoSaveInterval)
+        {
+            autoSaveTimer = 0f;
+            if (!IsPlayerInCombat() && Time.time - lastAutoSaveTime >= autoSaveCooldown)
+            {
+                StartCoroutine(AutoSaveCoroutine());
+            }
+            else
+            {
+                Debug.Log("自动存档跳过：玩家在战斗中或冷却中");
+            }
+        }
+    }
+
+    private IEnumerator AutoSaveCoroutine()
+    {
+        OnAutoSaveStart?.Invoke();
+        yield return new WaitForSeconds(1.5f);
+        SaveGame(updatePosition: false); // 自动存档不更新位置，只用篝火点
+        lastAutoSaveTime = Time.time;
+        OnAutoSaveComplete?.Invoke();
+    }
+
+    private bool IsPlayerInCombat()
+    {
+        if (EnemyManager.i == null) return false;
+        var enemies = EnemyManager.i.GetEnemiesInRange();
+        if (enemies == null || enemies.Count == 0) return false;
+
+        return enemies.Any(e =>
+            e.IsInState(EnemyStates.CombatMovement) ||
+            e.IsInState(EnemyStates.Attack));
+    }
+    #endregion
+
+    #region 应用退出
     private void OnApplicationQuit()
     {
-        SaveGame();
+        // 不再自动存档
     }
 
     private void OnApplicationPause(bool pauseStatus)
     {
-        if (pauseStatus) SaveGame();
+        // 不再自动存档
     }
     #endregion
 }

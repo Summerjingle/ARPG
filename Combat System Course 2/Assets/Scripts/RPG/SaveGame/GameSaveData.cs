@@ -6,18 +6,19 @@ using UnityEngine;
 [System.Serializable]
 public class GameSaveData
 {
-    public string saveId; // ´æµµÎ¨Ò»±êÊ¶
-    public string saveName; // ´æµµÃû³Æ
-    public int saveSlot; // ´æµµ²ÛÎ»
+    public string saveId; // ï¿½æµµÎ¨Ò»ï¿½ï¿½Ê¶
+    public string saveName; // ï¿½æµµï¿½ï¿½ï¿½ï¿½
+    public int saveSlot; // ï¿½æµµï¿½ï¿½Î»
 
-    // ³¡¾°ĞÅÏ¢
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
     public string currentScene;
     public SerializableVector3 playerPosition;
     public SerializableQuaternion playerRotation;
 
-    // Íæ¼ÒÊôĞÔ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public int level;
     public int currEXP;
+    public int currSoulAmount;
     public int hpValue;
     public int maxHealth;
     public float energyValue;
@@ -25,7 +26,7 @@ public class GameSaveData
     public int currCoins;
 
 
-    // ×°±¸ĞÅÏ¢
+    // ×°ï¿½ï¿½ï¿½ï¿½Ï¢
     public string equippedWeapon;
     public string equippedHelmet;
     public string equippedChestplate;
@@ -33,19 +34,19 @@ public class GameSaveData
     public string equippedLeggings;
     public string equippedBoots;
 
-    // ±³°üÄÚÈİ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public List<InventoryItemData> inventoryItems;
 
-    // ÈÎÎñ½ø¶È
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public List<QuestSaveData> questProgress;
     public bool showCompletedQuests = false;
     public bool autoTrackNewQuests = true;
     public string currentlyTrackedQuestID;
 
-    // ±£´æÊ±¼ä
+    // ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½
     public DateTime saveTime;
 
-    // ¹¹Ôìº¯Êı
+    // ï¿½ï¿½ï¿½ìº¯ï¿½ï¿½
     public GameSaveData()
     {
         saveId = Guid.NewGuid().ToString();
@@ -59,13 +60,13 @@ public class GameSaveData
     public GameSaveData(int slot) : this()
     {
         saveSlot = slot;
-        saveName = $"´æµµ {slot + 1}";
+        saveName = $"ï¿½æµµ {slot + 1}";
     }
 
-    #region µ¥¸ö´æµµÄÚÒ»´ÎĞÔÎïÆ·Ê°È¡Âß¼­
-    // Ê°È¡ÎïÆ·×Öµä
+    #region é™æ€ç‰©å“
+    // Ê°È¡ï¿½ï¿½Æ·ï¿½Öµï¿½
     public Dictionary<string, HashSet<string>> scenePickedItems = new Dictionary<string, HashSet<string>>();
-    // ¼ì²é³¡¾°ÖĞµÄÎïÆ·ÊÇ·ñÒÑ±»Ê°È¡
+    // ï¿½ï¿½é³¡ï¿½ï¿½ï¿½Ğµï¿½ï¿½ï¿½Æ·ï¿½Ç·ï¿½ï¿½Ñ±ï¿½Ê°È¡
     public bool IsSceneItemPicked(string sceneName, string itemId)
     {
         if (scenePickedItems.TryGetValue(sceneName, out HashSet<string> pickedItems))
@@ -75,7 +76,7 @@ public class GameSaveData
         return false;
     }
 
-    // ±ê¼Ç³¡¾°ÖĞµÄÎïÆ·ÎªÒÑÊ°È¡
+    // ï¿½ï¿½Ç³ï¿½ï¿½ï¿½ï¿½Ğµï¿½ï¿½ï¿½Æ·Îªï¿½ï¿½Ê°È¡
     public void MarkSceneItemAsPicked(string sceneName, string itemId)
     {
         if (!scenePickedItems.ContainsKey(sceneName))
@@ -86,8 +87,8 @@ public class GameSaveData
     }
     #endregion
 
-    #region µ¥¸ö´æµµÄÚÒ»´ÎĞÔ»ú¹Ø´¥·¢Âß¼­
-    // »ú¹Ø¼¤»î×´Ì¬×Öµä
+    #region é™æ€æœºå…³
+    // ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½×´Ì¬ï¿½Öµï¿½
     public Dictionary<string, HashSet<string>> sceneMechanismStates = new Dictionary<string, HashSet<string>>();
     public bool IsMechanismActivated(string sceneName, string mechanismId)
     {
@@ -111,9 +112,9 @@ public class GameSaveData
 [System.Serializable]
 public class InventoryItemData
 {
-    public string itemId;        // ÎïÆ·ID»òÃû³Æ
-    public int quantity;         // ÊıÁ¿
-    public int maxStack;         // ×î´ó¶ÑµşÊı
+    public string itemId;        // ï¿½ï¿½Æ·IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public int quantity;         // ï¿½ï¿½ï¿½ï¿½
+    public int maxStack;         // ï¿½ï¿½ï¿½Ñµï¿½ï¿½ï¿½
 
     public InventoryItemData(string id, int count, int max = 1)
     {
@@ -122,16 +123,16 @@ public class InventoryItemData
         maxStack = max;
     }
 
-    // Ä¬ÈÏ¹¹Ôìº¯ÊıÓÃÓÚĞòÁĞ»¯
+    // Ä¬ï¿½Ï¹ï¿½ï¿½ìº¯ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½
     public InventoryItemData() { }
 }
 
 [System.Serializable]
 public class QuestSaveData
 {
-    public string questID;        // ¸ÄÎªÊ¹ÓÃID¶ø²»ÊÇÃû³Æ
+    public string questID;        // ï¿½ï¿½ÎªÊ¹ï¿½ï¿½IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public QuestState questState;
-    public List<ObjectiveProgress> objectiveProgress; // ±£´æÄ¿±ê½ø¶È
+    public List<ObjectiveProgress> objectiveProgress; // ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½
 
     public QuestSaveData(string id, QuestState state)
     {
@@ -144,12 +145,12 @@ public class QuestSaveData
 [System.Serializable]
 public class ObjectiveProgress
 {
-    public int objectiveIndex;    // Ä¿±êË÷Òı
-    public int currentAmount;     // µ±Ç°½ø¶È
-    public bool isCompleted;      // ÊÇ·ñÍê³É
+    public int objectiveIndex;    // Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    public int currentAmount;     // ï¿½ï¿½Ç°ï¿½ï¿½ï¿½ï¿½
+    public bool isCompleted;      // ï¿½Ç·ï¿½ï¿½ï¿½ï¿½
 }
 
-// ¿ÉĞòÁĞ»¯µÄVector3Ìæ´ú½á¹¹
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½Vector3ï¿½ï¿½ï¿½ï¿½á¹¹
 [System.Serializable]
 public struct SerializableVector3
 {
@@ -180,7 +181,7 @@ public struct SerializableVector3
     }
 }
 
-// ¿ÉĞòÁĞ»¯µÄQuaternionÌæ´ú½á¹¹
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½Quaternionï¿½ï¿½ï¿½ï¿½á¹¹
 [System.Serializable]
 public struct SerializableQuaternion
 {
@@ -213,7 +214,7 @@ public struct SerializableQuaternion
     }
 }
 
-// ¿ÉĞòÁĞ»¯µÄColorÌæ´ú½á¹¹
+// ï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ï¿½ï¿½ï¿½Colorï¿½ï¿½ï¿½ï¿½á¹¹
 [System.Serializable]
 public struct SerializableColor
 {

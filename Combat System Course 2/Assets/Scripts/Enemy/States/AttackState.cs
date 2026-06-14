@@ -19,7 +19,7 @@ public class AttackState : State<EnemyController >
         if (isAttacking) return;
         enemy.NavAgent.SetDestination(enemy.Target.transform.position);
         if (Vector3.Distance(enemy.Target.transform.position, enemy.transform.position) <= attackDistance + 0.03f)
-            StartCoroutine(Attack(Random.Range(0,enemy.Fighter.Attacks.Count + 1)));//ÕâÀï¼Ó1£¬ÊÇÒòÎªµÚ¶þ¸ö²ÎÊýÊÇ»¥³âµÄ£¬¿ªÊ¼Á¬»÷Ç°×Ü»áÏÈ¹¥»÷Ò»´Î£¬Èç¹ûÁ¬»÷ÊýÊÇ3£¬ÄÇÃ´¼ÓÉÏ¿ªÊ¼µÄÒ»´Î¾ÍÊÇ4ÁË
+            StartCoroutine(Attack(Random.Range(0,enemy.Fighter.Attacks.Count + 1)));//ï¿½ï¿½ï¿½ï¿½ï¿½1ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½Ú¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç»ï¿½ï¿½ï¿½Ä£ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ç°ï¿½Ü»ï¿½ï¿½È¹ï¿½ï¿½ï¿½Ò»ï¿½Î£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½Ï¿ï¿½Ê¼ï¿½ï¿½Ò»ï¿½Î¾ï¿½ï¿½ï¿½4ï¿½ï¿½
 
     }
 
@@ -37,7 +37,8 @@ public class AttackState : State<EnemyController >
         yield return new WaitUntil( () =>enemy.Fighter.Attackstate==AttackStates.Idle);
         enemy.Animator.applyRootMotion=false;
         isAttacking=false;
-        enemy.ChangerState(EnemyStates.RetreatAfterAttack);
+        if (!enemy.IsInState(EnemyStates.Dead))
+            enemy.ChangerState(EnemyStates.RetreatAfterAttack);
     }
     public override void Exit()
     {

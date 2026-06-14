@@ -15,20 +15,19 @@ public class PlayerHUDUI : MonoBehaviour
     // ���������
     public Image playerHealthBarFill;
     public Image playerEnergyBarFill;
-    public Image playerEXPBarFill;
     public TextMeshProUGUI hpText;
     public TextMeshProUGUI enText;
     
 
     // ����ֵ���
-    public TextMeshProUGUI levelText;
-    [SerializeField] private float expFillSpeed = 1f;
+    public TextMeshProUGUI soulAmount;
     [SerializeField] private float energyFillSpeed = 4f;  // ������������ƽ���ٶ�
 
     // ����ֵ���
     public TextMeshProUGUI armorText;
 
-    private Coroutine energyCoroutine;  // ����ƽ��������
+    private Coroutine energyCoroutine;  // 
+    private Coroutine soulCoroutine;    // soulAmount 
 
     private void Awake()
     {
@@ -93,10 +92,7 @@ public class PlayerHUDUI : MonoBehaviour
     {
         if (playerProperty != null)
         {
-            // ������
-            int expRequired = playerProperty.level * 30;
-            playerEXPBarFill.fillAmount = expRequired > 0 ? (float)playerProperty.currEXP / expRequired : 0f;
-            levelText.text = playerProperty.level.ToString();
+            soulAmount.text = playerProperty.currSoulAmount.ToString();
 
             
             if (playerEnergyBarFill != null)
@@ -153,64 +149,41 @@ public class PlayerHUDUI : MonoBehaviour
         playerEnergyBarFill.fillAmount = target;
         energyCoroutine = null;
     }
-    // ==================== ������ϵͳ����ԭ�������������� ====================
-    public void UpdateEXPBar(bool levelUp = false)
+
+    public void UpdateSoulAmount()//更新SoulAmount 
     {
-        if (levelUp)
+        if (soulAmount != null && playerProperty != null)
         {
-            StartCoroutine(LevelUpAnimation());
-        }
-        else
-        {
-            StartCoroutine(AnimateEXPBar());
+            if (soulCoroutine != null)
+                StopCoroutine(soulCoroutine);
+
+            int targetAmount = playerProperty.currSoulAmount;//读取更新后的currsoulamount
+
+            int currentDisplay;
+            if (!int.TryParse(soulAmount.text, out currentDisplay))
+                currentDisplay = targetAmount;
+
+            soulCoroutine = StartCoroutine(AnimateNumber(currentDisplay, targetAmount, 0.5f));
         }
     }
 
-    private IEnumerator LevelUpAnimation()
+    IEnumerator AnimateNumber(int from, int to, float duration)//更新SoulAmount-数字跳动效果
     {
-        while (playerEXPBarFill.fillAmount < 1f)
+        float elapsed = 0f;
+        while (elapsed < duration)
         {
-            playerEXPBarFill.fillAmount = Mathf.MoveTowards(
-                playerEXPBarFill.fillAmount, 1f, expFillSpeed * Time.deltaTime);
+            elapsed += Time.deltaTime;
+            float t = elapsed / duration;
+            t = Mathf.SmoothStep(0, 1, t);
+            int current = Mathf.RoundToInt(Mathf.Lerp(from, to, t));
+            soulAmount.text = current.ToString();
             yield return null;
         }
-
-        UpdateEXPText();
-        yield return new WaitForSeconds(0.3f);
-        playerEXPBarFill.fillAmount = 0f;
-
-        if (playerProperty.currEXP > 0)
-        {
-            StartCoroutine(AnimateEXPBar());
-        }
+        soulAmount.text = to.ToString();
+        soulCoroutine = null;
     }
 
-    private IEnumerator AnimateEXPBar()
-    {
-        int expRequired = playerProperty.level * 30;
-        if (expRequired <= 0) yield break;
-
-        float targetFill = (float)playerProperty.currEXP / expRequired;
-
-        while (playerEXPBarFill.fillAmount < targetFill - 0.001f)
-        {
-            playerEXPBarFill.fillAmount = Mathf.MoveTowards(
-                playerEXPBarFill.fillAmount, targetFill, expFillSpeed * Time.deltaTime);
-            yield return null;
-        }
-
-        playerEXPBarFill.fillAmount = targetFill;
-    }
-
-    public void UpdateEXPText()
-    {
-        if (levelText != null && playerProperty != null)
-        {
-            levelText.text = playerProperty.level.ToString();
-        }
-    }
-
-    // ==================== ������ʾ ====================
+    //护甲值更新
     public void UpdateArmorDisplay()
     {
         if (playerProperty != null && armorText != null)
@@ -226,8 +199,8 @@ public class PlayerHUDUI : MonoBehaviour
         if (playerProperty != null)
             OnEnergyChanged(playerProperty.EnergyNormalized); // ǿ��ˢ��������
         UpdateArmorDisplay();
-        UpdateEXPBar();
-        UpdateEXPText();
+        if (soulAmount != null && playerProperty != null)
+            soulAmount.text = playerProperty.currSoulAmount.ToString();
     }
 
     private void OnDestroy()

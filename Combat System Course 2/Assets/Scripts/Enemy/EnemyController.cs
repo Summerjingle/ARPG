@@ -1,3 +1,4 @@
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -11,11 +12,11 @@ public class EnemyController : MonoBehaviour
 {
     [Header("��������")]
     public LootTable lootTable;
-    public string enemyTypeID = "Enemy"; // ��������ϵͳ
+    public string enemyTypeID = "Enemy"; 
 
     [Header("��������")]
-    public float lootSpawnDelay = 1f; // �����ӳ�ʱ��
-    public int EXP = 20;
+    public float lootSpawnDelay = 1f; 
+    public int provideSoulAmount = 20;
     public EnemyHeathBar healthBar;
     public bool IsUncounterable= false;
 

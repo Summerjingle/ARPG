@@ -59,7 +59,7 @@ public class MessageUI : MonoBehaviour
         UIStateManager.SetUIActive(false);
         Time.timeScale = 1f;
         if (IsInGameScene())
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(updatePosition: false);
 
         SaveManager.Instance.ResetSaveManagerState();
         SaveManager.shouldLoadFromSave = false;

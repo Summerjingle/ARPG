@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class SwitchMechanism : MonoBehaviour
 {
-    [Header("»ú¹Ø±êÊ¶")]
-    [Tooltip("»ú¹ØµÄÎ¨Ò»ID£¬±ØÐëÊÖ¶¯ÉèÖÃ£¡½¨Òé¸ñÊ½£º³¡¾°Ãû_»ú¹ØÃû_Î»ÖÃ")]
+    [Header("ï¿½ï¿½ï¿½Ø±ï¿½Ê¶")]
+    [Tooltip("ï¿½ï¿½ï¿½Øµï¿½Î¨Ò»IDï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½_Î»ï¿½ï¿½")]
     public string mechanismId;
 
-    [Header("´æµµÉèÖÃ")]
-    [Tooltip("Èç¹ûÎªtrue£¬»ú¹Ø¼¤»î×´Ì¬»áÔÚµ±Ç°´æµµÖÐÓÀ¾Ã±£´æ£»Èç¹ûÎªfalse£¬Ã¿´Î³¡¾°¼ÓÔØ¶¼»áÖØÖÃ")]
+    [Header("ï¿½æµµï¿½ï¿½ï¿½ï¿½")]
+    [Tooltip("ï¿½ï¿½ï¿½Îªtrueï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½Úµï¿½Ç°ï¿½æµµï¿½ï¿½ï¿½ï¿½ï¿½Ã±ï¿½ï¿½æ£»ï¿½ï¿½ï¿½Îªfalseï¿½ï¿½Ã¿ï¿½Î³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public bool persistAcrossSaves = true; 
 
     private string currentSceneName;
@@ -27,12 +27,12 @@ public class SwitchMechanism : MonoBehaviour
 
     private void Start()
     {
-        // Æô¶¯Ê±¼ì²é´æµµ×´Ì¬
+        // ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½æµµ×´Ì¬
         CheckActivationState();
     }
 
     /// <summary>
-    /// ¼ì²é»ú¹ØÊÇ·ñÒÑÔÚ´æµµÖÐ¼¤»î
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½Ú´æµµï¿½Ð¼ï¿½ï¿½ï¿½
     /// </summary>
     private void CheckActivationState()
     {
@@ -44,12 +44,12 @@ public class SwitchMechanism : MonoBehaviour
         if (SaveManager.Instance.currentSaveData.IsMechanismActivated(currentSceneName, mechanismId))
         {
             isActivated = true;
-            Debug.Log($"»ú¹Ø {mechanismId} ÒÑ´Ó´æµµ¼ÓÔØ¼¤»î×´Ì¬");
+            Debug.Log($"ï¿½ï¿½ï¿½ï¿½ {mechanismId} ï¿½Ñ´Ó´æµµï¿½ï¿½ï¿½Ø¼ï¿½ï¿½ï¿½×´Ì¬");
         }
     }
 
     /// <summary>
-    /// ¼¤»î»ú¹Ø£¨ÓÉ¾ßÌå»ú¹Ø½Å±¾µ÷ÓÃ£©
+    /// ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø£ï¿½ï¿½É¾ï¿½ï¿½ï¿½ï¿½ï¿½Ø½Å±ï¿½ï¿½ï¿½ï¿½Ã£ï¿½
     /// </summary>
     public void Activate()
     {
@@ -57,17 +57,17 @@ public class SwitchMechanism : MonoBehaviour
 
         isActivated = true;
 
-        // ±£´æ×´Ì¬µ½´æµµ
+        // ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½æµµ
         if (persistAcrossSaves)
         {
             SaveActivationState();
         }
 
-        Debug.Log($"»ú¹Ø {mechanismId} ÒÑ¼¤»î²¢±£´æ");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ {mechanismId} ï¿½Ñ¼ï¿½ï¿½î²¢ï¿½ï¿½ï¿½ï¿½");
     }
 
     /// <summary>
-    /// ²éÑ¯»ú¹ØÊÇ·ñÒÑ¼¤»î
+    /// ï¿½ï¿½Ñ¯ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ñ¼ï¿½ï¿½ï¿½
     /// </summary>
     public bool IsActivated()
     {
@@ -75,12 +75,12 @@ public class SwitchMechanism : MonoBehaviour
     }
 
     /// <summary>
-    /// ÖØÖÃ»ú¹Ø×´Ì¬£¨ÓÃÓÚµ÷ÊÔ£©
+    /// ï¿½ï¿½ï¿½Ã»ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½Úµï¿½ï¿½Ô£ï¿½
     /// </summary>
     public void ResetMechanism()
     {
         isActivated = false;
-        Debug.Log($"»ú¹Ø {mechanismId} ÒÑÖØÖÃ");
+        Debug.Log($"ï¿½ï¿½ï¿½ï¿½ {mechanismId} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½");
     }
 
     private void SaveActivationState()
@@ -88,16 +88,16 @@ public class SwitchMechanism : MonoBehaviour
         if (SaveManager.Instance != null && SaveManager.Instance.currentSaveData != null)
         {
             SaveManager.Instance.currentSaveData.MarkMechanismAsActivated(currentSceneName, mechanismId);
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(updatePosition: false);
         }
     }
 
-    [ContextMenu("Éú³ÉÎ¨Ò»ID")]
+    [ContextMenu("ï¿½ï¿½ï¿½ï¿½Î¨Ò»ID")]
     private void GenerateMechanismId()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         Vector3 pos = transform.position;
         mechanismId = $"{sceneName}_Mech_{gameObject.name}_{pos.x:F0}_{pos.y:F0}_{pos.z:F0}";
-        Debug.Log($"Éú³ÉµÄ»ú¹ØID: {mechanismId}");
+        Debug.Log($"ï¿½ï¿½ï¿½ÉµÄ»ï¿½ï¿½ï¿½ID: {mechanismId}");
     }
 }

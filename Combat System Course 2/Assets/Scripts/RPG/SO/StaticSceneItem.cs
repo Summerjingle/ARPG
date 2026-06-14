@@ -43,7 +43,7 @@ public class StaticSceneItem : MonoBehaviour
         if (SaveManager.Instance != null && SaveManager.Instance.currentSaveData != null)
         {
             SaveManager.Instance.currentSaveData.MarkSceneItemAsPicked(currentSceneName, itemId);
-            SaveManager.Instance.SaveGame();
+            SaveManager.Instance.SaveGame(updatePosition: false);
         }
 
         Debug.Log($"拾取静态物品: {itemId}");
