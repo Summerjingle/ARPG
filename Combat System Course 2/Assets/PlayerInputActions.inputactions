@@ -94,6 +94,24 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "QuickItemModifier",
+                    "type": "Button",
+                    "id": "54997d25-7e90-4cd5-b0a0-bcca7f8d0915",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "QuickItemNavigate",
+                    "type": "Value",
+                    "id": "5ddfab8b-4b7c-4418-8643-5c0dcd0bf43c",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
                 }
             ],
             "bindings": [
@@ -177,7 +195,7 @@
                 {
                     "name": "",
                     "id": "a62fcb39-da88-43aa-861c-a118eed64632",
-                    "path": "<Gamepad>/leftShoulder",
+                    "path": "<Gamepad>/rightShoulder",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -265,7 +283,7 @@
                 {
                     "name": "",
                     "id": "26f33631-35a2-4144-8195-b8614c780888",
-                    "path": "<Gamepad>/buttonWest",
+                    "path": "<Gamepad>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -276,7 +294,7 @@
                 {
                     "name": "",
                     "id": "60c70224-113b-4619-ac1c-c300fc50dd3b",
-                    "path": "<XInputController>/buttonWest",
+                    "path": "<XInputController>/buttonSouth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -320,7 +338,7 @@
                 {
                     "name": "",
                     "id": "5630ece3-1241-416c-bc68-a6acfb618cf9",
-                    "path": "<Gamepad>/rightShoulder",
+                    "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -369,6 +387,50 @@
                     "processors": "",
                     "groups": "",
                     "action": "Block",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "bae34dc6-e842-41a4-8798-0d9446445d3e",
+                    "path": "<Gamepad>/leftShoulder",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QuickItemModifier",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "825cb33f-614c-43a3-8712-e48dd156b81e",
+                    "path": "<Keyboard>/tab",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QuickItemModifier",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "d78ec9ca-151e-4ea9-8b14-59368957d5ba",
+                    "path": "<Mouse>/scroll",
+                    "interactions": "",
+                    "processors": "ScaleVector2(x=0,y=0.1)",
+                    "groups": "",
+                    "action": "QuickItemNavigate",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "95fee017-854f-4779-b601-a9f17d4b603e",
+                    "path": "<Gamepad>/dpad",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "QuickItemNavigate",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

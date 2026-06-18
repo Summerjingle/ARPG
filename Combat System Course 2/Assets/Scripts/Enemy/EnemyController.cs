@@ -34,8 +34,6 @@ public class EnemyController : MonoBehaviour
     public ICombatSystem Fighter { get; private set; }
     public VisionSensor VisionSensor { get; set; }
 
-    public SkinnedMashHighlighter MeshHighlighter { get; private set; }
-
     public CharacterController CharacterController { get; private set; }
     private void Start()
     {
@@ -43,7 +41,6 @@ public class EnemyController : MonoBehaviour
         Animator = GetComponent<Animator>();
         Fighter = GetComponent<ICombatSystem>();
         CharacterController = GetComponent<CharacterController>();
-        MeshHighlighter = GetComponent<SkinnedMashHighlighter>();
         healthBar = GetComponentInChildren<EnemyHeathBar>();
         CombatSystem = GetComponent<ICombatSystem>();
         HealthSystem healthSystem = GetComponent<HealthSystem>();

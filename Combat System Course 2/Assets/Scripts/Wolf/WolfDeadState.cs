@@ -14,26 +14,21 @@ public class WolfDeadState : State<WolfController>
         wolf.NavAgent.enabled = false;
 
         
-        // 通知任务系统
+        // 通知锟斤拷锟斤拷系统
         QuestManager.Instance.OnEnemyKilled("Wolf", wolf.wolfTypeID);
-        Debug.Log($"已通知任务系统: Wolf, {wolf.wolfTypeID}");
+        Debug.Log($"锟斤拷通知锟斤拷锟斤拷系统: Wolf, {wolf.wolfTypeID}");
 
-        // 生成掉落物品
+        // 锟斤拷锟缴碉拷锟斤拷锟斤拷品
         owner.StartCoroutine(SpawnWolfLootWithDelay(wolf));
 
-        // 从EnemyManager中移除
+        // 锟斤拷EnemyManager锟斤拷锟狡筹拷
         if (wolf.EnemyController != null)
         {
             EnemyManager.i.RemoveEnemyInRange(wolf.EnemyController);
         }
 
-        // 取消高亮
-        if (wolf.EnemyController?.MeshHighlighter != null)
-        {
-            wolf.EnemyController.MeshHighlighter.HighlightMesh(false);
-        }
-
-        // 禁用所有碰撞器
+        // 取锟斤拷锟斤拷锟斤拷
+        // 绂佺敤鎵�鏈夌鎾炰綋 锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷撞锟斤拷
         foreach (var collider in wolf.GetComponents<Collider>())
         {
             collider.enabled = false;
@@ -45,7 +40,7 @@ public class WolfDeadState : State<WolfController>
 
         wolf.DisableAttackCollider();
 
-        // 禁用相关组件
+        // 锟斤拷锟斤拷锟斤拷锟斤拷锟斤拷
         var visionSensor = wolf.GetComponentInChildren<VisionSensor>();
         if (visionSensor != null) visionSensor.enabled = false;
 
@@ -57,7 +52,7 @@ public class WolfDeadState : State<WolfController>
 
     private IEnumerator SpawnWolfLootWithDelay(WolfController wolfController)
     {
-        yield return new WaitForSeconds(1f); // 狼的掉落延迟
+        yield return new WaitForSeconds(1f); // 锟角的碉拷锟斤拷锟接筹拷
 
         if (wolfController != null && wolfController.wolfLootTable != null)
         {

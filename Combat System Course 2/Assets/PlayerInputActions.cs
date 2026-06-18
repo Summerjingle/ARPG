@@ -180,6 +180,24 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QuickItemModifier"",
+                    ""type"": ""Button"",
+                    ""id"": ""54997d25-7e90-4cd5-b0a0-bcca7f8d0915"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""QuickItemNavigate"",
+                    ""type"": ""Value"",
+                    ""id"": ""5ddfab8b-4b7c-4418-8643-5c0dcd0bf43c"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -263,7 +281,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""a62fcb39-da88-43aa-861c-a118eed64632"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -351,7 +369,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""26f33631-35a2-4144-8195-b8614c780888"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -362,7 +380,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""60c70224-113b-4619-ac1c-c300fc50dd3b"",
-                    ""path"": ""<XInputController>/buttonWest"",
+                    ""path"": ""<XInputController>/buttonSouth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -406,7 +424,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""5630ece3-1241-416c-bc68-a6acfb618cf9"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
@@ -455,6 +473,50 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Block"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bae34dc6-e842-41a4-8798-0d9446445d3e"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QuickItemModifier"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""825cb33f-614c-43a3-8712-e48dd156b81e"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QuickItemModifier"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d78ec9ca-151e-4ea9-8b14-59368957d5ba"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": ""ScaleVector2(x=0,y=0.1)"",
+                    ""groups"": """",
+                    ""action"": ""QuickItemNavigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""95fee017-854f-4779-b601-a9f17d4b603e"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QuickItemNavigate"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1749,6 +1811,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_DrawWeapon = m_Player.FindAction("DrawWeapon", throwIfNotFound: true);
         m_Player_Lock = m_Player.FindAction("Lock", throwIfNotFound: true);
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
+        m_Player_QuickItemModifier = m_Player.FindAction("QuickItemModifier", throwIfNotFound: true);
+        m_Player_QuickItemNavigate = m_Player.FindAction("QuickItemNavigate", throwIfNotFound: true);
         // UI_MainMenu
         m_UI_MainMenu = asset.FindActionMap("UI_MainMenu", throwIfNotFound: true);
         m_UI_MainMenu_Navigate = m_UI_MainMenu.FindAction("Navigate", throwIfNotFound: true);
@@ -1877,6 +1941,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_DrawWeapon;
     private readonly InputAction m_Player_Lock;
     private readonly InputAction m_Player_Block;
+    private readonly InputAction m_Player_QuickItemModifier;
+    private readonly InputAction m_Player_QuickItemNavigate;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -1928,6 +1994,14 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/Block".
         /// </summary>
         public InputAction @Block => m_Wrapper.m_Player_Block;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/QuickItemModifier".
+        /// </summary>
+        public InputAction @QuickItemModifier => m_Wrapper.m_Player_QuickItemModifier;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/QuickItemNavigate".
+        /// </summary>
+        public InputAction @QuickItemNavigate => m_Wrapper.m_Player_QuickItemNavigate;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -1984,6 +2058,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Block.started += instance.OnBlock;
             @Block.performed += instance.OnBlock;
             @Block.canceled += instance.OnBlock;
+            @QuickItemModifier.started += instance.OnQuickItemModifier;
+            @QuickItemModifier.performed += instance.OnQuickItemModifier;
+            @QuickItemModifier.canceled += instance.OnQuickItemModifier;
+            @QuickItemNavigate.started += instance.OnQuickItemNavigate;
+            @QuickItemNavigate.performed += instance.OnQuickItemNavigate;
+            @QuickItemNavigate.canceled += instance.OnQuickItemNavigate;
         }
 
         /// <summary>
@@ -2025,6 +2105,12 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Block.started -= instance.OnBlock;
             @Block.performed -= instance.OnBlock;
             @Block.canceled -= instance.OnBlock;
+            @QuickItemModifier.started -= instance.OnQuickItemModifier;
+            @QuickItemModifier.performed -= instance.OnQuickItemModifier;
+            @QuickItemModifier.canceled -= instance.OnQuickItemModifier;
+            @QuickItemNavigate.started -= instance.OnQuickItemNavigate;
+            @QuickItemNavigate.performed -= instance.OnQuickItemNavigate;
+            @QuickItemNavigate.canceled -= instance.OnQuickItemNavigate;
         }
 
         /// <summary>
@@ -2917,6 +3003,20 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnBlock(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "QuickItemModifier" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnQuickItemModifier(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "QuickItemNavigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnQuickItemNavigate(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_MainMenu" which allows adding and removing callbacks.

@@ -12,8 +12,8 @@ public class AutoSaveIndicator : MonoBehaviour
     [SerializeField] private float rotateSpeed = 360f;
     [SerializeField] private float spinDuration = 1.5f;
     [SerializeField] private float savedShowDuration = 1.5f;
-    [SerializeField] private string savingText = "保存中...";
-    [SerializeField] private string savedText = "存档完成";
+    [SerializeField] private string savingText = "";
+    [SerializeField] private string savedText = "";
 
     private enum State { Hidden, Spinning, ShowingSaved }
     private State state;

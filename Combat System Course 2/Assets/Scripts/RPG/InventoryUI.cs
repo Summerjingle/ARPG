@@ -15,8 +15,8 @@ public class InventoryUI : MonoBehaviour
         Equipment
     }
     [Header("区域隔离 (CanvasGroup)")]
-    public CanvasGroup itemsCanvasGroup;     // 拖入物品栏的父级 CanvasGroup
-    public CanvasGroup equipmentCanvasGroup; // 拖入装备栏的父级 CanvasGroup
+    public CanvasGroup itemsCanvasGroup;     // 物品栏的父级 CanvasGroup
+    public CanvasGroup equipmentCanvasGroup; // 装备栏的父级 CanvasGroup
     public Transform itemsSwitchButton;
     public Transform equipmentSwitchButton;
     private Vector3 originV3=new Vector3(1,1,1);

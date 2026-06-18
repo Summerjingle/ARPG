@@ -8,6 +8,7 @@ public class CombatMovementState : State<EnemyController>
     [SerializeField] private float distanceToStand = 3f;
     [SerializeField] private float adjustDistanceThreshold = 1f;
     [SerializeField] private float circlingSpeed = 20f;
+    [SerializeField] private float rotationSpeed = 500f;
     [SerializeField] private Vector2 idleTimeRange = new Vector2(2, 5);
     [SerializeField] private Vector2 circlingTimeRange = new Vector2(3, 6);
 
@@ -77,6 +78,14 @@ public class CombatMovementState : State<EnemyController>
             }
 
             enemyController.NavAgent.SetDestination(enemyController.Target.transform.position);
+
+            // 手动转向目标（updateRotation = false 时 NavAgent 不负责旋转）
+            Vector3 dirToTarget = enemyController.Target.transform.position - enemyController.transform.position;
+            dirToTarget.y = 0;
+            enemyController.transform.rotation = Quaternion.RotateTowards(
+                enemyController.transform.rotation,
+                Quaternion.LookRotation(dirToTarget),
+                rotationSpeed * Time.deltaTime);
         }
         else if (state == AICombatStates.Circling)//3.Χ��״̬
         {
