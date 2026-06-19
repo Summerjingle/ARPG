@@ -198,6 +198,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""QuickItemUse"",
+                    ""type"": ""Button"",
+                    ""id"": ""86daa21b-719e-470f-a936-08eead41e9a8"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -517,6 +526,28 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""QuickItemNavigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6e9ffd28-6673-4b5d-8400-e81da55e59fb"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QuickItemUse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""ff9395aa-c429-4d30-b9f0-5ac586a64b6a"",
+                    ""path"": ""<Keyboard>/f"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""QuickItemUse"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -1449,6 +1480,349 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ]
         },
         {
+            ""name"": ""UI_ItemDetail"",
+            ""id"": ""11b39d0c-f418-4971-b1d9-9e3e80d83017"",
+            ""actions"": [
+                {
+                    ""name"": ""Navigate"",
+                    ""type"": ""Value"",
+                    ""id"": ""f60108f3-5a3e-4da4-b999-6197112ecff4"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Use"",
+                    ""type"": ""Button"",
+                    ""id"": ""e50eb86f-1723-49df-8671-4c1b6b4a3135"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""9485ce1e-1574-41a6-8a83-dcfccd5b87ae"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""SetQuickSlot"",
+                    ""type"": ""Button"",
+                    ""id"": ""5d75d8e5-2a53-45c8-a5af-de407945a12c"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""4b3e9da6-3ce8-4f73-aedd-6824646ca8ab"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""55df32c9-faf9-4500-886a-25d69e03924d"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""WASD"",
+                    ""id"": ""f0aca4de-0b7a-412e-9fa1-b35e7c77836a"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""f45fcad4-61bb-4331-ae8d-0ca02f523c84"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""3832b0ee-5605-4015-be5d-d53819ab45f2"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""e48e5465-99db-4500-b10f-6c7c1ebcd425"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""cb95d842-9a59-44a7-98e1-3837fafa899a"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""aad35304-c1cd-45b6-bab8-0ff155ca4abe"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c0e33846-b2ff-4d03-aecb-d976a928c3a2"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Use"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""55865f92-7b4a-44c9-9bda-b824cf50678c"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""60eaf8e4-45f3-42e7-98d4-22b06f892554"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3ffd04a4-44f4-4790-9aa2-cb6c83f3a1e7"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SetQuickSlot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cf065bc8-bdfe-4b6e-92ca-c537cea9be83"",
+                    ""path"": ""<Keyboard>/e"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""SetQuickSlot"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""UI_QuickUseBar"",
+            ""id"": ""599d1089-80c8-44da-906b-46d1086fd11a"",
+            ""actions"": [
+                {
+                    ""name"": ""Navigate"",
+                    ""type"": ""Value"",
+                    ""id"": ""a187d9e7-01d6-4327-a611-ab6bb5bce330"",
+                    ""expectedControlType"": ""Vector2"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""Confirm"",
+                    ""type"": ""Button"",
+                    ""id"": ""b58875fa-e6bc-41b3-8bc4-915e03e5630d"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""664f36d6-d643-4bd0-8195-913aeb98f41a"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""1e479772-1694-421f-814c-78072d698b47"",
+                    ""path"": ""<Gamepad>/dpad"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""28cdb95a-aabe-4ef3-baa1-710be75814fc"",
+                    ""path"": ""<Gamepad>/leftStick"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""WASD"",
+                    ""id"": ""6c924fc1-13b3-4aee-9125-47345b80a14b"",
+                    ""path"": ""2DVector"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": true,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": ""up"",
+                    ""id"": ""81883f04-c2fd-476f-8de8-a41b08a3531f"",
+                    ""path"": ""<Keyboard>/w"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""down"",
+                    ""id"": ""8b18aeeb-d935-463b-94cb-2bff24b54a8f"",
+                    ""path"": ""<Keyboard>/s"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""left"",
+                    ""id"": ""07c2e6d4-431f-472f-a7a3-de41df80d93e"",
+                    ""path"": ""<Keyboard>/a"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": ""right"",
+                    ""id"": ""aaf5ba28-f8f0-40c4-8aa3-2d00ac1a3bb0"",
+                    ""path"": ""<Keyboard>/d"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Navigate"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": true
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3471ef60-857e-4b96-bae5-0383ec3873ab"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""833b3c82-b4ea-44a0-9c9a-5b35573fa845"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""fa0fe758-2901-4c32-a951-e7d39ccfc8de"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Confirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5589ea84-ac7f-4d56-9659-a46a8a27cbc8"",
+                    ""path"": ""<Keyboard>/enter"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Confirm"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
             ""name"": ""UI_PauseMenu"",
             ""id"": ""b00099d1-d21e-45d3-8389-b02ac59fe89f"",
             ""actions"": [
@@ -1813,6 +2187,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_Block = m_Player.FindAction("Block", throwIfNotFound: true);
         m_Player_QuickItemModifier = m_Player.FindAction("QuickItemModifier", throwIfNotFound: true);
         m_Player_QuickItemNavigate = m_Player.FindAction("QuickItemNavigate", throwIfNotFound: true);
+        m_Player_QuickItemUse = m_Player.FindAction("QuickItemUse", throwIfNotFound: true);
         // UI_MainMenu
         m_UI_MainMenu = asset.FindActionMap("UI_MainMenu", throwIfNotFound: true);
         m_UI_MainMenu_Navigate = m_UI_MainMenu.FindAction("Navigate", throwIfNotFound: true);
@@ -1830,6 +2205,17 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_Inventory_Cancel = m_UI_Inventory.FindAction("Cancel", throwIfNotFound: true);
         m_UI_Inventory_SwitchLeft = m_UI_Inventory.FindAction("SwitchLeft", throwIfNotFound: true);
         m_UI_Inventory_SwitchRight = m_UI_Inventory.FindAction("SwitchRight", throwIfNotFound: true);
+        // UI_ItemDetail
+        m_UI_ItemDetail = asset.FindActionMap("UI_ItemDetail", throwIfNotFound: true);
+        m_UI_ItemDetail_Navigate = m_UI_ItemDetail.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_ItemDetail_Use = m_UI_ItemDetail.FindAction("Use", throwIfNotFound: true);
+        m_UI_ItemDetail_Cancel = m_UI_ItemDetail.FindAction("Cancel", throwIfNotFound: true);
+        m_UI_ItemDetail_SetQuickSlot = m_UI_ItemDetail.FindAction("SetQuickSlot", throwIfNotFound: true);
+        // UI_QuickUseBar
+        m_UI_QuickUseBar = asset.FindActionMap("UI_QuickUseBar", throwIfNotFound: true);
+        m_UI_QuickUseBar_Navigate = m_UI_QuickUseBar.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_QuickUseBar_Confirm = m_UI_QuickUseBar.FindAction("Confirm", throwIfNotFound: true);
+        m_UI_QuickUseBar_Cancel = m_UI_QuickUseBar.FindAction("Cancel", throwIfNotFound: true);
         // UI_PauseMenu
         m_UI_PauseMenu = asset.FindActionMap("UI_PauseMenu", throwIfNotFound: true);
         m_UI_PauseMenu_Navigate = m_UI_PauseMenu.FindAction("Navigate", throwIfNotFound: true);
@@ -1852,6 +2238,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         UnityEngine.Debug.Assert(!m_UI_MainMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_MainMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_SaveMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_SaveMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_Inventory.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_Inventory.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UI_ItemDetail.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_ItemDetail.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UI_QuickUseBar.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_QuickUseBar.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_PauseMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_PauseMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_BonfireMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_BonfireMenu.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_Global.enabled, "This will cause a leak and performance issues, PlayerInputActions.Global.Disable() has not been called.");
@@ -1943,6 +2331,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Block;
     private readonly InputAction m_Player_QuickItemModifier;
     private readonly InputAction m_Player_QuickItemNavigate;
+    private readonly InputAction m_Player_QuickItemUse;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -2002,6 +2391,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/QuickItemNavigate".
         /// </summary>
         public InputAction @QuickItemNavigate => m_Wrapper.m_Player_QuickItemNavigate;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/QuickItemUse".
+        /// </summary>
+        public InputAction @QuickItemUse => m_Wrapper.m_Player_QuickItemUse;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2064,6 +2457,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @QuickItemNavigate.started += instance.OnQuickItemNavigate;
             @QuickItemNavigate.performed += instance.OnQuickItemNavigate;
             @QuickItemNavigate.canceled += instance.OnQuickItemNavigate;
+            @QuickItemUse.started += instance.OnQuickItemUse;
+            @QuickItemUse.performed += instance.OnQuickItemUse;
+            @QuickItemUse.canceled += instance.OnQuickItemUse;
         }
 
         /// <summary>
@@ -2111,6 +2507,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @QuickItemNavigate.started -= instance.OnQuickItemNavigate;
             @QuickItemNavigate.performed -= instance.OnQuickItemNavigate;
             @QuickItemNavigate.canceled -= instance.OnQuickItemNavigate;
+            @QuickItemUse.started -= instance.OnQuickItemUse;
+            @QuickItemUse.performed -= instance.OnQuickItemUse;
+            @QuickItemUse.canceled -= instance.OnQuickItemUse;
         }
 
         /// <summary>
@@ -2520,6 +2919,253 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// Provides a new <see cref="UI_InventoryActions" /> instance referencing this action map.
     /// </summary>
     public UI_InventoryActions @UI_Inventory => new UI_InventoryActions(this);
+
+    // UI_ItemDetail
+    private readonly InputActionMap m_UI_ItemDetail;
+    private List<IUI_ItemDetailActions> m_UI_ItemDetailActionsCallbackInterfaces = new List<IUI_ItemDetailActions>();
+    private readonly InputAction m_UI_ItemDetail_Navigate;
+    private readonly InputAction m_UI_ItemDetail_Use;
+    private readonly InputAction m_UI_ItemDetail_Cancel;
+    private readonly InputAction m_UI_ItemDetail_SetQuickSlot;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "UI_ItemDetail".
+    /// </summary>
+    public struct UI_ItemDetailActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public UI_ItemDetailActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "UI_ItemDetail/Navigate".
+        /// </summary>
+        public InputAction @Navigate => m_Wrapper.m_UI_ItemDetail_Navigate;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_ItemDetail/Use".
+        /// </summary>
+        public InputAction @Use => m_Wrapper.m_UI_ItemDetail_Use;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_ItemDetail/Cancel".
+        /// </summary>
+        public InputAction @Cancel => m_Wrapper.m_UI_ItemDetail_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_ItemDetail/SetQuickSlot".
+        /// </summary>
+        public InputAction @SetQuickSlot => m_Wrapper.m_UI_ItemDetail_SetQuickSlot;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_UI_ItemDetail; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="UI_ItemDetailActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(UI_ItemDetailActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="UI_ItemDetailActions" />
+        public void AddCallbacks(IUI_ItemDetailActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UI_ItemDetailActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UI_ItemDetailActionsCallbackInterfaces.Add(instance);
+            @Navigate.started += instance.OnNavigate;
+            @Navigate.performed += instance.OnNavigate;
+            @Navigate.canceled += instance.OnNavigate;
+            @Use.started += instance.OnUse;
+            @Use.performed += instance.OnUse;
+            @Use.canceled += instance.OnUse;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+            @SetQuickSlot.started += instance.OnSetQuickSlot;
+            @SetQuickSlot.performed += instance.OnSetQuickSlot;
+            @SetQuickSlot.canceled += instance.OnSetQuickSlot;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="UI_ItemDetailActions" />
+        private void UnregisterCallbacks(IUI_ItemDetailActions instance)
+        {
+            @Navigate.started -= instance.OnNavigate;
+            @Navigate.performed -= instance.OnNavigate;
+            @Navigate.canceled -= instance.OnNavigate;
+            @Use.started -= instance.OnUse;
+            @Use.performed -= instance.OnUse;
+            @Use.canceled -= instance.OnUse;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+            @SetQuickSlot.started -= instance.OnSetQuickSlot;
+            @SetQuickSlot.performed -= instance.OnSetQuickSlot;
+            @SetQuickSlot.canceled -= instance.OnSetQuickSlot;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_ItemDetailActions.UnregisterCallbacks(IUI_ItemDetailActions)" />.
+        /// </summary>
+        /// <seealso cref="UI_ItemDetailActions.UnregisterCallbacks(IUI_ItemDetailActions)" />
+        public void RemoveCallbacks(IUI_ItemDetailActions instance)
+        {
+            if (m_Wrapper.m_UI_ItemDetailActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="UI_ItemDetailActions.AddCallbacks(IUI_ItemDetailActions)" />
+        /// <seealso cref="UI_ItemDetailActions.RemoveCallbacks(IUI_ItemDetailActions)" />
+        /// <seealso cref="UI_ItemDetailActions.UnregisterCallbacks(IUI_ItemDetailActions)" />
+        public void SetCallbacks(IUI_ItemDetailActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UI_ItemDetailActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UI_ItemDetailActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="UI_ItemDetailActions" /> instance referencing this action map.
+    /// </summary>
+    public UI_ItemDetailActions @UI_ItemDetail => new UI_ItemDetailActions(this);
+
+    // UI_QuickUseBar
+    private readonly InputActionMap m_UI_QuickUseBar;
+    private List<IUI_QuickUseBarActions> m_UI_QuickUseBarActionsCallbackInterfaces = new List<IUI_QuickUseBarActions>();
+    private readonly InputAction m_UI_QuickUseBar_Navigate;
+    private readonly InputAction m_UI_QuickUseBar_Confirm;
+    private readonly InputAction m_UI_QuickUseBar_Cancel;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "UI_QuickUseBar".
+    /// </summary>
+    public struct UI_QuickUseBarActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public UI_QuickUseBarActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "UI_QuickUseBar/Navigate".
+        /// </summary>
+        public InputAction @Navigate => m_Wrapper.m_UI_QuickUseBar_Navigate;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_QuickUseBar/Confirm".
+        /// </summary>
+        public InputAction @Confirm => m_Wrapper.m_UI_QuickUseBar_Confirm;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_QuickUseBar/Cancel".
+        /// </summary>
+        public InputAction @Cancel => m_Wrapper.m_UI_QuickUseBar_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_UI_QuickUseBar; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="UI_QuickUseBarActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(UI_QuickUseBarActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="UI_QuickUseBarActions" />
+        public void AddCallbacks(IUI_QuickUseBarActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UI_QuickUseBarActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UI_QuickUseBarActionsCallbackInterfaces.Add(instance);
+            @Navigate.started += instance.OnNavigate;
+            @Navigate.performed += instance.OnNavigate;
+            @Navigate.canceled += instance.OnNavigate;
+            @Confirm.started += instance.OnConfirm;
+            @Confirm.performed += instance.OnConfirm;
+            @Confirm.canceled += instance.OnConfirm;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="UI_QuickUseBarActions" />
+        private void UnregisterCallbacks(IUI_QuickUseBarActions instance)
+        {
+            @Navigate.started -= instance.OnNavigate;
+            @Navigate.performed -= instance.OnNavigate;
+            @Navigate.canceled -= instance.OnNavigate;
+            @Confirm.started -= instance.OnConfirm;
+            @Confirm.performed -= instance.OnConfirm;
+            @Confirm.canceled -= instance.OnConfirm;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_QuickUseBarActions.UnregisterCallbacks(IUI_QuickUseBarActions)" />.
+        /// </summary>
+        /// <seealso cref="UI_QuickUseBarActions.UnregisterCallbacks(IUI_QuickUseBarActions)" />
+        public void RemoveCallbacks(IUI_QuickUseBarActions instance)
+        {
+            if (m_Wrapper.m_UI_QuickUseBarActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="UI_QuickUseBarActions.AddCallbacks(IUI_QuickUseBarActions)" />
+        /// <seealso cref="UI_QuickUseBarActions.RemoveCallbacks(IUI_QuickUseBarActions)" />
+        /// <seealso cref="UI_QuickUseBarActions.UnregisterCallbacks(IUI_QuickUseBarActions)" />
+        public void SetCallbacks(IUI_QuickUseBarActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UI_QuickUseBarActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UI_QuickUseBarActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="UI_QuickUseBarActions" /> instance referencing this action map.
+    /// </summary>
+    public UI_QuickUseBarActions @UI_QuickUseBar => new UI_QuickUseBarActions(this);
 
     // UI_PauseMenu
     private readonly InputActionMap m_UI_PauseMenu;
@@ -3017,6 +3663,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnQuickItemNavigate(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "QuickItemUse" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnQuickItemUse(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_MainMenu" which allows adding and removing callbacks.
@@ -3118,6 +3771,71 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSwitchRight(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_ItemDetail" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="UI_ItemDetailActions.AddCallbacks(IUI_ItemDetailActions)" />
+    /// <seealso cref="UI_ItemDetailActions.RemoveCallbacks(IUI_ItemDetailActions)" />
+    public interface IUI_ItemDetailActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Navigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNavigate(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Use" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnUse(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "SetQuickSlot" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSetQuickSlot(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_QuickUseBar" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="UI_QuickUseBarActions.AddCallbacks(IUI_QuickUseBarActions)" />
+    /// <seealso cref="UI_QuickUseBarActions.RemoveCallbacks(IUI_QuickUseBarActions)" />
+    public interface IUI_QuickUseBarActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Navigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnNavigate(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Confirm" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnConfirm(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancel(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_PauseMenu" which allows adding and removing callbacks.

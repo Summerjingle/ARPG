@@ -111,6 +111,7 @@ public class PlayerController : MonoBehaviour
         StartCoroutine(DelayedRegistration());
         RegisterToHUD();
         UIStateManager.OnUIActiveStateChanged += OnUIActiveStateChanged;
+        InputManager.Instance.OnQuickItemUse += OnQuickItemUse;
         speedHash = Animator.StringToHash("Speed");
         dirXHash = Animator.StringToHash("DirX");
         dirYHash = Animator.StringToHash("DirY");
@@ -148,14 +149,6 @@ public class PlayerController : MonoBehaviour
         }
         sprintHeld = inputActions.Player.Sprint.IsPressed();
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
-
-        // 喝药逻辑
-        if (isGrounded && !isDrinking && Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            PlayerProperty.Instance.UseDrag(testHealthPotion);
-            isDrinking = true;
-        }
-
 
         if ((!isMovementEnabled && !isRolling) || (DialogueManager.Instance != null && DialogueManager.Instance.IsDialogueActive))
         {
@@ -601,6 +594,8 @@ public class PlayerController : MonoBehaviour
     private void OnDestroy()
     {
         UIStateManager.OnUIActiveStateChanged -= OnUIActiveStateChanged;
+        if (InputManager.Instance != null)
+            InputManager.Instance.OnQuickItemUse -= OnQuickItemUse;
         if (PlayerHUDUI.Instance != null)
         {
             PlayerHUDUI.Instance.UnregisterPlayerComponents();
@@ -663,6 +658,34 @@ public class PlayerController : MonoBehaviour
             if (cameraController != null)
                 cameraController.SetCameraHeight(charactercontroller.center.y, true);
         }
+    }
+
+    private void OnQuickItemUse()
+    {
+        // 只在 Player 模式下响应，UI 打开时不触发
+        if (UIStateManager.IsAnyUIActive) return;
+        if (!isGrounded || isDrinking) return;
+        if (combatSystem.InAction || isRolling) return;
+
+        ItemSO item = QuickItemBar.Instance?.CurrentItem;
+        if (item == null || item.itemType != ItemType.Consumable) return;
+
+        // 消耗物品数量
+        if (item.IsStackable() && item.amount > 1)
+        {
+            item.amount -= 1;
+            InventoryUI.Instance?.UpdateItemAmountDisplay(item);
+            QuickItemBar.Instance?.RefreshView();
+        }
+        else
+        {
+            // 最后一个 → 从背包移除，触发 OnItemRemoved → QuickItemBar 被动清槽
+            InventoryManager.Instance?.RemoveItem(item, 1);
+        }
+
+        // 播放喝药动画
+        PlayerProperty.Instance.UseDrag(item);
+        isDrinking = true;
     }
 
     public void OnDrinkAnimationComplete()

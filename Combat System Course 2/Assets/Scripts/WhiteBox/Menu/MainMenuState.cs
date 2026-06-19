@@ -23,6 +23,7 @@ public class MainMenuState : MonoBehaviour
     public GameObject pressAnyKeyHint;
     public GameObject Title;
     public GameObject menuRoot;
+
     
       
 
@@ -73,11 +74,11 @@ public class MainMenuState : MonoBehaviour
     {
         currentState = State.Transition;
         hitAnimator.SetTrigger("pressed");
-        
     }
     void EnterPressAnyKey()
     {
         currentState = State.PressAnyKey;
+        
         pressAnyKeyHint.SetActive(true);
         menuRoot.SetActive(false);
     }

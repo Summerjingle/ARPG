@@ -5,6 +5,7 @@ public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
     public List<ItemSO> itemList;
+    public event System.Action<ItemSO> OnItemRemoved;
 
     private void Awake()
     {
@@ -76,7 +77,7 @@ public class InventoryManager : MonoBehaviour
 
 
     //�ӱ������Ƴ�ָ����Ʒ
-    public void RemoveItem(ItemSO targetItem, int amountToRemove = 1)
+    public void RemoveItem(ItemSO targetItem, int amountToRemove = 1, bool updateUI = true)
     {
         // �ڱ������ҵ���Ӧ����Ʒ��ͨ������ƥ�䣩
         ItemSO inventoryItem = null;
@@ -96,26 +97,31 @@ public class InventoryManager : MonoBehaviour
         }
 
         // ԭ�е��Ƴ��߼����ֲ���
+        bool removed = false;
+
         if (inventoryItem.IsStackable())
         {
             inventoryItem.amount -= amountToRemove;
             if (inventoryItem.amount <= 0)
             {
                 itemList.Remove(inventoryItem);
-                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} �Ѵӱ����Ƴ�");
+                removed = true;
             }
             else
             {
-                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} ���������� {inventoryItem.amount}");
             }
         }
         else
         {
             itemList.Remove(inventoryItem);
-            MessageUI.Instance.Show($"{inventoryItem.nameOfItem} �Ѵӱ����Ƴ�");
+            removed = true;
         }
 
-        InventoryUI.Instance.UpdateInventoryUI();
+        if (removed)
+            OnItemRemoved?.Invoke(inventoryItem);
+
+        if (updateUI)
+            InventoryUI.Instance.UpdateInventoryUI();
     }
 
 

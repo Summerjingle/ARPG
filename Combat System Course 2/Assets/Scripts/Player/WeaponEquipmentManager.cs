@@ -103,8 +103,6 @@ public class WeaponEquipmentManager : MonoBehaviour
         
         // UI更新
         InventoryUI.Instance?.ClearEquipmentIcon(ItemType.Weapon, ArmorType.NotArmor);
-        InventoryUI.Instance.currentSelectedItem=null;
-        InventoryUI.Instance.SelectFirstItem();
         //PlayerController.i.SetArmedMode(false);
     }
     public void ToggleWeapon()

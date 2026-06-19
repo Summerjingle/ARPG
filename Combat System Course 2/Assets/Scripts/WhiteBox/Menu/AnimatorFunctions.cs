@@ -73,6 +73,8 @@ public class AnimatorFunctions : MonoBehaviour
         FindObjectOfType<ArchiveManager>().ShowPanel();
     }
 
+    public void Die() => Destroy(gameObject);
+
     void QuitGame()
     {
 #if UNITY_EDITOR

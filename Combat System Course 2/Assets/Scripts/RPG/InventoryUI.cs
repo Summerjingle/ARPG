@@ -125,6 +125,7 @@ public class InventoryUI : MonoBehaviour
             if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = false;
 
         SelectFirstItem();
+        Debug.Log($"[DEBUG] 选中物体: {EventSystem.current.currentSelectedGameObject?.name ?? "NULL"}");
         }
         else
         {
@@ -142,19 +143,7 @@ public class InventoryUI : MonoBehaviour
 
     private void HandleCancel()
     {
-        Debug.Log("Cancel pressed");
-
-        if (itemDetail.gameObject.activeSelf)
-        {
-            itemDetail.gameObject.SetActive(false);
-
-            if (currentSelectedItem != null)
-            {
-                EventSystem.current.SetSelectedGameObject(currentSelectedItem.gameObject);
-            }
-            return;
-        }
-
+        // detail 面板由 UI_ItemDetail map 独立处理 Cancel，这里只管背包
         ToggleInventory();
     }
     private EquipmentSlotUI GetSlot(ItemSO item)
@@ -184,16 +173,10 @@ public class InventoryUI : MonoBehaviour
    private void HandleSubmit()
     {
         GameObject selected = EventSystem.current.currentSelectedGameObject;
+        Debug.Log($"[DEBUG HandleSubmit] 当前选中: {selected?.name ?? "NULL"}");
         if (selected == null) return;
 
-        // 1. 详情页处理
-        if (itemDetail.gameObject.activeSelf)
-        {
-            itemDetail.OnUseButtonClick();
-            return;
-        }
-
-        // 2. 物品栏逻辑
+        // 1. 物品栏逻辑
         ItemUI itemUI = selected.GetComponent<ItemUI>();
         if (itemUI != null)
         {
@@ -201,13 +184,13 @@ public class InventoryUI : MonoBehaviour
             return;
         }
 
-        // 3. 装备槽逻辑 (修正：直接调用并刷新)
+        // 3. 装备槽逻辑
         EquipmentSlotUI slot = selected.GetComponentInParent<EquipmentSlotUI>();
         if (slot != null)
         {
             slot.OnSubmit();
-            // 联动关键：卸装后立即刷新背包列表和高光
-            UpdateInventoryUI();
+            // 卸装后维持选中装备槽，防止跳回物品栏
+            EventSystem.current.SetSelectedGameObject(slot.gameObject);
             return;
         }
 
@@ -230,24 +213,10 @@ public class InventoryUI : MonoBehaviour
         // 清除物品栏高亮
         ClearAllHighlights();
 
-        // 强行对齐导航逻辑 (防止 D-Pad 乱跳)
+        // 装备槽Selectable已设Vertical模式，Unity自动处理上下导航
+        // 左右为null，切换区域只能用肩键
         var sorted = GetSortedSlots();
-        for (int i = 0; i < sorted.Count; i++)
-        {
-            var sel = sorted[i].GetComponentInChildren<Selectable>();
-            if (sel == null) continue;
 
-            Navigation nav = sel.navigation;
-            nav.mode = Navigation.Mode.Explicit;
-            nav.selectOnUp = i > 0 ? sorted[i - 1].GetComponentInChildren<Selectable>() : null;
-            nav.selectOnDown = i < sorted.Count - 1 ? sorted[i + 1].GetComponentInChildren<Selectable>() : null;
-            // 锁定左右，必须通过 Tab/肩键 切换区域
-            nav.selectOnLeft = null;
-            nav.selectOnRight = null;
-            sel.navigation = nav;
-        }
-
-        // 自动选中
         Selectable target = GetPrioritySlot(sorted);
         if (target != null)
             EventSystem.current.SetSelectedGameObject(target.gameObject);
@@ -388,8 +357,7 @@ private List<EquipmentSlotUI> GetSortedSlots()
     public void OnItemClick(ItemSO itemSO, ItemUI itemUI)
     {
         itemDetail.UpdateDetailUI(itemSO, itemUI);
-        EventSystem.current.SetSelectedGameObject(null);
-        EventSystem.current.SetSelectedGameObject(itemDetail.useButton.gameObject);
+        // detail 打开后由 ItemDetailUI.OnEnable 切换到 UI_ItemDetail map 并选中 useButton
 
         // 切换高亮
         SwitchHighlight(itemUI);
@@ -414,7 +382,7 @@ private List<EquipmentSlotUI> GetSortedSlots()
             GameObject destroyedItem = itemUI.gameObject;
 
             destroyedItem.transform.SetParent(null);
-            InventoryManager.Instance.itemList.Remove(itemSO);
+            InventoryManager.Instance.RemoveItem(itemSO, 1, updateUI: false);
 
             // 如果被销毁的物品正好是当前高亮的，需要清除高亮记录
             if (currentSelectedItem == itemUI || lastSelectedItem == itemUI)

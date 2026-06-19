@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class ItemDetailUI : MonoBehaviour
@@ -14,18 +15,54 @@ public class ItemDetailUI : MonoBehaviour
     public GameObject propertyTempate;
 
     public Button useButton;
+    public Button cancelButton;
+    public Button setQuickSlotButton;
+    public SetQuickUseUI setQuickUseUI;
 
     private TextMeshProUGUI buttonText;
-   
-
-
+    private TextMeshProUGUI quickSlotButtonText;
     private ItemSO itemSO;
     private ItemUI itemUI;
+    private bool isItemInQuickSlot;
+    private bool canQuickSlot;
+
+    private void Awake()
+    {
+        buttonText = useButton.GetComponentInChildren<TextMeshProUGUI>();
+        quickSlotButtonText = setQuickSlotButton?.GetComponentInChildren<TextMeshProUGUI>();
+        propertyTempate.SetActive(false);
+
+        // 鼠标点击支持
+        useButton.onClick.AddListener(OnUseButtonClick);
+        if (cancelButton != null)
+            cancelButton.onClick.AddListener(OnCancelButtonClick);
+        if (setQuickSlotButton != null)
+            setQuickSlotButton.onClick.AddListener(OnSetQuickSlotButtonClick);
+    }
+
+    private void OnEnable()
+    {
+        InputManager.Instance.OnItemDetailUse += OnUseButtonClick;
+        InputManager.Instance.OnItemDetailCancel += OnCancelButtonClick;
+        InputManager.Instance.OnItemDetailSetQuickSlot += OnSetQuickSlotButtonClick;
+        InputManager.Instance.SwitchToItemDetail();
+
+        // 默认选中 useButton
+        if (useButton != null)
+            EventSystem.current.SetSelectedGameObject(useButton.gameObject);
+    }
+
+    private void OnDisable()
+    {
+        InputManager.Instance.OnItemDetailUse -= OnUseButtonClick;
+        InputManager.Instance.OnItemDetailCancel -= OnCancelButtonClick;
+        InputManager.Instance.OnItemDetailSetQuickSlot -= OnSetQuickSlotButtonClick;
+        InputManager.Instance.SwitchToInventory();
+    }
+
     private void Start()
     {
-        propertyTempate.SetActive(false);
         this.gameObject.SetActive(false);
-        buttonText = useButton.GetComponentInChildren<TextMeshProUGUI>();
     }
     public void UpdateDetailUI(ItemSO itemSO,ItemUI itemUI)
     {
@@ -54,6 +91,18 @@ public class ItemDetailUI : MonoBehaviour
                 break;
             
         }
+        // 快捷槽按钮：只有 Weapon 和 Consumable 可用
+        canQuickSlot = itemSO.itemType == ItemType.Consumable;
+        if (setQuickSlotButton != null)
+            setQuickSlotButton.gameObject.SetActive(canQuickSlot);
+
+        if (canQuickSlot)
+        {
+            isItemInQuickSlot = QuickItemBar.Instance != null && QuickItemBar.Instance.HasItem(itemSO);
+            if (quickSlotButtonText != null)
+                quickSlotButtonText.text = isItemInQuickSlot ? "取消快捷道具" : "设为快捷道具";
+        }
+
         iconImage.sprite=itemSO.icon;
         nameText.text=itemSO.nameOfItem;
         typeText.text= type;
@@ -98,6 +147,15 @@ public class ItemDetailUI : MonoBehaviour
         
     }
 
+    public void OnCancelButtonClick()
+    {
+        this.gameObject.SetActive(false);
+        if (InventoryUI.Instance.currentSelectedItem != null)
+        {
+            EventSystem.current.SetSelectedGameObject(InventoryUI.Instance.currentSelectedItem.gameObject);
+        }
+    }
+
     public void OnUseButtonClick()
     {
         // �ȼ���Ƿ�Ϊ�������
@@ -111,5 +169,35 @@ public class ItemDetailUI : MonoBehaviour
         // ֻ�з�������߲�ִ��ʹ���߼�
         InventoryUI.Instance.OnItemUse(itemSO, itemUI);
         this.gameObject.SetActive(false);
+    }
+
+    /// <summary> SetQuickUseUI 关闭时回调，刷新按钮状态 </summary>
+    public void RefreshQuickSlotState()
+    {
+        if (itemSO == null) return;
+        isItemInQuickSlot = QuickItemBar.Instance != null && QuickItemBar.Instance.HasItem(itemSO);
+        if (quickSlotButtonText != null)
+            quickSlotButtonText.text = isItemInQuickSlot ? "取消快捷道具" : "设为快捷道具";
+    }
+
+    public void OnSetQuickSlotButtonClick()
+    {
+        if (itemSO == null) return;
+        if (!canQuickSlot) return;
+
+        if (isItemInQuickSlot)
+        {
+            // 已设为快捷道具 → 取消
+            QuickItemBar.Instance?.ClearSlotByItem(itemSO);
+            isItemInQuickSlot = false;
+            if (quickSlotButtonText != null)
+                quickSlotButtonText.text = "设为快捷道具";
+        }
+        else
+        {
+            // 未设置 → 打开选择面板
+            if (setQuickUseUI != null)
+                setQuickUseUI.Open(itemSO);
+        }
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -20,8 +21,10 @@ public class QuickItemBar : MonoBehaviour
         [HideInInspector] public CanvasGroup canvasGroup;
     }
 
+    public static QuickItemBar Instance { get; private set; }
+
     [Header("数据")]
-    [SerializeField] private QuickSlot[] slots = new QuickSlot[4];
+    [SerializeField] private QuickSlot[] slots = new QuickSlot[7];
 
     [Header("UI 引用")]
     [SerializeField] private SlotView leftSlot;
@@ -45,6 +48,23 @@ public class QuickItemBar : MonoBehaviour
     private int selectedIndex = 0;
     private bool isExpanded;
 
+    [Header("滑动动效")]
+    [SerializeField] private float slideDuration = 0.2f;
+    [SerializeField] private AnimationCurve slideCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    private Coroutine slideCoroutine;
+    private float slotSpacing;
+    private Vector2 leftOrigPos, centerOrigPos, rightOrigPos;
+    private bool isSliding;
+
+    private void Awake()
+    {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
+
     private void Start()
     {
         if (background != null)
@@ -60,8 +80,26 @@ public class QuickItemBar : MonoBehaviour
         InputManager.Instance.OnQuickItemModifierChanged += OnModifierChanged;
         InputManager.Instance.OnQuickItemNavigate += OnNavigate;
 
+        if (InventoryManager.Instance != null)
+            InventoryManager.Instance.OnItemRemoved += OnItemRemovedFromInventory;
+
         SetExpanded(false);
         RefreshView();
+
+        // 缓存三个槽的原始 anchoredPosition，用于滑动动效
+        CacheOriginalPositions();
+    }
+
+    private void CacheOriginalPositions()
+    {
+        if (leftSlot.root != null)
+            leftOrigPos = ((RectTransform)leftSlot.root.transform).anchoredPosition;
+        if (centerSlot.root != null)
+            centerOrigPos = ((RectTransform)centerSlot.root.transform).anchoredPosition;
+        if (rightSlot.root != null)
+            rightOrigPos = ((RectTransform)rightSlot.root.transform).anchoredPosition;
+
+        slotSpacing = centerOrigPos.x - leftOrigPos.x;
     }
 
     private void OnDestroy()
@@ -71,6 +109,8 @@ public class QuickItemBar : MonoBehaviour
             InputManager.Instance.OnQuickItemModifierChanged -= OnModifierChanged;
             InputManager.Instance.OnQuickItemNavigate -= OnNavigate;
         }
+        if (InventoryManager.Instance != null)
+            InventoryManager.Instance.OnItemRemoved -= OnItemRemovedFromInventory;
     }
 
     private void OnModifierChanged(bool held)
@@ -86,13 +126,13 @@ public class QuickItemBar : MonoBehaviour
 
     private void OnNavigate(int direction)
     {
-        if (!isExpanded) return;
+        if (!isExpanded || isSliding) return;
 
         int newIndex = Mathf.Clamp(selectedIndex + direction, 0, slots.Length - 1);
         if (newIndex != selectedIndex)
         {
-            selectedIndex = newIndex;
-            RefreshView();
+            if (slideCoroutine != null) StopCoroutine(slideCoroutine);
+            slideCoroutine = StartCoroutine(SlideCoroutine(direction, newIndex));
         }
     }
 
@@ -106,7 +146,7 @@ public class QuickItemBar : MonoBehaviour
         RefreshView();
     }
 
-    private void RefreshView()
+    public void RefreshView()
     {
         // 中间始终显示
         float centerS = isExpanded ? expandedCenterScale : 1f;
@@ -136,6 +176,44 @@ public class QuickItemBar : MonoBehaviour
             SetSlotAlpha(rightSlot, 0f);
     }
 
+    private IEnumerator SlideCoroutine(int direction, int newIndex)
+    {
+        isSliding = true;
+
+        RectTransform leftRT = leftSlot.root?.GetComponent<RectTransform>();
+        RectTransform centerRT = centerSlot.root?.GetComponent<RectTransform>();
+        RectTransform rightRT = rightSlot.root?.GetComponent<RectTransform>();
+
+        // direction>0 滚轮向下 → 内容左移；direction<0 滚轮向上 → 内容右移
+        float slideDistance = -direction * slotSpacing;
+        Vector2 offset = new Vector2(slideDistance, 0f);
+
+        float elapsed = 0f;
+        while (elapsed < slideDuration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            float t = slideCurve.Evaluate(Mathf.Clamp01(elapsed / slideDuration));
+            Vector2 current = Vector2.LerpUnclamped(Vector2.zero, offset, t);
+
+            if (leftRT != null) leftRT.anchoredPosition = leftOrigPos + current;
+            if (centerRT != null) centerRT.anchoredPosition = centerOrigPos + current;
+            if (rightRT != null) rightRT.anchoredPosition = rightOrigPos + current;
+
+            yield return null;
+        }
+
+        // 复位
+        if (leftRT != null) leftRT.anchoredPosition = leftOrigPos;
+        if (centerRT != null) centerRT.anchoredPosition = centerOrigPos;
+        if (rightRT != null) rightRT.anchoredPosition = rightOrigPos;
+
+        selectedIndex = newIndex;
+        RefreshView();
+
+        isSliding = false;
+        slideCoroutine = null;
+    }
+
     private void ApplySlot(SlotView view, int dataIndex, float scale)
     {
         QuickSlot data = slots[dataIndex];
@@ -143,7 +221,8 @@ public class QuickItemBar : MonoBehaviour
         {
             view.icon.sprite = data.item.icon;
             view.icon.enabled = true;
-            view.countText.text = data.count > 1 ? data.count.ToString() : "";
+            int displayCount = data.item.IsStackable() ? data.item.amount : data.count;
+            view.countText.text = displayCount > 1 ? displayCount.ToString() : "";
         }
         else
         {
@@ -163,6 +242,14 @@ public class QuickItemBar : MonoBehaviour
 
     // === 外部接口 ===
 
+    /// <summary> 读取槽位数据 </summary>
+    public QuickSlot GetSlot(int index)
+    {
+        if (index < 0 || index >= slots.Length)
+            return new QuickSlot();
+        return slots[index];
+    }
+
     /// <summary> 给指定槽位设置道具 </summary>
     public void SetSlot(int index, ItemSO item, int count)
     {
@@ -170,6 +257,39 @@ public class QuickItemBar : MonoBehaviour
         slots[index].item = item;
         slots[index].count = count;
         RefreshView();
+    }
+
+    /// <summary> 检查物品是否已在任意快捷槽位中 </summary>
+    public bool HasItem(ItemSO item)
+    {
+        if (item == null) return false;
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].item == item)
+                return true;
+        }
+        return false;
+    }
+
+    /// <summary> 清除指定物品所在的快捷槽位 </summary>
+    public void ClearSlotByItem(ItemSO item)
+    {
+        if (item == null) return;
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].item == item)
+            {
+                slots[i].item = null;
+                slots[i].count = 0;
+                RefreshView();
+                return;
+            }
+        }
+    }
+
+    private void OnItemRemovedFromInventory(ItemSO item)
+    {
+        ClearSlotByItem(item);
     }
 
     /// <summary> 当前选中的 ItemSO（使用道具时读这个） </summary>

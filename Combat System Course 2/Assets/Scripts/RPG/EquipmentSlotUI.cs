@@ -11,25 +11,18 @@ public class EquipmentSlotUI : MonoBehaviour, ISelectHandler, IDeselectHandler, 
     
     [Header("UI组件")]
     public Image iconImage;
-    public Sprite selectionSprite;
+    public GameObject selectionHighlight;
     public Selectable selectable;
-
-    [Header("高亮设置")]
-    public Color normalColor = Color.white;
-    public Color selectedColor = Color.yellow;
-
-    private Sprite originalIconSprite;
     public void OnSubmit(BaseEventData eventData) => Unequip();
     private void Awake()
     {
-        if (selectable == null)
-            selectable = GetComponentInChildren<Selectable>();
-
+        // Selectable必须挂在EquipmentSlotUI自己的GameObject上，不能用子级的
+        selectable = GetComponent<Selectable>();
         if (selectable == null)
             selectable = gameObject.AddComponent<Selectable>();
 
         Navigation nav = selectable.navigation;
-        nav.mode = Navigation.Mode.Automatic;
+        nav.mode = Navigation.Mode.Vertical;
         selectable.navigation = nav;
 
         if (iconImage == null)
@@ -37,7 +30,6 @@ public class EquipmentSlotUI : MonoBehaviour, ISelectHandler, IDeselectHandler, 
         if (iconImage != null)
         {
             selectable.targetGraphic = iconImage;
-            originalIconSprite = iconImage.sprite;
         }
 
         UpdateIcon(null);
@@ -49,24 +41,12 @@ public class EquipmentSlotUI : MonoBehaviour, ISelectHandler, IDeselectHandler, 
         {
             iconImage.sprite = icon;
             iconImage.enabled = icon != null;
-            originalIconSprite = icon;
         }
     }
     
     public void SetHighlight(bool highlight)
     {
-        if (iconImage == null) return;
-
-        if (highlight && selectionSprite != null)
-        {
-            iconImage.sprite = selectionSprite;
-        }
-        else
-        {
-            iconImage.sprite = originalIconSprite;
-        }
-
-        iconImage.color = highlight ? selectedColor : normalColor;
+        selectionHighlight?.SetActive(highlight);
     }
 
     public void OnSelect(BaseEventData eventData)
@@ -86,28 +66,37 @@ public class EquipmentSlotUI : MonoBehaviour, ISelectHandler, IDeselectHandler, 
 
     public void OnPointerClick(PointerEventData eventData)
     {
+        EventSystem.current.SetSelectedGameObject(gameObject);
         Unequip();
+        // 卸装后维持选中，防止跳回物品栏
+        EventSystem.current.SetSelectedGameObject(gameObject);
     }
+
+    private int _lastUnequipFrame = -1;
 
     private void Unequip()
     {
-        bool hasUnequipped = false;
+        // 防止同一帧内 Click + Submit 双重触发
+        if (Time.frameCount == _lastUnequipFrame) return;
+        _lastUnequipFrame = Time.frameCount;
+
+        // 卸装前先拿到 ItemSO，卸装后 Weapon/Armor 实例会被销毁
+        ItemSO unequippedItem = null;
         if (itemType == ItemType.Weapon)
         {
+            unequippedItem = WeaponEquipmentManager.Instance?.GetCurrentWeapon()?.itemSO;
             WeaponEquipmentManager.Instance?.UnequipWeapon();
-            hasUnequipped = true;
         }
         else if (itemType == ItemType.Armor)
         {
+            unequippedItem = ArmorEquipmentManager.Instance?.GetEquippedItem(armorType);
             ArmorEquipmentManager.Instance?.UnequipArmor(armorType);
-            hasUnequipped = true;
         }
 
-        if (hasUnequipped)
+        if (unequippedItem != null)
         {
             UpdateIcon(null);
-            // 触发 InventoryUI 刷新，确保卸下的物品回到背包第一格
-            InventoryUI.Instance.UpdateInventoryUI();
+            // ReAddItem 内部已做增量 UI（AddItem / UpdateItemAmountDisplay），无需再刷新
         }
     }
 }

@@ -284,7 +284,7 @@ public class SaveManager : MonoBehaviour
         currentSaveData.maxHealth = Mathf.RoundToInt(healthSystem.MaxHealth);//最大血量
         currentSaveData.energyValue = playerProperty.energyValue;//当前精力
         currentSaveData.armorValue = playerProperty.GetBaseArmor();//当前护甲
-        currentSaveData.currCoins=CurrencySystem.Instance.GetCurrentCoins();//当前钱币
+        currentSaveData.currCoins=CurrencySystem.Instance?.GetCurrentCoins() ?? 0;//当前钱币
         currentSaveData.saveTime = System.DateTime.Now;//保存事件
 
         currentSaveData.inventoryItems.Clear();
