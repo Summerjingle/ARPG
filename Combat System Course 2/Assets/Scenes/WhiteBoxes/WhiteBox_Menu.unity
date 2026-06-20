@@ -3511,7 +3511,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d3be7933a63c04b90d347fb7ac9dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuButtonController: {fileID: 1081951805}
+  menuListController: {fileID: 1081951808}
   animator: {fileID: 379048767}
   animatorFunctions: {fileID: 379048768}
   thisIndex: 2
@@ -3553,7 +3553,7 @@ MonoBehaviour:
   gameSceneName: 00Scene_Village
   loadingSceneName: LoadingScene
   disableOnce: 0
-  menuButtonController: {fileID: 1081951805}
+  menuListController: {fileID: 0}
 --- !u!1 &398970466
 GameObject:
   m_ObjectHideFlags: 0
@@ -6032,7 +6032,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d3be7933a63c04b90d347fb7ac9dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuButtonController: {fileID: 1081951805}
+  menuListController: {fileID: 1081951808}
   animator: {fileID: 638731605}
   animatorFunctions: {fileID: 638731606}
   thisIndex: 1
@@ -6074,7 +6074,7 @@ MonoBehaviour:
   gameSceneName: 00Scene_Village
   loadingSceneName: LoadingScene
   disableOnce: 0
-  menuButtonController: {fileID: 1081951805}
+  menuListController: {fileID: 0}
 --- !u!1 &641863183
 GameObject:
   m_ObjectHideFlags: 0
@@ -11078,9 +11078,9 @@ GameObject:
   - component: {fileID: 1081951803}
   - component: {fileID: 1081951802}
   - component: {fileID: 1081951801}
-  - component: {fileID: 1081951805}
   - component: {fileID: 1081951806}
   - component: {fileID: 1081951807}
+  - component: {fileID: 1081951808}
   m_Layer: 5
   m_Name: MenuRoot
   m_TagString: Untagged
@@ -11174,23 +11174,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &1081951805
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1081951800}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 420d7d5bd4fe0914dbd008676a29c609, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  index: 0
-  maxIndex: 2
-  audioSource: {fileID: 1081951806}
-  inputLocked: 0
-  deadZone: 0.5
 --- !u!82 &1081951806
 AudioSource:
   m_ObjectHideFlags: 0
@@ -11299,6 +11282,35 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1081951808
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1081951800}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f4bdf361b23de4640bad5156bcfb9110, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  index: 0
+  <maxIndex>k__BackingField: 2
+  navigateAction: {fileID: -1615589305660501112, guid: b24d4150e88249d4584c8174bb43993d,
+    type: 3}
+  submitAction: {fileID: -8012390747242929332, guid: b24d4150e88249d4584c8174bb43993d,
+    type: 3}
+  deadZone: 0.5
+  audioSource: {fileID: 0}
+  OnSelectionChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  OnSubmit:
+    m_PersistentCalls:
+      m_Calls: []
+  OnSubmitCanceled:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1001 &1086866163
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -45169,7 +45181,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 54d3be7933a63c04b90d347fb7ac9dc5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  menuButtonController: {fileID: 1081951805}
+  menuListController: {fileID: 1081951808}
   animator: {fileID: 1924577814}
   animatorFunctions: {fileID: 1924577816}
   thisIndex: 0
@@ -45190,7 +45202,7 @@ MonoBehaviour:
   gameSceneName: WhiteBox_Village
   loadingSceneName: LoadingScene
   disableOnce: 0
-  menuButtonController: {fileID: 1081951805}
+  menuListController: {fileID: 1081951808}
 --- !u!1 &1928863386
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ public class Bonfire : MonoBehaviour, IInteractable
 {
     [Header("Respawn Point")]
     [SerializeField] private Transform respawnPoint;
+    [SerializeField] private Animator bookAnimator;
 
     private bool isResting;
 
@@ -14,10 +15,13 @@ public class Bonfire : MonoBehaviour, IInteractable
     public void Interact()
     {
         isResting = true;
+        bookAnimator.SetTrigger("BookOpen");
 
+    }
+    public void OnCheckpointReached()//给动画事件末尾调用（书打开）
+    {
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
-
         var health = player.GetComponent<HealthSystem>();
         if (health != null)
             health.RestoreHealth(health.MaxHealth);
@@ -37,5 +41,6 @@ public class Bonfire : MonoBehaviour, IInteractable
     public void OnPanelClosed()
     {
         isResting = false;
+        bookAnimator.SetTrigger("BookClose");
     }
 }

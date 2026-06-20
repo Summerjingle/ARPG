@@ -1,54 +1,54 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class MenuButton : MonoBehaviour
 {
-    [SerializeField] MenuButtonController menuButtonController;
-    [SerializeField] Animator animator;
-    [SerializeField] AnimatorFunctions animatorFunctions;
-    [SerializeField] int thisIndex;
+    [SerializeField] private MenuListController menuListController;
+    [SerializeField] private Animator animator;
+    [SerializeField] private AnimatorFunctions animatorFunctions;
+    [SerializeField] private int thisIndex;
 
-
-
-    private PlayerInputActions input => InputManager.Instance?.Actions;
-
-    
-    void OnEnable()
+    private void OnEnable()
     {
-        input.UI_MainMenu.Enable();
-        input.UI_MainMenu.Submit.performed += OnSubmit;
-        input.UI_MainMenu.Submit.canceled += OnSubmitCanceled;
+        if (menuListController != null)
+        {
+            menuListController.OnSubmit.AddListener(OnSubmit);
+            menuListController.OnSubmitCanceled.AddListener(OnSubmitCanceledHandler);
+        }
     }
 
-    void OnDisable()
+    private void OnDisable()
     {
-        input.UI_MainMenu.Submit.performed -= OnSubmit;
-        input.UI_MainMenu.Submit.canceled -= OnSubmitCanceled;
-        input.UI_MainMenu.Disable();
+        if (menuListController != null)
+        {
+            menuListController.OnSubmit.RemoveListener(OnSubmit);
+            menuListController.OnSubmitCanceled.RemoveListener(OnSubmitCanceledHandler);
+        }
     }
 
-    void Update()
+    private void Update()
     {
-        animator.SetBool(
-            "selected",
-            menuButtonController.index == thisIndex
-        );
+        if (menuListController != null && animator != null)
+        {
+            animator.SetBool("selected", menuListController.index == thisIndex);
+        }
     }
 
-    void OnSubmit(InputAction.CallbackContext ctx)
+    private void OnSubmit(int index)
     {
-        if (menuButtonController.index != thisIndex) return;
+        if (index != thisIndex) return;
 
-        animator.SetBool("pressed", true);
-        
+        if (animator != null)
+            animator.SetBool("pressed", true);
     }
 
-    void OnSubmitCanceled(InputAction.CallbackContext ctx)
+    private void OnSubmitCanceledHandler()
     {
+        if (animator == null) return;
         if (!animator.GetBool("pressed")) return;
 
         animator.SetBool("pressed", false);
-        animatorFunctions.disableOnce = true;
+
+        if (animatorFunctions != null)
+            animatorFunctions.disableOnce = true;
     }
-    
 }

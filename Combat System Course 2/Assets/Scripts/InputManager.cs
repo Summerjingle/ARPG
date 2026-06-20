@@ -23,6 +23,8 @@ public class InputManager : MonoBehaviour
     public event Action OnGamePause;
     public event Action OnLock;
     public event Action OnBonfireExit;
+    public event Action<Vector2> OnBonfireNavigate;
+    public event Action OnBonfireSubmit;
     public event Action<bool> OnQuickItemModifierChanged;   // true=按下, false=松开
     public event Action<int> OnQuickItemNavigate;            // -1=左, 1=右
     public event Action OnItemDetailUse;
@@ -76,6 +78,8 @@ public class InputManager : MonoBehaviour
         Actions.UI_PauseMenu.Cancel.performed+= _ =>OnGamePause?.Invoke();
 
         Actions.UI_BonfireMenu.Exit.performed += _ => OnBonfireExit?.Invoke();
+        Actions.UI_BonfireMenu.Navigate.performed += ctx => OnBonfireNavigate?.Invoke(ctx.ReadValue<Vector2>());
+        Actions.UI_BonfireMenu.Submit.performed += _ => OnBonfireSubmit?.Invoke();
 
         Actions.Player.QuickItemModifier.started += _ => OnQuickItemModifierChanged?.Invoke(true);
         Actions.Player.QuickItemModifier.canceled += _ => OnQuickItemModifierChanged?.Invoke(false);

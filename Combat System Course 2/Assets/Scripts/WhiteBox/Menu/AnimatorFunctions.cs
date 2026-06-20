@@ -29,15 +29,15 @@ public class AnimatorFunctions : MonoBehaviour
         }
     }
 
-    [SerializeField] MenuButtonController menuButtonController;
+    [SerializeField] MenuListController menuListController;
 
  
 
     public void ExecuteButton()
     {
         Debug.Log("ִ�а�ť");
-        Debug.Log("ExecuteButton called on " + gameObject.name + ", index = " + menuButtonController.index);
-        int index = menuButtonController.index;
+        Debug.Log("ExecuteButton called on " + gameObject.name + ", index = " + menuListController.index);
+        int index = menuListController.index;
 
         switch (index)
         {
@@ -74,6 +74,15 @@ public class AnimatorFunctions : MonoBehaviour
     }
 
     public void Die() => Destroy(gameObject);
+
+    public void ExecuteBonfireOption()
+    {
+        int index = menuListController.index;
+        Debug.Log("ExecuteBonfireOption, index = " + index);
+
+        if (BonfirePanelCtrl.Instance != null)
+            BonfirePanelCtrl.Instance.HandleOption(index);
+    }
 
     void QuitGame()
     {

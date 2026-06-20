@@ -20,7 +20,7 @@ public class InventoryManager : MonoBehaviour
     {
         if (item.IsStackable())
         {
-            // ���ұ������Ƿ�������ͬ��Ʒ
+            
             ItemSO existingItem = FindStackableItem(item);
 
             if (existingItem != null)
@@ -106,15 +106,18 @@ public class InventoryManager : MonoBehaviour
             {
                 itemList.Remove(inventoryItem);
                 removed = true;
+                MessageUI.Instance.Show($"{inventoryItem.nameOfItem}");
             }
             else
             {
+                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} {inventoryItem.amount}");
             }
         }
         else
         {
             itemList.Remove(inventoryItem);
             removed = true;
+            MessageUI.Instance.Show($"{inventoryItem.nameOfItem} �Ѵӱ����Ƴ�");
         }
 
         if (removed)
