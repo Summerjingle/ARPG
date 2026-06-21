@@ -1,11 +1,17 @@
-﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ElevatorController : MonoBehaviour
 {
-    public Animator elevatorAnimator;
-    public Animator triggerAnimator;
+    [Header("Platform")]
+    [SerializeField] private Transform platform;
+    [SerializeField] private float topYOffset = 17.5f;
+
+    [Header("Movement")]
+    [SerializeField] private float moveDuration = 10f;
+    [SerializeField] private AnimationCurve moveCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    [Header("Trigger Button")]
+    [SerializeField] private Animator triggerAnimator;
 
     private enum ElevatorState { Idle, Pressed, Moving, Arrived, Releasable }
     private ElevatorState state = ElevatorState.Idle;
@@ -13,19 +19,64 @@ public class ElevatorController : MonoBehaviour
     private int playerInsideCount = 0;
     private bool playerInside => playerInsideCount > 0;
 
+    private Rigidbody rb;
+    private Vector3 bottomPos;
+    private Vector3 topPos;
+    private bool isAtBottom = true;
+
+    // FixedUpdate 驱动
+    private bool isMoving = false;
+    private float moveElapsed;
+    private Vector3 moveStartPos;
+    private Vector3 moveTargetPos;
+
+    private void Awake()
+    {
+        if (platform == null)
+            platform = transform.parent;
+
+        rb = platform.GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = platform.gameObject.AddComponent<Rigidbody>();
+        }
+        rb.isKinematic = true;
+        rb.useGravity = false;
+        rb.interpolation = RigidbodyInterpolation.None;
+
+        bottomPos = platform.position;
+        topPos = bottomPos + Vector3.up * topYOffset;
+    }
+
+    private void FixedUpdate()
+    {
+        if (!isMoving) return;
+
+        moveElapsed += Time.fixedDeltaTime;
+
+        if (moveElapsed >= moveDuration)
+        {
+            rb.position = moveTargetPos;
+            isMoving = false;
+            isAtBottom = !isAtBottom;
+            ElevatorFinished();
+            return;
+        }
+
+        float t = moveCurve.Evaluate(moveElapsed / moveDuration);
+        Vector3 newPos = Vector3.Lerp(moveStartPos, moveTargetPos, t);
+        rb.position = newPos;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
 
         playerInsideCount++;
 
-        Debug.Log($"Enter: count={playerInsideCount}, state={state}");
-        Debug.Log($"玩家进入触发器 - 位置: {other.transform.position}");
-
         if (state == ElevatorState.Idle && playerInsideCount == 1)
         {
             RequestOperate();
-            // 这里可以播放按键音效等
         }
     }
 
@@ -36,36 +87,40 @@ public class ElevatorController : MonoBehaviour
         playerInsideCount--;
         if (playerInsideCount < 0) playerInsideCount = 0;
 
-        Debug.Log($"Exit: count={playerInsideCount}, state={state}");
-        Debug.Log($"玩家退出触发器 - 位置: {other.transform.position}");
-
-
         if (!playerInside)
         {
             if (state == ElevatorState.Arrived || state == ElevatorState.Releasable)
             {
                 state = ElevatorState.Releasable;
                 triggerAnimator.SetTrigger("Release");
-                state = ElevatorState.Idle;          // 回到初始状态
+                state = ElevatorState.Idle;
             }
-            // 注意：这里不再直接 TryRelease，而是等动画结束再处理
         }
     }
 
-    // 由 Press 动画事件调用（动画最后一帧）
+    public void RequestOperate()
+    {
+        if (state == ElevatorState.Idle)
+        {
+            state = ElevatorState.Pressed;
+            triggerAnimator.SetTrigger("Press");
+        }
+    }
+
+    // 由 Press 动画事件调用
     public void ActivateElevator()
     {
         if (state != ElevatorState.Pressed) return;
 
         state = ElevatorState.Moving;
-        elevatorAnimator.SetTrigger("Operate");
+        moveStartPos = rb.position;
+        moveTargetPos = isAtBottom ? topPos : bottomPos;
+        moveElapsed = 0f;
+        isMoving = true;
     }
 
-    // 由电梯上升动画事件调用（到顶了）
     public void ElevatorFinished()
     {
-        Debug.Log($"ElevatorFinished, state={state}");
-
         if (state == ElevatorState.Moving)
         {
             state = playerInside ? ElevatorState.Arrived : ElevatorState.Releasable;
@@ -75,14 +130,6 @@ public class ElevatorController : MonoBehaviour
                 triggerAnimator.SetTrigger("Release");
                 state = ElevatorState.Idle;
             }
-        }
-    }
-    public void RequestOperate()
-    {
-        if (state == ElevatorState.Idle)
-        {
-            state = ElevatorState.Pressed;
-            triggerAnimator.SetTrigger("Press");
         }
     }
 }

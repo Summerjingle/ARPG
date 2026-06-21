@@ -4,7 +4,8 @@ using UnityEngine;
 
 public interface IInteractable
 {
+    event System.Action OnInteracted;
     void Interact();
-    int Priority { get; }   // 
+    int Priority { get; }   //
     bool CanInteract { get; }
 }

@@ -4,40 +4,57 @@ using UnityEngine;
 
 public class LockedMachine : MonoBehaviour, IInteractable
 {
-    
+
     private Animator machineAnim;
     public BoxCollider machineCollider;
     public AudioClip LockSound;
     public AudioClip UnlockSound;
-    private bool isActivated = false; // ´¥·¢Ò»´ÎºóÊ§Ğ§
-    public string warnningMessage;//»ú¹Ø±»Ëø×¡Ê±ÏÔÊ¾µÄ¾¯¸æĞÅÏ¢
+    private bool isActivated = false; // æ¿€æ´»ä¸€æ¬¡åå¤±æ•ˆ
+    public string warnningMessage; // æœºå™¨è¢«é”ä½æ—¶æ˜¾ç¤ºçš„æç¤ºä¿¡æ¯
+    public SwitchMechanism switchMechanism;  // å­˜æ¡£è”åŠ¨
 
     public bool CanInteract => !isActivated;
     public virtual int Priority => 10;
+    public event System.Action OnInteracted;
 
     private void Start()
     {
-        machineAnim = GetComponent<Animator>(); 
+        machineAnim = GetComponent<Animator>();
+
+        // åŠ è½½å­˜æ¡£åï¼Œå¦‚æœå·²ç»æ‰“å¼€è¿‡ï¼Œç›´æ¥æ¢å¤æ‰“å¼€çŠ¶æ€
+        // Animator ç”± SwitchMechanism.Awake() ç›´æ¥è·³åˆ°æœ€åä¸€å¸§ï¼Œè¿™é‡Œåªè®¾é€»è¾‘çŠ¶æ€
+        if (switchMechanism != null && switchMechanism.IsActivated())
+        {
+            isActivated = true;
+            if (machineCollider != null)
+                machineCollider.enabled = false;
+        }
     }
-    public void Interact() { 
-    
+    public void Interact() {
+
         Debug.Log("First Gate Triggered");
-        //Êä³ö±»»ú¹ØËø×¡ÁËµÄĞÅÏ¢
+        OnInteracted?.Invoke();
+        // æ˜¾ç¤ºæœºå™¨è¢«é”ä½çš„æç¤ºä¿¡æ¯
         MessageUI.Instance.Show(warnningMessage);
-        //·¢³öÎŞ·¨´ò¿ªµÄÉùÒô
+        // æ’­æ”¾æ— æ³•æ‰“å¼€çš„éŸ³æ•ˆ
         if (LockSound != null)
             AudioSource.PlayClipAtPoint(LockSound, transform.position);
 
     }
     public void OpenMachine() {
-    //´ò¿ª»ú¹Ø
+    // æ‰“å¼€æœºå™¨
     machineAnim.SetTrigger("Open");
-        //·¢³ö»ú¹Ø´ò¿ªµÄÉùÒô
+        // æ’­æ”¾æœºå™¨æ‰“å¼€çš„éŸ³æ•ˆ
         if (UnlockSound != null)
         AudioSource.PlayClipAtPoint(UnlockSound, transform.position);
-        //½ûÓÃ»ú¹ØÅö×²Æ÷
+        // ç¦ç”¨æœºå™¨ç¢°æ’ä½“
+        if (machineCollider != null)
+            machineCollider.enabled = false;
         isActivated = true;
+        // æŒä¹…åŒ–åˆ°å­˜æ¡£
+        if (switchMechanism != null)
+            switchMechanism.Activate();
         Destroy( this);
-    }//¹©Íâ²¿¶¯»­ÊÂ¼şµ÷ÓÃ£¬´ò¿ª»ú¹Ø
+    }// ä¾›å¤–éƒ¨äº‹ä»¶è°ƒç”¨ï¼Œæ‰“å¼€æœºå™¨
 
 }

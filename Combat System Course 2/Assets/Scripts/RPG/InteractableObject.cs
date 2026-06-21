@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class InteractableObject : MonoBehaviour, IInteractable
 {
+    public event System.Action OnInteracted;
     public ItemSO itemSO;
     public bool isActivated = false;
     public bool CanInteract => !isActivated;
@@ -17,5 +18,6 @@ public class InteractableObject : MonoBehaviour, IInteractable
     public virtual void Interact()
     {
         isActivated = true;
+        OnInteracted?.Invoke();
     }
 }

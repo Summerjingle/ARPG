@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class MachineTrigger : MonoBehaviour, IInteractable
 {
+    public event System.Action OnInteracted;
+
     public LockedMachine Machine;
     private Animator triggerAnim;
     private bool isActivated = false;
@@ -11,17 +13,18 @@ public class MachineTrigger : MonoBehaviour, IInteractable
 
     public virtual int Priority => 10;
     private void Start()
-    {
+{
         triggerAnim = GetComponent<Animator>();
     }
 
     public void Interact()
-    {
+{
         triggerAnim.SetTrigger("Activate");
+        OnInteracted?.Invoke();
         isActivated = true;
     }
     public void ActivateTheGate()
-    {
+{
         Machine.OpenMachine();
         Destroy(this);
     }

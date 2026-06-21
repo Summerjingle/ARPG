@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Bonfire : MonoBehaviour, IInteractable
 {
+    public event System.Action OnInteracted;
+
     [Header("Respawn Point")]
     [SerializeField] private Transform respawnPoint;
     [SerializeField] private Animator bookAnimator;
@@ -13,13 +15,14 @@ public class Bonfire : MonoBehaviour, IInteractable
     public bool CanInteract => !isResting;
 
     public void Interact()
-    {
+{
         isResting = true;
+        OnInteracted?.Invoke();
         bookAnimator.SetTrigger("BookOpen");
 
     }
     public void OnCheckpointReached()//给动画事件末尾调用（书打开）
-    {
+{
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null) return;
         var health = player.GetComponent<HealthSystem>();
@@ -39,7 +42,7 @@ public class Bonfire : MonoBehaviour, IInteractable
     }
 
     public void OnPanelClosed()
-    {
+{
         isResting = false;
         bookAnimator.SetTrigger("BookClose");
     }

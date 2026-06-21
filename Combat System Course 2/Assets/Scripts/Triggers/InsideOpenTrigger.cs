@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class InsideOpenTrigger : MonoBehaviour, IInteractable
 {
+    public event System.Action OnInteracted;
+
     public LockedMachine lockedDoor;
     public virtual int Priority => 10;
     private bool isActivated = false;
@@ -11,8 +13,9 @@ public class InsideOpenTrigger : MonoBehaviour, IInteractable
     
 
     public void Interact()
-    {
+{
         lockedDoor.OpenMachine();
+        OnInteracted?.Invoke();
         isActivated = true;
         Destroy(this);
     }

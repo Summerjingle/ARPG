@@ -3553,7 +3553,7 @@ MonoBehaviour:
   gameSceneName: 00Scene_Village
   loadingSceneName: LoadingScene
   disableOnce: 0
-  menuListController: {fileID: 0}
+  menuListController: {fileID: 1081951808}
 --- !u!1 &398970466
 GameObject:
   m_ObjectHideFlags: 0
@@ -6074,7 +6074,7 @@ MonoBehaviour:
   gameSceneName: 00Scene_Village
   loadingSceneName: LoadingScene
   disableOnce: 0
-  menuListController: {fileID: 0}
+  menuListController: {fileID: 1081951808}
 --- !u!1 &641863183
 GameObject:
   m_ObjectHideFlags: 0

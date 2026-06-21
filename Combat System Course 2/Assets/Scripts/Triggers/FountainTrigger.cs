@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class FountainTrigger : MonoBehaviour, IInteractable
 {
+    public event System.Action OnInteracted;
+
    public FountainDirection direction;
     public FountainTurner turner;
     private Animator triggerAnim;
@@ -12,12 +14,13 @@ public class FountainTrigger : MonoBehaviour, IInteractable
 
     public virtual int Priority => 10;
     private void Start()
-    {
+{
         triggerAnim = GetComponent<Animator>();
     }
     public void Interact()
-    {
+{
         triggerAnim.SetTrigger("Activate");
+        OnInteracted?.Invoke();
         turner.SetDirection(direction);
         
     }

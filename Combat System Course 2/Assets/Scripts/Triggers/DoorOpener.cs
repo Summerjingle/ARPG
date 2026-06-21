@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class DoorOpener : MonoBehaviour, IInteractable
 {
+    public event System.Action OnInteracted;
     public ItemSO requiredItem;
     public SwitchMechanism doorMechanism;
 
@@ -22,6 +23,8 @@ public class DoorOpener : MonoBehaviour, IInteractable
     {
         if (isOpened) return;
 
+        OnInteracted?.Invoke();
+
         if (InventoryManager.Instance.HasItem(requiredItem))
         {
             InventoryManager.Instance.RemoveItem(requiredItem);
@@ -31,7 +34,7 @@ public class DoorOpener : MonoBehaviour, IInteractable
         }
         else
         {
-            MessageUI.Instance.Show("ĞèÒªÔ¿³×½âËø");
+            MessageUI.Instance.Show("éœ€è¦é’¥åŒ™è§£é”");
         }
     }
 

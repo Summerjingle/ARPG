@@ -4,13 +4,17 @@ using UnityEngine;
 
 public class SwitchMechanism : MonoBehaviour
 {
-    [Header("���ر�ʶ")]
-    [Tooltip("���ص�ΨһID�������ֶ����ã������ʽ��������_������_λ��")]
+    [Header("开关标识")]
+    [Tooltip("唯一ID，格式：场景名_开关名_位置")]
     public string mechanismId;
 
-    [Header("�浵����")]
-    [Tooltip("���Ϊtrue�����ؼ���״̬���ڵ�ǰ�浵�����ñ��棻���Ϊfalse��ÿ�γ������ض�������")]
-    public bool persistAcrossSaves = true; 
+    [Header("存档设置")]
+    [Tooltip("true=永久保存，false=每次重置")]
+    public bool persistAcrossSaves = true;
+
+    [Header("读档恢复")]
+    [Tooltip("读档时直接跳到该 State 的最后一帧，空字符串=不处理")]
+    public string restoreStateName = "Open";
 
     private string currentSceneName;
     private bool isActivated = false;
@@ -23,17 +27,12 @@ public class SwitchMechanism : MonoBehaviour
         {
             GenerateMechanismId();
         }
-    }
 
-    private void Start()
-    {
-        // ����ʱ���浵״̬
+        // 尽早在 Awake 恢复，确保其他脚本 Start() 时 IsActivated() 已正确
         CheckActivationState();
     }
 
-    /// <summary>
-    /// �������Ƿ����ڴ浵�м���
-    /// </summary>
+    // 检查存档中是否已激活
     private void CheckActivationState()
     {
         if (!persistAcrossSaves) return;
@@ -44,43 +43,47 @@ public class SwitchMechanism : MonoBehaviour
         if (SaveManager.Instance.currentSaveData.IsMechanismActivated(currentSceneName, mechanismId))
         {
             isActivated = true;
-            Debug.Log($"���� {mechanismId} �ѴӴ浵���ؼ���״̬");
+            Debug.Log($"开关 {mechanismId} 已从存档恢复");
+
+            // 自动恢复 Animator 状态（机关门等），直接跳到最后一帧
+            if (!string.IsNullOrEmpty(restoreStateName))
+            {
+                var anim = GetComponent<Animator>();
+                if (anim != null)
+                {
+                    anim.Play(restoreStateName, 0, 1f);
+                    anim.Update(0);
+                }
+            }
         }
     }
 
-    /// <summary>
-    /// ������أ��ɾ�����ؽű����ã�
-    /// </summary>
+    // 激活开关
     public void Activate()
     {
         if (isActivated) return;
 
         isActivated = true;
 
-        // ����״̬���浵
         if (persistAcrossSaves)
         {
             SaveActivationState();
         }
 
-        Debug.Log($"���� {mechanismId} �Ѽ������");
+        Debug.Log($"开关 {mechanismId} 已激活");
     }
 
-    /// <summary>
-    /// ��ѯ�����Ƿ��Ѽ���
-    /// </summary>
+    // 查询是否已激活
     public bool IsActivated()
     {
         return isActivated;
     }
 
-    /// <summary>
-    /// ���û���״̬�����ڵ��ԣ�
-    /// </summary>
+    // 重置开关（调试用）
     public void ResetMechanism()
     {
         isActivated = false;
-        Debug.Log($"���� {mechanismId} ������");
+        Debug.Log($"开关 {mechanismId} 已重置");
     }
 
     private void SaveActivationState()
@@ -92,12 +95,12 @@ public class SwitchMechanism : MonoBehaviour
         }
     }
 
-    [ContextMenu("����ΨһID")]
+    [ContextMenu("生成唯一ID")]
     private void GenerateMechanismId()
     {
         string sceneName = UnityEngine.SceneManagement.SceneManager.GetActiveScene().name;
         Vector3 pos = transform.position;
         mechanismId = $"{sceneName}_Mech_{gameObject.name}_{pos.x:F0}_{pos.y:F0}_{pos.z:F0}";
-        Debug.Log($"���ɵĻ���ID: {mechanismId}");
+        Debug.Log($"生成的开关ID: {mechanismId}");
     }
 }

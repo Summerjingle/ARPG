@@ -65,7 +65,52 @@
 
 ---
 
+## 2026-06-20 菜单系统重构
+
+### MenuListController + 多选项篝火
+- **MenuListController**：新建通用多选项菜单导航控制器（`WhiteBox/Menu/MenuListController.cs`），用 `InputActionReference` 注入不同菜单的 Navigate/Submit，UnityEvent 通知外部。替代硬编码的 MenuButtonController
+- **MenuButton 重构**：引用从 `MenuButtonController` → `MenuListController`，Submit 改为订阅 Controller 事件
+- **AnimatorFunctions 更新**：引用换为 `MenuListController`，新增 `ExecuteBonfireOption()` 供篝火 Pressed 动画事件调用
+- **InputManager 扩展**：新增 `OnBonfireNavigate(Vector2)`、`OnBonfireSubmit` 事件，转发 `UI_BonfireMenu`
+- **BonfireOptionButton**：新建篝火选项按钮（`RPG/UI/BonfireOptionButton.cs`），Animator 用 `BonfireOptions.controller`，参数名 `Selected`/`Pressed`
+- **BonfirePanelCtrl 多选项化**：集成 `MenuListController`，支持导航选择 + `HandleOption(index)`：0=Rest, 1=预留, 2=Leave。离开前重置所有按钮 Animator.Selected 防残留
+- **MenuButtonController 废弃**：不再被引用，可删除
+
+---
+
+## 2026-06-21 电梯修复 + 描边交互存档系统
+
+### 电梯抽搐修复
+- **ElevatorController.cs** 重写：Animator 驱动改为脚本驱动。`FixedUpdate` + `rb.position` 直接赋值替代协程 + `MovePosition`；移除 `elevatorAnimator` 引用
+- **Elevator.cs** 废弃（动画事件转发不再需要）
+- 场景改动：Elevator GameObject 加 Rigidbody（kinematic/no gravity/no interpolation）、MeshCollider → BoxCollider、禁用 Animator、移除 Elevator.cs 组件
+
+### AddOutlineToRenderer — SubMesh 多材质修复
+- `CreateOutline()` 和 `RefreshOutline()`：不再 `new Material[] { _outlineMaterial }`，改为读取父物体 `sharedMaterials.Length` 创建等长数组全部填 outline。修复门+锁等多 SubMesh 物体只渲染第一个子网格的 bug
+- **首次交互销毁**：新增 `_removeAfterInteract` 选项（Inspector 勾选）。`Start()` 中 `GetComponentInParent<IInteractable>()` 订阅 `OnInteracted` 事件，回调中 DestroyOutline + 取消订阅。读档时若 `CanInteract` 已为 false 则立即销毁
+- 事件驱动，零 Update/LateUpdate 开销
+
+### IInteractable 事件化
+- 接口新增 `event System.Action OnInteracted;`
+- 9 个实现类全部添加 event 字段 + `Interact()` 中 `OnInteracted?.Invoke();`
+  - LockedMachine、InteractableObject、Bonfire、DoorOpener、ElevatorLever、InsideOpenTrigger、MachineTrigger、FountainTrigger、NPC
+
+### SwitchMechanism 读档恢复
+- `CheckActivationState()` 从 `Start()` 移到 `Awake()`（解决执行顺序问题）
+- 新增 `restoreStateName` 字段（默认 "Open"）：读档时 `anim.Play(stateName, 0, 1f) + anim.Update(0)` 直接跳到最后一帧，不播动画
+- 空字符串 = 跳过 Animator 恢复
+
+### LockedMachine 存档联动
+- 新增 `public SwitchMechanism switchMechanism;`
+- `OpenMachine()` 中调用 `switchMechanism.Activate()` 持久化 + 禁用 `machineCollider`
+- `Start()` 读档恢复：检查 `switchMechanism.IsActivated()` → 设置 `isActivated=true` + 禁用 collider
+- Animator 由 SwitchMechanism.Awake 先一步处理，LockedMachine 不重复设置
+
+---
+
 ## 待办
 - [ ] Scripts 目录整理（按之前列的方案）
 - [ ] EnemyHeathBar 拼写修正
 - [ ] EnemyTest.cs 等测试脚本清理
+- [ ] 清理场景中 Missing Script 引用（Elevator.cs 残留）
+- [ ] 所有 LockedMachine GameObject 需要在 Inspector 拖入对应的 SwitchMechanism 引用
