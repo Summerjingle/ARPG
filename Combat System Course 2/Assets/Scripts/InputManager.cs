@@ -8,14 +8,14 @@ public class InputManager : MonoBehaviour
     public static InputManager Instance { get; private set; }
 
     public PlayerInputActions Actions { get; private set; }
-    public event Action<bool> OnDeviceChanged;//设备切换：手柄、键鼠
+    public event Action<bool> OnDeviceChanged;
     public bool IsUsingGamepad { get; private set; }
     public event System.Action OnAttack;
     public event System.Action OnInteract;
     public event System.Action ToggleWeapon;
     public event System.Action OnToggleInventory;
     public event System.Action<Vector2> OnUINavigate;
-    public event System.Action OnUISubmit;   
+    public event System.Action OnUISubmit;
     public event System.Action OnUICancel;
     public event Action OnUISwitchLeft;
     public event Action OnUISwitchRight;
@@ -25,20 +25,18 @@ public class InputManager : MonoBehaviour
     public event Action OnBonfireExit;
     public event Action<Vector2> OnBonfireNavigate;
     public event Action OnBonfireSubmit;
-    public event Action<bool> OnQuickItemModifierChanged;   // true=按下, false=松开
-    public event Action<int> OnQuickItemNavigate;            // -1=左, 1=右
+    public event Action OnArchiveCancel;
+    public event Action OnArchiveDelete;
+    public event Action OnConfirmSubmit;
+    public event Action OnConfirmCancel;
+    public event Action<bool> OnQuickItemModifierChanged;
+    public event Action<int> OnQuickItemNavigate;
     public event Action OnItemDetailUse;
     public event Action OnItemDetailCancel;
     public event Action OnItemDetailSetQuickSlot;
     public event Action OnQuickUseConfirm;
     public event Action OnQuickUseCancel;
     public event Action OnQuickItemUse;
-
-
-
-
-    
-    
 
     private void Awake()
     {
@@ -93,15 +91,16 @@ public class InputManager : MonoBehaviour
         };
 
         Actions.Player.QuickItemUse.performed += _ => OnQuickItemUse?.Invoke();
-        
 
+        Actions.UI_ArchiveMenu.Cancel.performed += _ => OnArchiveCancel?.Invoke();
+        Actions.UI_ArchiveMenu.Delete.performed += _ => OnArchiveDelete?.Invoke();
 
-
+        Actions.UI_Confirm.Submit.performed += _ => OnConfirmSubmit?.Invoke();
+        Actions.UI_Confirm.Cancel.performed += _ => OnConfirmCancel?.Invoke();
     }
 
     private void OnEnable()
     {
-        Actions.Enable();
         InputSystem.onActionChange += DetectDeviceChange;
     }
 
@@ -110,9 +109,9 @@ public class InputManager : MonoBehaviour
         Actions.Disable();
         InputSystem.onActionChange -= DetectDeviceChange;
     }
+
     private void DetectDeviceChange(object obj, InputActionChange change)
     {
-        // 只有当有按键被按下/触发时，才检测设备
         if (change == InputActionChange.ActionPerformed)
         {
             InputAction action = (InputAction)obj;
@@ -120,27 +119,35 @@ public class InputManager : MonoBehaviour
 
             if (device != null)
             {
-                // 判断当前触发的设备是不是手柄
                 bool isGamepad = device is Gamepad;
 
-                // 如果设备状态发生了变化，就触发事件
                 if (isGamepad != IsUsingGamepad)
                 {
                     IsUsingGamepad = isGamepad;
                     OnDeviceChanged?.Invoke(IsUsingGamepad);
-                    Debug.Log("输入设备已切换，当前是否为手柄：" + IsUsingGamepad);
+                    // Debug.Log("input device switched, is gamepad: " + IsUsingGamepad);
                 }
             }
         }
     }
+
+    private void EnableExclusive(InputActionMap map)
+    {
+        map.Disable();
+        map.Enable();
+    }
+
     public void SwitchToMainMenuUI()
     {
         Actions.Player.Disable();
         Actions.UI_BonfireMenu.Disable();
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
         Actions.Empty.Disable();
-        Actions.UI_MainMenu.Enable();
+
+        EnableExclusive(Actions.UI_MainMenu);
         UIStateManager.SetUIActive(true);
     }
 
@@ -151,15 +158,17 @@ public class InputManager : MonoBehaviour
         Actions.UI_QuickUseBar.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_MainMenu.Disable();
-        Actions.UI_SaveMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
         Actions.UI_BonfireMenu.Disable();
         Actions.Empty.Disable();
 
-        Actions.Player.Enable();
-        Actions.Global.Enable();
+        EnableExclusive(Actions.Player);
+        EnableExclusive(Actions.Global);
         UIStateManager.SetUIActive(false);
     }
-    public void SwitchToSaveMenu()
+
+    public void SwitchToArchiveMenu()
     {
         Actions.UI_MainMenu.Disable();
         Actions.Player.Disable();
@@ -167,29 +176,43 @@ public class InputManager : MonoBehaviour
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
         Actions.Empty.Disable();
-        Actions.UI_SaveMenu.Enable();
-        UIStateManager.SetUIActive(true); // ��ʾ���
+        Actions.UI_Confirm.Disable();
+
+        EnableExclusive(Actions.UI_ArchiveMenu);
+        UIStateManager.SetUIActive(true);
     }
+
+    public void SwitchToConfirm()
+    {
+        Actions.Player.Disable();
+        Actions.UI_MainMenu.Disable();
+        Actions.UI_BonfireMenu.Disable();
+        Actions.UI_ItemDetail.Disable();
+        Actions.UI_QuickUseBar.Disable();
+        Actions.UI_Inventory.Disable();
+        Actions.UI_PauseMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.Empty.Disable();
+
+        EnableExclusive(Actions.UI_Confirm);
+    }
+
     public void SwitchToInventory()
     {
-        // 禁用玩家输入
         Actions.Player.Disable();
-
-        // 禁用其他UI（防止冲突）
         Actions.UI_MainMenu.Disable();
-        Actions.UI_SaveMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_BonfireMenu.Disable();
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
         Actions.Empty.Disable();
-
-        // 启用背包专用的UI输入
-        Actions.UI_Inventory.Enable();
         Actions.Global.Disable();
+
+        EnableExclusive(Actions.UI_Inventory);
         UIStateManager.SetUIActive(true);
-        
-        Debug.Log("已切换到 Inventory UI 输入模式");
+        Debug.Log("switched to Inventory UI input mode");
     }
 
     public void SwitchToItemDetail()
@@ -197,14 +220,14 @@ public class InputManager : MonoBehaviour
         Actions.Player.Disable();
         Actions.UI_Inventory.Disable();
         Actions.UI_MainMenu.Disable();
-        Actions.UI_SaveMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_BonfireMenu.Disable();
         Actions.Empty.Disable();
         Actions.Global.Disable();
 
-        Actions.UI_ItemDetail.Enable();
-        // Cursor 由 UIStateManager 统一管理，打开背包时已设为可见
+        EnableExclusive(Actions.UI_ItemDetail);
     }
 
     public void SwitchToQuickUseBar()
@@ -213,36 +236,32 @@ public class InputManager : MonoBehaviour
         Actions.UI_Inventory.Disable();
         Actions.UI_ItemDetail.Disable();
         Actions.UI_MainMenu.Disable();
-        Actions.UI_SaveMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_BonfireMenu.Disable();
         Actions.Empty.Disable();
         Actions.Global.Disable();
 
-        Actions.UI_QuickUseBar.Enable();
+        EnableExclusive(Actions.UI_QuickUseBar);
     }
 
     public void SwitchToPauseMenu()
     {
-        // 禁用所有游戏相关输入
         Actions.Player.Disable();
         Actions.Global.Disable();
-
-        // 禁用其他UI（确保不会干扰）
         Actions.UI_MainMenu.Disable();
-        Actions.UI_SaveMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
         Actions.UI_Inventory.Disable();
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
         Actions.UI_BonfireMenu.Disable();
         Actions.Empty.Disable();
 
-        // 启用暂停菜单UI输入
-        Actions.UI_PauseMenu.Enable();
-        
+        EnableExclusive(Actions.UI_PauseMenu);
         UIStateManager.SetUIActive(true);
-        Debug.Log("已切换到 Pause Menu 输入模式.");
-
+        Debug.Log("switched to Pause Menu input mode.");
     }
 
     public void SwitchToBonfireMenu()
@@ -250,14 +269,15 @@ public class InputManager : MonoBehaviour
         Actions.Player.Disable();
         Actions.Global.Disable();
         Actions.UI_MainMenu.Disable();
-        Actions.UI_SaveMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
         Actions.UI_Inventory.Disable();
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.Empty.Disable();
 
-        Actions.UI_BonfireMenu.Enable();
+        EnableExclusive(Actions.UI_BonfireMenu);
         UIStateManager.SetUIActive(true);
     }
 
@@ -266,13 +286,15 @@ public class InputManager : MonoBehaviour
         Actions.Player.Disable();
         Actions.Global.Disable();
         Actions.UI_MainMenu.Disable();
-        Actions.UI_SaveMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
         Actions.UI_Inventory.Disable();
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_BonfireMenu.Disable();
-        Actions.Empty.Enable();
+
+        EnableExclusive(Actions.Empty);
         UIStateManager.SetUIActive(true);
     }
 }

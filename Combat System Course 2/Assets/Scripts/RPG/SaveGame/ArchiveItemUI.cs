@@ -12,7 +12,8 @@ public class ArchiveItemUI : MonoBehaviour
     public TextMeshProUGUI healthText;
     public TextMeshProUGUI expText;
     public Button button;
-    public Button deleteButton; // ĞÂÔöÉ¾³ı°´Å¥×Ö¶Î
+    public Button deleteButton;
+    public GameObject selectionOutline; // é€‰ä¸­é«˜äº®è¾¹æ¡†
 
     [HideInInspector] public UnityEvent onClick = new UnityEvent();
 
@@ -20,7 +21,6 @@ public class ArchiveItemUI : MonoBehaviour
     {
         button.onClick.AddListener(() => onClick.Invoke());
 
-        // Èç¹ûÓĞÉ¾³ı°´Å¥£¬Ò²ÎªÆäÌí¼Ó¼àÌı
         if (deleteButton != null)
         {
             deleteButton.onClick.AddListener(() => OnDeleteButtonClicked());
@@ -35,34 +35,36 @@ public class ArchiveItemUI : MonoBehaviour
         healthText.text = $"{saveData.hpValue}/{saveData.maxHealth}";
         expText.text = saveData.currEXP.ToString();
 
-        // ÉèÖÃ°´Å¥ÎªÒÑ´æµµ×´Ì¬µÄÑÕÉ«
         button.image.color = Color.white;
     }
 
     public void SetEmptySlot(int slotIndex)
     {
-        dateText.text = "¿Õ´æµµ²Û";
+        dateText.text = "ç©ºå­˜æ¡£ä½";
         levelText.text = "---";
         sceneText.text = "---";
         healthText.text = "---";
         expText.text = "---";
 
-        // ÉèÖÃ°´Å¥Îª¿Õ²ÛÎ»×´Ì¬µÄÑÕÉ«
         button.image.color = Color.gray;
 
-        // ¿Õ²ÛÎ»½ûÓÃÉ¾³ı°´Å¥
         if (deleteButton != null)
         {
             deleteButton.interactable = false;
         }
     }
 
-    // ĞÂÔö£ºÉ¾³ı°´Å¥µã»÷ÊÂ¼ş
+    /// <summary>
+    /// è®¾ç½®é€‰ä¸­é«˜äº®çŠ¶æ€
+    /// </summary>
+    public void SetHighlighted(bool highlighted)
+    {
+        if (selectionOutline != null)
+            selectionOutline.SetActive(highlighted);
+    }
+
     private void OnDeleteButtonClicked()
     {
-        // ÕâÀï¿ÉÒÔÌí¼ÓÉ¾³ıÂß¼­
-        // ÓÉÓÚÎÒÃÇÖ±½ÓÔÚ MenuSceneController ÖĞ°ó¶¨ÁËÊÂ¼ş£¬Õâ¸ö·½·¨¿ÉÒÔÁô¿Õ
-        // »òÕßÄú¿ÉÒÔÔÚÕâÀïÌí¼ÓÒ»Ğ©ÊÓ¾õĞ§¹û
-        Debug.Log("É¾³ı°´Å¥±»µã»÷");
+        Debug.Log("åˆ é™¤æŒ‰é’®è¢«ç‚¹å‡»");
     }
 }

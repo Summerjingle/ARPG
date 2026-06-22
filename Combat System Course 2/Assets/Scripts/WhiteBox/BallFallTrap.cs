@@ -10,15 +10,32 @@ public class BallFallTrap : MonoBehaviour
     public float brickAcceleration = 5f;
     private bool triggered;
     public GameObject[] gameObjects;
+    public GameObject savedBall;// 载入存档的时候，如果已经触发过坠球陷阱的话，就删除gameObjects、bricks和ballRb，然后active该物体
 
-    public LayerMask groundLayer; // ���� Layer�����ڴ����ж�
+    [Header("存档联动")]
+    public SwitchMechanism trapMechanism;
+
+    public LayerMask groundLayer; // 地面 Layer，用于坠落判断
+
+    private void Start()
+    {
+        // 读档恢复：如果之前已经触发过，直接显示坠后状态
+        if (trapMechanism != null && trapMechanism.IsActivated())
+        {
+            triggered = true;
+            ShowPostTrapState();
+        }
+    }
 
     private void OnTriggerEnter(Collider other)
     {
         if (triggered) return;
         if (!other.CompareTag("Player")) return;
-
+        other.GetComponent<ICombatSystem>().InAction = true;
         triggered = true;
+
+        // 持久化到存档
+        trapMechanism?.Activate();
 
         // 短暂关掉球的 Collider，让站在球上的人物失去地面接触 → 触发 Falling
         StartCoroutine(BallDropRoutine());
@@ -74,8 +91,7 @@ public class BallFallTrap : MonoBehaviour
             }
         }
 
-        // // 再等 2 秒后销毁
-        
+        // 再等 2 秒后销毁
         yield return new WaitForSeconds(2f);
         foreach (var rb in bricks)
         {
@@ -85,5 +101,34 @@ public class BallFallTrap : MonoBehaviour
             }
         }
     }
-}
 
+    /// <summary>
+    /// 读档时直接显示坠落后的状态（跳过物理动画过程）
+    /// </summary>
+    private void ShowPostTrapState()
+    {
+        // 删除地板
+        foreach (var go in gameObjects)
+        {
+            if (go != null)
+                Destroy(go);
+        }
+
+        // 删除砖块
+        foreach (var rb in bricks)
+        {
+            if (rb != null)
+                Destroy(rb.gameObject);
+        }
+
+        // 删除空中原始球
+        if (ballRb != null)
+            Destroy(ballRb.gameObject);
+
+        // 显示坠落后的球
+        if (savedBall != null)
+            savedBall.SetActive(true);
+
+        Debug.Log($"BallFallTrap {trapMechanism.mechanismId} 已从存档恢复坠后状态");
+    }
+}

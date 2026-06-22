@@ -811,7 +811,7 @@
             ]
         },
         {
-            "name": "UI_SaveMenu",
+            "name": "UI_ArchiveMenu",
             "id": "0e80f8ac-8610-465f-a970-a15142b1271f",
             "actions": [
                 {
@@ -833,9 +833,18 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "AnyKey",
+                    "name": "Cancel",
                     "type": "Button",
-                    "id": "124a7d57-6e87-4d7a-8f56-edcc13d67bb4",
+                    "id": "c1a2b3c4-d5e6-4789-abcd-ef0123456789",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Delete",
+                    "type": "Button",
+                    "id": "d1e2f3a4-b5c6-4789-abcd-ef0123456790",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -1032,122 +1041,137 @@
                 },
                 {
                     "name": "",
-                    "id": "92e9ea83-412d-49bd-aebd-afc596a4cebd",
-                    "path": "<Keyboard>/anyKey",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "AnyKey",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "4198d118-bd60-4c60-8b09-57ccf13f38f9",
-                    "path": "<Gamepad>/buttonSouth",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "AnyKey",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "10a23823-c522-4051-bc3f-32feeb0d0046",
+                    "id": "a1b2c3d4-e5f6-4789-abcd-ef0123456701",
                     "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AnyKey",
+                    "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "513d9094-2d29-47a0-9e20-165484868ce5",
+                    "id": "b1c2d3e4-f5a6-4789-abcd-ef0123456702",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Cancel",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "c1d2e3f4-a5b6-4789-abcd-ef0123456703",
                     "path": "<Gamepad>/buttonNorth",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AnyKey",
+                    "action": "Delete",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "07f04e5f-7fd2-4146-8924-4af0ce5d670b",
-                    "path": "<Gamepad>/buttonWest",
+                    "id": "d1e2f3a4-b5c6-4789-abcd-ef0123456704",
+                    "path": "<Keyboard>/y",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AnyKey",
+                    "action": "Delete",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "UI_Confirm",
+            "id": "a1b2c3d4-e5f6-7890-0000-abcdef123456",
+            "actions": [
+                {
+                    "name": "Submit",
+                    "type": "Button",
+                    "id": "b2c3d4e5-f6a7-8901-1111-abcdef123456",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Cancel",
+                    "type": "Button",
+                    "id": "c3d4e5f6-a7b8-9012-2222-abcdef123456",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "d4e5f6a7-b8c9-0123-3333-abcdef123456",
+                    "path": "<Gamepad>/buttonSouth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "a27659d0-8928-4df4-a4b1-70a10a83dbcc",
-                    "path": "<Gamepad>/rightShoulder",
+                    "id": "e5f6a7b8-c9d0-1234-4444-abcdef123456",
+                    "path": "<Keyboard>/space",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AnyKey",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "012863b1-92ec-4eff-9963-3559ffa48786",
-                    "path": "<Gamepad>/leftShoulder",
+                    "id": "f6a7b8c9-d0e1-2345-5555-abcdef123456",
+                    "path": "<Keyboard>/enter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AnyKey",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "2648f661-9f21-45cd-9bd4-c4bec38f82aa",
-                    "path": "<Gamepad>/leftTrigger",
+                    "id": "a7b8c9d0-e1f2-3456-6666-abcdef123456",
+                    "path": "<Keyboard>/numpadEnter",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AnyKey",
+                    "action": "Submit",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "b8d9dd25-c73c-446b-ad4f-b6a86095c768",
-                    "path": "<Gamepad>/rightTrigger",
+                    "id": "b8c9d0e1-f2a3-4567-7777-abcdef123456",
+                    "path": "<Gamepad>/buttonEast",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AnyKey",
+                    "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
                 {
                     "name": "",
-                    "id": "f33ee555-a96e-4bb3-8542-c479722ed418",
-                    "path": "<Mouse>/leftButton",
+                    "id": "c9d0e1f2-a3b4-5678-8888-abcdef123456",
+                    "path": "<Keyboard>/escape",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "AnyKey",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
-                    "id": "8d5651ab-7bd6-416c-b0eb-7cc0e9846007",
-                    "path": "<Mouse>/rightButton",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "",
-                    "action": "AnyKey",
+                    "action": "Cancel",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

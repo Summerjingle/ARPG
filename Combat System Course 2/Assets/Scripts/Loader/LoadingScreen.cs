@@ -9,10 +9,10 @@ public class LoadingScreen : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private Image progressFill;
     [SerializeField] private TextMeshProUGUI progressText;
-    [SerializeField] private float minLoadTime = 2f;
 
     private void Start()
     {
+        Debug.Log($"<color=yellow>[TRACE] LoadingScreen.Start, frame={Time.frameCount}</color>");
         progressFill.fillAmount = 0f;
         StartCoroutine(LoadSceneAsync());
     }
@@ -34,40 +34,22 @@ public class LoadingScreen : MonoBehaviour
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(targetScene);
         asyncLoad.allowSceneActivation = false;
 
-        float timer = 0f;
-
         while (!asyncLoad.isDone)
         {
-            float rawProgress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            float progress = Mathf.Clamp01(asyncLoad.progress / 0.9f);
+            progressFill.fillAmount = progress;
+            progressText.text = $"{progress * 100:F0}";
 
-            if (timer < minLoadTime)
-            {
-                rawProgress = Mathf.Clamp01(timer / minLoadTime);
-            }
-
-            float displayProgress = asyncLoad.allowSceneActivation ? rawProgress : Mathf.Min(rawProgress, 0.9f);
-
-            progressFill.fillAmount = displayProgress;
-            progressText.text = $"{displayProgress * 100:F0}";
-
-            if (rawProgress >= 0.9f && timer >= minLoadTime)
+            if (asyncLoad.progress >= 0.9f)
             {
                 asyncLoad.allowSceneActivation = true;
             }
 
-            timer += Time.deltaTime;
             yield return null;
         }
 
-        float fillSpeed = 1f / 2f;
-        float f = progressFill.fillAmount;
-        while (f < 1f)
-        {
-            f = Mathf.MoveTowards(f, 1f, fillSpeed * Time.deltaTime);
-            progressFill.fillAmount = f;
-            progressText.text = $"{f * 100:F0}";
-            yield return null;
-        }
+        progressFill.fillAmount = 1f;
+        progressText.text = "100";
 
         if (SaveManager.shouldLoadFromSave)
         {

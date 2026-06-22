@@ -33,14 +33,12 @@ public class MenuListController : MonoBehaviour
     {
         if (Navigate != null)
         {
-            Navigate.Enable();
             Navigate.performed += OnNavigate;
             Navigate.canceled += OnNavigateCanceled;
         }
 
         if (Submit != null)
         {
-            Submit.Enable();
             Submit.performed += OnSubmitPerformed;
             Submit.canceled += OnSubmitCanceledPerformed;
         }
@@ -52,14 +50,12 @@ public class MenuListController : MonoBehaviour
         {
             Navigate.performed -= OnNavigate;
             Navigate.canceled -= OnNavigateCanceled;
-            Navigate.Disable();
         }
 
         if (Submit != null)
         {
             Submit.performed -= OnSubmitPerformed;
             Submit.canceled -= OnSubmitCanceledPerformed;
-            Submit.Disable();
         }
     }
 

@@ -9,6 +9,10 @@ TagManager:
   - Interactable
   - Portal
   - SpawnPoint
+  - DialoguePanel
+  - MainMissionPanel
+  - ChoiceButtons
+  - SideMissionPanel
   layers:
   - Default
   - TransparentFX
@@ -26,7 +30,7 @@ TagManager:
   - MiniMark
   - pk
   - OB
-  - 
+  - PlayerBlocker
   - 
   - 
   - 

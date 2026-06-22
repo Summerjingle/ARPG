@@ -6,6 +6,7 @@ public class BallStopTrigger : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip hitSound;
 
+    public PlayerFighterNew player;
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<Rigidbody>() != ballRb) return;
@@ -18,5 +19,6 @@ public class BallStopTrigger : MonoBehaviour
         ballRb.isKinematic = true;
         ballRb.useGravity = false;
         ballRb.velocity = Vector3.zero;
+        player.InAction=false;
     }
 }

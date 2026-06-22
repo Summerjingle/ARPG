@@ -108,9 +108,66 @@
 
 ---
 
+## 2026-06-22 输入穿透修复 + 存档面板完善 + 加载优化
+
+### 输入系统根因修复
+
+**问题：三个独立的 PlayerInputActions 实例同时运行**
+- `InputManager.Actions` — `new PlayerInputActions()`，管理自己的副本
+- `MainMenuState.input` — 又一个 `new PlayerInputActions()`，只为了 AnyKey 检测
+- 原始 `.inputactions` 资产 — 被 EventSystem 的 `InputSystemUIInputModule` 全量 Enable
+- MenuListController 的 `InputActionReference` 指向原始资产，InputManager 的 SwitchToXxx 管不到
+
+**修复：**
+- **MainMenuState.cs** — 删除独立的 `new PlayerInputActions()`，改用 `InputManager.Instance.Actions.UI_MainMenu.AnyKey`；Start 中调用 `SwitchToMainMenuUI()`
+- **InputManager.cs** — 移除 `OnEnable` 里的 `Actions.Enable()`（避免与 SwitchToXxx 的 Enable 计数堆叠）；新增 `EnableExclusive(map)` 辅助方法（先 Disable 再 Enable，确保计数恒为 1）；所有 SwitchToXxx 改用 EnableExclusive
+- **MenuListController.cs** — 移除独立的 `action.Enable()/Disable()`，只订阅事件不管理生命周期
+
+### 存档面板导航穿透修复
+
+**问题：在存档里按方向键，主菜单的选中也跟着动**
+- 原始资产被 InputSystemUIInputModule 全量 Enable → 所有 Map 的 Navigate 同时活着
+- 主菜单 MenuListController 和存档 MenuListController 同时收到事件
+
+**修复：ArchiveManager.cs**
+- 新增 `public MenuListController mainMenuListController` 字段
+- `ShowPanel()` 中 `mainMenuListController.enabled = false`
+- `HidePanel()` 中 `mainMenuListController.enabled = true`
+- 场景中需将 MenuRoot 的 MenuListController 拖入此字段
+
+### 确认面板 A 键唤醒其他面板修复
+
+**问题：删除确认面板按 A → loadConfirmPanel 也被激活**
+- 确认模式下存档的 MenuListController 仍在响应 UI_ArchiveMenu/Submit
+- 按 A 同时触发 `OnConfirmSubmitPressed` 和 `OnSubmitPressed` → `SelectLoadArchive`
+
+**修复：ArchiveManager.cs**
+- `SelectLoadArchive/SelectDeleteArchive` 中 `menuListController.enabled = false`
+- `CancelSelection/CancelDelete/ConfirmDelete/ConfirmLoad` 中 `menuListController.enabled = true`
+
+### 加载界面优化
+
+**问题：新游戏时进度条跑两遍 + 加载迟缓**
+- `minLoadTime = 2f` 强控假进度 + 第二个 while 循环 2秒后填充 = 至少 4 秒人为拖延
+- 冷启动时假进度与真实进度不同步，两段分裂明显
+
+**修复：LoadingScreen.cs**
+- 移除 `minLoadTime` 假进度
+- 移除场景激活后第二次填充循环
+- 进度条直接反映 `asyncLoad.progress / 0.9f`
+- 同步 `LoadScene("LoadingScene")` 保留（场景本身很小）
+
+### 输入系统命名统一
+- UI_SaveMenu → UI_ArchiveMenu（Action Map + C# 类 + InputManager 方法）
+- 移除 AnyKey Action，新增 Navigate/Submit/Cancel/Delete 四个 Action
+- 新增 UI_Confirm 通用确认面板 ActionMap（Submit + Cancel），供所有确认面板复用
+
+---
+
 ## 待办
 - [ ] Scripts 目录整理（按之前列的方案）
 - [ ] EnemyHeathBar 拼写修正
 - [ ] EnemyTest.cs 等测试脚本清理
 - [ ] 清理场景中 Missing Script 引用（Elevator.cs 残留）
 - [ ] 所有 LockedMachine GameObject 需要在 Inspector 拖入对应的 SwitchMechanism 引用
+- [ ] 场景中 ArchiveManager.mainMenuListController 需要拖入 MenuRoot 的 MenuListController

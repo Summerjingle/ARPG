@@ -897,7 +897,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             ]
         },
         {
-            ""name"": ""UI_SaveMenu"",
+            ""name"": ""UI_ArchiveMenu"",
             ""id"": ""0e80f8ac-8610-465f-a970-a15142b1271f"",
             ""actions"": [
                 {
@@ -919,9 +919,18 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""AnyKey"",
+                    ""name"": ""Cancel"",
                     ""type"": ""Button"",
-                    ""id"": ""124a7d57-6e87-4d7a-8f56-edcc13d67bb4"",
+                    ""id"": ""c1a2b3c4-d5e6-4789-abcd-ef0123456789"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Delete"",
+                    ""type"": ""Button"",
+                    ""id"": ""d1e2f3a4-b5c6-4789-abcd-ef0123456790"",
                     ""expectedControlType"": """",
                     ""processors"": """",
                     ""interactions"": """",
@@ -1118,122 +1127,137 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""92e9ea83-412d-49bd-aebd-afc596a4cebd"",
-                    ""path"": ""<Keyboard>/anyKey"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""AnyKey"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""4198d118-bd60-4c60-8b09-57ccf13f38f9"",
-                    ""path"": ""<Gamepad>/buttonSouth"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""AnyKey"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""10a23823-c522-4051-bc3f-32feeb0d0046"",
+                    ""id"": ""a1b2c3d4-e5f6-4789-abcd-ef0123456701"",
                     ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AnyKey"",
+                    ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""513d9094-2d29-47a0-9e20-165484868ce5"",
+                    ""id"": ""b1c2d3e4-f5a6-4789-abcd-ef0123456702"",
+                    ""path"": ""<Keyboard>/escape"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Cancel"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c1d2e3f4-a5b6-4789-abcd-ef0123456703"",
                     ""path"": ""<Gamepad>/buttonNorth"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AnyKey"",
+                    ""action"": ""Delete"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""07f04e5f-7fd2-4146-8924-4af0ce5d670b"",
-                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""id"": ""d1e2f3a4-b5c6-4789-abcd-ef0123456704"",
+                    ""path"": ""<Keyboard>/y"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AnyKey"",
+                    ""action"": ""Delete"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""UI_Confirm"",
+            ""id"": ""a1b2c3d4-e5f6-7890-0000-abcdef123456"",
+            ""actions"": [
+                {
+                    ""name"": ""Submit"",
+                    ""type"": ""Button"",
+                    ""id"": ""b2c3d4e5-f6a7-8901-1111-abcdef123456"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Cancel"",
+                    ""type"": ""Button"",
+                    ""id"": ""c3d4e5f6-a7b8-9012-2222-abcdef123456"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""d4e5f6a7-b8c9-0123-3333-abcdef123456"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Submit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""a27659d0-8928-4df4-a4b1-70a10a83dbcc"",
-                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""id"": ""e5f6a7b8-c9d0-1234-4444-abcdef123456"",
+                    ""path"": ""<Keyboard>/space"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AnyKey"",
+                    ""action"": ""Submit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""012863b1-92ec-4eff-9963-3559ffa48786"",
-                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""id"": ""f6a7b8c9-d0e1-2345-5555-abcdef123456"",
+                    ""path"": ""<Keyboard>/enter"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AnyKey"",
+                    ""action"": ""Submit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""2648f661-9f21-45cd-9bd4-c4bec38f82aa"",
-                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""id"": ""a7b8c9d0-e1f2-3456-6666-abcdef123456"",
+                    ""path"": ""<Keyboard>/numpadEnter"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AnyKey"",
+                    ""action"": ""Submit"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""b8d9dd25-c73c-446b-ad4f-b6a86095c768"",
-                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""id"": ""b8c9d0e1-f2a3-4567-7777-abcdef123456"",
+                    ""path"": ""<Gamepad>/buttonEast"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AnyKey"",
+                    ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
                 {
                     ""name"": """",
-                    ""id"": ""f33ee555-a96e-4bb3-8542-c479722ed418"",
-                    ""path"": ""<Mouse>/leftButton"",
+                    ""id"": ""c9d0e1f2-a3b4-5678-8888-abcdef123456"",
+                    ""path"": ""<Keyboard>/escape"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""AnyKey"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
-                    ""id"": ""8d5651ab-7bd6-416c-b0eb-7cc0e9846007"",
-                    ""path"": ""<Mouse>/rightButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""AnyKey"",
+                    ""action"": ""Cancel"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -2387,11 +2411,16 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_UI_MainMenu_Navigate = m_UI_MainMenu.FindAction("Navigate", throwIfNotFound: true);
         m_UI_MainMenu_Submit = m_UI_MainMenu.FindAction("Submit", throwIfNotFound: true);
         m_UI_MainMenu_AnyKey = m_UI_MainMenu.FindAction("AnyKey", throwIfNotFound: true);
-        // UI_SaveMenu
-        m_UI_SaveMenu = asset.FindActionMap("UI_SaveMenu", throwIfNotFound: true);
-        m_UI_SaveMenu_Navigate = m_UI_SaveMenu.FindAction("Navigate", throwIfNotFound: true);
-        m_UI_SaveMenu_Submit = m_UI_SaveMenu.FindAction("Submit", throwIfNotFound: true);
-        m_UI_SaveMenu_AnyKey = m_UI_SaveMenu.FindAction("AnyKey", throwIfNotFound: true);
+        // UI_ArchiveMenu
+        m_UI_ArchiveMenu = asset.FindActionMap("UI_ArchiveMenu", throwIfNotFound: true);
+        m_UI_ArchiveMenu_Navigate = m_UI_ArchiveMenu.FindAction("Navigate", throwIfNotFound: true);
+        m_UI_ArchiveMenu_Submit = m_UI_ArchiveMenu.FindAction("Submit", throwIfNotFound: true);
+        m_UI_ArchiveMenu_Cancel = m_UI_ArchiveMenu.FindAction("Cancel", throwIfNotFound: true);
+        m_UI_ArchiveMenu_Delete = m_UI_ArchiveMenu.FindAction("Delete", throwIfNotFound: true);
+        // UI_Confirm
+        m_UI_Confirm = asset.FindActionMap("UI_Confirm", throwIfNotFound: true);
+        m_UI_Confirm_Submit = m_UI_Confirm.FindAction("Submit", throwIfNotFound: true);
+        m_UI_Confirm_Cancel = m_UI_Confirm.FindAction("Cancel", throwIfNotFound: true);
         // UI_Inventory
         m_UI_Inventory = asset.FindActionMap("UI_Inventory", throwIfNotFound: true);
         m_UI_Inventory_Navigate = m_UI_Inventory.FindAction("Navigate", throwIfNotFound: true);
@@ -2432,7 +2461,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     {
         UnityEngine.Debug.Assert(!m_Player.enabled, "This will cause a leak and performance issues, PlayerInputActions.Player.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_MainMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_MainMenu.Disable() has not been called.");
-        UnityEngine.Debug.Assert(!m_UI_SaveMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_SaveMenu.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UI_ArchiveMenu.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_ArchiveMenu.Disable() has not been called.");
+        UnityEngine.Debug.Assert(!m_UI_Confirm.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_Confirm.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_Inventory.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_Inventory.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_ItemDetail.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_ItemDetail.Disable() has not been called.");
         UnityEngine.Debug.Assert(!m_UI_QuickUseBar.enabled, "This will cause a leak and performance issues, PlayerInputActions.UI_QuickUseBar.Disable() has not been called.");
@@ -2858,39 +2888,44 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     /// </summary>
     public UI_MainMenuActions @UI_MainMenu => new UI_MainMenuActions(this);
 
-    // UI_SaveMenu
-    private readonly InputActionMap m_UI_SaveMenu;
-    private List<IUI_SaveMenuActions> m_UI_SaveMenuActionsCallbackInterfaces = new List<IUI_SaveMenuActions>();
-    private readonly InputAction m_UI_SaveMenu_Navigate;
-    private readonly InputAction m_UI_SaveMenu_Submit;
-    private readonly InputAction m_UI_SaveMenu_AnyKey;
+    // UI_ArchiveMenu
+    private readonly InputActionMap m_UI_ArchiveMenu;
+    private List<IUI_ArchiveMenuActions> m_UI_ArchiveMenuActionsCallbackInterfaces = new List<IUI_ArchiveMenuActions>();
+    private readonly InputAction m_UI_ArchiveMenu_Navigate;
+    private readonly InputAction m_UI_ArchiveMenu_Submit;
+    private readonly InputAction m_UI_ArchiveMenu_Cancel;
+    private readonly InputAction m_UI_ArchiveMenu_Delete;
     /// <summary>
-    /// Provides access to input actions defined in input action map "UI_SaveMenu".
+    /// Provides access to input actions defined in input action map "UI_ArchiveMenu".
     /// </summary>
-    public struct UI_SaveMenuActions
+    public struct UI_ArchiveMenuActions
     {
         private @PlayerInputActions m_Wrapper;
 
         /// <summary>
         /// Construct a new instance of the input action map wrapper class.
         /// </summary>
-        public UI_SaveMenuActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        public UI_ArchiveMenuActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
         /// <summary>
-        /// Provides access to the underlying input action "UI_SaveMenu/Navigate".
+        /// Provides access to the underlying input action "UI_ArchiveMenu/Navigate".
         /// </summary>
-        public InputAction @Navigate => m_Wrapper.m_UI_SaveMenu_Navigate;
+        public InputAction @Navigate => m_Wrapper.m_UI_ArchiveMenu_Navigate;
         /// <summary>
-        /// Provides access to the underlying input action "UI_SaveMenu/Submit".
+        /// Provides access to the underlying input action "UI_ArchiveMenu/Submit".
         /// </summary>
-        public InputAction @Submit => m_Wrapper.m_UI_SaveMenu_Submit;
+        public InputAction @Submit => m_Wrapper.m_UI_ArchiveMenu_Submit;
         /// <summary>
-        /// Provides access to the underlying input action "UI_SaveMenu/AnyKey".
+        /// Provides access to the underlying input action "UI_ArchiveMenu/Cancel".
         /// </summary>
-        public InputAction @AnyKey => m_Wrapper.m_UI_SaveMenu_AnyKey;
+        public InputAction @Cancel => m_Wrapper.m_UI_ArchiveMenu_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_ArchiveMenu/Delete".
+        /// </summary>
+        public InputAction @Delete => m_Wrapper.m_UI_ArchiveMenu_Delete;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
-        public InputActionMap Get() { return m_Wrapper.m_UI_SaveMenu; }
+        public InputActionMap Get() { return m_Wrapper.m_UI_ArchiveMenu; }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
         public void Enable() { Get().Enable(); }
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
@@ -2898,9 +2933,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
         public bool enabled => Get().enabled;
         /// <summary>
-        /// Implicitly converts an <see ref="UI_SaveMenuActions" /> to an <see ref="InputActionMap" /> instance.
+        /// Implicitly converts an <see ref="UI_ArchiveMenuActions" /> to an <see ref="InputActionMap" /> instance.
         /// </summary>
-        public static implicit operator InputActionMap(UI_SaveMenuActions set) { return set.Get(); }
+        public static implicit operator InputActionMap(UI_ArchiveMenuActions set) { return set.Get(); }
         /// <summary>
         /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
         /// </summary>
@@ -2908,20 +2943,23 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
         /// </remarks>
-        /// <seealso cref="UI_SaveMenuActions" />
-        public void AddCallbacks(IUI_SaveMenuActions instance)
+        /// <seealso cref="UI_ArchiveMenuActions" />
+        public void AddCallbacks(IUI_ArchiveMenuActions instance)
         {
-            if (instance == null || m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces.Contains(instance)) return;
-            m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces.Add(instance);
+            if (instance == null || m_Wrapper.m_UI_ArchiveMenuActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UI_ArchiveMenuActionsCallbackInterfaces.Add(instance);
             @Navigate.started += instance.OnNavigate;
             @Navigate.performed += instance.OnNavigate;
             @Navigate.canceled += instance.OnNavigate;
             @Submit.started += instance.OnSubmit;
             @Submit.performed += instance.OnSubmit;
             @Submit.canceled += instance.OnSubmit;
-            @AnyKey.started += instance.OnAnyKey;
-            @AnyKey.performed += instance.OnAnyKey;
-            @AnyKey.canceled += instance.OnAnyKey;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+            @Delete.started += instance.OnDelete;
+            @Delete.performed += instance.OnDelete;
+            @Delete.canceled += instance.OnDelete;
         }
 
         /// <summary>
@@ -2930,8 +2968,8 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
         /// </remarks>
-        /// <seealso cref="UI_SaveMenuActions" />
-        private void UnregisterCallbacks(IUI_SaveMenuActions instance)
+        /// <seealso cref="UI_ArchiveMenuActions" />
+        private void UnregisterCallbacks(IUI_ArchiveMenuActions instance)
         {
             @Navigate.started -= instance.OnNavigate;
             @Navigate.performed -= instance.OnNavigate;
@@ -2939,18 +2977,21 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @Submit.started -= instance.OnSubmit;
             @Submit.performed -= instance.OnSubmit;
             @Submit.canceled -= instance.OnSubmit;
-            @AnyKey.started -= instance.OnAnyKey;
-            @AnyKey.performed -= instance.OnAnyKey;
-            @AnyKey.canceled -= instance.OnAnyKey;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+            @Delete.started -= instance.OnDelete;
+            @Delete.performed -= instance.OnDelete;
+            @Delete.canceled -= instance.OnDelete;
         }
 
         /// <summary>
-        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_SaveMenuActions.UnregisterCallbacks(IUI_SaveMenuActions)" />.
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_ArchiveMenuActions.UnregisterCallbacks(IUI_ArchiveMenuActions)" />.
         /// </summary>
-        /// <seealso cref="UI_SaveMenuActions.UnregisterCallbacks(IUI_SaveMenuActions)" />
-        public void RemoveCallbacks(IUI_SaveMenuActions instance)
+        /// <seealso cref="UI_ArchiveMenuActions.UnregisterCallbacks(IUI_ArchiveMenuActions)" />
+        public void RemoveCallbacks(IUI_ArchiveMenuActions instance)
         {
-            if (m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces.Remove(instance))
+            if (m_Wrapper.m_UI_ArchiveMenuActionsCallbackInterfaces.Remove(instance))
                 UnregisterCallbacks(instance);
         }
 
@@ -2960,21 +3001,128 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <remarks>
         /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
         /// </remarks>
-        /// <seealso cref="UI_SaveMenuActions.AddCallbacks(IUI_SaveMenuActions)" />
-        /// <seealso cref="UI_SaveMenuActions.RemoveCallbacks(IUI_SaveMenuActions)" />
-        /// <seealso cref="UI_SaveMenuActions.UnregisterCallbacks(IUI_SaveMenuActions)" />
-        public void SetCallbacks(IUI_SaveMenuActions instance)
+        /// <seealso cref="UI_ArchiveMenuActions.AddCallbacks(IUI_ArchiveMenuActions)" />
+        /// <seealso cref="UI_ArchiveMenuActions.RemoveCallbacks(IUI_ArchiveMenuActions)" />
+        /// <seealso cref="UI_ArchiveMenuActions.UnregisterCallbacks(IUI_ArchiveMenuActions)" />
+        public void SetCallbacks(IUI_ArchiveMenuActions instance)
         {
-            foreach (var item in m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces)
+            foreach (var item in m_Wrapper.m_UI_ArchiveMenuActionsCallbackInterfaces)
                 UnregisterCallbacks(item);
-            m_Wrapper.m_UI_SaveMenuActionsCallbackInterfaces.Clear();
+            m_Wrapper.m_UI_ArchiveMenuActionsCallbackInterfaces.Clear();
             AddCallbacks(instance);
         }
     }
     /// <summary>
-    /// Provides a new <see cref="UI_SaveMenuActions" /> instance referencing this action map.
+    /// Provides a new <see cref="UI_ArchiveMenuActions" /> instance referencing this action map.
     /// </summary>
-    public UI_SaveMenuActions @UI_SaveMenu => new UI_SaveMenuActions(this);
+    public UI_ArchiveMenuActions @UI_ArchiveMenu => new UI_ArchiveMenuActions(this);
+
+    // UI_Confirm
+    private readonly InputActionMap m_UI_Confirm;
+    private List<IUI_ConfirmActions> m_UI_ConfirmActionsCallbackInterfaces = new List<IUI_ConfirmActions>();
+    private readonly InputAction m_UI_Confirm_Submit;
+    private readonly InputAction m_UI_Confirm_Cancel;
+    /// <summary>
+    /// Provides access to input actions defined in input action map "UI_Confirm".
+    /// </summary>
+    public struct UI_ConfirmActions
+    {
+        private @PlayerInputActions m_Wrapper;
+
+        /// <summary>
+        /// Construct a new instance of the input action map wrapper class.
+        /// </summary>
+        public UI_ConfirmActions(@PlayerInputActions wrapper) { m_Wrapper = wrapper; }
+        /// <summary>
+        /// Provides access to the underlying input action "UI_Confirm/Submit".
+        /// </summary>
+        public InputAction @Submit => m_Wrapper.m_UI_Confirm_Submit;
+        /// <summary>
+        /// Provides access to the underlying input action "UI_Confirm/Cancel".
+        /// </summary>
+        public InputAction @Cancel => m_Wrapper.m_UI_Confirm_Cancel;
+        /// <summary>
+        /// Provides access to the underlying input action map instance.
+        /// </summary>
+        public InputActionMap Get() { return m_Wrapper.m_UI_Confirm; }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Enable()" />
+        public void Enable() { Get().Enable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.Disable()" />
+        public void Disable() { Get().Disable(); }
+        /// <inheritdoc cref="UnityEngine.InputSystem.InputActionMap.enabled" />
+        public bool enabled => Get().enabled;
+        /// <summary>
+        /// Implicitly converts an <see ref="UI_ConfirmActions" /> to an <see ref="InputActionMap" /> instance.
+        /// </summary>
+        public static implicit operator InputActionMap(UI_ConfirmActions set) { return set.Get(); }
+        /// <summary>
+        /// Adds <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <param name="instance">Callback instance.</param>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c> or <paramref name="instance"/> have already been added this method does nothing.
+        /// </remarks>
+        /// <seealso cref="UI_ConfirmActions" />
+        public void AddCallbacks(IUI_ConfirmActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UI_ConfirmActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UI_ConfirmActionsCallbackInterfaces.Add(instance);
+            @Submit.started += instance.OnSubmit;
+            @Submit.performed += instance.OnSubmit;
+            @Submit.canceled += instance.OnSubmit;
+            @Cancel.started += instance.OnCancel;
+            @Cancel.performed += instance.OnCancel;
+            @Cancel.canceled += instance.OnCancel;
+        }
+
+        /// <summary>
+        /// Removes <see cref="InputAction.started"/>, <see cref="InputAction.performed"/> and <see cref="InputAction.canceled"/> callbacks provided via <param cref="instance" /> on all input actions contained in this map.
+        /// </summary>
+        /// <remarks>
+        /// Calling this method when <paramref name="instance" /> have not previously been registered has no side-effects.
+        /// </remarks>
+        /// <seealso cref="UI_ConfirmActions" />
+        private void UnregisterCallbacks(IUI_ConfirmActions instance)
+        {
+            @Submit.started -= instance.OnSubmit;
+            @Submit.performed -= instance.OnSubmit;
+            @Submit.canceled -= instance.OnSubmit;
+            @Cancel.started -= instance.OnCancel;
+            @Cancel.performed -= instance.OnCancel;
+            @Cancel.canceled -= instance.OnCancel;
+        }
+
+        /// <summary>
+        /// Unregisters <param cref="instance" /> and unregisters all input action callbacks via <see cref="UI_ConfirmActions.UnregisterCallbacks(IUI_ConfirmActions)" />.
+        /// </summary>
+        /// <seealso cref="UI_ConfirmActions.UnregisterCallbacks(IUI_ConfirmActions)" />
+        public void RemoveCallbacks(IUI_ConfirmActions instance)
+        {
+            if (m_Wrapper.m_UI_ConfirmActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        /// <summary>
+        /// Replaces all existing callback instances and previously registered input action callbacks associated with them with callbacks provided via <param cref="instance" />.
+        /// </summary>
+        /// <remarks>
+        /// If <paramref name="instance" /> is <c>null</c>, calling this method will only unregister all existing callbacks but not register any new callbacks.
+        /// </remarks>
+        /// <seealso cref="UI_ConfirmActions.AddCallbacks(IUI_ConfirmActions)" />
+        /// <seealso cref="UI_ConfirmActions.RemoveCallbacks(IUI_ConfirmActions)" />
+        /// <seealso cref="UI_ConfirmActions.UnregisterCallbacks(IUI_ConfirmActions)" />
+        public void SetCallbacks(IUI_ConfirmActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UI_ConfirmActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UI_ConfirmActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    /// <summary>
+    /// Provides a new <see cref="UI_ConfirmActions" /> instance referencing this action map.
+    /// </summary>
+    public UI_ConfirmActions @UI_Confirm => new UI_ConfirmActions(this);
 
     // UI_Inventory
     private readonly InputActionMap m_UI_Inventory;
@@ -3919,11 +4067,11 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         void OnAnyKey(InputAction.CallbackContext context);
     }
     /// <summary>
-    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_SaveMenu" which allows adding and removing callbacks.
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_ArchiveMenu" which allows adding and removing callbacks.
     /// </summary>
-    /// <seealso cref="UI_SaveMenuActions.AddCallbacks(IUI_SaveMenuActions)" />
-    /// <seealso cref="UI_SaveMenuActions.RemoveCallbacks(IUI_SaveMenuActions)" />
-    public interface IUI_SaveMenuActions
+    /// <seealso cref="UI_ArchiveMenuActions.AddCallbacks(IUI_ArchiveMenuActions)" />
+    /// <seealso cref="UI_ArchiveMenuActions.RemoveCallbacks(IUI_ArchiveMenuActions)" />
+    public interface IUI_ArchiveMenuActions
     {
         /// <summary>
         /// Method invoked when associated input action "Navigate" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
@@ -3940,12 +4088,41 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnSubmit(InputAction.CallbackContext context);
         /// <summary>
-        /// Method invoked when associated input action "AnyKey" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
         /// </summary>
         /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
-        void OnAnyKey(InputAction.CallbackContext context);
+        void OnCancel(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Delete" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnDelete(InputAction.CallbackContext context);
+    }
+    /// <summary>
+    /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_Confirm" which allows adding and removing callbacks.
+    /// </summary>
+    /// <seealso cref="UI_ConfirmActions.AddCallbacks(IUI_ConfirmActions)" />
+    /// <seealso cref="UI_ConfirmActions.RemoveCallbacks(IUI_ConfirmActions)" />
+    public interface IUI_ConfirmActions
+    {
+        /// <summary>
+        /// Method invoked when associated input action "Submit" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnSubmit(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "Cancel" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnCancel(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_Inventory" which allows adding and removing callbacks.

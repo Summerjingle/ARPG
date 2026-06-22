@@ -60,6 +60,7 @@ public class AnimatorFunctions : MonoBehaviour
 
     void StartNewGame()
     {
+        Debug.Log($"<color=red>[TRACE] StartNewGame called, frame={Time.frameCount}</color>");
         SaveManager.Instance.CreateNewGame(-1);
 
         PlayerPrefs.SetString("TargetScene", gameSceneName);

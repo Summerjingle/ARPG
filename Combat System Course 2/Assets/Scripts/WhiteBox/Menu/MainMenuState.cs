@@ -27,23 +27,24 @@ public class MainMenuState : MonoBehaviour
     
       
 
-    private PlayerInputActions input;
     private Animator hitAnimator;
-    
+
 
     void Awake()
     {
-        input = new PlayerInputActions();
         hitAnimator=pressAnyKeyHint.GetComponent<Animator>();
         if (globalVolume.profile.TryGet<DepthOfField>(out depthOfFieldComponent))
         {Debug.Log("成功拿到景深组件！");}
         Title.SetActive(true);
-        
+
 
     }
 
     void Start()
     {
+        if (InputManager.Instance != null)
+            InputManager.Instance.SwitchToMainMenuUI();
+
         if (skipPressAnyKey)
             EnterMainMenu();
         else
@@ -52,14 +53,14 @@ public class MainMenuState : MonoBehaviour
 
     void OnEnable()
     {
-        input.UI_MainMenu.Enable();
-        input.UI_MainMenu.AnyKey.performed += OnAnyKey;
+        if (InputManager.Instance != null)
+            InputManager.Instance.Actions.UI_MainMenu.AnyKey.performed += OnAnyKey;
     }
 
     void OnDisable()
     {
-        input.UI_MainMenu.AnyKey.performed -= OnAnyKey;
-        input.UI_MainMenu.Disable();
+        if (InputManager.Instance != null)
+            InputManager.Instance.Actions.UI_MainMenu.AnyKey.performed -= OnAnyKey;
     }
 
     void OnAnyKey(InputAction.CallbackContext ctx)
