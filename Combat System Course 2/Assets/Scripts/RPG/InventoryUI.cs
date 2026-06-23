@@ -29,7 +29,10 @@ public class InventoryUI : MonoBehaviour
     public GameObject content;
     public GameObject itemPrefab;
     public ItemDetailUI itemDetail;
-    
+
+    // ItemSO → ItemUI 快速查找，避免 foreach 轮询
+    private Dictionary<ItemSO, ItemUI> itemUIMap = new Dictionary<ItemSO, ItemUI>();
+
     [Header("装备槽位")]
     [SerializeField] private List<EquipmentSlotUI> equipmentSlots = new List<EquipmentSlotUI>();
     public ItemUI currentSelectedItem;
@@ -310,6 +313,7 @@ private List<EquipmentSlotUI> GetSortedSlots()
         itemGo.transform.SetParent(content.transform);
         ItemUI itemUI = itemGo.GetComponent<ItemUI>();
         itemUI.InitItem(itemSO);
+        itemUIMap[itemSO] = itemUI;
     }
 
     private ItemUI FindItemUI(ItemSO targetItem)
@@ -382,6 +386,7 @@ private List<EquipmentSlotUI> GetSortedSlots()
             GameObject destroyedItem = itemUI.gameObject;
 
             destroyedItem.transform.SetParent(null);
+            itemUIMap.Remove(itemSO);
             InventoryManager.Instance.RemoveItem(itemSO, 1, updateUI: false);
 
             // 如果被销毁的物品正好是当前高亮的，需要清除高亮记录
@@ -457,6 +462,7 @@ private List<EquipmentSlotUI> GetSortedSlots()
         {
             Destroy(child.gameObject);
         }
+        itemUIMap.Clear();
 
         foreach (ItemSO item in InventoryManager.Instance.itemList)
         {
@@ -471,6 +477,7 @@ private List<EquipmentSlotUI> GetSortedSlots()
             if (itemUI != null)
             {
                 itemUI.InitItem(item);
+                itemUIMap[item] = itemUI;
             }
             else
             {
@@ -479,6 +486,21 @@ private List<EquipmentSlotUI> GetSortedSlots()
         }
 
         LayoutRebuilder.ForceRebuildLayoutImmediate(content.GetComponent<RectTransform>());
+    }
+
+    /// <summary> 刷新指定物品的 QuickLight 指示器 (O(1) 字典查找) </summary>
+    public void RefreshQuickLightForItem(ItemSO item)
+    {
+        if (item == null) return;
+        if (itemUIMap.TryGetValue(item, out ItemUI itemUI))
+            itemUI.UpdateQuickLight();
+    }
+
+    /// <summary> 刷新全部物品的 QuickLight（读档后调用） </summary>
+    public void RefreshAllQuickLights()
+    {
+        foreach (var kv in itemUIMap)
+            kv.Value.UpdateQuickLight();
     }
 
     public void SelectFirstItem()

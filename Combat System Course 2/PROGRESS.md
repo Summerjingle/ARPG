@@ -164,6 +164,54 @@
 
 ---
 
+## 2026-06-23 Static Batching × AddOutlineToRenderer 鬼影建筑
+
+### 现象
+WhiteBox_Village 场景打包后出现白色/红色建筑形状的半透明物体（类似 SM_Fortress_Wall_Archway_01、SM_Entrance_01），位于真实建筑附近，Editor 中完全看不到。
+
+### 排查过程
+- 怀疑是 AddOutlineToRenderer 创建的 Outline 子物体，用户列出所有挂载该组件的物体，鬼影不匹配
+- 将 OutlineOnly_White 颜色改为红色 → 鬼影变红，确认是 Outline shader 渲染
+- 将 Outline 子物体改名为 `Outline_父物体名` + 随机色 + 3倍放大 → DebugBuildWhiteObjects 运行时扫描 → 发现 Outline 子物体的 sharedMesh 变成了 `Combined Mesh (root: scene)`，62000+ 顶点
+
+### 根因
+**Static Batching**。场景中 `SM_Column_05c_LOD3` 等挂有 AddOutlineToRenderer 的物体同时勾选了 Batching Static。Build 时 Unity 将所有静态物体合并成大 Mesh，`MeshFilter.sharedMesh` 在运行时返回的是合并后的 Combined Mesh（包含整片场景的静态几何体），Outline 子物体用这个 Mesh 渲染 → 整片建筑都出现轮廓。
+
+### 修复
+1. **手动**：所有挂 AddOutlineToRenderer 的物体，Inspector 右上角 Static 下拉 → 取消 Batching Static
+2. **代码防御**：`CreateOutline()` 中检测 `sharedMesh.name.Contains("Combined Mesh")`，命中则报错跳过并提示关 Batching Static
+
+### 教训
+- `MeshFilter.sharedMesh` 在 Static Batching 开启时，Build 后会变成 Combined Mesh，不是原始 Mesh
+- 任何需要复制 Mesh 来做视觉效果（描边、高亮、轮廓）的运行时系统，必须确保源物体不参与 Static Batching
+- Shader 调试不要先怀疑 Shader，先确认 Mesh 来源是否正确
+
+---
+
+### 武器拔出状态存档
+- **GameSaveData** 新增 `bool isWeaponDrawn`
+- **SaveManger.SaveGame()** 写入 `WeaponEquipmentManager.Instance.isWeaponDrawn`
+- **SaveManger.ApplyEquipmentCoroutine()** 读档时若为拔出状态，触发 `drawWeapon` 动画让动画事件调 `DrawWeapon()` + `SetWeaponDrawState()`，不直接设 `Armed=true`（否则状态机不切换）
+
+### 快捷道具栏存档
+- **GameSaveData** 新增 `List<QuickSlotSaveData> quickSlots`（每槽 `itemName` + `count`）
+- **SaveManger.SaveQuickSlots()** 遍历 7 槽存 `item.nameOfItem`
+- **SaveManger.ApplyQuickSlots()** 读档恢复
+
+**引用不一致 Bug 修复：**
+- 原实现从 `ItemDB` 查物品（原始 SO），背包里是 `Instantiate` 副本
+- `QuickItemBar.HasItem()` / `ClearSlotByItem()` 用 `==` 引用比较 → 永远不匹配
+- **症状**：读档后快捷槽 icon 有但无 count、背包不识别已设快捷、道具用完后槽位残留
+- **修复**：`ApplyQuickSlots()` 改为从 `InventoryManager.itemList` 查（与背包同一实例）
+
+### 快捷道具高亮指示器 QuickLight
+- **ItemUI** 新增 `quickLightObject` 字段 + `UpdateQuickLight()`，`InitItem()` 时自动检查 `QuickItemBar.HasItem()`
+- **InventoryUI** 维护 `Dictionary<ItemSO, ItemUI>` 实现 O(1) 查找 `RefreshQuickLightForItem()`
+- **SetQuickUseUI** 设槽时先读旧道具，新旧都刷新 QuickLight（避免被替换的旧道具 QuickLight 残留）
+- **SaveManger** 读档完补调 `RefreshAllQuickLights()`（因为 `UpdateInventoryUI` 在 `ApplyQuickSlots` 之前执行）
+
+---
+
 ## 待办
 - [ ] Scripts 目录整理（按之前列的方案）
 - [ ] EnemyHeathBar 拼写修正

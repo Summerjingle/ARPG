@@ -28,6 +28,7 @@ public class GameSaveData
 
     // װ����Ϣ
     public string equippedWeapon;
+    public bool isWeaponDrawn;
     public string equippedHelmet;
     public string equippedChestplate;
     public string equippedGauntlets;
@@ -36,6 +37,9 @@ public class GameSaveData
 
     // ��������
     public List<InventoryItemData> inventoryItems;
+
+    // 快捷道具栏
+    public List<QuickSlotSaveData> quickSlots;
 
     // �������
     public List<QuestSaveData> questProgress;
@@ -52,6 +56,7 @@ public class GameSaveData
         saveId = Guid.NewGuid().ToString();
         saveTime = DateTime.Now;
         inventoryItems = new List<InventoryItemData>();
+        quickSlots = new List<QuickSlotSaveData>();
         questProgress = new List<QuestSaveData>();
         scenePickedItems = new Dictionary<string, HashSet<string>>();
         sceneMechanismStates = new Dictionary<string, HashSet<string>>(); 
@@ -125,6 +130,20 @@ public class InventoryItemData
 
     // Ĭ�Ϲ��캯���������л�
     public InventoryItemData() { }
+}
+
+[System.Serializable]
+public class QuickSlotSaveData
+{
+    public string itemName;     // ItemSO.name，空串表示空槽
+    public int count;
+
+    public QuickSlotSaveData() { }
+    public QuickSlotSaveData(string name, int c)
+    {
+        itemName = name ?? "";
+        count = c;
+    }
 }
 
 [System.Serializable]

@@ -192,6 +192,7 @@ public class ItemDetailUI : MonoBehaviour
             isItemInQuickSlot = false;
             if (quickSlotButtonText != null)
                 quickSlotButtonText.text = "设为快捷道具";
+            InventoryUI.Instance?.RefreshQuickLightForItem(itemSO);
         }
         else
         {

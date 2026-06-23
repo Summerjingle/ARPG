@@ -149,7 +149,7 @@ public class QuickItemBar : MonoBehaviour
     public void RefreshView()
     {
         // 中间始终显示
-        float centerS = isExpanded ? expandedCenterScale : 1f;
+        float centerS = isExpanded ? expandedCenterScale : 1.1f;//这个是常态
         ApplySlot(centerSlot, selectedIndex, centerS);
 
         // 道具名

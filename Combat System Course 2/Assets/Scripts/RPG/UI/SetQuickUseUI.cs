@@ -105,6 +105,23 @@ public class SetQuickUseUI : MonoBehaviour
             EventSystem.current.SetSelectedGameObject(slots[0].gameObject);
     }
 
+    private void AssignQuickSlot(QuickUseSlotUI slotUI)
+    {
+        if (slotUI == null) return;
+
+        // 取旧道具，以便替换后关掉它的 QuickLight
+        var oldSlot = QuickItemBar.Instance?.GetSlot(slotUI.slotIndex);
+        ItemSO oldItem = oldSlot?.item;
+
+        QuickItemBar.Instance?.SetSlot(slotUI.slotIndex, pendingItemSO, 1);
+
+        // 刷新新道具
+        InventoryUI.Instance?.RefreshQuickLightForItem(pendingItemSO);
+        // 刷新旧道具（如果和新道具不同）
+        if (oldItem != null && oldItem != pendingItemSO)
+            InventoryUI.Instance?.RefreshQuickLightForItem(oldItem);
+    }
+
     private void OnConfirm()
     {
         GameObject selected = EventSystem.current.currentSelectedGameObject;
@@ -113,8 +130,7 @@ public class SetQuickUseUI : MonoBehaviour
         QuickUseSlotUI slotUI = selected.GetComponent<QuickUseSlotUI>();
         if (slotUI == null) return;
 
-        QuickItemBar.Instance?.SetSlot(slotUI.slotIndex, pendingItemSO, 1);
-
+        AssignQuickSlot(slotUI);
         Close();
     }
 
@@ -122,7 +138,7 @@ public class SetQuickUseUI : MonoBehaviour
     {
         if (slotUI == null) return;
         EventSystem.current.SetSelectedGameObject(slotUI.gameObject);
-        QuickItemBar.Instance?.SetSlot(slotUI.slotIndex, pendingItemSO, 1);
+        AssignQuickSlot(slotUI);
         Close();
     }
 

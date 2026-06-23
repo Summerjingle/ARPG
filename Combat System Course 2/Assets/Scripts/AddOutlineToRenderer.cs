@@ -41,7 +41,7 @@ public class AddOutlineToRenderer : MonoBehaviour
             {
                 _interactable.OnInteracted += HandleInteracted;
 
-                // 加载存档后，如果交互已经发生过（门已开），立即销毁描边并退订
+                // 读取存档后，如果交互已经发生过（门已开），立即销毁描边并退订
                 if (!_interactable.CanInteract)
                 {
                     _interactable.OnInteracted -= HandleInteracted;
@@ -65,10 +65,9 @@ public class AddOutlineToRenderer : MonoBehaviour
         DestroyOutline();
     }
 
-    // 在编辑器中修改属性时自动刷新
+    // 编辑器中修改属性时自动刷新
     private void OnValidate()
     {
-        // 延迟调用避免在 OnValidate 中直接创建/销毁对象导致的警告
         if (!Application.isPlaying && _outlineChild != null)
         {
             RefreshOutline();
@@ -102,13 +101,12 @@ public class AddOutlineToRenderer : MonoBehaviour
         // 避免重复创建
         DestroyOutline();
 
-        // 子物体
         _outlineChild = new GameObject("Outline");
         _outlineChild.transform.SetParent(transform);
         _outlineChild.transform.localPosition = Vector3.zero;
         _outlineChild.transform.localRotation = Quaternion.identity;
         _outlineChild.transform.localScale = Vector3.one;
-        _outlineChild.hideFlags = HideFlags.NotEditable; // 防止用户误操作
+        _outlineChild.hideFlags = HideFlags.NotEditable;
 
         // 根据父物体类型复制 Mesh
         if (_parentRenderer is SkinnedMeshRenderer parentSkinned)
@@ -119,11 +117,12 @@ public class AddOutlineToRenderer : MonoBehaviour
             skinned.rootBone = parentSkinned.rootBone;
             skinned.quality = parentSkinned.quality;
             skinned.updateWhenOffscreen = parentSkinned.updateWhenOffscreen;
-            // 匹配父物体 SubMesh 数量，每个槽位都用 outline 材质
+
             var matCount = parentSkinned.sharedMaterials.Length;
             var outlineMats = new Material[matCount];
             for (int i = 0; i < matCount; i++) outlineMats[i] = _outlineMaterial;
             skinned.materials = outlineMats;
+
             skinned.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             skinned.receiveShadows = false;
             skinned.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
@@ -132,7 +131,6 @@ public class AddOutlineToRenderer : MonoBehaviour
         }
         else if (_parentRenderer is MeshRenderer)
         {
-            // 需要 MeshFilter
             var parentFilter = GetComponent<MeshFilter>();
             if (parentFilter == null)
             {
@@ -145,12 +143,21 @@ public class AddOutlineToRenderer : MonoBehaviour
             var filter = _outlineChild.AddComponent<MeshFilter>();
             filter.sharedMesh = parentFilter.sharedMesh;
 
+            // 检测 Static Batching 导致的 Combined Mesh：顶点数异常大，Mesh 名包含 "Combined Mesh"
+            if (parentFilter.sharedMesh != null && parentFilter.sharedMesh.name.Contains("Combined Mesh"))
+            {
+                Debug.LogError($"[AddOutlineToRenderer] {gameObject.name}: 检测到 Static Batching 合并网格 (\"{parentFilter.sharedMesh.name}\", {parentFilter.sharedMesh.vertexCount} 顶点)！请在 Inspector 右上角 Static 下拉中取消勾选 Batching Static，否则 Build 中描边会渲染整片场景。", this);
+                DestroyImmediate(_outlineChild);
+                _outlineChild = null;
+                return;
+            }
+
             var meshRenderer = _outlineChild.AddComponent<MeshRenderer>();
-            // 匹配父物体 SubMesh 数量，每个槽位都用 outline 材质
             var matCount = _parentRenderer.sharedMaterials.Length;
             var outlineMats = new Material[matCount];
             for (int i = 0; i < matCount; i++) outlineMats[i] = _outlineMaterial;
             meshRenderer.materials = outlineMats;
+
             meshRenderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.Off;
             meshRenderer.receiveShadows = false;
             meshRenderer.lightProbeUsage = UnityEngine.Rendering.LightProbeUsage.Off;
@@ -187,7 +194,6 @@ public class AddOutlineToRenderer : MonoBehaviour
     {
         if (_outlineRenderer == null || _parentRenderer == null) return;
 
-        // 重新赋值 Material（匹配 SubMesh 数量，全部用 outline 材质）
         var matCount = _outlineRenderer.sharedMaterials.Length;
         var outlineMats = new Material[matCount];
         for (int i = 0; i < matCount; i++) outlineMats[i] = _outlineMaterial;
@@ -210,5 +216,34 @@ public class AddOutlineToRenderer : MonoBehaviour
                 outlineFilter.sharedMesh = parentFilter.sharedMesh;
             }
         }
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("Find All Inactive Objects")]
+    void FindAllInactiveObjects()
+    {
+        Debug.Log("=== 开始查找所有未激活的物体 ===");
+
+        GameObject[] allObjects = FindObjectsOfType<GameObject>(true);
+
+        int inactiveCount = 0;
+        foreach (GameObject obj in allObjects)
+        {
+            if (!obj.activeInHierarchy)
+            {
+                inactiveCount++;
+                Debug.Log($"未激活: {obj.name}, 路径: {GetPath(obj.transform)}");
+            }
+        }
+
+        Debug.Log($"=== 查找完成，共找到 {inactiveCount} 个未激活的物体 ===");
+    }
+#endif
+
+    string GetPath(Transform t)
+    {
+        if (t.parent == null)
+            return t.name;
+        return GetPath(t.parent) + "/" + t.name;
     }
 }

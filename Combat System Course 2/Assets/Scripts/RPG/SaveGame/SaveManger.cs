@@ -290,8 +290,11 @@ public class SaveManager : MonoBehaviour
         currentSaveData.inventoryItems.Clear();
         currentSaveData.questProgress.Clear();
 
+        currentSaveData.isWeaponDrawn = WeaponEquipmentManager.Instance?.isWeaponDrawn ?? false;
+
         SaveEquipment(equipmentManager);
         SaveInventory();
+        SaveQuickSlots();
         SaveQuests();
 
         try
@@ -368,6 +371,24 @@ public class SaveManager : MonoBehaviour
         currentSaveData.inventoryItems.AddRange(itemStacks);
 
         Debug.Log($"�ѱ��� {currentSaveData.inventoryItems.Count} ����Ʒ�ѵ�");
+    }
+
+    private void SaveQuickSlots()
+    {
+        currentSaveData.quickSlots.Clear();
+
+        if (QuickItemBar.Instance == null)
+        {
+            Debug.LogWarning("QuickItemBar δ��ʼ�����޷�����");
+            return;
+        }
+
+        for (int i = 0; i < 7; i++)
+        {
+            var slot = QuickItemBar.Instance.GetSlot(i);
+            string itemName = slot.item != null ? slot.item.nameOfItem ?? slot.item.name : "";
+            currentSaveData.quickSlots.Add(new QuickSlotSaveData(itemName, slot.count));
+        }
     }
 
     private void SaveQuests()
@@ -487,7 +508,9 @@ public class SaveManager : MonoBehaviour
         }
 
         ApplyPlayerProperties(player);
-        ApplyInventory();
+        ApplyInventory();       // 内部会 UpdateInventoryUI，此时 QuickSlots 还没恢复
+        ApplyQuickSlots();
+        InventoryUI.Instance?.RefreshAllQuickLights(); // 补刷新：QuickSlots 恢复后才设 QuickLight
         ApplyQuests();
         ApplyEquipment();
 
@@ -576,6 +599,26 @@ public class SaveManager : MonoBehaviour
         InventoryUI.Instance?.UpdateInventoryUI();
         Debug.Log($"Ӧ�ô浵�� - �ڴ�����Ʒ����: {InventoryManager.Instance.itemList.Count}");
     }
+
+    private void ApplyQuickSlots()
+    {
+        if (QuickItemBar.Instance == null) return;
+        if (currentSaveData.quickSlots == null || currentSaveData.quickSlots.Count == 0) return;
+        if (InventoryManager.Instance == null) return;
+
+        for (int i = 0; i < Mathf.Min(currentSaveData.quickSlots.Count, 7); i++)
+        {
+            var data = currentSaveData.quickSlots[i];
+            if (string.IsNullOrEmpty(data.itemName))
+                continue;
+
+            // 必须从背包 itemList 查——背包内是 Instantiate 副本，QuickItemBar 用 == 引用比较
+            ItemSO item = InventoryManager.Instance.itemList?.Find(it => it != null && it.nameOfItem == data.itemName);
+            if (item != null)
+                QuickItemBar.Instance.SetSlot(i, item, data.count);
+        }
+    }
+
     private void ApplyQuests()
     {
         if (QuestManager.Instance == null || QuestDBManager.Instance == null) return;
@@ -685,6 +728,16 @@ public class SaveManager : MonoBehaviour
             }
         }
 
+
+        // 恢复武器拔出状态：走 drawWeapon 动画，让动画事件调 DrawWeapon() 和 SetWeaponDrawState()
+        if (currentSaveData.isWeaponDrawn && WeaponEquipmentManager.Instance != null)
+        {
+            yield return null;
+            var anim = player.GetComponent<Animator>();
+            if (anim != null)
+                anim.SetTrigger("drawWeapon");
+            Debug.Log("已触发武器拔出动画恢复");
+        }
         Debug.Log("=== װ�����̽��� ===");
     }
 

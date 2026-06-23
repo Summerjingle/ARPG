@@ -89,6 +89,11 @@ public class ArchiveManager : MonoBehaviour
         ClearArchiveContent();
         PopulateArchiveList();
 
+        // 强制刷新布局后重置滚动位置到顶部，防止第二次打开时残留旧位置
+        Canvas.ForceUpdateCanvases();
+        if (scrollRect != null)
+            scrollRect.verticalNormalizedPosition = 1f;
+
         if (menuListController != null)
             menuListController.index = 0;
     }
@@ -198,12 +203,38 @@ public class ArchiveManager : MonoBehaviour
 
     private void ScrollToItem(int index)
     {
-        if (scrollRect == null || archiveItems.Count == 0) return;
+        if (scrollRect == null || archiveItems.Count == 0 || index < 0 || index >= archiveItems.Count) return;
 
-        float t = archiveItems.Count > 1
-            ? 1f - (float)index / (archiveItems.Count - 1)
-            : 1f;
-        scrollRect.verticalNormalizedPosition = t;
+        // 强制刷新布局，确保 Content 高度和 item 位置都已计算完毕
+        Canvas.ForceUpdateCanvases();
+
+        RectTransform contentRect = scrollRect.content;
+        RectTransform viewportRect = scrollRect.viewport != null ? scrollRect.viewport : (RectTransform)scrollRect.transform;
+        RectTransform targetRect = archiveItems[index].GetComponent<RectTransform>();
+
+        float contentHeight = contentRect.rect.height;
+        float viewportHeight = viewportRect.rect.height;
+
+        // 内容没超出视口，不需要滚
+        if (contentHeight <= viewportHeight)
+        {
+            scrollRect.verticalNormalizedPosition = 1f;
+            return;
+        }
+
+        // 计算目标 item 顶部离 Content 顶部的实际像素距离
+        // anchoredPosition.y 是 pivot 点的位置，需补偿 pivot 偏移得到顶边
+        float pivotOffset = targetRect.rect.height * (1f - targetRect.pivot.y);
+        float itemTop = -(targetRect.anchoredPosition.y + pivotOffset);
+        float itemHeight = targetRect.rect.height;
+
+        float scrollableHeight = contentHeight - viewportHeight;
+
+        // 让目标 item 尽量居中显示（如果 item 比视口高，则显示顶部）
+        float desiredScroll = itemTop - (viewportHeight - itemHeight) * 0.5f;
+        desiredScroll = Mathf.Clamp(desiredScroll, 0f, scrollableHeight);
+
+        scrollRect.verticalNormalizedPosition = 1f - (desiredScroll / scrollableHeight);
     }
 
     // === archive list input (UI_ArchiveMenu map) ===

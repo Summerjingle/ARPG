@@ -8,6 +8,7 @@ public class ItemUI : MonoBehaviour
     public TextMeshProUGUI amountText;
     public ItemSO itemSO;
     public GameObject highlightObject;
+    public GameObject quickLightObject;
 
     private Button _button;
 
@@ -35,9 +36,14 @@ public class ItemUI : MonoBehaviour
             amountText.gameObject.SetActive(false);
         }
         SetHighlight(false);
+        UpdateQuickLight();
     }
 
-    
+    public void UpdateQuickLight()
+    {
+        if (quickLightObject != null && itemSO != null)
+            quickLightObject.SetActive(QuickItemBar.Instance?.HasItem(itemSO) ?? false);
+    }
 
     // ����������ʾ
     public void UpdateAmountDisplay()
