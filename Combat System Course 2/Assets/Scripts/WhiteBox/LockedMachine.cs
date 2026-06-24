@@ -15,6 +15,7 @@ public class LockedMachine : MonoBehaviour, IInteractable
 
     public bool CanInteract => !isActivated;
     public virtual int Priority => 10;
+    public string PlayerAnimationTrigger => null;
     public event System.Action OnInteracted;
 
     private void Start()

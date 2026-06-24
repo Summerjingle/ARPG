@@ -11,6 +11,7 @@ public class FountainTrigger : MonoBehaviour, IInteractable
     private Animator triggerAnim;
     private bool isActivated = false;
     public bool CanInteract => !isActivated && !turner.IsRotating;
+    public string PlayerAnimationTrigger => null;
 
     public virtual int Priority => 10;
     private void Start()

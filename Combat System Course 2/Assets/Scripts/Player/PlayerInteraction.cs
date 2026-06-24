@@ -6,10 +6,12 @@ public class PlayerInteraction : MonoBehaviour
 {
     private List<IInteractable> interactablesInRange = new();
     private PlayerInputActions inputActions;
+    private Animator animator;
 
     private void Awake()
     {
         inputActions = InputManager.Instance.Actions;
+        animator = GetComponentInParent<Animator>();
     }
     private void OnEnable()
     {
@@ -70,6 +72,13 @@ public class PlayerInteraction : MonoBehaviour
         }
 
         target?.Interact();
+
+        // 若交互目标指定了玩家动画，则播放
+        if (target != null && !string.IsNullOrEmpty(target.PlayerAnimationTrigger))
+        {
+            animator.Play(target.PlayerAnimationTrigger);
+        }
+
         StartCoroutine(RefreshPromptNextFrame());
     }
     private System.Collections.IEnumerator RefreshPromptNextFrame()

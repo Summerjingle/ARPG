@@ -21,6 +21,12 @@ public class ArchiveManager : MonoBehaviour
     public ScrollRect scrollRect;
     public MenuListController mainMenuListController;
 
+    [Header("滚动翻页")]
+    [Tooltip("一页最多可见几个存档条目")]
+    public int maxVisibleItems = 3;
+    [Tooltip("每翻一页滚动的归一化比例（0~1），填0则自动根据页数计算")]
+    public float pageScrollStep = 0f;
+
     [Header("场景设置")]
     public string gameSceneName = "WhiteBox_Village";
     public string loadingSceneName = "LoadingScene";
@@ -88,14 +94,6 @@ public class ArchiveManager : MonoBehaviour
 
         ClearArchiveContent();
         PopulateArchiveList();
-
-        // 强制刷新布局后重置滚动位置到顶部，防止第二次打开时残留旧位置
-        Canvas.ForceUpdateCanvases();
-        if (scrollRect != null)
-            scrollRect.verticalNormalizedPosition = 1f;
-
-        if (menuListController != null)
-            menuListController.index = 0;
     }
 
     public void HidePanel()
@@ -134,7 +132,6 @@ public class ArchiveManager : MonoBehaviour
     public void PopulateArchiveList()
     {
         List<GameSaveData> saves = SaveManager.Instance.GetAllSaves();
-        // Debug.Log($"[Archive] GetAllSaves 返回 {saves.Count} 条存档");
 
         int i = 0;
         foreach (GameSaveData saveData in saves.OrderByDescending(s => s.saveTime))
@@ -148,6 +145,9 @@ public class ArchiveManager : MonoBehaviour
             menuListController.maxIndex = Mathf.Max(0, saves.Count - 1);
             menuListController.index = 0;
         }
+
+        // 强制重建 Layout，确保 ScrollRect.content 尺寸正确后再设滚动位置
+        LayoutRebuilder.ForceRebuildLayoutImmediate(scrollRect.content);
 
         if (saves.Count == 0)
             ShowEmptyArchiveMessage();
@@ -205,36 +205,35 @@ public class ArchiveManager : MonoBehaviour
     {
         if (scrollRect == null || archiveItems.Count == 0 || index < 0 || index >= archiveItems.Count) return;
 
-        // 强制刷新布局，确保 Content 高度和 item 位置都已计算完毕
-        Canvas.ForceUpdateCanvases();
+        int totalItems = archiveItems.Count;
+        int totalPages = Mathf.CeilToInt((float)totalItems / maxVisibleItems);
 
-        RectTransform contentRect = scrollRect.content;
-        RectTransform viewportRect = scrollRect.viewport != null ? scrollRect.viewport : (RectTransform)scrollRect.transform;
-        RectTransform targetRect = archiveItems[index].GetComponent<RectTransform>();
-
-        float contentHeight = contentRect.rect.height;
-        float viewportHeight = viewportRect.rect.height;
-
-        // 内容没超出视口，不需要滚
-        if (contentHeight <= viewportHeight)
+        // 所有 item 都在一页内，不需要滚动
+        if (totalPages <= 1)
         {
             scrollRect.verticalNormalizedPosition = 1f;
             return;
         }
 
-        // 计算目标 item 顶部离 Content 顶部的实际像素距离
-        // anchoredPosition.y 是 pivot 点的位置，需补偿 pivot 偏移得到顶边
-        float pivotOffset = targetRect.rect.height * (1f - targetRect.pivot.y);
-        float itemTop = -(targetRect.anchoredPosition.y + pivotOffset);
-        float itemHeight = targetRect.rect.height;
+        int currentPage = index / maxVisibleItems;
 
-        float scrollableHeight = contentHeight - viewportHeight;
+        float step;
+        if (pageScrollStep > 0f)
+        {
+            // Inspector 手动指定每页滚动比例
+            step = pageScrollStep;
+        }
+        else
+        {
+            // 自动：总滚动量均分给页数
+            step = 1f / (totalPages - 1);
+        }
 
-        // 让目标 item 尽量居中显示（如果 item 比视口高，则显示顶部）
-        float desiredScroll = itemTop - (viewportHeight - itemHeight) * 0.5f;
-        desiredScroll = Mathf.Clamp(desiredScroll, 0f, scrollableHeight);
+        // page 0 → pos 1.0（顶部），page 越大越接近底部
+        float target = 1f - (currentPage * step);
+        target = Mathf.Clamp01(target);
 
-        scrollRect.verticalNormalizedPosition = 1f - (desiredScroll / scrollableHeight);
+        scrollRect.verticalNormalizedPosition = target;
     }
 
     // === archive list input (UI_ArchiveMenu map) ===

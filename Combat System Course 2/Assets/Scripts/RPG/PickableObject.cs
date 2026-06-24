@@ -6,6 +6,9 @@ public class PickableObject : InteractableObject
     public override int Priority => 100;
     public System.Action onInteract;
 
+    // 不设 isTrigger，Player 身上的 trigger collider 已足够检测
+    protected override void Start() { }
+
     public override void Interact()
     {
         if (!CanInteract) return;

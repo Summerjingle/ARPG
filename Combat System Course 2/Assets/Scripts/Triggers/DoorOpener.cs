@@ -8,6 +8,7 @@ public class DoorOpener : MonoBehaviour, IInteractable
 
     public int Priority => 5;
     public bool CanInteract => !isOpened;
+    public string PlayerAnimationTrigger => null;
 
     private bool isOpened = false;
     private Animator animator;

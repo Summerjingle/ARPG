@@ -8,4 +8,5 @@ public interface IInteractable
     void Interact();
     int Priority { get; }   //
     bool CanInteract { get; }
+    string PlayerAnimationTrigger { get; }  // 交互时玩家播放的动画名，null 或空 = 不播放
 }

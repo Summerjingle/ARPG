@@ -9,6 +9,7 @@ public class ElevatorLever : MonoBehaviour, IInteractable
 
     public int Priority => 10;
     public bool CanInteract => true;
+    public string PlayerAnimationTrigger => null;
 
     public void Interact()
 {
@@ -18,7 +19,7 @@ public class ElevatorLever : MonoBehaviour, IInteractable
         OnInteracted?.Invoke();
     }
 
-    // ¶¯»­ÊÂ¼þ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
     public void ActivateElevator()
 {
         elevator.RequestOperate();

@@ -5,7 +5,7 @@ public class NPC : MonoBehaviour, IInteractable
 {
     public event System.Action OnInteracted;
 
-    [Header("NPC»ù´¡ÉèÖÃ")]
+    [Header("NPCï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public string npcID;
     public TextMeshProUGUI myName;
 
@@ -17,6 +17,7 @@ public class NPC : MonoBehaviour, IInteractable
 
     
     public bool CanInteract => isInteractable;
+    public string PlayerAnimationTrigger => null;
 
     private Camera mainCamera;
 
@@ -36,11 +37,11 @@ public class NPC : MonoBehaviour, IInteractable
         if (!isInteractable) return;
         OnInteracted?.Invoke();
 
-        // Ô­ÓÐ¶Ô»°Âß¼­
+        // Ô­ï¿½Ð¶Ô»ï¿½ï¿½ß¼ï¿½
         
     }
 
-    // ¿ÉÑ¡£ºÔÚ¶Ô»°ÖÐ°Ñ NPC ±ê¼Ç²»¿É½»»¥
+    // ï¿½ï¿½Ñ¡ï¿½ï¿½ï¿½Ú¶Ô»ï¿½ï¿½Ð°ï¿½ NPC ï¿½ï¿½Ç²ï¿½ï¿½É½ï¿½ï¿½ï¿½
     public void SetInteractable(bool value)
 {
         isInteractable = value;

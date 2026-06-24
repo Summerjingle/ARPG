@@ -1231,8 +1231,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: 0.00007468462, y: -21}
-  m_SizeDelta: {x: -142.5508, y: 200}
+  m_AnchoredPosition: {x: 0.00007468462, y: -0.0031437743}
+  m_SizeDelta: {x: -142.5508, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &290002903
 MonoBehaviour:
@@ -1247,7 +1247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_HorizontalFit: 0
-  m_VerticalFit: 0
+  m_VerticalFit: 2
 --- !u!114 &290002904
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1268,8 +1268,8 @@ MonoBehaviour:
   m_ChildAlignment: 1
   m_StartCorner: 0
   m_StartAxis: 1
-  m_CellSize: {x: 1500, y: 250}
-  m_Spacing: {x: 0, y: 15}
+  m_CellSize: {x: 1450, y: 220}
+  m_Spacing: {x: 0, y: 60}
   m_Constraint: 1
   m_ConstraintCount: 1
 --- !u!1 &304273092
@@ -5578,7 +5578,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0, g: 0, b: 0, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
@@ -7697,9 +7697,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Content: {fileID: 290002902}
-  m_Horizontal: 1
-  m_Vertical: 0
-  m_MovementType: 1
+  m_Horizontal: 0
+  m_Vertical: 1
+  m_MovementType: 0
   m_Elasticity: 0.1
   m_Inertia: 1
   m_DecelerationRate: 0.135
@@ -8893,7 +8893,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3312d7739989d2b4e91e6319e9a96d76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_Padding: {x: -20, y: 0, z: -20, w: -20}
+  m_Padding: {x: -20, y: -20.01, z: -20, w: -25}
   m_Softness: {x: 0, y: 0}
 --- !u!222 &1477144880
 CanvasRenderer:
@@ -37382,7 +37382,7 @@ GameObject:
   - component: {fileID: 2037530400}
   - component: {fileID: 2037530405}
   m_Layer: 5
-  m_Name: Title
+  m_Name: ArchiveCtrl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -37506,6 +37506,8 @@ MonoBehaviour:
   menuListController: {fileID: 1623047402}
   scrollRect: {fileID: 1194963831}
   mainMenuListController: {fileID: 1081951808}
+  maxVisibleItems: 3
+  pageScrollStep: 0
   gameSceneName: WhiteBox_Village
   loadingSceneName: LoadingScene
 --- !u!1001 &2112170685

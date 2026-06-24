@@ -2,87 +2,71 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ChestOpener : MonoBehaviour
+public class ChestOpener : MonoBehaviour, IInteractable
 {
+    public event System.Action OnInteracted;
+
     public LootTable lootTable;
     private bool isOpened = false;
-    private Animator chestAnim;
-    private bool isPlayerInTrigger = false;
-    public GameObject openChestTipText;
-    [Header("»ú¹ØÏµÍ³")]
+    public Animator chestAnim;
+    [Header("Save System")]
     public SwitchMechanism chestMechanism;
-    [Header("Åö×²Æ÷ÉèÖÃ")]
-    public BoxCollider triggerCollider; // ´¥·¢¼ì²âµÄÅö×²Æ÷
+    [Header("Collider Reference")]
+    public BoxCollider triggerCollider;
+
+    public int Priority => 90;
+    public bool CanInteract => !isOpened;
+    public string PlayerAnimationTrigger => "Kick";
 
     private void Start()
     {
-        chestAnim = GetComponent<Animator>();
+        
         Debug.Log($"ChestOpener Start - chestMechanism: {chestMechanism != null}");
 
-        // ÑÓ³ÙÒ»Ö¡¼ì²é£¬È·±£ SwitchMechanism ÒÑ¾­³õÊ¼»¯Íê³É
+        // Delay one frame to ensure SwitchMechanism has initialized
         StartCoroutine(DelayedActivationCheck());
     }
     private IEnumerator DelayedActivationCheck()
     {
-        // µÈ´ıÒ»Ö¡£¬È·±£ËùÓĞ×é¼şµÄ Start ·½·¨¶¼Ö´ĞĞÍê±Ï
         yield return null;
 
-        Debug.Log($"ÑÓ³Ù¼ì²é - chestMechanism: {chestMechanism != null}, IsActivated: {chestMechanism?.IsActivated()}");
+        Debug.Log($"Delayed check - chestMechanism: {chestMechanism != null}, IsActivated: {chestMechanism?.IsActivated()}");
 
         if (chestMechanism != null && chestMechanism.IsActivated())
         {
             SetChestAsOpened();
         }
     }
-    private void OnTriggerEnter(Collider other)
+    public void Interact()
     {
-        if (other.CompareTag("Player") && !isOpened)
-        {
-            isPlayerInTrigger = true;
-            openChestTipText.SetActive(true);
-        }
-    }
-    private void OnTriggerExit(Collider other)
-    {
-         if (other.CompareTag("Player"))
-        {
-            isPlayerInTrigger = false;
-            openChestTipText.SetActive(false);
-        }
-    }
-    private void Update()
-    {
-        if (!isOpened && isPlayerInTrigger && Input.GetKeyDown(KeyCode.E))
-        {
+        if (isOpened) return;
+
+        OnInteracted?.Invoke();
+
+        if (chestAnim != null && chestAnim.runtimeAnimatorController != null)
             chestAnim.SetTrigger("ChestOpen");
-            openChestTipText.SetActive(false);
-            isOpened = true;
-            if (triggerCollider != null)
-                triggerCollider.enabled = false;
-            StartCoroutine(SpawItem());
-            chestMechanism.Activate(); // ¼ÇÂ¼µ½´æµµ
-            Debug.Log("±¦Ïä×´Ì¬ÒÑ±£´æµ½´æµµ");
-        }
+        isOpened = true;
+        StartCoroutine(SpawnItem());
+        chestMechanism?.Activate();
+        Debug.Log("Chest state saved to save file");
     }
+
     private void SetChestAsOpened()
     {
-        // Ö±½Ó´Ó´æµµ¼ÓÔØ¿ªÆô×´Ì¬
-        chestAnim.Play("ChestOpen", -1, 1f); // Ö±½Ó²¥·Åµ½¶¯»­×îºóÒ»Ö¡
-        openChestTipText.SetActive(false);
+        // SwitchMechanism.Awake() å·²æŠŠ Animator è·³åˆ° restoreStateName æœ€åä¸€å¸§
+        // è¿™é‡Œåªè®¾ç½®é€»è¾‘çŠ¶æ€
         isOpened = true;
-        // ½ûÓÃ´¥·¢Æ÷Åö×²Æ÷
-        if (triggerCollider != null)
-            triggerCollider.enabled = false;
-        Debug.Log("±¦ÏäÒÑ´Ó´æµµ¼ÓÔØ¿ªÆô×´Ì¬");
+        Debug.Log("Chest restored to opened state from save");
     }
-    private IEnumerator SpawItem()
+    private IEnumerator SpawnItem()
     {
         yield return new WaitForSeconds(1f);
         Vector3 chestForward = transform.forward;
         Vector3 spawnCenter = transform.position + chestForward * 0.5f + Vector3.up * 1f;
 
-        LootSpawner.SpawnLootItems(spawnCenter, lootTable, transform);
-
+        LootSpawner.SpawnLootItems(spawnCenter, lootTable, transform, ejectFromChest: true);
+        yield return new WaitForSeconds(0.1f); 
+        Destroy(this);
     }
 
 }

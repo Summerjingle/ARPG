@@ -7,6 +7,7 @@ public class InteractableObject : MonoBehaviour, IInteractable
     public bool isActivated = false;
     public bool CanInteract => !isActivated;
     public virtual int Priority => 100;
+    public virtual string PlayerAnimationTrigger => null;
 
     protected virtual void Start()
     {

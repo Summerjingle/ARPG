@@ -10,6 +10,7 @@ public class InsideOpenTrigger : MonoBehaviour, IInteractable
     public virtual int Priority => 10;
     private bool isActivated = false;
     public bool CanInteract => !isActivated;
+    public string PlayerAnimationTrigger => null;
     
 
     public void Interact()

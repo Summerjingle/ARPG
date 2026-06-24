@@ -13,6 +13,7 @@ public class Bonfire : MonoBehaviour, IInteractable
 
     public int Priority => 200;
     public bool CanInteract => !isResting;
+    public string PlayerAnimationTrigger => null;
 
     public void Interact()
 {
