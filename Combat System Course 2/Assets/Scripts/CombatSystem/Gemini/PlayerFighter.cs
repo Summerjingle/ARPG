@@ -167,6 +167,8 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
 
     public IEnumerator PlayHitReaction(ICombatSystem attacker)
     {
+        PlayerController.i?.OnRollEnd();
+
         InAction = true;
         IsTakingHit = true;
 
@@ -186,6 +188,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     }//��ʼ���˷�Ӧ
     public void PlayDeathAnimation(ICombatSystem attacker)
     {
+        PlayerController.i?.OnRollEnd();
         animator.CrossFade("Death", 0.2f);
     }//������������
     private void OnTriggerEnter(Collider other)

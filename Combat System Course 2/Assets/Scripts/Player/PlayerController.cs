@@ -11,7 +11,6 @@ public class PlayerController : MonoBehaviour
     private PlayerInputActions inputActions;
     private Vector2 moveInput;
     private bool sprintHeld;
-    private bool rollRequested;
     private bool crouchHeld;
     private Vector2 lookInput; // ԭʼ���/ҡ������
     public Vector2 LookInput => lookInput;
@@ -90,6 +89,8 @@ public class PlayerController : MonoBehaviour
     private bool isRolling = false;
     private float lastRollTime = -Mathf.Infinity;
     private int rollLayerIndex;
+    private bool rollEndTriggered;
+    private Coroutine fadeRollCoroutine;
 
     [HideInInspector] public bool isLockedOn = false;
     [HideInInspector] public Vector3 lockedTargetDir;
@@ -143,10 +144,6 @@ public class PlayerController : MonoBehaviour
         // ─────────────── 基础输入读取 ───────────────
         lookInput = inputActions.Player.Look.ReadValue<Vector2>();
         crouchHeld = inputActions.Player.Crouch.IsPressed();
-        if (inputActions.Player.Roll.WasPressedThisFrame())
-        {
-            rollRequested = true;
-        }
         sprintHeld = inputActions.Player.Sprint.IsPressed();
         moveInput = inputActions.Player.Move.ReadValue<Vector2>();
 
@@ -173,9 +170,8 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("CrouchMoving", isCrouching && moveInput.magnitude > 0.1f);
 
         // ─────────────── 攀爬与翻滚输入 ───────────────
-        if (rollRequested && !isDrinking && !UIStateManager.IsAnyUIActive && isGrounded && !isRolling)
+        if (inputActions.Player.Roll.WasPressedThisFrame() && !isDrinking && !UIStateManager.IsAnyUIActive && isGrounded && !isRolling)
         {
-            rollRequested = false;
             if (parkourController != null && parkourController.TryClimb()) return;
             StartRoll();
             return;
@@ -406,15 +402,20 @@ public class PlayerController : MonoBehaviour
             AnimatorStateInfo state =
                 animator.GetCurrentAnimatorStateInfo(rollLayerIndex);
 
-            if (state.IsName(rollAnimFront) ||
+            bool stateMatch = state.IsName(rollAnimFront) ||
                 state.IsName(rollAnimBack) ||
                 state.IsName(rollAnimLeft) ||
-                state.IsName(rollAnimRight))
+                state.IsName(rollAnimRight);
+
+            if (stateMatch)
             {
                 curveValue = rollSpeedCurve.Evaluate(state.normalizedTime);
             }
 
             velocity = rollDirection * rollSpeed * curveValue;
+
+            if (Time.frameCount % 3 == 0) // 每3帧打一次，避免刷屏
+                Debug.Log($"[ROLL] frame={Time.frameCount} state={state.shortNameHash} stateMatch={stateMatch} normTime={state.normalizedTime:F3} curve={curveValue:F3} vel={velocity.magnitude:F2}");
         }
         else
         {
@@ -524,10 +525,16 @@ public class PlayerController : MonoBehaviour
     private void StartRoll()
     {
         if (isRolling || Time.time < lastRollTime + rollCooldown)
+        {
+            Debug.Log($"[ROLL] StartRoll blocked: isRolling={isRolling}, cooldownRemain={lastRollTime + rollCooldown - Time.time:F3}");
             return;
+        }
 
         if (!PlayerProperty.Instance.ConsumeEnergy(rollEnergyCost))
+        {
+            Debug.Log("[ROLL] StartRoll blocked: not enough energy");
             return;
+        }
 
         if (rollLayerIndex < 0)
         {
@@ -555,9 +562,13 @@ public class PlayerController : MonoBehaviour
             rollDirection = transform.forward;
         }
 
+        if (fadeRollCoroutine != null)
+            StopCoroutine(fadeRollCoroutine);
+
         animator.SetLayerWeight(rollLayerIndex, 1f);
 
         string animName = GetRollDirection();
+        Debug.Log($"[ROLL] StartRoll frame={Time.frameCount} anim={animName} dir={rollDirection} layerWeight={animator.GetLayerWeight(rollLayerIndex):F2}");
         animator.CrossFade(animName, 0.05f, rollLayerIndex, 0f);
 
         StartCoroutine(WaitForRollEnd(animName));
@@ -578,17 +589,50 @@ public class PlayerController : MonoBehaviour
 
     private IEnumerator WaitForRollEnd(string animName)
     {
-        yield return null;
-        yield return new WaitUntil(() =>
-        {
-            var state = animator.GetCurrentAnimatorStateInfo(rollLayerIndex);
-            return state.IsName(animName) && state.normalizedTime >= rollExitTime;
-        });
+        Debug.Log($"[ROLL] WaitForRollEnd started frame={Time.frameCount} anim={animName}");
+        // 等动画事件或外部中断触发 OnRollEnd()
+        yield return new WaitUntil(() => rollEndTriggered);
 
+        Debug.Log($"[ROLL] WaitForRollEnd triggered frame={Time.frameCount} isRolling={isRolling}");
+
+        rollEndTriggered = false;
+
+        // OnRollEnd 已经做完清理的话直接退出
+        if (!isRolling) yield break;
         animator.SetLayerWeight(rollLayerIndex, 0f);
         combatSystem.InAction = false;
         isRolling = false;
         if (!UIStateManager.IsAnyUIActive) isMovementEnabled = true;
+    }
+
+    /// <summary>翻滚结束：Animation Event 调用，或受击/死亡中断时由 PlayerFighter 调用</summary>
+    public void OnRollEnd()
+    {
+        Debug.Log($"[ROLL] OnRollEnd called frame={Time.frameCount} stackTrace: {new System.Diagnostics.StackTrace(1, false)}");
+
+        if (!isRolling) return;
+
+        rollEndTriggered = true;
+        combatSystem.InAction = false;
+        isRolling = false;
+        if (!UIStateManager.IsAnyUIActive) isMovementEnabled = true;
+
+        fadeRollCoroutine = StartCoroutine(FadeRollLayerWeight());
+    }
+
+    private IEnumerator FadeRollLayerWeight()
+    {
+        float startWeight = animator.GetLayerWeight(rollLayerIndex);
+        float elapsed = 0f;
+        float duration = 0.2f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            animator.SetLayerWeight(rollLayerIndex, Mathf.Lerp(startWeight, 0f, elapsed / duration));
+            yield return null;
+        }
+        animator.SetLayerWeight(rollLayerIndex, 0f);
+        fadeRollCoroutine = null;
     }
 
     private void OnDestroy()

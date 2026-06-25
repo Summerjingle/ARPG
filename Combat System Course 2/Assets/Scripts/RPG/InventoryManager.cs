@@ -25,26 +25,26 @@ public class InventoryManager : MonoBehaviour
 
             if (existingItem != null)
             {
-                // ���Զѵ�����������
+                // 尝试堆叠到已有物品
                 int remainingSpace = existingItem.maxStackSize - existingItem.amount;
                 int amountToAdd = Mathf.Min(item.amount, remainingSpace);
 
                 existingItem.amount += amountToAdd;
                 
 
-                // �������ʣ����Ʒ���ݹ�����
+                // 如果还有剩余物品，递归处理
                 if (item.amount > amountToAdd)
                 {
                     item.amount -= amountToAdd;
-                    AddItem(item); // �ݹ鴦��ʣ����Ʒ
+                    AddItem(item); // 递归处理剩余物品
                 }
 
                 InventoryUI.Instance.UpdateItemAmountDisplay(existingItem);
             }
             else
             {
-                // û���ҵ��ɶѵ�����Ʒ����������Ʒ
-                ItemSO newItem = Instantiate(item); // ���������Ա����޸�ԭʼSO
+                // 没有找到可堆叠的物品，添加新物品
+                ItemSO newItem = Instantiate(item); // 实例化以避免修改原始SO
                 newItem.amount = item.amount;
                 itemList.Add(newItem);
                 InventoryUI.Instance.AddItem(newItem);
@@ -53,7 +53,7 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            // �Ƕѵ���Ʒֱ������
+            // 非堆叠物品直接添加
             ItemSO newItem = Instantiate(item);
             newItem.amount = 1;
             itemList.Add(newItem);
@@ -62,7 +62,7 @@ public class InventoryManager : MonoBehaviour
         }
     }
 
-    // ���ҿɶѵ�����Ʒ
+    // 查找可堆叠的物品
     private ItemSO FindStackableItem(ItemSO targetItem)
     {
         foreach (ItemSO item in itemList)
@@ -76,10 +76,10 @@ public class InventoryManager : MonoBehaviour
     }
 
 
-    //�ӱ������Ƴ�ָ����Ʒ
+    // 从背包中移除指定物品
     public void RemoveItem(ItemSO targetItem, int amountToRemove = 1, bool updateUI = true)
     {
-        // �ڱ������ҵ���Ӧ����Ʒ��ͨ������ƥ�䣩
+        // 在背包中找到对应的物品（通过名称匹配）
         ItemSO inventoryItem = null;
         foreach (ItemSO item in itemList)
         {
@@ -92,11 +92,11 @@ public class InventoryManager : MonoBehaviour
 
         if (inventoryItem == null)
         {
-            Debug.LogWarning($"�����Ƴ������ڵ���Ʒ: {targetItem.nameOfItem}");
+            Debug.LogWarning($"无法移除不存在的物品: {targetItem.nameOfItem}");
             return;
         }
 
-        // ԭ�е��Ƴ��߼����ֲ���
+        // 原有的移除逻辑保持不变
         bool removed = false;
 
         if (inventoryItem.IsStackable())
@@ -110,14 +110,14 @@ public class InventoryManager : MonoBehaviour
             }
             else
             {
-                MessageUI.Instance.Show($"{inventoryItem.nameOfItem} {inventoryItem.amount}");
+                MessageUI.Instance.Show($"{inventoryItem.nameOfItem}剩余{inventoryItem.amount}");
             }
         }
         else
         {
             itemList.Remove(inventoryItem);
             removed = true;
-            MessageUI.Instance.Show($"{inventoryItem.nameOfItem} �Ѵӱ����Ƴ�");
+            MessageUI.Instance.Show($"{inventoryItem.nameOfItem} 已从背包移除");
         }
 
         if (removed)
@@ -128,7 +128,7 @@ public class InventoryManager : MonoBehaviour
     }
 
 
-    // �����Ʒ����
+    // 获取物品数量
     public int GetItemCount(string itemName)
     {
         int totalCount = 0;
@@ -142,36 +142,36 @@ public class InventoryManager : MonoBehaviour
         return totalCount;
     }
 
-    // ������ʾ��Ϣ����Ʒ���ӣ��Ѵ��ڣ�
+    // 重新添加物品（显示提示信息，已存在时）
     public void ReAddItem(ItemSO item)
     {
         if (item.IsStackable())
         {
-            // ���ұ������Ƿ�������ͬ��Ʒ
+            // 查找背包中是否存在相同物品
             ItemSO existingItem = FindStackableItem(item);
 
             if (existingItem != null)
             {
-                // ���Զѵ�����������
+                // 尝试堆叠到已有物品
                 int remainingSpace = existingItem.maxStackSize - existingItem.amount;
                 int amountToAdd = Mathf.Min(item.amount, remainingSpace);
 
                 existingItem.amount += amountToAdd;
                
 
-                // �������ʣ����Ʒ���ݹ�����
+                // 如果还有剩余物品，递归处理
                 if (item.amount > amountToAdd)
                 {
                     item.amount -= amountToAdd;
-                    ReAddItem(item); // �ݹ鴦��ʣ����Ʒ
+                    ReAddItem(item); // 递归处理剩余物品
                 }
 
                 InventoryUI.Instance.UpdateItemAmountDisplay(existingItem);
             }
             else
             {
-                // û���ҵ��ɶѵ�����Ʒ����������Ʒ
-                ItemSO newItem = Instantiate(item); // ���������Ա����޸�ԭʼSO
+                // 没有找到可堆叠的物品，添加新物品
+                ItemSO newItem = Instantiate(item); // 实例化以避免修改原始SO
                 newItem.amount = item.amount;
                 itemList.Add(newItem);
                 InventoryUI.Instance.AddItem(newItem);
@@ -180,7 +180,7 @@ public class InventoryManager : MonoBehaviour
         }
         else
         {
-            // �Ƕѵ���Ʒֱ������
+            // 非堆叠物品直接添加
             ItemSO newItem = Instantiate(item);
             newItem.amount = 1;
             itemList.Add(newItem);
@@ -205,7 +205,7 @@ public class InventoryManager : MonoBehaviour
     }
 
 
-    // ����������Ƿ���ָ����������Ʒ
+    // 检查背包中是否有指定数量的特定物品
     public bool HasEnoughItems(ItemSO targetItem, int requiredAmount)
     {
         return GetItemCount(targetItem.nameOfItem) >= requiredAmount;
@@ -216,18 +216,18 @@ public class InventoryManager : MonoBehaviour
         if (itemList != null)
         {
             itemList.Clear();
-            Debug.Log("������������");
+            Debug.Log("背包已清空");
         }
 
-        // �ؼ���ͬʱ���� UI�������ʾ����Ʒ
+        // 同时更新 UI，确保界面清空物品
         if (InventoryUI.Instance != null)
         {
             InventoryUI.Instance.UpdateInventoryUI();
-            Debug.Log("���UI�Ѹ���");
+            Debug.Log("背包UI已更新");
         }
     }
 
-    // ���ӻ�ȡ������Ʒ�ѵ����ݵķ��������ڴ浵��
+    // 添加获取所有物品堆叠数据的方法，用于存档
     public List<InventoryItemData> GetAllItemStacks()
     {
         List<InventoryItemData> stacks = new List<InventoryItemData>();

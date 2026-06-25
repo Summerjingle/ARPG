@@ -219,3 +219,43 @@ WhiteBox_Village 场景打包后出现白色/红色建筑形状的半透明物�
 - [ ] 清理场景中 Missing Script 引用（Elevator.cs 残留）
 - [ ] 所有 LockedMachine GameObject 需要在 Inspector 拖入对应的 SwitchMechanism 引用
 - [ ] 场景中 ArchiveManager.mainMenuListController 需要拖入 MenuRoot 的 MenuListController
+
+---
+
+## 2026-06-25 翻滚系统修复
+
+### 问题
+偶尔翻滚时角色"抽一下"然后不播放翻滚动画，但体力已被扣除。偶发性，推测为时序竞争问题。
+
+### 排查过程
+- 加 `[ROLL]` 前缀 Debug 日志覆盖：输入、StartRoll、翻滚中 velocity/state/normalizedTime、OnRollEnd、WaitForRollEnd
+- 日志暴露两条 bug：
+
+### Bug 1：rollRequested 粘性 flag
+- `rollRequested` 只在 `!isRolling` 时清除（第 176 行），翻滚中按键不会消费
+- 连续按翻滚时输入跨帧残留，翻滚结束后自动再滚
+- **修复**：删掉 `rollRequested` 变量，触发条件直接调 `WasPressedThisFrame()`
+
+### Bug 2：rollEndTriggered 在 yield break 路径未重置
+- `WaitForRollEnd` 协程：`OnRollEnd` 已做完整清理时走 `if (!isRolling) yield break`，但 `rollEndTriggered` 没清
+- 下一次 `StartRoll` 启动协程后 `rollEndTriggered` 仍是 true → 协程立刻触发 → 当场清除翻滚 → 体力扣了滚没滚
+- **修复**：`rollEndTriggered = false` 移到 `yield break` 之前
+
+### Bug 3：FadeRollLayerWeight 协程冲突（连续翻滚卡死）
+- `OnRollEnd()` 启动 `FadeRollLayerWeight()` 协程（0.2s 淡出 layer weight）
+- 连续翻滚时旧 fade 协程还在跑，新 `StartRoll` 设 `layerWeight=1` 后每帧被旧协程 Lerp 下拉
+- layer weight 不稳定时 CrossFade 的动画事件不触发 → `OnRollEnd` 永远不调 → 角色卡死在 `isRolling=true`，以 8m/s 速度永久滑动
+- **修复**：存 `fadeRollCoroutine` 引用，`StartRoll` 时先 `StopCoroutine` 再设 weight
+
+### WaitForRollEnd 改为动画事件驱动
+- 原实现：轮询 `state.IsName(animName) && normalizedTime >= 0.75`，帧卡顿时窗口错过就永远等不到
+- 新实现：`WaitForRollEnd` 等 `rollEndTriggered` flag，`OnRollEnd()` 由动画 Animation Event 调用（四个翻滚 clip 75% 处）
+- 不依赖状态名、不依赖 normalizedTime、不依赖协程轮询
+
+### 受击/死亡中断兜底
+- `PlayerFighter.PlayHitReaction()` / `PlayDeathAnimation()` 入口调 `PlayerController.i.OnRollEnd()` 强制结束翻滚
+- `OnRollEnd()` 带 `if (!isRolling) return` 防重复清理
+
+### Roll 层淡出
+- 原 `SetLayerWeight(0f)` 瞬切导致 Base Layer 生硬接管
+- 改为 `FadeRollLayerWeight()` 协程 0.2s Lerp 淡出
