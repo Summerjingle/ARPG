@@ -27,7 +27,11 @@ public class PlayerAttack : MonoBehaviour
     private void TryAttack()
     {
         if (!canCombo) return;
-        
+
+        // 反弹期间禁止输入新攻击（canCombo 可能在正放阶段已变为 true）
+        var fighter = PlayerController.i?.combatSystem as PlayerFighterNew;
+        if (fighter != null && fighter.IsRebounding) return;
+
         if(weaponEquipmentManager.GetCurrentWeapon()!=null&& weaponEquipmentManager.isWeaponDrawn)
         {
             // 清理可能残留的 Trigger，确保动画机状态干净
@@ -42,6 +46,10 @@ public class PlayerAttack : MonoBehaviour
             }
             else
                 animator.SetTrigger("attack");
+
+            // 确保 AttackSpeed 为正常值（反弹协程可能残留 0 或 -1）
+            animator.SetFloat("AttackSpeed", 1f);
+
             canCombo = false;
             animator.applyRootMotion = true;
 
@@ -87,7 +95,6 @@ public class PlayerAttack : MonoBehaviour
         if (PlayerController.i != null)
         {
             PlayerController.i.LockRotation = true;
-            Debug.Log($"[Attack] LockRotation set to TRUE, frame={Time.frameCount}");
         }
     }
 
@@ -99,8 +106,14 @@ public class PlayerAttack : MonoBehaviour
         {
             PlayerController.i.LockRotation = false;
             canCombo = true;
-            Debug.Log($"[Attack] LockRotation set to FALSE, frame={Time.frameCount}");
         }
+    }
+
+    // 供外部（如反弹系统）强制重置攻击状态
+    public void ForceResetAttackState()
+    {
+        canCombo = true;
+        animator.applyRootMotion = false;
     }
     
 }

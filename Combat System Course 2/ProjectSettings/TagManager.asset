@@ -13,6 +13,7 @@ TagManager:
   - MainMissionPanel
   - ChoiceButtons
   - SideMissionPanel
+  - Obstacle
   layers:
   - Default
   - TransparentFX

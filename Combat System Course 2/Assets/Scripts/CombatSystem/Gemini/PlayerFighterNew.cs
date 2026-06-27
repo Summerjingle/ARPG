@@ -16,6 +16,16 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
 
+    // 反弹状态
+    [Header("Rebound")]
+    [SerializeField] [Range(0f, 0.5f)] private float reboundFreezeDuration = 0.02f;
+    [SerializeField] [Range(-5f, -0.1f)] private float reboundSpeed = -1f;
+    [SerializeField] private GameObject reboundVfxPrefab;
+    [SerializeField] private AudioClip reboundSfx;
+    public bool IsRebounding { get; private set; } = false;
+    private Coroutine reboundCoroutine;
+    private Vector3 lastReboundHitPoint;
+
     // 特殊受击动画（Animation Event 设置，null/空 = 使用默认受击动画）
     public string CurrentSpecialHitReaction { get; set; }
 
@@ -147,6 +157,138 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         animator.CrossFade("Death", 0.2f);
     }
 
+    // ==========================================
+    // 反弹系统 (由 Weapon.OnTriggerEnter 调用)
+    // ==========================================
+
+    public void OnWeaponRebound(Vector3 hitPoint)
+    {
+        Debug.Log($"[Rebound] OnWeaponRebound called: InAction={InAction}, IsRebounding={IsRebounding}, IsDead={HealthSystem.IsDead}, hitPoint={hitPoint}, frame={Time.frameCount}");
+
+        // 仅攻击中、非已反弹、非死亡状态可触发
+        if (!InAction)
+        {
+            Debug.Log("[Rebound] 拒绝：InAction=false（玩家不在攻击中）");
+            return;
+        }
+        if (IsRebounding)
+        {
+            Debug.Log("[Rebound] 拒绝：已在反弹中");
+            return;
+        }
+        if (HealthSystem.IsDead)
+        {
+            Debug.Log("[Rebound] 拒绝：玩家已死亡");
+            return;
+        }
+
+        lastReboundHitPoint = hitPoint;
+        Debug.Log($"[Rebound] 启动 DoRebound 协程, frame={Time.frameCount}");
+        reboundCoroutine = StartCoroutine(DoRebound());
+    }
+
+    private IEnumerator DoRebound()
+    {
+        Debug.Log($"[Rebound] DoRebound 开始, frame={Time.frameCount}");
+        IsRebounding = true;
+        var playerAttack = GetComponent<PlayerAttack>();
+
+        // ① 立即关闭武器碰撞体，防止同一帧多次触发
+        var weaponCollider = WeaponEquipmentManager.Instance?.GetCurrentWeapon()?.GetComponentInChildren<BoxCollider>();
+        if (weaponCollider != null)
+        {
+            weaponCollider.enabled = false;
+            Debug.Log($"[Rebound] ① 武器碰撞体已关闭, frame={Time.frameCount}");
+        }
+        else
+        {
+            Debug.LogWarning("[Rebound] ① 警告：GetCurrentWeapon 或武器 BoxCollider 为 null");
+        }
+
+        // ② 定格卡顿 + VFX/音效
+        animator.SetFloat("AttackSpeed", 0f);
+
+        if (reboundVfxPrefab != null)
+            Instantiate(reboundVfxPrefab, lastReboundHitPoint, Quaternion.identity);
+
+        if (reboundSfx != null)
+            AudioSource.PlayClipAtPoint(reboundSfx, lastReboundHitPoint);
+
+        Debug.Log($"[Rebound] ② 定格: AttackSpeed=0, freezeDuration={reboundFreezeDuration}s, frame={Time.frameCount}");
+        yield return new WaitForSeconds(reboundFreezeDuration);
+
+        if (IsTakingHit || HealthSystem.IsDead)
+        {
+            Debug.Log($"[Rebound] Abort 在定格后: IsTakingHit={IsTakingHit}, IsDead={HealthSystem.IsDead}");
+            goto Abort;
+        }
+
+        // ③ 倒放攻击动画（通过 AttackSpeed 参数驱动，Unity 原生插值，丝滑）
+        var state = animator.GetCurrentAnimatorStateInfo(0);
+        float currentNormTime = state.normalizedTime;
+
+        // 从 ClipInfo 拿真实动画长度（BlendTree 的 state.length 是 Infinity）
+        var clipInfos = animator.GetCurrentAnimatorClipInfo(0);
+        float clipLength = 1f; // fallback
+        if (clipInfos.Length > 0)
+            clipLength = clipInfos[0].clip.length;
+        else if (!float.IsInfinity(state.length) && state.length > 0.01f)
+            clipLength = state.length;
+
+        float reverseDuration = currentNormTime * clipLength / Mathf.Abs(reboundSpeed);
+        Debug.Log($"[Rebound] ③ 倒放: normalizedTime={currentNormTime:F3}, clipLength={clipLength:F3}s, speed={reboundSpeed}, reverseDuration={reverseDuration:F3}s");
+
+        animator.SetFloat("AttackSpeed", reboundSpeed);
+        Debug.Log($"[Rebound] ③ AttackSpeed={reboundSpeed} 开始倒放, frame={Time.frameCount}");
+
+        float elapsed = 0f;
+        while (elapsed < reverseDuration)
+        {
+            if (IsTakingHit || HealthSystem.IsDead)
+            {
+                Debug.Log($"[Rebound] Abort 在倒放中: elapsed={elapsed:F3}s, IsTakingHit={IsTakingHit}");
+                goto Abort;
+            }
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // ④ 直接切回执剑待机（用 Play 而非 CrossFade，避免过渡期间攻击动画事件二次触发）
+        animator.SetFloat("AttackSpeed", 1f);
+        animator.Play("Combat Blend Tree", 0, 0);
+        animator.applyRootMotion = false;
+
+        // 重置攻击输入状态（canCombo=true），否则反弹后无法再次攻击
+        if (playerAttack != null)
+            playerAttack.ForceResetAttackState();
+
+        InAction = false;
+        IsRebounding = false;
+
+        // 延迟一帧强制解锁旋转，确保在倒放触发的 StartRotationLock 动画事件之后生效
+        yield return null;
+        if (PlayerController.i != null)
+            PlayerController.i.LockRotation = false;
+
+        Debug.Log($"[Rebound] ⑤ 完成: InAction=false, LockRotation=false, canCombo=true");
+        yield break;
+
+    Abort:
+        Debug.Log($"[Rebound] Abort: AttackSpeed=1, IsRebounding=false");
+        animator.SetFloat("AttackSpeed", 1f);
+        animator.applyRootMotion = false;
+
+        if (playerAttack != null)
+            playerAttack.ForceResetAttackState();
+
+        IsRebounding = false;
+
+        // 延迟一帧强制解锁旋转
+        yield return null;
+        if (PlayerController.i != null)
+            PlayerController.i.LockRotation = false;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (HealthSystem.IsDead) return;
@@ -214,6 +356,9 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     }
     public void AE_EnableHitbox(string hitboxName)
     {
+        // 反弹期间禁止动画事件重新开启碰撞体
+        if (IsRebounding) return;
+
         hitTargets.Clear(); //每次挥刀开始，清空上一刀的记录
         // 将动画传来的字符串转为枚举
         if (System.Enum.TryParse(hitboxName, out AttackHitbox type))

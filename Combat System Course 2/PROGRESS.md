@@ -318,3 +318,52 @@ M Assets/Scripts/Enemy/EnemyManager.cs
 ### Roll 层淡出
 - 原 `SetLayerWeight(0f)` 瞬切导致 Base Layer 生硬接管
 - 改为 `FadeRollLayerWeight()` 协程 0.2s Lerp 淡出
+
+---
+
+## 2026-06-27 武器反弹系统 (Weapon Rebound)
+
+### 功能
+玩家攻击时武器碰到 `Tag = "Obstacle"` 的物体触发反弹：定格 → 倒放攻击动画 → 切回执剑待机。
+
+### 碰撞检测
+- **Weapon.cs** 基类新增 `OnTriggerEnter`：检测 Obstacle → `ClosestPoint` 取碰撞点 → 回调 `PlayerFighterNew.OnWeaponRebound(hitPoint)`
+- 武器已有 Rigidbody (Kinematic) + BoxCollider (IsTrigger)，OnTriggerEnter 原生可用
+
+### 反弹时序
+```
+碰撞 → ① 关武器碰撞体 → ② 定格(reboundFreezeDuration) → ③ 倒放(AttackSpeed=-1) → ④ Play("Combat Blend Tree")
+```
+- **Controller 参数方案**：Animator 攻击状态绑定 `AttackSpeed` Float 参数（Min=-5），`SetFloat` 控制正放/定格/倒放，比手动 `Play(normTime)` 丝滑
+- **倒放时长**：`normalizedTime × clipLength / |speed|`，ClipInfo 拿真实长度防 BlendTree Infinity
+- **切回待机**：`animator.Play("Combat Blend Tree", 0, 0)` 替代 CrossFade，避免过渡期攻击动画事件二次触发
+
+### VFX/音效
+- 碰撞点 Instantiate `reboundVfxPrefab` + `AudioSource.PlayClipAtPoint(reboundSfx)`
+
+### 状态管理
+- `IsRebounding` 标志：反弹期间 InAction=true，可被敌人攻击打断
+- **Abort 路径**：每帧检测 `IsTakingHit || HealthSystem.IsDead`，打断后恢复 AttackSpeed=1、applyRootMotion=false、canCombo=true、LockRotation=false
+- **清理**：`ForceResetAttackState()` 重置 canCombo + applyRootMotion；延迟一帧 `LockRotation=false` 确保倒放触发的 StartRotationLock 之后生效
+- `TryAttack` IsRebounding 阻断防止反弹期间发起新攻击
+- `AE_EnableHitbox` IsRebounding 守卫防止倒放时动画事件重新开启武器碰撞体
+
+### Inspector 可调参数 (PlayerFighterNew → Rebound)
+| 参数 | 范围 | 默认 | 效果 |
+|------|------|------|------|
+| Rebound Freeze Duration | 0~0.5s | 0.02s | 碰撞定格时长 |
+| Rebound Speed | -5~-0.1 | -1 | 倒放速度 |
+| Rebound Vfx Prefab | GameObject | null | 火花粒子 |
+| Rebound Sfx | AudioClip | null | 金属碰撞音 |
+
+### 涉及文件
+```
+M Assets/Scripts/RPG/Weapon/Weapon.cs
+M Assets/Scripts/CombatSystem/Gemini/PlayerFighterNew.cs
+M Assets/Scripts/Player/PlayerAttack.cs
+M Assets/GameData/Animator/P&E/PlayerController.controller
+```
+
+### 待办
+- [ ] 敌人攻击反弹（目前仅玩家）
+- [ ] 反弹后硬直帧可配置（目前直接切 Idle，无停顿）
