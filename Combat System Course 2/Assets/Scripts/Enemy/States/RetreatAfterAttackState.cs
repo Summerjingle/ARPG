@@ -19,6 +19,11 @@ public class RetreatAfterAttackState : State<EnemyController>
     }
     public override void Execute()
     {
+        if (enemyController.Target == null || enemyController.Target.HealthSystem.IsDead)
+        {
+            enemyController.ChangerState(EnemyStates.CombatMovement);
+            return;
+        }
         if (Vector3.Distance(enemyController.transform.position, targetPos) >= distanceToRetreat)
         {
             enemyController.ChangerState(EnemyStates.CombatMovement);

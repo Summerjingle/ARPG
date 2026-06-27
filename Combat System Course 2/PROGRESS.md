@@ -219,6 +219,65 @@ WhiteBox_Village 场景打包后出现白色/红色建筑形状的半透明物�
 - [ ] 清理场景中 Missing Script 引用（Elevator.cs 残留）
 - [ ] 所有 LockedMachine GameObject 需要在 Inspector 拖入对应的 SwitchMechanism 引用
 - [ ] 场景中 ArchiveManager.mainMenuListController 需要拖入 MenuRoot 的 MenuListController
+- [ ] **攻击穿过敌人**：定位 collider/rigidbody 配置问题
+- [ ] **敌人挨打后状态**：测试验证状态机 5 项修复是否生效
+
+---
+
+## 2026-06-27 特殊击退系统 + 敌人状态机修复
+
+### 特殊受击系统（连招终结技击飞）
+- **接口**：`ICombatSystem` 新增 `CurrentSpecialHitReaction` 属性（set/get）+ `PlayHitReaction` 加 `specialHitReaction` 可选参数
+- **玩家侧**：`PlayerFighterNew.AE_SetHitReaction(string)` — Animation Event 入口，传 "KnockUp" 等动画名
+- **敌人侧**：`OnTriggerEnter` 读取并消费 attacker 的 `CurrentSpecialHitReaction`，命中后清空
+- `DisableHitboxes()` 清除 `CurrentSpecialHitReaction = null`，防止挥空残留到下一刀
+- 空参/空字符串 = 默认受击动画（敌人"SwordImpact"，玩家"hit_light_B_body"）
+
+### 手动击退（替代 root motion）
+- **问题**：`Dam_FlyDie_Left_Root` 开了 `applyRootMotion=true` 但敌人只位移 0.268 单位 → FBX `Bake Into Pose` 勾着导致
+- **修复**：`EnemyFighter` 新增 `[SerializeField] knockbackDistance = 3f`，特殊击退时停 NavAgent → 播动画 → 逐帧 ease-out Lerp 位移 → Warp 同步 → 恢复 NavAgent
+- 移除所有 root motion 开关和 debug log
+
+### 敌人状态机 5 项修复
+
+**P0 — Attack()协程劫持状态（概率性）**
+- 根因：`GettingHitState.Enter().StopAllCoroutines()` 只停在 GettingHitState 自身，不停 AttackState 上的旧 `Attack()` 协程。被打断后 `ExecuteEnemyAttack` break 设 `Attackstate=Idle` → 旧协程 `WaitUntil(Idle)` 满足 → 调用 `ChangerState(RetreatAfterAttack)` 把状态从 GettingHit 抢走
+- 修复：`AttackState.Exit()` 加 `StopAllCoroutines()` + 清理 isAttacking/applyRootMotion/DisableHitboxes/NavAgent.isStopped
+
+**P0 — InAction 被 ExecuteEnemyAttack 覆盖**
+- 根因：while break 后无条件设 `InAction=false`，与 `PlayHitReaction` 设的 `InAction=true` 冲突
+- 修复：`InAction = false` 仅在 `!IsTakingHit` 时执行
+
+**P1 — EnemyManager 不感知攻击被中断**
+- 修复：新增 `previousAttacker` 字段追踪，检测到攻击者瞬间变 GettingHit → 重置 `notAttackingTimer` 为完整间隔
+
+**P2 — RetreatAfterAttack NPE**
+- 修复：`Execute()` 开头检查 `Target == null || Target.HealthSystem.IsDead` → 直接切 CombatMovement
+
+**P3 — GettingHit 事件泄漏**
+- 修复：匿名 lambda `+= () => StartCoroutine(...)` → 命名方法 `OnHitCompleteHandler` + `Exit()` 中 `-=`
+
+**额外 — 敌人挨打后卡住**
+- 根因：`PrepareEnemyAttack` 设 `navAgent.isStopped=true`，攻击被打断后 `FinishEnemyAttack` 不调用 → NavAgent 一直 stopped
+- 修复：`CombatMovementState.Enter()` + `AttackState.Exit()` 双重保险设 `navAgent.isStopped = false`
+
+### RegisterHit 防同一刀重复命中
+- `ICombatSystem` 新增 `bool RegisterHit(GameObject target)`
+- 三个 Fighter 全部实现：`PlayerFighterNew`(已有)、`PlayerFighter`、`EnemyFighter`
+- `EnableHitbox()` 时 `hitTargets.Clear()`，`OnTriggerEnter` 调用 `attacker.RegisterHit(this.gameObject)` 做去重
+
+### 涉及文件
+```
+M Assets/Scripts/CombatSystem/Gemini/ICombatSystem.cs
+M Assets/Scripts/CombatSystem/Gemini/PlayerFighterNew.cs
+M Assets/Scripts/CombatSystem/Gemini/PlayerFighter.cs
+M Assets/Scripts/CombatSystem/Gemini/EnemyFighter.cs
+M Assets/Scripts/Enemy/States/AttackState.cs
+M Assets/Scripts/Enemy/States/GettingHitState.cs
+M Assets/Scripts/Enemy/States/CombatMovementState.cs
+M Assets/Scripts/Enemy/States/RetreatAfterAttackState.cs
+M Assets/Scripts/Enemy/EnemyManager.cs
+```
 
 ---
 

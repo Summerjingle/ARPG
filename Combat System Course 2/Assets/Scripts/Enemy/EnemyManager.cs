@@ -13,6 +13,7 @@ public class EnemyManager : MonoBehaviour
     private List<EnemyController> enemiesIsRange = new List<EnemyController>();
     private float notAttackingTimer = 2f;
     private float timer = 0f;
+    private EnemyController previousAttacker;
 
 
     private void Awake()
@@ -25,6 +26,13 @@ public class EnemyManager : MonoBehaviour
         if (enemiesIsRange.Count == 0) return;
         if (!enemiesIsRange.Any(e => e.IsInState(EnemyStates.Attack)))
         {
+            // 检测上一帧的攻击者是否被击中断——重置完整间隔
+            if (previousAttacker != null && previousAttacker.IsInState(EnemyStates.GettingHit))
+            {
+                notAttackingTimer = Random.Range(timeRangeBetweenAttacks.x, timeRangeBetweenAttacks.y);
+            }
+            previousAttacker = null;
+
             if (notAttackingTimer > 0)
             {
                 notAttackingTimer -= Time.deltaTime;
@@ -38,13 +46,16 @@ public class EnemyManager : MonoBehaviour
                     attackingEnemy.ChangerState(EnemyStates.Attack);
                     notAttackingTimer = Random.Range(timeRangeBetweenAttacks.x, timeRangeBetweenAttacks.y);
                 }
-
             }
+        }
+        else
+        {
+            previousAttacker = enemiesIsRange.FirstOrDefault(e => e.IsInState(EnemyStates.Attack));
         }
         if (timer >= 0.1f)
         {
             timer = 0f;
-            
+
         }
 
         timer += Time.deltaTime;

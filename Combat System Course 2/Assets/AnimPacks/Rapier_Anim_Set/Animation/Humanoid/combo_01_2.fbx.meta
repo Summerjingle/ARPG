@@ -68,22 +68,6 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.33928573
-        functionName: StopRotationLock
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 20c98bd8c4ed86f4c83b749ccbfa6ce3,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.6875
-        functionName: OnAttackEnd
-        data: 
-        objectReferenceParameter: {fileID: 11500000, guid: 20c98bd8c4ed86f4c83b749ccbfa6ce3,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
       - time: 0.27898547
         functionName: AE_EnableHitbox
         data: Sword
@@ -96,6 +80,22 @@ ModelImporter:
         functionName: DisableHitboxes
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 78b6199c6c54bea47a79fec53d121eb2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.41910014
+        functionName: StopRotationLock
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 20c98bd8c4ed86f4c83b749ccbfa6ce3,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.5575696
+        functionName: OnAttackEnd
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 20c98bd8c4ed86f4c83b749ccbfa6ce3,
           type: 3}
         floatParameter: 0
         intParameter: 0

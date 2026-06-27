@@ -8,16 +8,26 @@ public class GettingHitState : State<EnemyController>
     [SerializeField] float stunnTime = 0.5f;
     public override void Enter(EnemyController owner)
     {
-
         StopAllCoroutines();
         enemyController = owner;
-        enemyController.Fighter.OnHitComplete += () => StartCoroutine(GoToCombatMovement());
+        enemyController.Fighter.OnHitComplete += OnHitCompleteHandler;
     }
+
+    public override void Exit()
+    {
+        if (enemyController != null && enemyController.Fighter != null)
+            enemyController.Fighter.OnHitComplete -= OnHitCompleteHandler;
+    }
+
+    void OnHitCompleteHandler()
+    {
+        StartCoroutine(GoToCombatMovement());
+    }
+
     IEnumerator GoToCombatMovement()
     {
         yield return new WaitForSeconds(stunnTime);
 
-        // 多重检查确保可以安全切换状态
         if (enemyController != null &&
             enemyController.isActiveAndEnabled &&
             !enemyController.IsInState(EnemyStates.Dead) &&
@@ -27,5 +37,4 @@ public class GettingHitState : State<EnemyController>
             enemyController.ChangerState(EnemyStates.CombatMovement);
         }
     }
-
 }

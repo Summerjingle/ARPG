@@ -16,7 +16,10 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
     [SerializeField] private AudioClip hitSound;         // 命中音效
     [SerializeField] private GameObject hitFxPrefab;     // 飙血特效预制体
+    [SerializeField] private float knockbackDistance = 3f; // 特殊击退距离
 
+
+    private HashSet<int> hitTargets = new HashSet<int>();
 
     // 健康系统
     public HealthSystem HealthSystem { get; private set; }
@@ -26,6 +29,9 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
     public bool IsCounterable => Attackstate == AttackStates.Windup && comboCount == 0;
+
+    // 特殊受击动画（由攻击方的 Animation Event 设置，空字符串 = 使用默认）
+    public string CurrentSpecialHitReaction { get; set; }
 
     // 攻击状态
     public AttackStates Attackstate { get; set; }
@@ -196,7 +202,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             enemyController.NavAgent.isStopped = false;
         }
     }
-    public IEnumerator PlayHitReaction(ICombatSystem attacker)
+    public IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null)
     {
         InAction = true;
         IsTakingHit = true;
@@ -205,24 +211,82 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         dispVec.y = 0f;
         transform.rotation = Quaternion.LookRotation(dispVec);
 
-        // 检查敌人类型
+        string hitAnim = string.IsNullOrEmpty(specialHitReaction) ? "SwordImpact" : specialHitReaction;
+        bool isSpecial = !string.IsNullOrEmpty(specialHitReaction);
+
+        // 特殊击退：脚本移动替代 root motion（不依赖 FBX Bake Into Pose 设置）
+        Vector3 knockbackDir = Vector3.zero;
+        Vector3 knockbackStart = Vector3.zero;
+        Vector3 knockbackTarget = Vector3.zero;
+        if (isSpecial)
+        {
+            knockbackDir = (transform.position - attacker.transform.position).normalized;
+            knockbackDir.y = 0f;
+            knockbackStart = transform.position;
+            knockbackTarget = knockbackStart + knockbackDir * knockbackDistance;
+            if (navAgent != null) navAgent.isStopped = true;
+        }
+
         bool isHumanoid = GetComponent<WolfController>() == null;
 
         if (isHumanoid)
         {
-            // 人形敌人：使用图层1
-            animator.CrossFade("SwordImpact", 0.2f, 1);
+            animator.CrossFade(hitAnim, 0.2f, 1);
             yield return null;
             var animstate = animator.GetNextAnimatorStateInfo(1);
-            yield return new WaitForSeconds(animstate.length * 0.8f);
+            float waitTime = isSpecial ? animstate.length : animstate.length * 0.8f;
+
+            if (isSpecial)
+            {
+                float elapsed = 0f;
+                while (elapsed < waitTime)
+                {
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.Clamp01(elapsed / waitTime);
+                    float eased = 1f - (1f - t) * (1f - t); // ease-out
+                    transform.position = Vector3.Lerp(knockbackStart, knockbackTarget, eased);
+                    yield return null;
+                }
+            }
+            else
+            {
+                yield return new WaitForSeconds(waitTime);
+            }
         }
         else
         {
-            // 狼：使用图层0
-            animator.CrossFade("SwordImpact", 0.2f, 0);
+            animator.CrossFade(hitAnim, 0.2f, 0);
             yield return null;
             var animstate = animator.GetCurrentAnimatorStateInfo(0);
-            yield return new WaitForSeconds(animstate.length * 0.8f);
+            float waitTime = isSpecial ? animstate.length : animstate.length * 0.8f;
+
+            if (isSpecial)
+            {
+                float elapsed = 0f;
+                while (elapsed < waitTime)
+                {
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.Clamp01(elapsed / waitTime);
+                    float eased = 1f - (1f - t) * (1f - t);
+                    transform.position = Vector3.Lerp(knockbackStart, knockbackTarget, eased);
+                    yield return null;
+                }
+            }
+            else
+            {
+                yield return new WaitForSeconds(waitTime);
+            }
+        }
+
+        if (isSpecial)
+        {
+            transform.position = knockbackTarget;
+            if (navAgent != null)
+            {
+                navAgent.ResetPath();
+                navAgent.Warp(transform.position);
+                navAgent.isStopped = false;
+            }
         }
 
         OnHitComplete?.Invoke();
@@ -244,9 +308,13 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             if (attacker.currTarget.gameObject != this.gameObject) return;
 
             var attackerDamage = attacker.GetWeaponDamage();
+
+            // 防止同一刀命中同一目标多次
+            if (!attacker.RegisterHit(this.gameObject)) return;
+
             TakeDamage(attackerDamage);
 
-   
+
 
             // 顿帧（攻击者 + 自己）
             Animator attackerAnimator = (attacker as MonoBehaviour)?.GetComponent<Animator>();
@@ -257,11 +325,13 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
             if (selfAnimator != null)
                 HitDelay.Instance.Stop(0.04f, selfAnimator);
-
-            // 受击动画
+             AudioSource.PlayClipAtPoint(hitSound, transform.position, 0.8f);
+            // 受击动画：读取攻击方的特殊动画名（Animation Event 设置），播放后清除
+            string specialReaction = attacker.CurrentSpecialHitReaction;
+            attacker.CurrentSpecialHitReaction = null;
             if (!HealthSystem.IsDead)
             {
-                StartCoroutine(PlayHitReaction(attacker));
+                StartCoroutine(PlayHitReaction(attacker, specialReaction));
             }
             else
             {
@@ -322,6 +392,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     // 敌人专属Hitbox启用
     public void EnableEnemyHitbox(AttackData attack)
     {
+        hitTargets.Clear();
 
         switch (attack.HitboxToUse)
         {
@@ -401,6 +472,15 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
         Debug.Log($"禁用所有敌人({gameObject.name})Hitbox");
     }
+
+    public bool RegisterHit(GameObject target)
+    {
+        int id = target.GetInstanceID();
+        if (hitTargets.Contains(id)) return false;
+        hitTargets.Add(id);
+        return true;
+    }
+
     public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCount = 0)
     {
         Debug.Log($"[EnemyAttack] 开始执行敌人攻击，目标: {(target != null ? target.gameObject.name : "null")}");
@@ -497,8 +577,11 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         //�ȴ��������
         Attackstate = AttackStates.Idle;
         comboCount = 0;
-        InAction = false;
         currTarget = null;
+        if (!IsTakingHit)
+        {
+            InAction = false;
+        }
     }
     public void UpdateEnemyAttackStateWithCombo(float normalizedTime, AttackData attack)
     {

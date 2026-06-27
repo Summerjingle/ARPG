@@ -21,10 +21,8 @@ public class CombatController : MonoBehaviour
 
     private void OnAnimatorMove()
     {
-        if (!combatSystem.InCounter)
-        {
-            transform.position += animator.deltaPosition;
-        }
+        // 只处理旋转，位移由各自主体的移动系统（如 PlayerController）负责，
+        // 避免多个 OnAnimatorMove 重复应用 animator.deltaPosition 导致抖动
         transform.rotation *= animator.deltaRotation;
     }
 

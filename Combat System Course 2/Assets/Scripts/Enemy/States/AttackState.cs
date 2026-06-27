@@ -42,6 +42,11 @@ public class AttackState : State<EnemyController >
     }
     public override void Exit()
     {
+        StopAllCoroutines();
+        isAttacking = false;
+        enemy.Animator.applyRootMotion = false;
+        enemy.Fighter.DisableHitboxes();
+        enemy.NavAgent.isStopped = false;
         enemy.NavAgent.ResetPath();
     }
 }

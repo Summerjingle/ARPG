@@ -68,7 +68,23 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.34821427
+      - time: 0.15434787
+        functionName: AE_EnableHitbox
+        data: Sword
+        objectReferenceParameter: {fileID: 11500000, guid: 78b6199c6c54bea47a79fec53d121eb2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.21086948
+        functionName: DisableHitboxes
+        data: 
+        objectReferenceParameter: {fileID: 11500000, guid: 78b6199c6c54bea47a79fec53d121eb2,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
+      - time: 0.65160686
         functionName: StopRotationLock
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 20c98bd8c4ed86f4c83b749ccbfa6ce3,
@@ -84,17 +100,9 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.15434787
-        functionName: AE_EnableHitbox
-        data: Sword
-        objectReferenceParameter: {fileID: 11500000, guid: 78b6199c6c54bea47a79fec53d121eb2,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
-      - time: 0.21086948
-        functionName: DisableHitboxes
-        data: 
+      - time: 0.15870117
+        functionName: AE_SetHitReaction
+        data: Dam_FlyDie_Left_Root
         objectReferenceParameter: {fileID: 11500000, guid: 78b6199c6c54bea47a79fec53d121eb2,
           type: 3}
         floatParameter: 0

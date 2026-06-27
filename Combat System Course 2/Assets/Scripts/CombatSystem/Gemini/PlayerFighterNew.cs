@@ -15,7 +15,10 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     public bool InAction { get; set; } = false;
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
-    
+
+    // 特殊受击动画（Animation Event 设置，null/空 = 使用默认受击动画）
+    public string CurrentSpecialHitReaction { get; set; }
+
     // 这些状态在新系统中可能不再严格需要，但为了接口保留
     public bool IsCounterable => false; 
     public AttackStates Attackstate { get; set; }
@@ -123,12 +126,13 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         return playerProperty?.armorValue ?? 0;
     }
 
-    public IEnumerator PlayHitReaction(ICombatSystem attacker)
+    public IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null)
     {
         InAction = true;
         IsTakingHit = true;
 
-        animator.CrossFade("hit_light_B_body", 0.2f, 4);
+        string hitAnim = string.IsNullOrEmpty(specialHitReaction) ? "hit_light_B_body" : specialHitReaction;
+        animator.CrossFade(hitAnim, 0.2f, 4);
         yield return null;
         var animstate = animator.GetNextAnimatorStateInfo(4);
         yield return new WaitForSeconds(animstate.length * 0.8f);
@@ -154,11 +158,17 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
             if (attacker.currTarget.gameObject != this.gameObject) return;
 
             var attackerDamage = attacker.GetWeaponDamage();
+
+            // 防止同一刀命中同一目标多次
+            if (!attacker.RegisterHit(this.gameObject)) return;
+
             TakeDamage(attackerDamage);
             
             if (!HealthSystem.IsDead)
             {
-                StartCoroutine(PlayHitReaction(attacker));
+                string specialReaction = attacker.CurrentSpecialHitReaction;
+                attacker.CurrentSpecialHitReaction = null;
+                StartCoroutine(PlayHitReaction(attacker, specialReaction));
             }
             else
             {
@@ -212,6 +222,21 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         }
     }
 
+    // Animation Event 调用：设置本次攻击命中时的特殊受击动画
+    // 在 AE_EnableHitbox 同一帧或之前调用即可
+    // 传空字符串 = 清空，使用默认受击动画
+    public void AE_SetHitReaction(string animName)
+    {
+        if (string.IsNullOrEmpty(animName))
+        {
+            CurrentSpecialHitReaction = null;
+        }
+        else
+        {
+            CurrentSpecialHitReaction = animName;
+        }
+    }
+
     // 建议在动画 Event 中调用此方法关闭碰撞
     public void DisableHitboxes()
     {
@@ -222,6 +247,9 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
 
         var weaponCollider = WeaponEquipmentManager.Instance?.GetCurrentWeapon()?.GetComponentInChildren<BoxCollider>();
         if (weaponCollider != null) weaponCollider.enabled = false;
+
+        // 清除特殊受击标记，防止挥空后残留到下一刀
+        CurrentSpecialHitReaction = null;
     }
     public bool RegisterHit(GameObject target)
     {

@@ -435,8 +435,11 @@ public class PlayerController : MonoBehaviour
                 targetRotation = Quaternion.LookRotation(moveDir);
             }
         }
-        float activeRotSpeed = combatSystem.InAction ? rotationSpeed * 0.5f : rotationSpeed;
-        transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, activeRotSpeed * Time.deltaTime);
+        if (!LockRotation)
+        {
+            float activeRotSpeed = combatSystem.InAction ? rotationSpeed * 0.5f : rotationSpeed;
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, activeRotSpeed * Time.deltaTime);
+        }
 
         // 梯子检测 
         Vector3 rayOrigin = transform.position + Vector3.up * 0.4f + transform.forward * (charactercontroller.radius + 0.05f);
@@ -702,6 +705,10 @@ public class PlayerController : MonoBehaviour
             if (cameraController != null)
                 cameraController.SetCameraHeight(charactercontroller.center.y, true);
         }
+
+        // Lock-on: push camera target back when near enemy to prevent overhead view
+        if (cameraController != null)
+            cameraController.UpdateLockCameraDistance();
     }
 
     private void OnQuickItemUse()

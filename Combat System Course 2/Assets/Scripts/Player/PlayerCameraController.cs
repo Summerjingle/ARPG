@@ -4,7 +4,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerCameraController : MonoBehaviour
 {
-    
+
     [Header("Camera Settings")]
     public GameObject cinemachineCameraTarget;
 
@@ -23,10 +23,12 @@ public class PlayerCameraController : MonoBehaviour
     private float yaw;
     private float pitch;
 
-    private Vector2 lookInput; 
+    private Vector2 lookInput;
 
     private Transform lockedTarget;
     private bool isLockingOn = false;
+    private float lockYawVelocity;
+    private float lockPitchVelocity;
 
     private void Start()
     {
@@ -40,14 +42,14 @@ public class PlayerCameraController : MonoBehaviour
 
     private void LateUpdate()
     {
-        
-        if (lockCameraPosition || cinemachineCameraTarget == null) return;
+        if (cinemachineCameraTarget == null) return;
 
+        // Lock-on: smooth follow to avoid jitter from root motion
         if (isLockingOn && lockedTarget != null)
         {
             HandleLockOnCamera();
         }
-        else
+        else if (!lockCameraPosition)
         {
             HandleFreeCamera();
         }
@@ -56,7 +58,7 @@ public class PlayerCameraController : MonoBehaviour
     {
         lookInput = look;
     }
-    // �����ƶ��������ת
+
     private void HandleFreeCamera()
     {
         float mouseX = lookInput.x;
@@ -75,31 +77,68 @@ public class PlayerCameraController : MonoBehaviour
             Quaternion.Euler(pitch + cameraAngleOverride, yaw, 0f);
     }
 
-    // ����ʱ�����˲ʱ�������
+    private float lockCameraTargetZ;
+
+    // Smooth follow during lock-on; avoids jitter from per-frame position changes
     private void HandleLockOnCamera()
     {
         Vector3 dir = lockedTarget.position - transform.position;
         dir.y = 0f;
         if (dir.sqrMagnitude < 0.001f) return;
 
-        yaw = Quaternion.LookRotation(dir).eulerAngles.y;
-        pitch = 10f; // ���Զ��崹ֱ�Ƕ�
+        float targetYaw = Quaternion.LookRotation(dir).eulerAngles.y;
+        yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref lockYawVelocity, 0.08f);
+        pitch = Mathf.SmoothDamp(pitch, 10f, ref lockPitchVelocity, 0.08f);
 
         cinemachineCameraTarget.transform.rotation =
             Quaternion.Euler(pitch + cameraAngleOverride, yaw, 0f);
     }
 
-    // ����Ŀ������
+    // Called externally (e.g. from PlayerController.LateUpdate) to push camera target
+    // away from enemy when close, preventing Cinemachine from going overhead
+    public void UpdateLockCameraDistance()
+    {
+        if (!isLockingOn || lockedTarget == null) return;
+
+        Vector3 toEnemy = lockedTarget.position - transform.position;
+        toEnemy.y = 0f;
+        float dist = toEnemy.magnitude;
+
+        float minDist = 3f;
+        float pushback = 0.3f;
+        float desiredZ = dist < minDist ? -(minDist - dist) * pushback : 0f;
+
+        lockCameraTargetZ = Mathf.Lerp(lockCameraTargetZ, desiredZ, Time.deltaTime * 8f);
+
+        Vector3 localPos = cinemachineCameraTarget.transform.localPosition;
+        localPos.z = lockCameraTargetZ;
+        cinemachineCameraTarget.transform.localPosition = localPos;
+    }
+
+    // Snap to enemy direction on first lock, then smooth follow
     public void LockOnTarget(Transform target)
     {
+        bool wasLockingOn = isLockingOn;
         lockedTarget = target;
         isLockingOn = target != null;
         lockCameraPosition = target != null;
+
+        if (!wasLockingOn && target != null)
+        {
+            Vector3 dir = target.position - transform.position;
+            dir.y = 0f;
+            if (dir.sqrMagnitude > 0.001f)
+            {
+                yaw = Quaternion.LookRotation(dir).eulerAngles.y;
+                pitch = 10f;
+            }
+            lockYawVelocity = 0f;
+            lockPitchVelocity = 0f;
+        }
     }
 
     public void UnlockCamera()
     {
-        // 同步 yaw/pitch 到当前相机朝向，避免解锁瞬间大幅度摆动
         if (cinemachineCameraTarget != null)
         {
             yaw = cinemachineCameraTarget.transform.rotation.eulerAngles.y;
@@ -111,7 +150,6 @@ public class PlayerCameraController : MonoBehaviour
         lockCameraPosition = false;
     }
 
-    // �ⲿ��ȡ�����ˮƽ������ת�������ƶ�����
     public Quaternion GetPlanarRotation()
     {
         if (cinemachineCameraTarget != null)
@@ -123,7 +161,6 @@ public class PlayerCameraController : MonoBehaviour
         return Quaternion.identity;
     }
 
-    // �ⲿ��ȡ�������������ƶ�����
     public Vector3 GetLockedDirection()
     {
         if (isLockingOn && lockedTarget != null)
@@ -145,10 +182,8 @@ public class PlayerCameraController : MonoBehaviour
 
     private void HandleUIStateChanged(bool isUIActive)
     {
-        // UI �� �� �������ס
         lockCameraPosition = isUIActive;
 
-        // UI ��ʱ����ֹ���������ֵ
         if (isUIActive)
         {
             Input.ResetInputAxes();
@@ -162,7 +197,6 @@ public class PlayerCameraController : MonoBehaviour
 
         if (smooth)
         {
-            // ƽ������
             pos.y = Mathf.Lerp(pos.y, height, Time.deltaTime * 10f);
         }
         else

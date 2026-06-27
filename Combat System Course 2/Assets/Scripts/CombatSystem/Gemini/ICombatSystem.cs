@@ -5,56 +5,56 @@ using UnityEngine;
 public enum AttackStates { Idle, Windup, Impact, Cooldown }
 public interface ICombatSystem
 {
-    // »ù´¡Õ½¶·ÄÜÁ¦
+    // åŸºç¡€æˆ˜æ–—å±æ€§
     bool CanAttack();
     void TryToAttack(ICombatSystem target = null);
     float GetWeaponDamage();
     bool HasUsableWeapon();
 
-    // ×´Ì¬¹ÜÀí
+    // çŠ¶æ€ç®¡ç†
     void UpdateAttackState(float normalizedTime, AttackData attack);
     void ResetAttackState();
 
-    // Hitbox¿ØÖÆ
+    // Hitboxç®¡ç†
     void EnableHitbox(AttackData attack);
     void DisableHitboxes();
 
-    // ¹¥»÷Êı¾İÑ¡Ôñ
+    // æ”»å‡»æ•°æ®é€‰æ‹©
     AttackData SelectAttack(ICombatSystem target, int comboCount);
     Vector3 CalculateAttackDirection(ICombatSystem target);
     Vector3 CalculateAttackPosition(ICombatSystem target, AttackData attack, Vector3 attackDir, Vector3 startPos);
 
-    // Õ½¶·ÉúÃüÖÜÆÚ
+    // æˆ˜æ–—æµç¨‹æ§åˆ¶
     void PrepareAttack(ICombatSystem target);
     void FinishAttack();
 
-    // Á¬»÷ÏµÍ³
+    // è¿å‡»ç³»ç»Ÿ
     bool CheckComboCondition();
     IEnumerator ExecuteAttack(ICombatSystem target, int comboCount);
 
-    // ½¡¿µÏµÍ³
+    // ç”Ÿå‘½ç³»ç»Ÿ
     HealthSystem HealthSystem { get; }
 
-    // Õ½¶·×´Ì¬
+    // æˆ˜æ–—çŠ¶æ€
     bool InAction { get; set; }
     bool IsTakingHit { get; }
     bool InCounter { get; set; }
     bool IsCounterable { get; }
 
-    // ¹¥»÷×´Ì¬
+    // æ”»å‡»çŠ¶æ€
     AttackStates Attackstate { get; set; }
     bool docombo { get; set; }
     int comboCount { get; set; }
 
-    // Ä¿±ê¹ÜÀí
+    // ç›®æ ‡ç®¡ç†
     ICombatSystem currTarget { get; set; }
 
-    // ¹¥»÷Êı¾İ
+    // æ”»å‡»æ•°æ®
     List<AttackData> Attacks { get; }
     List<AttackData> LongRangeAttacks { get; }
     float LongRangeAttackThreshold { get; }
 
-    // ×é¼şÒıÓÃ
+    // ç»„ä»¶å¼•ç”¨
     Animator animator { get; }
     BoxCollider WeaponCollider { get; }
     SphereCollider leftHandCollider { get; }
@@ -62,13 +62,19 @@ public interface ICombatSystem
     SphereCollider leftFootCollider { get; }
     SphereCollider rightFootCollider { get; }
 
-    // ÊÂ¼ş
+    // ç‰¹æ®Šå—å‡»åŠ¨ç”»ï¼ˆAnimation Event è®¾ç½®ï¼Œnull/ç©º = ä½¿ç”¨é»˜è®¤å—å‡»åŠ¨ç”»ï¼‰
+    string CurrentSpecialHitReaction { get; set; }
+
+    // å‘½ä¸­è®°å½•ï¼ˆæ¯åˆ€æ¸…ç©ºï¼Œé˜²æ­¢åŒä¸€åˆ€å‘½ä¸­åŒä¸€ç›®æ ‡å¤šæ¬¡ï¼‰
+    bool RegisterHit(GameObject target);
+
+    // äº‹ä»¶
     event System.Action<ICombatSystem> OnGotHit;
     event System.Action OnHitComplete;
     Transform transform { get; }
     GameObject gameObject { get; }
     void TakeDamage(float damage);
 
-    IEnumerator PlayHitReaction(ICombatSystem attacker);
+    IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null);
     void PlayDeathAnimation(ICombatSystem attacker);
 }

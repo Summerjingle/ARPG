@@ -12,6 +12,8 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     private const float INPUT_BUFFER_TIME = 0.2f;
     private ICombatSystem currentTarget;
 
+    private HashSet<int> hitTargets = new HashSet<int>();
+
      // ����ϵͳ
     public HealthSystem HealthSystem { get; private set; }
     
@@ -20,6 +22,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
     public bool IsCounterable => Attackstate == AttackStates.Windup && comboCount == 0;
+    public string CurrentSpecialHitReaction { get; set; }
     
     // ����״̬
     public AttackStates Attackstate { get; set; }
@@ -165,7 +168,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         return currentTarget;
     }
 
-    public IEnumerator PlayHitReaction(ICombatSystem attacker)
+    public IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null)
     {
         PlayerController.i?.OnRollEnd();
 
@@ -176,8 +179,8 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         dispVec.y = 0f;
         transform.rotation = Quaternion.LookRotation(dispVec);
 
-        // ���ʹ��ͼ��1
-        animator.CrossFade("SwordImpact", 0.2f, 1);
+        string hitAnim = string.IsNullOrEmpty(specialHitReaction) ? "SwordImpact" : specialHitReaction;
+        animator.CrossFade(hitAnim, 0.2f, 1);
         yield return null;
         var animstate = animator.GetNextAnimatorStateInfo(1);
         yield return new WaitForSeconds(animstate.length * 0.8f);
@@ -185,7 +188,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         OnHitComplete?.Invoke();
         InAction = false;
         IsTakingHit = false;
-    }//��ʼ���˷�Ӧ
+    }
     public void PlayDeathAnimation(ICombatSystem attacker)
     {
         PlayerController.i?.OnRollEnd();
@@ -202,11 +205,17 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             if (attacker.currTarget.gameObject != this.gameObject) return;
 
             var attackerDamage = attacker.GetWeaponDamage();
+
+            // 防止同一刀命中同一目标多次
+            if (!attacker.RegisterHit(this.gameObject)) return;
+
             TakeDamage(attackerDamage);
             Debug.Log("�������");
             if (!HealthSystem.IsDead)
             {
-                StartCoroutine(PlayHitReaction(attacker));
+                string specialReaction = attacker.CurrentSpecialHitReaction;
+                attacker.CurrentSpecialHitReaction = null;
+                StartCoroutine(PlayHitReaction(attacker, specialReaction));
             }
             else
             {
@@ -214,6 +223,14 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             }
         }
     }
+    public bool RegisterHit(GameObject target)
+    {
+        int id = target.GetInstanceID();
+        if (hitTargets.Contains(id)) return false;
+        hitTargets.Add(id);
+        return true;
+    }
+
     public float GetWeaponDamage()
     {
         return WeaponEquipmentManager.Instance?.GetWeaponDamage() ?? 1f;
@@ -375,7 +392,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     // ���ר��Hitbox����
     public void EnablePlayerHitbox(AttackData attack)
     {
-        
+        hitTargets.Clear();
 
         switch (attack.HitboxToUse)
         {
@@ -444,6 +461,8 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         var weaponCollider = WeaponEquipmentManager.Instance?.GetCurrentWeapon()?.GetComponentInChildren<BoxCollider>();
         if (weaponCollider != null)
             weaponCollider.enabled = false;
+
+        CurrentSpecialHitReaction = null;
 
         Debug.Log("�����������Hitbox");
     }

@@ -3,9 +3,7 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    float timePassed;
-    float clipLength;//
-    float clipSpeed;
+
     bool attack;
 
     private WeaponEquipmentManager weaponEquipmentManager;
@@ -46,9 +44,15 @@ public class PlayerAttack : MonoBehaviour
                 animator.SetTrigger("attack");
             canCombo = false;
             animator.applyRootMotion = true;
-           if (PlayerController.i != null && PlayerController.i.combatSystem != null)
+
+            // 攻击开始时立即锁定脚本旋转，避免与 CombatController 的 Root Motion 旋转冲突导致相机抖动
+            if (PlayerController.i != null)
             {
-                PlayerController.i.combatSystem.InAction = true;
+                PlayerController.i.LockRotation = true;
+                if (PlayerController.i.combatSystem != null)
+                {
+                    PlayerController.i.combatSystem.InAction = true;
+                }
             }
             
         }
@@ -79,23 +83,24 @@ public class PlayerAttack : MonoBehaviour
     // 停止转向：在动画开始突进或发力时调用
     public void StartRotationLock()
     {
-        
+        Debug.Log($"[Attack] StartRotationLock called, frame={Time.frameCount}");
         if (PlayerController.i != null)
         {
             PlayerController.i.LockRotation = true;
-          
+            Debug.Log($"[Attack] LockRotation set to TRUE, frame={Time.frameCount}");
         }
     }
 
     // 恢复转向：在动画收招或允许玩家微调方向时调用
     public void StopRotationLock()
     {
+        Debug.Log($"[Attack] StopRotationLock called, frame={Time.frameCount}");
         if (PlayerController.i != null)
         {
             PlayerController.i.LockRotation = false;
-            canCombo = true; 
+            canCombo = true;
+            Debug.Log($"[Attack] LockRotation set to FALSE, frame={Time.frameCount}");
         }
-        
     }
     
 }

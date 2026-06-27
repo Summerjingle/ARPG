@@ -20,10 +20,12 @@ public class CombatMovementState : State<EnemyController>
     public override void Enter(EnemyController owner)
     {
         enemyController = owner;
+        enemyController.NavAgent.isStopped = false;
         enemyController.NavAgent.stoppingDistance = distanceToStand;
         enemyController.NavAgent.updateRotation = false;
         enemyController.combatMovementTimer = 0;
         enemyController.Animator.SetBool("combatMode", true);
+        StartChase();
     }
     public override void Execute()
     {
@@ -74,7 +76,7 @@ public class CombatMovementState : State<EnemyController>
 
             if (Vector3.Distance(enemyController.Target.transform.position, enemyController.transform.position) <= distanceToStand + 0.03f)
             {
-                StartIdle();//ֻҪ��ҳ���׷��״̬�ķ�Χ�ڣ�ֱ�ӽ������״̬
+                StartCircling();//到达攻击距离，环绕而不是发呆
             }
 
             enemyController.NavAgent.SetDestination(enemyController.Target.transform.position);
