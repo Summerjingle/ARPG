@@ -34,9 +34,9 @@ public class DeadState : State<EnemyController>
         EnemyManager.i.RemoveEnemyInRange(owner);
 
         // 5. 禁用角色控制器
-        if (owner.CharacterController != null)
+        if (owner.capsuleCollider != null)
         {
-            owner.CharacterController.enabled = false;
+            owner.capsuleCollider.enabled = false;
         }
 
         // 6. 通知任务系统：敌人被击杀
@@ -49,6 +49,7 @@ public class DeadState : State<EnemyController>
         // 7. 生成战利品（延迟生成）
         owner.StartCoroutine(SpawnLootWithDelay(owner));
 
+        
         // 8. 延迟一帧后禁用NavAgent（确保当前帧的所有导航操作完成）
         if (owner.NavAgent != null)
         {

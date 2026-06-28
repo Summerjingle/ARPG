@@ -30,7 +30,13 @@ public class AttackState : State<EnemyController >
         enemy.Fighter.TryToAttack(enemy.Target);
         for (int i = 0; i < comboCount; i++)
         {
-            yield return new WaitUntil(() => enemy.Fighter.Attackstate == AttackStates.Cooldown);
+            // 同时监听 Cooldown 和 Idle：弹反会跳过 Cooldown 直接设 Idle
+            yield return new WaitUntil(() =>
+                enemy.Fighter.Attackstate == AttackStates.Cooldown ||
+                enemy.Fighter.Attackstate == AttackStates.Idle);
+
+            if (enemy.Fighter.Attackstate == AttackStates.Idle) break;
+
             enemy.Fighter.TryToAttack();
         }
 

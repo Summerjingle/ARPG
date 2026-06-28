@@ -18,6 +18,14 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     [SerializeField] private GameObject hitFxPrefab;     // 飙血特效预制体
     [SerializeField] private float knockbackDistance = 3f; // 特殊击退距离
 
+    [Header("Rebound")]
+    [SerializeField] [Range(0f, 0.5f)] private float reboundFreezeDuration = 0.02f;
+    [SerializeField] [Range(-5f, -0.1f)] private float reboundSpeed = -1f;
+    [SerializeField] private GameObject reboundVfxPrefab;
+    [SerializeField] private AudioClip reboundSfx;
+    public bool IsRebounding { get; private set; } = false;
+    private Coroutine reboundCoroutine;
+    private Vector3 lastReboundHitPoint;
 
     private HashSet<int> hitTargets = new HashSet<int>();
 
@@ -63,6 +71,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     // 事件
     public event System.Action<ICombatSystem> OnGotHit;
     public event System.Action OnHitComplete;
+    public event System.Action<GameObject> OnDamageDealt;
+    public void NotifyDamageDealt(GameObject target) => OnDamageDealt?.Invoke(target);
 
     protected virtual void Awake()
     {
@@ -88,10 +98,12 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         rightHandCollider = animator.GetBoneTransform(HumanBodyBones.RightHand)?.GetComponent<SphereCollider>();
         rightFootCollider = animator.GetBoneTransform(HumanBodyBones.RightFoot)?.GetComponent<SphereCollider>();
 
-        // 敌人使用自己的武器
+        // 敌人使用自己的武器（默认关闭碰撞体，仅在 Impact 阶段由 EnableEnemyHitbox 打开）
         if (enemyWeapon != null)
         {
             WeaponCollider = enemyWeapon.GetComponentInChildren<BoxCollider>();
+            if (WeaponCollider != null)
+                WeaponCollider.enabled = false;
         }
     }
 
@@ -314,7 +326,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
             TakeDamage(attackerDamage);
 
-
+            // 通知攻击方：成功造成伤害（用于命中转向等）
+            attacker.NotifyDamageDealt(this.gameObject);
 
             // 顿帧（攻击者 + 自己）
             Animator attackerAnimator = (attacker as MonoBehaviour)?.GetComponent<Animator>();
@@ -481,6 +494,109 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         return true;
     }
 
+    // ==========================================
+    // 反弹系统 (由 Weapon.OnTriggerEnter 调用)
+    // ==========================================
+
+    public void OnWeaponRebound(Vector3 hitPoint)
+    {
+        if (!InAction) return;
+        if (IsRebounding) return;
+        if (HealthSystem.IsDead) return;
+
+        lastReboundHitPoint = hitPoint;
+        reboundCoroutine = StartCoroutine(DoRebound());
+    }
+
+    private IEnumerator DoRebound()
+    {
+        IsRebounding = true;
+
+        // ① 关闭武器碰撞体
+        var weaponCollider = GetComponentInChildren<Weapon>()?.GetComponentInChildren<BoxCollider>();
+        if (weaponCollider != null)
+            weaponCollider.enabled = false;
+
+        // ② 定格 + VFX/音效
+        animator.SetFloat("AttackSpeed", 0f);
+
+        if (reboundVfxPrefab != null)
+            Instantiate(reboundVfxPrefab, lastReboundHitPoint, Quaternion.identity);
+
+        if (reboundSfx != null)
+            AudioSource.PlayClipAtPoint(reboundSfx, lastReboundHitPoint);
+
+        yield return new WaitForSeconds(reboundFreezeDuration);
+
+        if (IsTakingHit || HealthSystem.IsDead)
+            goto Abort;
+
+        // ③ 倒放攻击动画
+        var state = animator.GetCurrentAnimatorStateInfo(0);
+        float currentNormTime = state.normalizedTime;
+        int stateHash = state.fullPathHash;
+
+        var clipInfos = animator.GetCurrentAnimatorClipInfo(0);
+        float clipLength = 1f;
+        if (clipInfos.Length > 0)
+            clipLength = clipInfos[0].clip.length;
+        else if (!float.IsInfinity(state.length) && state.length > 0.01f)
+            clipLength = state.length;
+
+        float reverseDuration = currentNormTime * clipLength / Mathf.Abs(reboundSpeed);
+
+        animator.SetFloat("AttackSpeed", reboundSpeed);
+
+        float elapsed = 0f;
+        while (elapsed < reverseDuration)
+        {
+            if (IsTakingHit || HealthSystem.IsDead)
+                goto Abort;
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        // ④ 切回待机，和玩家 Play("Combat Blend Tree") 同理
+        animator.SetFloat("AttackSpeed", 1f);
+        animator.Play("CombatMovement", 0, 0);
+        DisableEnemyHitboxes();
+
+        if (navAgent != null)
+            navAgent.isStopped = false;
+
+        Attackstate = AttackStates.Idle;
+        comboCount = 0;
+        docombo = false;
+        currTarget = null;
+        InAction = false;
+        IsRebounding = false;
+
+        yield break;
+
+    Abort:
+        animator.SetFloat("AttackSpeed", 1f);
+        DisableEnemyHitboxes();
+
+        if (navAgent != null)
+            navAgent.isStopped = false;
+
+        Attackstate = AttackStates.Idle;
+        comboCount = 0;
+        docombo = false;
+        currTarget = null;
+        InAction = false;
+        IsRebounding = false;
+    }
+
+    // 供外部强制重置攻击状态
+    public void ForceResetAttackState()
+    {
+        Attackstate = AttackStates.Idle;
+        comboCount = 0;
+        docombo = false;
+        InAction = false;
+    }
+
     public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCount = 0)
     {
         Debug.Log($"[EnemyAttack] 开始执行敌人攻击，目标: {(target != null ? target.gameObject.name : "null")}");
@@ -517,12 +633,13 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
         animator.CrossFade(attack.AttackName, 0.2f);
         yield return null;
-        var animstate = animator.GetNextAnimatorStateInfo(1);
+        var animstate = animator.GetNextAnimatorStateInfo(0);
 
         float timer = 0f;
         while (timer <= animstate.length)
         {
             if (IsTakingHit) break;
+            if (IsRebounding) break;
             timer += Time.deltaTime;
             float normalizedTime = timer / animstate.length;
 
@@ -575,10 +692,14 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             yield return null;
         }
         //�ȴ��������
-        Attackstate = AttackStates.Idle;
-        comboCount = 0;
-        currTarget = null;
-        if (!IsTakingHit)
+        // 反弹期间不重置攻击状态，由 DoRebound 收尾时统一处理，避免 AttackState 提前切到 Retreat
+        if (!IsRebounding)
+        {
+            Attackstate = AttackStates.Idle;
+            comboCount = 0;
+            currTarget = null;
+        }
+        if (!IsTakingHit && !IsRebounding)
         {
             InAction = false;
         }

@@ -34,13 +34,13 @@ public class EnemyController : MonoBehaviour
     public ICombatSystem Fighter { get; private set; }
     public VisionSensor VisionSensor { get; set; }
 
-    public CharacterController CharacterController { get; private set; }
+    public CapsuleCollider capsuleCollider;
     private void Start()
     {
         NavAgent = GetComponent<NavMeshAgent>();
         Animator = GetComponent<Animator>();
         Fighter = GetComponent<ICombatSystem>();
-        CharacterController = GetComponent<CharacterController>();
+        capsuleCollider = GetComponent<CapsuleCollider>();
         healthBar = GetComponentInChildren<EnemyHeathBar>();
         CombatSystem = GetComponent<ICombatSystem>();
         HealthSystem healthSystem = GetComponent<HealthSystem>();

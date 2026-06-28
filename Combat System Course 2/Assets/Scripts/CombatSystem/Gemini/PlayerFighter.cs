@@ -52,6 +52,8 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     // �¼�
     public event System.Action<ICombatSystem> OnGotHit;
     public event System.Action OnHitComplete;
+    public event System.Action<GameObject> OnDamageDealt;
+    public void NotifyDamageDealt(GameObject target) => OnDamageDealt?.Invoke(target);
     private void Awake()
     {
         weaponManager = WeaponEquipmentManager.Instance;
@@ -210,6 +212,10 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             if (!attacker.RegisterHit(this.gameObject)) return;
 
             TakeDamage(attackerDamage);
+
+            // 通知攻击方：成功造成伤害
+            attacker.NotifyDamageDealt(this.gameObject);
+
             Debug.Log("�������");
             if (!HealthSystem.IsDead)
             {

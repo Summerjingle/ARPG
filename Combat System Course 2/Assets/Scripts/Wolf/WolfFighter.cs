@@ -9,22 +9,23 @@ public class WolfFighter : EnemyFighter
     protected override void Awake()
     {
         wolfController = GetComponent<WolfController>();
-        base.Awake(); // µ÷ÓÃ¸¸Àà³õÊ¼»¯»ù´¡×é¼þ
+        base.Awake(); // ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 
-    // Ö»ÐèÒªÖØÐ´Åö×²Æ÷³õÊ¼»¯ - ÀÇ²»ÐèÒª¹Ç÷ÀÅö×²Æ÷
+    // Ö»ï¿½ï¿½Òªï¿½ï¿½Ð´ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½ - ï¿½Ç²ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½
     protected override void InitializeEnemyBodyColliders()
     {
-        // ÀÇÌø¹ý¹Ç÷ÀÅö×²Æ÷³õÊ¼»¯
-        Debug.Log($"ÀÇ {gameObject.name} Ìø¹ý¹Ç÷ÀÅö×²Æ÷³õÊ¼»¯");
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½
+        Debug.Log($"ï¿½ï¿½ {gameObject.name} ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½ï¿½");
 
-        // Ö»³õÊ¼»¯ÎäÆ÷Åö×²Æ÷£¨Èç¹ûÓÐµÄ»°£©
+        // Ö»ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ»ï¿½ï¿½ï¿½
         if (enemyWeapon != null)
         {
             WeaponCollider = enemyWeapon.GetComponentInChildren<BoxCollider>();
             if (WeaponCollider != null)
             {
-                Debug.Log($"³õÊ¼»¯ÀÇÎäÆ÷Åö×²Æ÷: {WeaponCollider.name}");
+                WeaponCollider.enabled = false;
+                Debug.Log($"ï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½ï¿½: {WeaponCollider.name}");
             }
         }
     }
@@ -34,7 +35,7 @@ public class WolfFighter : EnemyFighter
 
         base.TakeDamage(damage);
 
-        // ¼ì²âËÀÍö²¢Í¨Öª WolfController
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¨Öª WolfController
         if (HealthSystem.IsDead && wolfController != null)
         {
             wolfController.HandleWolfDeath();

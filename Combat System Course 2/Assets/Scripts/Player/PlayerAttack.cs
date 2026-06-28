@@ -6,13 +6,48 @@ public class PlayerAttack : MonoBehaviour
 
     bool attack;
 
+    [Header("Hit Rotation")]
+    [SerializeField] [Range(0f, 1f)] private float hitRotationStrength = 0.5f;
+
     private WeaponEquipmentManager weaponEquipmentManager;
+    private PlayerFighterNew fighter;
     private bool canCombo = true;
     private Animator animator;
     void Start()
     {
         weaponEquipmentManager=GetComponent<WeaponEquipmentManager>();
         animator=GetComponent<Animator>();
+
+        fighter = GetComponent<PlayerFighterNew>();
+        if (fighter != null)
+        {
+            fighter.OnDamageDealt += OnPlayerDealtDamage;
+        }
+    }
+
+    private void OnDestroy()
+    {
+        if (fighter != null)
+        {
+            fighter.OnDamageDealt -= OnPlayerDealtDamage;
+        }
+    }
+
+    /// <summary>
+    /// 攻击命中敌人时，角色向目标方向微旋转（增强打击感）
+    /// </summary>
+    private void OnPlayerDealtDamage(GameObject target)
+    {
+        if (target == null) return;
+
+        Vector3 dirToTarget = target.transform.position - transform.position;
+        dirToTarget.y = 0f;
+
+        if (dirToTarget.sqrMagnitude > 0.001f)
+        {
+            Quaternion targetRot = Quaternion.LookRotation(dirToTarget);
+            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, hitRotationStrength);
+        }
     }
     private void OnEnable()
     {

@@ -71,6 +71,8 @@ public interface ICombatSystem
     // 事件
     event System.Action<ICombatSystem> OnGotHit;
     event System.Action OnHitComplete;
+    event System.Action<GameObject> OnDamageDealt;  // 成功造成伤害时触发，参数为被命中的目标
+    void NotifyDamageDealt(GameObject target);      // 供外部安全触发 OnDamageDealt
     Transform transform { get; }
     GameObject gameObject { get; }
     void TakeDamage(float damage);

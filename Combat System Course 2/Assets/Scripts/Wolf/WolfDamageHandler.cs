@@ -17,43 +17,46 @@ public class WolfDamageHandler : MonoBehaviour
     {
         if (wolfController.IsDead) return;
 
-        // ·ÀÖØ¸´Âß¼­±£³Ö²»±ä...
+        // ï¿½ï¿½ï¿½Ø¸ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½Ö²ï¿½ï¿½ï¿½...
         if (Time.frameCount == lastDamageFrame) return;
         if (lastDamageCollider == other && lastDamageTime >= 0 && Time.time - lastDamageTime < DAMAGE_COOLDOWN) return;
         if (lastDamageTime >= 0 && Time.time - lastDamageTime < DAMAGE_COOLDOWN) return;
 
         if (other.CompareTag("Hitbox") && other.gameObject.layer == LayerMask.NameToLayer("PlayerHitbox"))
         {
-            // Ö±½ÓÊ¹ÓÃ ICombatSystem ½Ó¿Ú
+            // Ö±ï¿½ï¿½Ê¹ï¿½ï¿½ ICombatSystem ï¿½Ó¿ï¿½
             var attacker = other.GetComponentInParent<ICombatSystem>();
             if (attacker == null) return;
 
-            // Ö±½ÓÍ¨¹ı½Ó¿Ú¼ì²é¹¥»÷×´Ì¬
+            // Ö±ï¿½ï¿½Í¨ï¿½ï¿½ï¿½Ó¿Ú¼ï¿½é¹¥ï¿½ï¿½×´Ì¬
             if (attacker.Attackstate != AttackStates.Windup &&
                 attacker.Attackstate != AttackStates.Impact)
             {
-                Debug.Log($"WolfDamageHandler: ¹¥»÷Õß²»ÔÚÓĞĞ§¹¥»÷×´Ì¬£¬ºöÂÔÉËº¦¡£×´Ì¬: {attacker.Attackstate}");
+                Debug.Log($"WolfDamageHandler: ï¿½ï¿½ï¿½ï¿½ï¿½ß²ï¿½ï¿½ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½ï¿½ï¿½×´Ì¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëºï¿½ï¿½ï¿½×´Ì¬: {attacker.Attackstate}");
                 return;
             }
 
-            // È·ÈÏ¹¥»÷Ä¿±ê
+            // È·ï¿½Ï¹ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
             if ((attacker.currTarget as UnityEngine.Object) != wolfController.Fighter &&
             (attacker.currTarget as UnityEngine.Object) != null)
             {
-                Debug.Log("WolfDamageHandler: ¹¥»÷Ä¿±ê²»Æ¥Åä£¬ºöÂÔÉËº¦");
+                Debug.Log("WolfDamageHandler: ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê²»Æ¥ï¿½ä£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ëºï¿½");
                 return;
             }
 
-            // Ê¹ÓÃ½Ó¿Ú»ñÈ¡ÉËº¦Öµ
+            // Ê¹ï¿½Ã½Ó¿Ú»ï¿½È¡ï¿½Ëºï¿½Öµ
             float damage = attacker.GetWeaponDamage();
-            Debug.Log($"WolfDamageHandler: ÓĞĞ§ÉËº¦ {damage}, ¹¥»÷Õß: {attacker.GetType().Name}, Ö¡: {Time.frameCount}");
+            Debug.Log($"WolfDamageHandler: ï¿½ï¿½Ğ§ï¿½Ëºï¿½ {damage}, ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½: {attacker.GetType().Name}, Ö¡: {Time.frameCount}");
 
-            // ¸üĞÂ·ÀÖØ¸´±ê¼Ç
+            // ï¿½ï¿½ï¿½Â·ï¿½ï¿½Ø¸ï¿½ï¿½ï¿½ï¿½
             lastDamageTime = Time.time;
             lastDamageFrame = Time.frameCount;
             lastDamageCollider = other;
 
             wolfController.TakeDamage(damage);
+
+            // é€šçŸ¥æ”»å‡»æ–¹ï¼šæˆåŠŸé€ æˆä¼¤å®³ï¼ˆç”¨äºå‘½ä¸­è½¬å‘ç­‰ï¼‰
+            attacker.NotifyDamageDealt(gameObject);
         }
     }
 

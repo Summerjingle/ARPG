@@ -6,7 +6,7 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
 {
     private WeaponEquipmentManager weaponManager;
     private PlayerProperty playerProperty;
-
+    private int rollLayerIndex;
     // 核心战斗系统属性
     public HealthSystem HealthSystem { get; private set; }
     private HashSet<int> hitTargets = new HashSet<int>();
@@ -37,7 +37,7 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
 
     // 目标管理
     public ICombatSystem currTarget { get; set; }
-
+    public GameObject blockObject;
     // 攻击数据 (若动画机中不依赖这些数据，后续也可移除)
     [SerializeField] private List<AttackData> attacks;
     [SerializeField] private List<AttackData> longRangeAttacks;
@@ -58,7 +58,13 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     // 事件
     public event System.Action<ICombatSystem> OnGotHit;
     public event System.Action OnHitComplete;
+    public event System.Action<GameObject> OnDamageDealt;
+    public void NotifyDamageDealt(GameObject target) => OnDamageDealt?.Invoke(target);
 
+    void OnEnable()
+    {
+        InputManager.Instance.OnBlock+=DoBlock;
+    }
     private void Awake()
     {
         weaponManager = WeaponEquipmentManager.Instance;
@@ -69,6 +75,7 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
 
         animator = GetComponent<Animator>();
         InitializeBodyColliders();
+        rollLayerIndex = animator.GetLayerIndex("Roll");
     }
 
     private void InitializeBodyColliders()
@@ -161,51 +168,28 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     // 反弹系统 (由 Weapon.OnTriggerEnter 调用)
     // ==========================================
 
+    
     public void OnWeaponRebound(Vector3 hitPoint)
     {
-        Debug.Log($"[Rebound] OnWeaponRebound called: InAction={InAction}, IsRebounding={IsRebounding}, IsDead={HealthSystem.IsDead}, hitPoint={hitPoint}, frame={Time.frameCount}");
-
-        // 仅攻击中、非已反弹、非死亡状态可触发
-        if (!InAction)
-        {
-            Debug.Log("[Rebound] 拒绝：InAction=false（玩家不在攻击中）");
-            return;
-        }
-        if (IsRebounding)
-        {
-            Debug.Log("[Rebound] 拒绝：已在反弹中");
-            return;
-        }
-        if (HealthSystem.IsDead)
-        {
-            Debug.Log("[Rebound] 拒绝：玩家已死亡");
-            return;
-        }
+        if (!InAction) return;
+        if (IsRebounding) return;
+        if (HealthSystem.IsDead) return;
 
         lastReboundHitPoint = hitPoint;
-        Debug.Log($"[Rebound] 启动 DoRebound 协程, frame={Time.frameCount}");
         reboundCoroutine = StartCoroutine(DoRebound());
     }
 
     private IEnumerator DoRebound()
     {
-        Debug.Log($"[Rebound] DoRebound 开始, frame={Time.frameCount}");
         IsRebounding = true;
         var playerAttack = GetComponent<PlayerAttack>();
 
-        // ① 立即关闭武器碰撞体，防止同一帧多次触发
+        // ① 关闭武器碰撞体
         var weaponCollider = WeaponEquipmentManager.Instance?.GetCurrentWeapon()?.GetComponentInChildren<BoxCollider>();
         if (weaponCollider != null)
-        {
             weaponCollider.enabled = false;
-            Debug.Log($"[Rebound] ① 武器碰撞体已关闭, frame={Time.frameCount}");
-        }
-        else
-        {
-            Debug.LogWarning("[Rebound] ① 警告：GetCurrentWeapon 或武器 BoxCollider 为 null");
-        }
 
-        // ② 定格卡顿 + VFX/音效
+        // ② 定格 + VFX/音效
         animator.SetFloat("AttackSpeed", 0f);
 
         if (reboundVfxPrefab != null)
@@ -214,67 +198,53 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         if (reboundSfx != null)
             AudioSource.PlayClipAtPoint(reboundSfx, lastReboundHitPoint);
 
-        Debug.Log($"[Rebound] ② 定格: AttackSpeed=0, freezeDuration={reboundFreezeDuration}s, frame={Time.frameCount}");
         yield return new WaitForSeconds(reboundFreezeDuration);
 
         if (IsTakingHit || HealthSystem.IsDead)
-        {
-            Debug.Log($"[Rebound] Abort 在定格后: IsTakingHit={IsTakingHit}, IsDead={HealthSystem.IsDead}");
             goto Abort;
-        }
 
-        // ③ 倒放攻击动画（通过 AttackSpeed 参数驱动，Unity 原生插值，丝滑）
+        // ③ 倒放攻击动画
         var state = animator.GetCurrentAnimatorStateInfo(0);
         float currentNormTime = state.normalizedTime;
 
-        // 从 ClipInfo 拿真实动画长度（BlendTree 的 state.length 是 Infinity）
         var clipInfos = animator.GetCurrentAnimatorClipInfo(0);
-        float clipLength = 1f; // fallback
+        float clipLength = 1f;
         if (clipInfos.Length > 0)
             clipLength = clipInfos[0].clip.length;
         else if (!float.IsInfinity(state.length) && state.length > 0.01f)
             clipLength = state.length;
 
         float reverseDuration = currentNormTime * clipLength / Mathf.Abs(reboundSpeed);
-        Debug.Log($"[Rebound] ③ 倒放: normalizedTime={currentNormTime:F3}, clipLength={clipLength:F3}s, speed={reboundSpeed}, reverseDuration={reverseDuration:F3}s");
 
         animator.SetFloat("AttackSpeed", reboundSpeed);
-        Debug.Log($"[Rebound] ③ AttackSpeed={reboundSpeed} 开始倒放, frame={Time.frameCount}");
 
         float elapsed = 0f;
         while (elapsed < reverseDuration)
         {
             if (IsTakingHit || HealthSystem.IsDead)
-            {
-                Debug.Log($"[Rebound] Abort 在倒放中: elapsed={elapsed:F3}s, IsTakingHit={IsTakingHit}");
                 goto Abort;
-            }
             elapsed += Time.deltaTime;
             yield return null;
         }
 
-        // ④ 直接切回执剑待机（用 Play 而非 CrossFade，避免过渡期间攻击动画事件二次触发）
+        // ④ 切回待机
         animator.SetFloat("AttackSpeed", 1f);
         animator.Play("Combat Blend Tree", 0, 0);
         animator.applyRootMotion = false;
 
-        // 重置攻击输入状态（canCombo=true），否则反弹后无法再次攻击
         if (playerAttack != null)
             playerAttack.ForceResetAttackState();
 
         InAction = false;
         IsRebounding = false;
 
-        // 延迟一帧强制解锁旋转，确保在倒放触发的 StartRotationLock 动画事件之后生效
         yield return null;
         if (PlayerController.i != null)
             PlayerController.i.LockRotation = false;
 
-        Debug.Log($"[Rebound] ⑤ 完成: InAction=false, LockRotation=false, canCombo=true");
         yield break;
 
     Abort:
-        Debug.Log($"[Rebound] Abort: AttackSpeed=1, IsRebounding=false");
         animator.SetFloat("AttackSpeed", 1f);
         animator.applyRootMotion = false;
 
@@ -283,7 +253,6 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
 
         IsRebounding = false;
 
-        // 延迟一帧强制解锁旋转
         yield return null;
         if (PlayerController.i != null)
             PlayerController.i.LockRotation = false;
@@ -304,8 +273,14 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
             // 防止同一刀命中同一目标多次
             if (!attacker.RegisterHit(this.gameObject)) return;
 
+            // 格挡中不受伤害
+            if (blockObject != null && blockObject.activeSelf) return;
+
             TakeDamage(attackerDamage);
-            
+
+            // 通知攻击方：成功造成伤害
+            attacker.NotifyDamageDealt(this.gameObject);
+
             if (!HealthSystem.IsDead)
             {
                 string specialReaction = attacker.CurrentSpecialHitReaction;
@@ -406,6 +381,35 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         
         hitTargets.Add(id); // 没打过，记录下来
         return true; // 允许生效
+    }
+    private void DoBlock()
+    {
+        if (weaponManager.GetCurrentWeapon() != null)
+        {
+            Debug.Log("已装备武器，触发DoBlock方法");
+            
+            animator.SetLayerWeight(rollLayerIndex, 1f);
+            animator.CrossFade("PlayerBlock", 0.2f, 3);
+        }
+        else
+        {
+            Debug.Log("未装备武器，触发DoBlock方法失败！");
+        }
+       
+    }
+    public void EnableBlock()//给block动画调用
+    {
+        Debug.Log("动画事件：blockEnable");
+        PlayerController.i.isMovementEnabled=false;
+        InAction=true;
+        blockObject.SetActive(true);
+    }
+    public void DisableBlock()//给block动画调用
+    {
+        Debug.Log("动画事件：blockDisable");
+        PlayerController.i.isMovementEnabled=true;
+        InAction=false;
+        blockObject.SetActive(false);
     }
 
     #region ICombatSystem 遗留接口实现 (已废弃/转移，仅为防止报错空实现)

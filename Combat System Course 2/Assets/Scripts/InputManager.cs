@@ -10,13 +10,14 @@ public class InputManager : MonoBehaviour
     public PlayerInputActions Actions { get; private set; }
     public event Action<bool> OnDeviceChanged;
     public bool IsUsingGamepad { get; private set; }
-    public event System.Action OnAttack;
-    public event System.Action OnInteract;
-    public event System.Action ToggleWeapon;
-    public event System.Action OnToggleInventory;
-    public event System.Action<Vector2> OnUINavigate;
-    public event System.Action OnUISubmit;
-    public event System.Action OnUICancel;
+    public event Action OnAttack;
+    public event Action OnBlock;
+    public event Action OnInteract;
+    public event Action ToggleWeapon;
+    public event Action OnToggleInventory;
+    Action<Vector2> OnUINavigate;
+    public event Action OnUISubmit;
+    public event Action OnUICancel;
     public event Action OnUISwitchLeft;
     public event Action OnUISwitchRight;
 
@@ -52,6 +53,7 @@ public class InputManager : MonoBehaviour
         Actions = new PlayerInputActions();
 
         Actions.Player.Attack.performed += _ => OnAttack?.Invoke();
+        Actions.Player.Block.performed += _ => OnBlock?.Invoke();
         Actions.Player.Interact.performed += _ => OnInteract?.Invoke();
         Actions.Player.DrawWeapon.started += _ => ToggleWeapon?.Invoke();
         Actions.Player.Lock.performed += _ => OnLock?.Invoke();
