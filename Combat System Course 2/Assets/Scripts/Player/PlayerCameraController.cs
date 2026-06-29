@@ -143,11 +143,19 @@ public class PlayerCameraController : MonoBehaviour
         {
             yaw = cinemachineCameraTarget.transform.rotation.eulerAngles.y;
             pitch = cinemachineCameraTarget.transform.rotation.eulerAngles.x;
+
+            // 重置锁定期间的 Z 偏移，避免跟随摄像机带着错误的偏移量
+            Vector3 localPos = cinemachineCameraTarget.transform.localPosition;
+            localPos.z = 0f;
+            cinemachineCameraTarget.transform.localPosition = localPos;
         }
 
         isLockingOn = false;
         lockedTarget = null;
         lockCameraPosition = false;
+        lockCameraTargetZ = 0f;
+        lockYawVelocity = 0f;
+        lockPitchVelocity = 0f;
     }
 
     public Quaternion GetPlanarRotation()

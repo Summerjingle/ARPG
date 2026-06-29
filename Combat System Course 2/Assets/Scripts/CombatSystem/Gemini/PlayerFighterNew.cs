@@ -94,7 +94,7 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
 
     private void Update()
     {
-        // 现在 Update 只负责索敌，输入和攻击执行全部交给了 PlayerAttack
+       //锁定敌人
         UpdateTarget();
     }
 

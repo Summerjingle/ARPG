@@ -367,3 +367,48 @@ M Assets/GameData/Animator/P&E/PlayerController.controller
 ### 待办
 - [ ] 敌人攻击反弹（目前仅玩家）
 - [ ] 反弹后硬直帧可配置（目前直接切 Idle，无停顿）
+
+---
+
+## 2026-06-30 大剑系统 + 挂点枚举重构
+
+### 大剑武器
+- **GreatSword.cs** — 新增重型武器类（`RPG/Weapon/GreatSword.cs`）
+- **Weapon_GreatSword.asset** — 大剑 ItemSO 配置
+- **GreatSword.prefab** — 大剑预制体（手部 socket2）
+- **动画**：MassiveGreatSword_AnimSet 包导入，`WP_Equip`（拔武器）和 `WP_Unequip`（收武器）
+
+### Weapon.cs 枚举化挂点选择
+- 新增 `SheathLocation` 枚举：`Waist`（默认，腰间）/ `Back`（背部）
+- 新增 `HandSocket` 枚举：`Primary`（默认，primary socket）/ `Secondary`（第二 socket）
+- 新增字段：`drawWeaponTriggerName`、`sheathWeaponTriggerName`、`sheathLocation`、`handSocket`、`isHeavy`
+- 以后加新挂点只需：枚举加一项 → lookup 加一个 case → Inspector 选上
+
+### WeaponEquipmentManager.cs 挂点路由
+- 新增 `GetSheathHolder(Weapon)` — 根据 `sheathLocation` 返回 `weaponHolder` 或 `weaponHolder_Back`
+- 新增 `GetHandSocket(Weapon)` — 根据 `handSocket` 返回 `weaponSocket` 或 `weaponSocket2`
+- `DrawWeapon()` 用 `GetHandSocket()` 替代写死的 `weaponSocket`
+- `SheathWeapon()` 用 `GetSheathHolder()` 替代写死的 `weaponHolder`
+- `EquipWeapon()` 先实例化到腰间，再根据武器配置移到正确挂点
+
+### 重型武器减速系统
+- **Weapon.cs**：`isHeavy` bool 字段（大剑勾上）
+- **WeaponEquipmentManager.cs**：`heavyWeaponSpeedMultiplier`（Inspector 可调，默认 0.7）+ `CurrentSpeedMultiplier` 公开属性（重型+已拔出=倍率，其余=1）
+- **PlayerController.cs**：`targetMoveSpeed *= WeaponEquipmentManager.Instance.CurrentSpeedMultiplier`
+
+### 大剑 Animator Controller 配置
+- ArmsLayer 新增 `playerDraw_GreatSword` 和 `playerSheath_GreatSword` 两个 state
+- Draw 流程：`DefaultState` → `drawGreatSword` trigger → `playerDraw_GreatSword` → HasExitTime=1 → `Combat`
+- Sheath 流程：`Combat` → `sheathGreatSword` trigger → `playerSheath_GreatSword` → HasExitTime=1 → `DefaultState`
+- **Bug 诊断**：ExitTime=1 但动画"还播一点点" → 根因是 `WP_Equip.fbx.meta` 和 `WP_Unequip.fbx.meta` 的 `loopTime: 1`，循环动画在末帧过渡期间重启导致。改 `loopTime: 0` 即可（用户自己改）
+
+### 涉及文件
+```
+M Assets/Scripts/RPG/Weapon/Weapon.cs
+M Assets/Scripts/Player/WeaponEquipmentManager.cs
+M Assets/Scripts/Player/PlayerController.cs
+M Assets/GameData/Animator/P&E/PlayerController.controller
++ Assets/Scripts/RPG/Weapon/GreatSword.cs
++ Assets/GameData/DataSO/Weapon_GreatSword.asset
++ Assets/Res/Prefabs/GreatSword.prefab
+```

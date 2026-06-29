@@ -123,11 +123,14 @@ public class CombatMovementState : State<EnemyController>
     private void StartChase()
     {
         state = AICombatStates.Chase;
-
+        enemyController.Fighter.InCounter = false;
+        SetBlockObjectActive(false);
     }
     private void StartIdle()
     {
         state = AICombatStates.Idle;
+        enemyController.Fighter.InCounter = false;
+        SetBlockObjectActive(false);
         timer = Random.Range(idleTimeRange.x, idleTimeRange.y);
         enemyController.Animator.SetFloat("forwardSpeed", 0f);
         enemyController.Animator.SetFloat("strafeSpeed", 0f);
@@ -136,15 +139,25 @@ public class CombatMovementState : State<EnemyController>
     private void StartCircling()
     {
         state = AICombatStates.Circling;
-
+        enemyController.Fighter.InCounter = true;
+        SetBlockObjectActive(true);
         enemyController.NavAgent.ResetPath();
         timer = Random.Range(circlingTimeRange.x, circlingTimeRange.y);
         circlingDir = Random.Range(0, 2) == 0 ? 1 : -1;
 
     }
 
+    private void SetBlockObjectActive(bool active)
+    {
+        var fighter = enemyController.Fighter as EnemyFighter;
+        if (fighter != null && fighter.blockObject != null)
+            fighter.blockObject.SetActive(active);
+    }
+
     public override void Exit()
     {
+        enemyController.Fighter.InCounter = false;
+        SetBlockObjectActive(false);
         enemyController.NavAgent.updateRotation = true;
         enemyController.combatMovementTimer = 0f;
         enemyController.Animator.SetFloat("forwardSpeed", 0f);

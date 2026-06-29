@@ -120,6 +120,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemSO: {fileID: 11400000, guid: 7e6b9d89d5471bc418e33022d24d7a10, type: 2}
+  drawWeaponTriggerName: drawWeapon
+  sheathWeaponTriggerName: sheathWeapon
   damage: 25
 --- !u!114 &9057602055944392035
 MonoBehaviour:
@@ -134,3 +136,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   itemSO: {fileID: 11400000, guid: 9aae080c939e8164d8a9e56dc8b2e78d, type: 2}
+  isActivated: 0

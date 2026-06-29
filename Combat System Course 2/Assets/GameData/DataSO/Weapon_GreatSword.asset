@@ -1,0 +1,27 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5d70b432a2f265408c22e06e5d63b01, type: 3}
+  m_Name: Weapon_GreatSword
+  m_EditorClassIdentifier: 
+  nameOfItem: "\u5DE8\u5251"
+  itemType: 0
+  armorType: 5
+  description: "\u4E00\u628A\u5DE8\u5927\u7684\u5251"
+  propertyList:
+  - propertyType: 2
+    value: 100
+  icon: {fileID: 21300000, guid: cf0d50b176762de43bd59a1c6930ae7e, type: 3}
+  interactablePrefab: {fileID: 0}
+  weaponPrefab: {fileID: 6824938446369233064, guid: dc459900344f6ae40ba8e7674c45dbe6,
+    type: 3}
+  maxStackSize: 1
+  amount: 1

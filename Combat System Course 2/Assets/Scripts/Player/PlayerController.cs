@@ -323,7 +323,7 @@ public class PlayerController : MonoBehaviour
         wasInActionLastFrame = combatSystem.InAction;
 
         float targetMoveSpeed = 0f;
-        
+
         // 只有非动作状态，才产生 WASD 目标速度
         if (!combatSystem.InAction)
         {
@@ -331,6 +331,9 @@ public class PlayerController : MonoBehaviour
             else if (isSprinting) targetMoveSpeed = sprintSpeed * inputMagnitude;
             else if (isLockedOn) targetMoveSpeed = lockWalkSpeed * inputMagnitude;
             else targetMoveSpeed = Mathf.Lerp(walkSpeed, runSpeed, accelerationT) * inputMagnitude;
+
+            // 重型武器减速
+            targetMoveSpeed *= WeaponEquipmentManager.Instance.CurrentSpeedMultiplier;
         }
 
         // 平滑过渡到目标速度

@@ -13,19 +13,23 @@ public class RetreatAfterAttackState : State<EnemyController>
 
     public override void Enter(EnemyController owner)
     {
-       
+
         enemyController = owner;
+        enemyController.Fighter.InCounter = true;
+        SetBlockObjectActive(true);
         targetPos = enemyController.Target.transform.position;
     }
     public override void Execute()
     {
         if (enemyController.Target == null || enemyController.Target.HealthSystem.IsDead)
         {
+            SetBlockObjectActive(false);
             enemyController.ChangerState(EnemyStates.CombatMovement);
             return;
         }
         if (Vector3.Distance(enemyController.transform.position, targetPos) >= distanceToRetreat)
         {
+            SetBlockObjectActive(false);
             enemyController.ChangerState(EnemyStates.CombatMovement);
             return;
         }
@@ -34,5 +38,18 @@ public class RetreatAfterAttackState : State<EnemyController>
         vecToTarget.y = 0f;
         transform.rotation=Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(vecToTarget), rotationSpeed * Time.deltaTime);
     }
-    
+
+    public override void Exit()
+    {
+        enemyController.Fighter.InCounter = false;
+        SetBlockObjectActive(false);
+    }
+
+    private void SetBlockObjectActive(bool active)
+    {
+        var fighter = enemyController.Fighter as EnemyFighter;
+        if (fighter != null && fighter.blockObject != null)
+            fighter.blockObject.SetActive(active);
+    }
+
 }

@@ -11,7 +11,13 @@ public class AttackState : State<EnemyController >
     public override void Enter(EnemyController owner)
     {
         enemy = owner;
-        enemy.NavAgent.stoppingDistance=attackDistance;
+        enemy.NavAgent.stoppingDistance = attackDistance;
+
+        // 攻击状态不是防御状态：关闭格挡并重置反制标记
+        enemy.Fighter.InCounter = false;
+        var fighter = enemy.Fighter as EnemyFighter;
+        if (fighter != null && fighter.blockObject != null)
+            fighter.blockObject.SetActive(false);
     }
 
     public override void Execute()

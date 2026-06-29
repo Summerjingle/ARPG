@@ -33,6 +33,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public HealthSystem HealthSystem { get; private set; }
 
     // 战斗状态
+    public GameObject blockObject;
     public bool InAction { get; set; } = false;
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
@@ -323,7 +324,9 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
             // 防止同一刀命中同一目标多次
             if (!attacker.RegisterHit(this.gameObject)) return;
-
+            
+            // 格挡中不受伤害
+            if (blockObject != null && blockObject.activeSelf) return;
             TakeDamage(attackerDamage);
 
             // 通知攻击方：成功造成伤害（用于命中转向等）
