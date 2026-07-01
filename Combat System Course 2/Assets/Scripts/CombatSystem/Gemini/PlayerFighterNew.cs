@@ -38,6 +38,7 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     // 目标管理
     public ICombatSystem currTarget { get; set; }
     public GameObject blockObject;
+    public float CritRate => playerProperty?.TotalCritRate ?? 0f;
     // 攻击数据 (若动画机中不依赖这些数据，后续也可移除)
     [SerializeField] private List<AttackData> attacks;
     [SerializeField] private List<AttackData> longRangeAttacks;
@@ -125,12 +126,12 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         return nearest;
     }
 
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, bool isCrit = false)
     {
         if (HealthSystem.IsDead) return;
 
         int currentArmor = GetPlayerArmor();
-        HealthSystem.TakeDamage(damage, currentArmor);
+        HealthSystem.TakeDamage(damage, currentArmor, isCrit);
         OnGotHit?.Invoke(this); 
 
         
@@ -229,7 +230,9 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
 
         // ④ 切回待机
         animator.SetFloat("AttackSpeed", 1f);
-        animator.Play("Combat Blend Tree", 0, 0);
+        var wp = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
+        string btName = wp?.combatBlendTreeName ?? "Combat Blend Tree";
+        animator.Play(btName, 0, 0);
         animator.applyRootMotion = false;
 
         if (playerAttack != null)
@@ -273,10 +276,11 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
             // 防止同一刀命中同一目标多次
             if (!attacker.RegisterHit(this.gameObject)) return;
 
-            // 格挡中不受伤害
-            if (blockObject != null && blockObject.activeSelf) return;
+            // 格挡中不受伤害（重武器无视格挡）
+            if (blockObject != null && blockObject.activeSelf && !attacker.IsUsingHeavyWeapon()) return;
 
-            TakeDamage(attackerDamage);
+            bool isCrit = Random.value < (attacker.CritRate / 100f);
+            TakeDamage(attackerDamage, isCrit);
 
             // 通知攻击方：成功造成伤害
             attacker.NotifyDamageDealt(this.gameObject);
@@ -329,33 +333,44 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
                 break;
         }
     }
-    public void AE_EnableHitbox(string hitboxName)
+    public void AE_EnableHitbox(string param)
     {
         // 反弹期间禁止动画事件重新开启碰撞体
         if (IsRebounding) return;
 
-        hitTargets.Clear(); //每次挥刀开始，清空上一刀的记录
-        // 将动画传来的字符串转为枚举
+        hitTargets.Clear();
+
+        // 解析参数：格式 "武器的碰撞器类型|特殊受击动画名称（需要在动画机中存在该动画，可以为空）"
+        // 例如: "Sword|hit_heavy_B" 或 "RightHand|"
+        string[] parts = param.Split('|');
+        string hitboxName = parts[0];
+        string reactionAnim = parts.Length > 1 ? parts[1] : null;
+
+        // 设置特殊受击动画
+        if (string.IsNullOrEmpty(reactionAnim))
+            CurrentSpecialHitReaction = null;
+        else
+            CurrentSpecialHitReaction = reactionAnim;
+
+        // 启用对应的碰撞体
         if (System.Enum.TryParse(hitboxName, out AttackHitbox type))
         {
-            EnableHitboxByType(type); // 调用 Switch 逻辑
+            EnableHitboxByType(type);
         }
     }
 
-    // Animation Event 调用：设置本次攻击命中时的特殊受击动画
-    // 在 AE_EnableHitbox 同一帧或之前调用即可
-    // 传空字符串 = 清空，使用默认受击动画
-    public void AE_SetHitReaction(string animName)
-    {
-        if (string.IsNullOrEmpty(animName))
-        {
-            CurrentSpecialHitReaction = null;
-        }
-        else
-        {
-            CurrentSpecialHitReaction = animName;
-        }
-    }
+    //该功能已经弃用，加入到上方的enable碰撞器方法中了
+    // public void AE_SetHitReaction(string animName)
+    // {
+    //     if (string.IsNullOrEmpty(animName))
+    //     {
+    //         CurrentSpecialHitReaction = null;
+    //     }
+    //     else
+    //     {
+    //         CurrentSpecialHitReaction = animName;
+    //     }
+    // }
 
     // 建议在动画 Event 中调用此方法关闭碰撞
     public void DisableHitboxes()
@@ -371,6 +386,11 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         // 清除特殊受击标记，防止挥空后残留到下一刀
         CurrentSpecialHitReaction = null;
     }
+    public bool IsUsingHeavyWeapon()
+    {
+        return WeaponEquipmentManager.Instance?.GetCurrentWeapon()?.isHeavy ?? false;
+    }
+
     public bool RegisterHit(GameObject target)
     {
         int id = target.GetInstanceID();

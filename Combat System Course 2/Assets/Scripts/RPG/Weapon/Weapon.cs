@@ -13,6 +13,7 @@ public abstract class Weapon : MonoBehaviour
     [Header("动画触发器")]
     public String drawWeaponTriggerName;
     public String sheathWeaponTriggerName;
+    public string combatBlendTreeName = "Combat Blend Tree";
 
     [Header("挂点选择")]
     public SheathLocation sheathLocation = SheathLocation.Waist;
@@ -29,6 +30,10 @@ public abstract class Weapon : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Obstacle"))
+            return;
+
+        // 重武器无视战斗单位的碰撞（格挡盾牌等），直接穿透
+        if (isHeavy && other.GetComponentInParent<ICombatSystem>() != null)
             return;
 
         Vector3 hitPoint = other.ClosestPoint(transform.position);

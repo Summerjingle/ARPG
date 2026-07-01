@@ -29,11 +29,11 @@ public class WolfFighter : EnemyFighter
             }
         }
     }
-    public override void TakeDamage(float damage)
+    public override void TakeDamage(float damage, bool isCrit = false)
     {
         if (HealthSystem.IsDead) return;
 
-        base.TakeDamage(damage);
+        base.TakeDamage(damage, isCrit);
 
         // ���������֪ͨ WolfController
         if (HealthSystem.IsDead && wolfController != null)

@@ -64,7 +64,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 4259086489823444316, guid: 381ffe204132c004dbe36235e98379a5, type: 3}
+  - {fileID: 2100000, guid: efc3f3f7cabc11f4487f2066fb886b4d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -101,6 +101,7 @@ MonoBehaviour:
   itemSO: {fileID: 11400000, guid: f8dafbee3d8e2164f9a2e3478b223d77, type: 2}
   drawWeaponTriggerName: drawGreatSword
   sheathWeaponTriggerName: sheathGreatSword
+  combatBlendTreeName: Combat Blend Tree_GreatSword
   sheathLocation: 1
   handSocket: 1
   isHeavy: 1
@@ -120,12 +121,12 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 0
   serializedVersion: 3
-  m_Size: {x: 0.5135937, y: 0.17516458, z: 1.473425}
-  m_Center: {x: 0.006922034, y: -0.000007690482, z: 0.83637255}
+  m_Size: {x: 0.60199714, y: 0.25374535, z: 1.6132127}
+  m_Center: {x: 0.0020107478, y: 0.009814903, z: 0.9062664}
 --- !u!54 &7636926935168898587
 Rigidbody:
   m_ObjectHideFlags: 0

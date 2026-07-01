@@ -3,15 +3,15 @@ using System.Collections;
 
 public class KnightDFighter : EnemyFighter
 {
-    [Header("ÆïÊ¿ÌØÊâ²ÎÊý")]
-    [SerializeField] private float shieldBlockChance = 1f; // % ¼¸ÂÊ¸ñµ²
+    [Header("ï¿½ï¿½Ê¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
+    [SerializeField] private float shieldBlockChance = 1f; // % ï¿½ï¿½ï¿½Ê¸ï¿½
 
     private bool pendingBlock = false;
 
-    // --- ÊÜ»÷Ê±¸ñµ²Âß¼­ ---
-    public override void TakeDamage(float damage)
+    // --- ï¿½Ü»ï¿½Ê±ï¿½ï¿½ï¿½ß¼ï¿½ ---
+    public override void TakeDamage(float damage, bool isCrit = false)
     {
-        // Èç¹ûÖ®Ç°ÒÑ¾­ÅÐ¶¨Òª¸ñµ²£¬Ôò²»ÊÜÉËº¦
+        //ï¿½ï¿½ï¿½Ö®Ç°ï¿½Ñ¾ï¿½ï¿½Ð¶ï¿½Òªï¿½ñµ²£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ëºï¿½
         if (pendingBlock)
         {
             PlayInstantBlockEffect();
@@ -19,31 +19,31 @@ public class KnightDFighter : EnemyFighter
             return;
         }
 
-        // Ëæ»ú¼¸ÂÊ¸ñµ²
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¸ï¿½
         if (Random.value < shieldBlockChance && !HealthSystem.IsDead && !IsTakingHit)
         {
             PlayBlockEffect();
-            return; // ÍêÈ«¸ñµ²£¬ÎÞÉËº¦
+            return; // ï¿½ï¿½È«ï¿½ñµ²£ï¿½ï¿½ï¿½ï¿½Ëºï¿½
         }
 
-        base.TakeDamage(damage);
+        base.TakeDamage(damage, isCrit);
     }
 
-    // ÆÕÍ¨¸ñµ²Ð§¹û
+    // ï¿½ï¿½Í¨ï¿½ï¿½Ð§ï¿½ï¿½
     private void PlayBlockEffect()
     {
         animator.CrossFade("Block", 0.1f, 1);
     }
 
-    // ¼´Ê±¸ñµ²Ð§¹û
+    // ï¿½ï¿½Ê±ï¿½ï¿½Ð§ï¿½ï¿½
     private void PlayInstantBlockEffect()
     {
         animator.CrossFade("Block", 0.05f, 1);
     }
 
-    // ==================¡¾¶ÁÖ¸Áî¸ñµ²»úÖÆ¡¿=====================
+    // ==================ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ñµ²»ï¿½ï¿½Æ¡ï¿½=====================
 
-    // Íæ¼Ò¹¥»÷¿ªÊ¼Ê±µ÷ÓÃ£º¾ö¶¨ÊÇ·ñÒª¸ñµ²
+    // ï¿½ï¿½Ò¹ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼Ê±ï¿½ï¿½ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Òªï¿½ï¿½
     public void TryPredictiveBlock()
     {
         if (!HealthSystem.IsDead && !IsTakingHit && Random.value < shieldBlockChance)
@@ -53,12 +53,12 @@ public class KnightDFighter : EnemyFighter
         }
     }
 
-    // ´¥·¢¶ÁÖ¸Áî¸ñµ²Ð§¹û
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
     public void PerformPredictiveBlock(Animator playerAnimator)
     {
         pendingBlock = false;
 
-        // Íæ¼Ò¹¥»÷Í£¶Ù£¨hitstop£©
+        // ï¿½ï¿½Ò¹ï¿½ï¿½ï¿½Í£ï¿½Ù£ï¿½hitstopï¿½ï¿½
         if (playerAnimator != null)
         {
             playerAnimator.speed = 0f;

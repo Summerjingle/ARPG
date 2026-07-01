@@ -100,14 +100,6 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
-      - time: 0.15870117
-        functionName: AE_SetHitReaction
-        data: Dam_FlyDie_Left_Root
-        objectReferenceParameter: {fileID: 11500000, guid: 78b6199c6c54bea47a79fec53d121eb2,
-          type: 3}
-        floatParameter: 0
-        intParameter: 0
-        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

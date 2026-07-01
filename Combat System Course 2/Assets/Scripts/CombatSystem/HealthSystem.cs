@@ -6,7 +6,7 @@ public class HealthSystem : MonoBehaviour
     [field: SerializeField] public float MaxHealth { get;  set; } = 25f;
     [field: SerializeField] public float Health { get;  set; } = 25f;
 
-    public event Action<HealthSystem> OnHealthChanged;
+    public event Action<HealthSystem, HealthChangeInfo> OnHealthChanged;
     public event Action<HealthSystem> OnDeath;
     public event Action<HealthSystem> OnDeathComplete;
 
@@ -17,26 +17,43 @@ public class HealthSystem : MonoBehaviour
         Health = MaxHealth;
     }
 
-    public void TakeDamage(float damage, int armor = 0)
+    private void Start()
+    {
+        // å‘é£˜å­—ç®¡ç†å™¨æ³¨å†Œï¼Œç¡®ä¿åŠ¨æ€ç”Ÿæˆçš„æ•Œäººä¹Ÿèƒ½è¢«ç›‘å¬åˆ°
+        if (FloatingTextManager.Instance != null)
+            FloatingTextManager.Instance.RegisterHealthSystem(this);
+    }
+
+    private void OnDestroy()
+    {
+        if (FloatingTextManager.Instance != null)
+            FloatingTextManager.Instance.UnregisterHealthSystem(this);
+    }
+
+    public void TakeDamage(float damage, int armor = 0, bool isCrit = false)
     {
         if (IsDead) return;
 
-        // ¼ÆËã»¤¼×¼õÃâ
+        //ï¿½ï¿½ï¿½ã»¤ï¿½×¼ï¿½ï¿½ï¿½
         float damageReduction = armor * 0.005f;
         float reducedDamage = damage * (1 - Mathf.Clamp(damageReduction, 0, 0.8f));
 
         float previousHealth = Health;
         Health = Mathf.Clamp(Health - reducedDamage, 0, MaxHealth);
 
-        // ´¥·¢ÑªÁ¿±ä»¯ÊÂ¼ş
-        OnHealthChanged?.Invoke(this);
+        var info = new HealthChangeInfo
+        {
+            delta = Health - previousHealth,
+            isCrit = isCrit
+        };
+        OnHealthChanged?.Invoke(this, info);
 
-        // ¼ì²éËÀÍö
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (Health <= 0 && !IsDead)
         {
             IsDead = true;
-            OnDeath?.Invoke(this);        // ËÀÍö¿ªÊ¼ÊÂ¼ş
-            OnDeathComplete?.Invoke(this); // ËÀÍöÍê³ÉÊÂ¼ş
+            OnDeath?.Invoke(this);        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¼ï¿½Â¼ï¿½
+            OnDeathComplete?.Invoke(this); // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Â¼ï¿½
         }
     }
 
@@ -44,28 +61,49 @@ public class HealthSystem : MonoBehaviour
     {
         if (IsDead) return;
 
+        float previousHealth = Health;
         Health = Mathf.Clamp(Health + amount, 0, MaxHealth);
-        OnHealthChanged?.Invoke(this);
+
+        var info = new HealthChangeInfo
+        {
+            delta = Health - previousHealth,
+            isCrit = false
+        };
+        OnHealthChanged?.Invoke(this, info);
     }
 
     public void SetMaxHealth(float maxHealth, bool restoreToFull = false)
     {
         MaxHealth = maxHealth;
+        float previousHealth = Health;
         if (restoreToFull)
         {
             Health = MaxHealth;
         }
-        OnHealthChanged?.Invoke(this);
+
+        var info = new HealthChangeInfo
+        {
+            delta = Health - previousHealth,
+            isCrit = false
+        };
+        OnHealthChanged?.Invoke(this, info);
     }
 
     public void ResetHealth()
     {
         IsDead = false;
+        float previousHealth = Health;
         Health = MaxHealth;
-        OnHealthChanged?.Invoke(this);
+
+        var info = new HealthChangeInfo
+        {
+            delta = Health - previousHealth,
+            isCrit = false
+        };
+        OnHealthChanged?.Invoke(this, info);
     }
 
-    // ±ã½İÊôĞÔ
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     public float HealthPercent => MaxHealth > 0 ? Health / MaxHealth : 0f;
     public bool IsFullHealth => Health >= MaxHealth;
     public bool IsAlive => !IsDead;

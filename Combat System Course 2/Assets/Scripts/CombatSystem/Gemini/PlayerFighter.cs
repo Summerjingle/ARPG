@@ -22,6 +22,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
     public bool IsCounterable => Attackstate == AttackStates.Windup && comboCount == 0;
+    public float CritRate => playerProperty?.TotalCritRate ?? 0f;
     public string CurrentSpecialHitReaction { get; set; }
     
     // ����״̬
@@ -126,12 +127,12 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     {
         return UIStateManager.IsAnyUIActive;
     }
-    public void TakeDamage(float damage)
+    public void TakeDamage(float damage, bool isCrit = false)
     {
         if (HealthSystem.IsDead) return;
 
         int currentArmor = GetPlayerArmor();
-        HealthSystem.TakeDamage(damage, currentArmor);
+        HealthSystem.TakeDamage(damage, currentArmor, isCrit);
         OnGotHit?.Invoke(this);  // this ���� ICombatSystem
 
        
@@ -211,7 +212,8 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             // 防止同一刀命中同一目标多次
             if (!attacker.RegisterHit(this.gameObject)) return;
 
-            TakeDamage(attackerDamage);
+            bool isCrit = Random.value < (attacker.CritRate / 100f);
+            TakeDamage(attackerDamage, isCrit);
 
             // 通知攻击方：成功造成伤害
             attacker.NotifyDamageDealt(this.gameObject);
@@ -578,6 +580,12 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     {
         yield return ExecutePlayerAttack(target, comboCount);
     }
+
+    public bool IsUsingHeavyWeapon()
+    {
+        return WeaponEquipmentManager.Instance?.GetCurrentWeapon()?.isHeavy ?? false;
+    }
+
     Transform ICombatSystem.transform => this.transform;
     GameObject ICombatSystem.gameObject => this.gameObject;
     

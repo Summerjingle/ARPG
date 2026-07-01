@@ -81,10 +81,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private string rollAnimRight = "Esc_Roll_Right_Root";
     [SerializeField] private float rollCooldown = 0.8f;
     [SerializeField] private int rollEnergyCost = 15;
-    [SerializeField] private float rollExitTime = 0.75f;
     [SerializeField] private float rollSpeed = 8f;
-    [SerializeField] private AnimationCurve rollSpeedCurve =
-        AnimationCurve.EaseInOut(0, 1, 1, 0);
+    [SerializeField] private AnimationCurve rollSpeedCurve =AnimationCurve.EaseInOut(0, 1, 1, 0);
     private Vector3 rollDirection;
     private bool isRolling = false;
     private float lastRollTime = -Mathf.Infinity;
@@ -331,9 +329,13 @@ public class PlayerController : MonoBehaviour
             else if (isSprinting) targetMoveSpeed = sprintSpeed * inputMagnitude;
             else if (isLockedOn) targetMoveSpeed = lockWalkSpeed * inputMagnitude;
             else targetMoveSpeed = Mathf.Lerp(walkSpeed, runSpeed, accelerationT) * inputMagnitude;
-
-            // 重型武器减速
-            targetMoveSpeed *= WeaponEquipmentManager.Instance.CurrentSpeedMultiplier;
+            
+            // 重型武器减速 2026.7.1 补充在非冲刺下状态进行
+            if (!isSprinting)
+            {
+                targetMoveSpeed *= WeaponEquipmentManager.Instance.CurrentSpeedMultiplier;
+            }
+            
         }
 
         // 平滑过渡到目标速度
@@ -678,10 +680,17 @@ public class PlayerController : MonoBehaviour
 
     private void LateUpdate()
     {
+        // Sync cinemachineCameraTarget world position — replaces old child-transform inheritance.
+        // Must happen BEFORE SetLookInput so HandleLockOnCamera reads correct positions.
         if (cameraController != null)
         {
+            cameraController.SyncCameraTargetPosition(
+                transform.position,
+                charactercontroller.center.y,
+                true);
             cameraController.SetLookInput(lookInput);
         }
+
         // �ж�Ŀ��߶�
         float targetHeight = isCrouching || !headChecker.CanStandUpFromCrouch()
             ? crouchHeight
@@ -704,12 +713,9 @@ public class PlayerController : MonoBehaviour
             charactercontroller.center = curCenter;
 
             charactercontroller.height = newHeight;
-
-            if (cameraController != null)
-                cameraController.SetCameraHeight(charactercontroller.center.y, true);
         }
 
-        // Lock-on: push camera target back when near enemy to prevent overhead view
+        // Lock-on: shrink camera distance when near enemy (replaces old Z-pushback)
         if (cameraController != null)
             cameraController.UpdateLockCameraDistance();
     }

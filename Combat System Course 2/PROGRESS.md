@@ -224,6 +224,61 @@ WhiteBox_Village 场景打包后出现白色/红色建筑形状的半透明物�
 
 ---
 
+## 2026-07-01 锁定摄像机系统重构
+
+### 问题
+
+1. **锁定后绕敌转圈，摄像机抖动** — 画面小幅度高频震颤
+2. **lockOnMinDistance 无效** — 靠近敌人时摄像机飞到两人头顶
+
+### 根因
+
+**问题1 根因：cinemachineCameraTarget 同时被两个来源驱动旋转，相位差一帧**
+
+- `PlayerController.Update` 旋转 Player → CCT（Player 子节点）继承父旋转 → 世界位置偏移
+- `PlayerCameraController.LateUpdate.HandleLockOnCamera` 用 SmoothDampAngle 覆写 CCT rotation
+- TargetLockingCam 的 FramingTransposer（XDamping=0, YDamping=0）零延迟跟踪 Follow target 的每一帧微动
+- Player 的 RotateTowards 和 CCT 的 SmoothDampAngle 不同步 → 微小差异 → 直接传给摄像机
+
+**问题2 根因：HandleLockOnCamera 的 early return 冻结了 CCT rotation，但 FramingTransposer 不读 rotation**
+
+- FramingTransposer 只看 Follow target 位置
+- 近距离时 player + enemy 挤在一起，FramingTransposer 取景两点 → 正上方
+- 旧的 Z 轴推远 CCT 起反作用（Follow target 更靠后 → 头顶角度更陡）
+- CinemachineCollider Damping=0 让遮挡瞬移无过渡
+
+### 代码改动
+
+**PlayerCameraController.cs：**
+- `using TMPro.Examples;` → `using Cinemachine;`
+- 移除 `lockCameraTargetZ` 字段
+- 新增字段：`lockOnMinDistance`(5)、`lockOnMinCameraDistance`(1.5)、`lockOnDefaultCameraDistance`(4)、`lockCamBody`(private, runtime cache via `lockCam.GetCinemachineComponent<Cinemachine3rdPersonFollow>()`)
+- `HandleFreeCamera`：删掉死代码 `deltaTimeMultiplier = 1f`
+- `HandleLockOnCamera`：删除 early return，始终平滑追踪敌人方向
+- `UpdateLockCameraDistance`：不再推 CCT 的 localPosition.z，改为 lerp `lockCamBody.CameraDistance`（指数衰减），近距离时缩小相机距离防止钻地
+- `UnlockCamera`：重置 CameraDistance 替代 Z 偏移重置
+- `SetCameraHeight`：改用世界坐标 + 指数衰减 Lerp
+- 新增 `SyncCameraTargetPosition(Vector3 playerPosition, float headOffsetY, bool smoothHeight)`：每帧手动同步 CCT 世界位置跟随 Player（替代父子继承），XZ 瞬时、Y 指数衰减
+
+**PlayerController.cs：**
+- `LateUpdate` 开头新增 `SyncCameraTargetPosition`（在 SetLookInput 之前）
+- 移除 crouch 块中的旧 `SetCameraHeight` 调用
+
+### 场景改动（已完成）
+
+1. CCT 脱离 Player 子节点 → 根层级
+2. TargetLockingCam Body → FramingTransposer 改为 3rd Person Follow，参数：CameraDistance=4, ShoulderOffset=(1, 0.39, 0), Damping=(0,0,0)
+3. 两台 VCam CinemachineCollider → Damping: 0→0.2, DampingWhenOccluded: 0→0.1
+
+### 涉及文件
+```
+M Assets/Scripts/Player/PlayerCameraController.cs
+M Assets/Scripts/Player/PlayerController.cs
+M Assets/Scenes/WhiteBoxes/WhiteBox_Village.unity
+```
+
+---
+
 ## 2026-06-27 特殊击退系统 + 敌人状态机修复
 
 ### 特殊受击系统（连招终结技击飞）
@@ -367,6 +422,132 @@ M Assets/GameData/Animator/P&E/PlayerController.controller
 ### 待办
 - [ ] 敌人攻击反弹（目前仅玩家）
 - [ ] 反弹后硬直帧可配置（目前直接切 Idle，无停顿）
+
+---
+
+## 2026-07-01 伤害飘字系统 (Floating Text)
+
+### 功能
+角色受击/暴击/恢复时，头顶弹出伤害数字飘字：弹入→停留→淡出→回收。支持三种类型：普通攻击（白）、暴击（橙红+图标）、恢复（绿）。
+
+### 数据流
+```
+攻击方 Fighter.OnTriggerEnter
+  → Random.value < attacker.CritRate/100 → isCrit
+  → target.TakeDamage(damage, isCrit)
+  → HealthSystem.TakeDamage(damage, armor, isCrit)
+  → 构造 HealthChangeInfo { delta, isCrit }
+  → OnHealthChanged(HealthSystem, HealthChangeInfo)
+  → FloatingTextManager 选 Config → 出池 → 曲线动画 → 回收
+```
+
+### 新建文件
+```
++ Assets/Scripts/CombatSystem/HealthChangeInfo.cs
++ Assets/Scripts/CombatSystem/FloatingText/FloatingTextConfig.cs
++ Assets/Scripts/CombatSystem/FloatingText/FloatingTextDatabase.cs
++ Assets/Scripts/CombatSystem/FloatingText/FloatingTextManager.cs
++ Assets/Scripts/CombatSystem/FloatingText/FloatingTextInstance.cs
++ Assets/GameData/FloatingTexts/CommonFloatingText.asset
++ Assets/GameData/FloatingTexts/CriticalDamageFloatingText.asset
++ Assets/GameData/FloatingTexts/HealingFloatingText.asset
++ Assets/GameData/FloatingTexts/Floating Text Database.asset
++ Assets/GameData/FloatingTexts/FloatingTMP.prefab
+```
+
+### 修改文件
+```
+M Assets/Scripts/CombatSystem/HealthSystem.cs
+M Assets/Scripts/CombatSystem/Gemini/ICombatSystem.cs
+M Assets/Scripts/CombatSystem/Gemini/PlayerFighterNew.cs
+M Assets/Scripts/CombatSystem/Gemini/PlayerFighter.cs
+M Assets/Scripts/CombatSystem/Gemini/EnemyFighter.cs
+M Assets/Scripts/CombatSystem/Gemini/KnightDFighter.cs
+M Assets/Scripts/Wolf/WolfFighter.cs
+M Assets/Scripts/Player/PlayerProperty.cs
+M Assets/Scripts/Player/PlayerHUDUI.cs
+M Assets/Scripts/Enemy/EnemyHeathBar.cs
+M Assets/Scripts/Enemy/BossHealthBar.cs
+M Assets/Scenes/WhiteBoxes/WhiteBox_Village.unity
+```
+
+### 架构设计
+
+**HealthChangeInfo** — 血量变化信息结构体，随 `OnHealthChanged` 事件传递：
+- `delta`（正=恢复，负=伤害）
+- `isCrit`（暴击标记）
+
+**FloatingTextConfig (SO)** — 单个飘字类型的配置：
+- 外观：`textColor`、`baseFontSize`、`icon`（Sprite 可选）
+- 动画曲线：`sizeCurve`（弹入 0.3→1.4→0.95→0.8）、`horizontalOffsetCurve`（右飘 0→0.6）、`alphaCurve`（保持0.4s→淡出至0）
+- 行为：`duration`(1.2s)、`heightOffset`(2.5)、`randomHorizontalRange`(0.5)
+
+**三种 Config：**
+
+| | 攻击 (Common) | 暴击 (Critical) | 恢复 (Healing) |
+|---|---|---|---|
+| 颜色 | 白 | 橙红 | 绿 |
+| 字号 | 4 | 5 | 4 |
+| 图标 | 无 | 有 | 无 |
+
+**FloatingTextDatabase (SO)** — 聚合三个 Config，参考 ItemDBSO 模式。`SelectConfig(info)` 按 delta 正负 + isCrit 选择。
+
+**FloatingTextManager** — 单例 + 对象池 + 生命周期：
+- `Awake` 预创建 20 个池实例，`Start` 扫描已有 HealthSystem 注册
+- `Update` 所有活跃飘字面向相机（billboard）
+- `RegisterHealthSystem`/`UnregisterHealthSystem` 供动态刷出的敌人自注册
+- `OnHealthChanged` → 选 Config → 出池 → 设文字/颜色/字号/图标 → 定世界坐标 → 播放动画协程
+- 动画结束回调 `ReturnToPool`
+
+**FloatingTextInstance** — 挂池对象上：
+- `TextMeshPro`（世界空间） + `SpriteRenderer`（Icon 子对象，`GetComponentInChildren` 查找）
+- `PlayAnimation(config, onComplete)` → 协程逐帧 `Evaluate` 曲线驱动 Scale/Alpha/Position
+- 无 Canvas 依赖，纯世界空间 Mesh 渲染
+
+### 暴击系统（前置依赖）
+
+- **PlayerProperty** 新增 `baseCritRate`(5%) + `bonusCritRate`(0%) + `TotalCritRate`
+- **ICombatSystem** 新增 `float CritRate { get; }`
+- **PlayerFighter / PlayerFighterNew** — CritRate 读 PlayerProperty.TotalCritRate
+- **EnemyFighter** — CritRate 返回 0（静态可背板，不引入不确定性）
+- **WolfFighter / KnightDFighter** — 继承 EnemyFighter 的 CritRate=0
+- OnTriggerEnter 中 `Random.value < attacker.CritRate/100f` 判定，结果传入 TakeDamage → HealthSystem
+
+### HealthSystem 改造
+
+- `OnHealthChanged` 事件签名：`Action<HealthSystem>` → `Action<HealthSystem, HealthChangeInfo>`
+- `TakeDamage(float, int, bool isCrit=false)` / `RestoreHealth` / `SetMaxHealth` / `ResetHealth` 全部构造 HealthChangeInfo 后触发
+- `Start()` 中向 FloatingTextManager 自注册（覆盖动态生成的敌人）
+- `OnDestroy()` 中注销
+
+**向后兼容**：3 个订阅者（PlayerHUDUI、EnemyHeathBar、BossHealthBar）只加参、方法体不动。
+
+### ICombatSystem 接口同步
+
+- `TakeDamage(float)` → `TakeDamage(float, bool isCrit=false)` — 5 个实现类全部更新
+- KnightDFighter override 格挡逻辑不变，`base.TakeDamage(damage, isCrit)` 透传
+
+### 对象池
+
+- 20 个 TMP 实例预创建，Queue 管理
+- `GetFromPool` 池空时动态扩容
+- `ReturnToPool` 停动画 → 关显 → 入队
+- 后备：无 prefab 时自动创建默认 TMP（fontSize=36, sortingOrder=100）
+
+### 预制体结构
+```
+FloatingTMP (RectTransform, 无 Canvas)
+├── FloatingTextInstance (脚本)
+├── TextMeshPro (MeshRenderer + 世界空间 TMP)
+└── Icon
+    └── SpriteRenderer
+```
+
+### 注意
+
+- 世界空间 TextMeshPro 的 `fontSize` 语义不同于 UI 版（TextMeshProUGUI），取决于字体资产采样点数。当前字号 4~5 对应字体资产的实际渲染尺寸
+- 曲线用 `tangentMode: 0`（Auto）简化序列化，免手动调切线
+- CritRate 不加 ICombatSystem 接口方法体，直接在 Fighter 中用 `Random.value < attacker.CritRate/100f`
 
 ---
 

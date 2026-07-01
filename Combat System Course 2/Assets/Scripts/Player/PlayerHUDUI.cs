@@ -105,7 +105,7 @@ public class PlayerHUDUI : MonoBehaviour
         UpdateHealthBar();
     }
 
-    private void OnHealthChanged(HealthSystem sys)
+    private void OnHealthChanged(HealthSystem sys, HealthChangeInfo info)
     {
         UpdateHealthBar();
     }

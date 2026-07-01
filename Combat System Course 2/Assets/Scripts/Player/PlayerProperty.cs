@@ -31,8 +31,13 @@ public class PlayerProperty : MonoBehaviour
     public int currSoulAmount=0;
 
     
-    [SerializeField] private int baseArmorValue = 0; 
-    private int equipmentArmorBonus = 0; 
+    [Header("Crit System")]
+    [SerializeField] private float baseCritRate = 5f;
+    [SerializeField] private float bonusCritRate = 0f;
+    public float TotalCritRate => baseCritRate + bonusCritRate;
+
+    [SerializeField] private int baseArmorValue = 0;
+    private int equipmentArmorBonus = 0;
 
    
     private HealthSystem healthSystem;

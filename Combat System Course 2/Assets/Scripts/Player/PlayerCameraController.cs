@@ -1,4 +1,4 @@
-using TMPro.Examples;
+using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -64,12 +64,9 @@ public class PlayerCameraController : MonoBehaviour
         float mouseX = lookInput.x;
         float mouseY = lookInput.y;
 
-        if (mouseX != 0f || mouseY != 0f)
-        {
-            float deltaTimeMultiplier = 1f;
-            yaw += mouseX * deltaTimeMultiplier;
-            pitch += mouseY * deltaTimeMultiplier;
-        }
+        const float sensitivity = 1f;
+        yaw   += mouseX * sensitivity;
+        pitch += mouseY * sensitivity;
 
         pitch = Mathf.Clamp(pitch, bottomClamp, topClamp);
 
@@ -77,42 +74,67 @@ public class PlayerCameraController : MonoBehaviour
             Quaternion.Euler(pitch + cameraAngleOverride, yaw, 0f);
     }
 
-    private float lockCameraTargetZ;
+    [Header("Lock-on Distance")]
+    [Tooltip("玩家与敌人距离小于此值时开始缩短相机距离")]
+    public float lockOnMinDistance = 5f;
 
-    // Smooth follow during lock-on; avoids jitter from per-frame position changes
+    [Tooltip("距离小于 minDistance 时，相机缩到的最短距离")]
+    public float lockOnMinCameraDistance = 1.5f;
+
+    [Tooltip("锁定状态下默认相机距离")]
+    public float lockOnDefaultCameraDistance = 4f;
+
+    // Runtime cached from EnemyLockSystem.lockCam — pipeline body, not a MonoBehaviour
+    private Cinemachine3rdPersonFollow lockCamBody;
+
+    // Smooth follow during lock-on; avoids jitter from per-frame position changes.
+    // CameraDistance is shrunk separately by UpdateLockCameraDistance at close range.
     private void HandleLockOnCamera()
     {
         Vector3 dir = lockedTarget.position - transform.position;
         dir.y = 0f;
-        if (dir.sqrMagnitude < 0.001f) return;
 
         float targetYaw = Quaternion.LookRotation(dir).eulerAngles.y;
-        yaw = Mathf.SmoothDampAngle(yaw, targetYaw, ref lockYawVelocity, 0.08f);
-        pitch = Mathf.SmoothDamp(pitch, 10f, ref lockPitchVelocity, 0.08f);
+        yaw   = Mathf.SmoothDampAngle(yaw, targetYaw, ref lockYawVelocity, 0.12f);
+        pitch = Mathf.SmoothDamp(pitch, 10f, ref lockPitchVelocity, 0.12f);
 
         cinemachineCameraTarget.transform.rotation =
             Quaternion.Euler(pitch + cameraAngleOverride, yaw, 0f);
     }
 
-    // Called externally (e.g. from PlayerController.LateUpdate) to push camera target
-    // away from enemy when close, preventing Cinemachine from going overhead
+    // Called from PlayerController.LateUpdate — adjusts lock cam distance when close to enemy
     public void UpdateLockCameraDistance()
     {
         if (!isLockingOn || lockedTarget == null) return;
+
+        // Lazy cache the lock cam's 3rdPersonFollow body
+        if (lockCamBody == null)
+        {
+            var lockSystem = GetComponent<EnemyLockSystem>();
+            if (lockSystem != null && lockSystem.lockCam != null)
+                lockCamBody = lockSystem.lockCam.GetCinemachineComponent<Cinemachine3rdPersonFollow>();
+        }
+        if (lockCamBody == null) return;
 
         Vector3 toEnemy = lockedTarget.position - transform.position;
         toEnemy.y = 0f;
         float dist = toEnemy.magnitude;
 
-        float minDist = 3f;
-        float pushback = 0.3f;
-        float desiredZ = dist < minDist ? -(minDist - dist) * pushback : 0f;
+        float desiredDistance;
+        if (dist < lockOnMinDistance)
+        {
+            float t = Mathf.Clamp01(dist / lockOnMinDistance);
+            desiredDistance = Mathf.Lerp(lockOnMinCameraDistance, lockOnDefaultCameraDistance, t);
+        }
+        else
+        {
+            desiredDistance = lockOnDefaultCameraDistance;
+        }
 
-        lockCameraTargetZ = Mathf.Lerp(lockCameraTargetZ, desiredZ, Time.deltaTime * 8f);
-
-        Vector3 localPos = cinemachineCameraTarget.transform.localPosition;
-        localPos.z = lockCameraTargetZ;
-        cinemachineCameraTarget.transform.localPosition = localPos;
+        lockCamBody.CameraDistance = Mathf.Lerp(
+            lockCamBody.CameraDistance,
+            desiredDistance,
+            1f - Mathf.Exp(-8f * Time.deltaTime));
     }
 
     // Snap to enemy direction on first lock, then smooth follow
@@ -141,21 +163,19 @@ public class PlayerCameraController : MonoBehaviour
     {
         if (cinemachineCameraTarget != null)
         {
-            yaw = cinemachineCameraTarget.transform.rotation.eulerAngles.y;
+            yaw   = cinemachineCameraTarget.transform.rotation.eulerAngles.y;
             pitch = cinemachineCameraTarget.transform.rotation.eulerAngles.x;
-
-            // 重置锁定期间的 Z 偏移，避免跟随摄像机带着错误的偏移量
-            Vector3 localPos = cinemachineCameraTarget.transform.localPosition;
-            localPos.z = 0f;
-            cinemachineCameraTarget.transform.localPosition = localPos;
         }
 
-        isLockingOn = false;
-        lockedTarget = null;
+        // Reset lock cam distance to default
+        if (lockCamBody != null)
+            lockCamBody.CameraDistance = lockOnDefaultCameraDistance;
+
+        isLockingOn   = false;
+        lockedTarget  = null;
         lockCameraPosition = false;
-        lockCameraTargetZ = 0f;
-        lockYawVelocity = 0f;
-        lockPitchVelocity = 0f;
+        lockYawVelocity     = 0f;
+        lockPitchVelocity   = 0f;
     }
 
     public Quaternion GetPlanarRotation()
@@ -197,22 +217,39 @@ public class PlayerCameraController : MonoBehaviour
             Input.ResetInputAxes();
         }
     }
+    /// <summary>
+    /// 每帧从 PlayerController 调用，让 CCT 世界位置跟随玩家（替代父子关系）。
+    /// XZ 瞬时跟随，Y 轴可选平滑（配合蹲下过渡）。
+    /// </summary>
+    public void SyncCameraTargetPosition(Vector3 playerPosition, float headOffsetY, bool smoothHeight = true)
+    {
+        if (cinemachineCameraTarget == null) return;
+
+        Vector3 pos = cinemachineCameraTarget.transform.position;
+        pos.x = playerPosition.x;
+        pos.z = playerPosition.z;
+
+        float targetY = playerPosition.y + headOffsetY;
+        if (smoothHeight)
+            pos.y = Mathf.Lerp(pos.y, targetY, 1f - Mathf.Exp(-12f * Time.deltaTime));
+        else
+            pos.y = targetY;
+
+        cinemachineCameraTarget.transform.position = pos;
+    }
+
     public void SetCameraHeight(float height, bool smooth = true)
     {
         if (cinemachineCameraTarget == null) return;
 
-        Vector3 pos = cinemachineCameraTarget.transform.localPosition;
+        Vector3 pos = cinemachineCameraTarget.transform.position;
 
         if (smooth)
-        {
-            pos.y = Mathf.Lerp(pos.y, height, Time.deltaTime * 10f);
-        }
+            pos.y = Mathf.Lerp(pos.y, height, 1f - Mathf.Exp(-10f * Time.deltaTime));
         else
-        {
             pos.y = height;
-        }
 
-        cinemachineCameraTarget.transform.localPosition = pos;
+        cinemachineCameraTarget.transform.position = pos;
     }
     public float Yaw => yaw;
     public float Pitch => pitch;

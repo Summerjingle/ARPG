@@ -5,18 +5,18 @@ using UnityEngine.UI;
 public class EnemyHeathBar : MonoBehaviour
 {
     public TextMeshProUGUI myName;
-    [Header("ÑªÌõÉèÖÃ")]
+    [Header("Ñªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public Image healthBarFill;
     public Image healthBarBG;
 
     
     private HealthSystem healthSystem;
 
-    [Header("Î»ÖÃÆ«ÒÆ")]
+    [Header("Î»ï¿½ï¿½Æ«ï¿½ï¿½")]
     public Vector3 positionOffset = new Vector3(0, 2f, 0);
     public bool faceCamera = true;
 
-    [Header("¸ß¼¶ÉèÖÃ")]
+    [Header("ï¿½ß¼ï¿½ï¿½ï¿½ï¿½ï¿½")]
     public bool hideWhenFull = true;
     public float showDurationAfterHit = 3f;
     private float hideTimer;
@@ -25,27 +25,27 @@ public class EnemyHeathBar : MonoBehaviour
 
     void Start()
     {
-        // ×Ô¶¯»ñÈ¡×é¼þ
+        // ï¿½Ô¶ï¿½ï¿½ï¿½È¡ï¿½ï¿½ï¿½
         canvas = GetComponent<Canvas>();
         mainCamera = Camera.main;
 
-        // »ñÈ¡ HealthSystem
+        // ï¿½ï¿½È¡ HealthSystem
         healthSystem = GetComponentInParent<HealthSystem>();
         if (healthSystem == null )
         {
-            Debug.Log("Ã»ÕÒµ½health system");
+            Debug.Log("Ã»ï¿½Òµï¿½health system");
         }
 
         if (healthSystem != null)
         {
-            healthSystem.OnHealthChanged += OnHealthChanged; // Ö±½Ó¶©ÔÄ
+            healthSystem.OnHealthChanged += OnHealthChanged; // Ö±ï¿½Ó¶ï¿½ï¿½ï¿½
             healthSystem.OnDeath += OnFighterDeath;
             healthSystem.OnDeathComplete += OnFighterDeathComplete;
             RefreshHealthBar();
         }
 
 
-        // ÅäÖÃCanvas
+        // ï¿½ï¿½ï¿½ï¿½Canvas
         if (canvas != null)
         {
             canvas.worldCamera = mainCamera;
@@ -57,12 +57,12 @@ public class EnemyHeathBar : MonoBehaviour
 
     void Update()
     {
-        // Èç¹û½ÇÉ«ÒÑËÀÍö£¬²»ÔÙ¸üÐÂÎ»ÖÃºÍÐý×ª
+        // ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù¸ï¿½ï¿½ï¿½Î»ï¿½Ãºï¿½ï¿½ï¿½×ª
         if (healthSystem != null && healthSystem.IsDead) return;
 
-        // ¸üÐÂÑªÌõÎ»ÖÃ£¨¸úËæ½ÇÉ«£©
+        // ï¿½ï¿½ï¿½ï¿½Ñªï¿½ï¿½Î»ï¿½Ã£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É«ï¿½ï¿½
         transform.position = healthSystem.transform.position + positionOffset;
-        // ÈÃÑªÌõÊ¼ÖÕÃæÏòÏà»ú
+        // ï¿½ï¿½Ñªï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (faceCamera && mainCamera != null)
         {
             transform.rotation = mainCamera.transform.rotation;
@@ -84,7 +84,7 @@ public class EnemyHeathBar : MonoBehaviour
         }
     }
 
-    void OnHealthChanged(HealthSystem hs)
+    void OnHealthChanged(HealthSystem hs, HealthChangeInfo info)
     {
         RefreshHealthBar();
     }
@@ -92,7 +92,7 @@ public class EnemyHeathBar : MonoBehaviour
    
     void OnFighterDeath(HealthSystem healthSystem)
     {
-        // ËäÈ»²ÎÊý¿ÉÄÜÓÃ²»µ½£¬µ«ÎªÁËÆ¥ÅäÊÂ¼þÇ©Ãû±ØÐë½ÓÊÜ
+        // ï¿½ï¿½È»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã²ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îªï¿½ï¿½Æ¥ï¿½ï¿½ï¿½Â¼ï¿½Ç©ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (canvas != null) canvas.enabled = false;
     }
 
@@ -112,14 +112,14 @@ public class EnemyHeathBar : MonoBehaviour
         }
     }
 
-    // ÊÖ¶¯¸üÐÂÑªÌõ£¨Íâ²¿µ÷ÓÃ£©
+    // ï¿½Ö¶ï¿½ï¿½ï¿½ï¿½ï¿½Ñªï¿½ï¿½ï¿½ï¿½ï¿½â²¿ï¿½ï¿½ï¿½Ã£ï¿½
     public void RefreshHealthBar()
     {
         if (healthSystem != null && healthSystem.IsDead) return;
         if (healthBarFill == null || healthSystem == null) return;
 
 
-        // ¼ÆËãÑªÁ¿°Ù·Ö±È
+        // ï¿½ï¿½ï¿½ï¿½Ñªï¿½ï¿½ï¿½Ù·Ö±ï¿½
         float fillAmount = healthSystem.Health / healthSystem.MaxHealth;
         healthBarFill.fillAmount = fillAmount;
 

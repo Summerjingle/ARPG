@@ -15,12 +15,12 @@ public class WeaponEquipmentManager : MonoBehaviour
     private Animator playerAnim;
     private bool isPlayingAnim;
     private float lastToggleTime = 0f;
-    [SerializeField]private float toggleCooldown = 3.2f; // 3.2秒内不能重复切换
+    [SerializeField]private float toggleCooldown = 0.3f; // 动画结束后的防抖缓冲区，大剑动画长自然冷却就长
 
     [Header("重型武器")]
     [SerializeField] private float heavyWeaponSpeedMultiplier = 0.7f; // 拔出重型武器时移速倍率
     public float CurrentSpeedMultiplier =>
-        (currentWeapon != null && currentWeapon.isHeavy && isWeaponDrawn) ? heavyWeaponSpeedMultiplier : 1f;
+        (currentWeapon != null && currentWeapon.isHeavy && (isWeaponDrawn || isPlayingAnim)) ? heavyWeaponSpeedMultiplier : 1f;
 
     // ===== 根据武器配置选挂点 =====
     // 新增收纳挂点：加 case SheathLocation.Xxx => weaponHolder_Xxx;
@@ -139,7 +139,6 @@ public class WeaponEquipmentManager : MonoBehaviour
         if (isPlayingAnim) return;
 
         isPlayingAnim = true;
-        lastToggleTime = Time.time;
 
         if (isWeaponDrawn)
             playerAnim.SetTrigger(currentWeapon.sheathWeaponTriggerName);
@@ -178,6 +177,7 @@ public class WeaponEquipmentManager : MonoBehaviour
     {
         isWeaponDrawn = true;
         isPlayingAnim = false;
+        lastToggleTime = Time.time;
         playerAnim.SetBool("Armed", true);
         Debug.Log("拔剑状态完成");
     }
@@ -185,6 +185,7 @@ public class WeaponEquipmentManager : MonoBehaviour
     {
         isWeaponDrawn = false;
         isPlayingAnim = false;
+        lastToggleTime = Time.time;
         playerAnim.SetBool("Armed", false);
         Debug.Log("收剑状态完成");
     }

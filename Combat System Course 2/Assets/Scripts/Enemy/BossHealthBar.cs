@@ -25,7 +25,7 @@ public class BossHealthBar : MonoBehaviour
 
        
 
-        // BossÑªÌõÊ¼ÖÕÏÔÊ¾
+        // BossÑªï¿½ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½Ê¾
         healthBarFill.enabled = true;
         healthBarBG.enabled = true;
 
@@ -33,7 +33,7 @@ public class BossHealthBar : MonoBehaviour
     }
 
   
-    void OnHealthChanged(HealthSystem hs)
+    void OnHealthChanged(HealthSystem hs, HealthChangeInfo info)
     {
         RefreshHealthBar();
     }

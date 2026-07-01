@@ -35,6 +35,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     // 战斗状态
     public GameObject blockObject;
     public bool InAction { get; set; } = false;
+    public float CritRate => 0f;  // 敌人暴击率=0（静态，玩家可背板）
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
     public bool IsCounterable => Attackstate == AttackStates.Windup && comboCount == 0;
@@ -113,18 +114,13 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         return enemyWeapon?.GetDamage() ?? 1f;
     }
 
-    public virtual void TakeDamage(float damage)
+    public virtual void TakeDamage(float damage, bool isCrit = false)
     {
         if (HealthSystem.IsDead) return;
 
-        // 敌人护甲逻辑（可以根据需要扩展）
         int currentArmor = 0;
 
-        // 如果有需要，可以在这里添加敌人的护甲计算
-        // 例如：var enemyProperty = GetComponent<EnemyProperty>();
-        // currentArmor = enemyProperty?.armorValue ?? 0;
-
-        HealthSystem.TakeDamage(damage, currentArmor);
+        HealthSystem.TakeDamage(damage, currentArmor, isCrit);
         OnGotHit?.Invoke(this);  // this 就是 ICombatSystem
 
         Debug.Log($"敌人({gameObject.name})受到伤害: {damage}, 护甲减免: {currentArmor}, 剩余生命: {HealthSystem.Health}");
@@ -323,11 +319,13 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             var attackerDamage = attacker.GetWeaponDamage();
 
             // 防止同一刀命中同一目标多次
-            if (!attacker.RegisterHit(this.gameObject)) return;
+            if (!attacker.RegisterHit(this.gameObject)) 
+                return;
             
-            // 格挡中不受伤害
-            if (blockObject != null && blockObject.activeSelf) return;
-            TakeDamage(attackerDamage);
+            // 格挡中不受伤害（重武器无视格挡）
+            if (blockObject != null && blockObject.activeSelf && !attacker.IsUsingHeavyWeapon()) return;
+            bool isCrit = Random.value < (attacker.CritRate / 100f);
+            TakeDamage(attackerDamage, isCrit);
 
             // 通知攻击方：成功造成伤害（用于命中转向等）
             attacker.NotifyDamageDealt(this.gameObject);
@@ -487,6 +485,11 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         }
 
         Debug.Log($"禁用所有敌人({gameObject.name})Hitbox");
+    }
+
+    public bool IsUsingHeavyWeapon()
+    {
+        return enemyWeapon?.isHeavy ?? false;
     }
 
     public bool RegisterHit(GameObject target)

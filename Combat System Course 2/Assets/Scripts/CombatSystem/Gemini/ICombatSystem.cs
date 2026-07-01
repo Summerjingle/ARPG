@@ -68,6 +68,12 @@ public interface ICombatSystem
     // 命中记录（每刀清空，防止同一刀命中同一目标多次）
     bool RegisterHit(GameObject target);
 
+    // 是否使用重型武器（大剑等），用于判断攻击能否被格挡
+    bool IsUsingHeavyWeapon();
+
+    // 暴击率 0~100
+    float CritRate { get; }
+
     // 事件
     event System.Action<ICombatSystem> OnGotHit;
     event System.Action OnHitComplete;
@@ -75,7 +81,7 @@ public interface ICombatSystem
     void NotifyDamageDealt(GameObject target);      // 供外部安全触发 OnDamageDealt
     Transform transform { get; }
     GameObject gameObject { get; }
-    void TakeDamage(float damage);
+    void TakeDamage(float damage, bool isCrit = false);
 
     IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null);
     void PlayDeathAnimation(ICombatSystem attacker);
