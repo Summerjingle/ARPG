@@ -5,7 +5,7 @@ using System;
 public class ArmorEquipmentManager : MonoBehaviour
 {
     [System.Serializable]
-    
+
     public class EquipmentSocket
     {
 
@@ -44,7 +44,10 @@ public class ArmorEquipmentManager : MonoBehaviour
     // װ�����ף���¶���ⲿ���õ�Ψһ�ӿڣ�
     public void EquipArmor(ItemSO armorItem)
     {
-        EquipmentSocket targetSocket = GetSocketByType(armorItem.armorType);
+        ArmorSO armorSO = armorItem as ArmorSO;
+        if (armorSO == null) return;
+
+        EquipmentSocket targetSocket = GetSocketByType(armorSO.armorType);
         if (targetSocket == null) return;
 
         UnequipArmor(targetSocket, false);
@@ -52,15 +55,15 @@ public class ArmorEquipmentManager : MonoBehaviour
         // ����װ������ѡ������߼�
         if (targetSocket.isSymmetric)
         {
-            EquipSymmetricArmor(armorItem, targetSocket);
+            EquipSymmetricArmor(armorSO, targetSocket);
         }
         else
         {
-            EquipSingleArmor(armorItem, targetSocket);
+            EquipSingleArmor(armorSO, targetSocket);
         }
         OnEquipmentChanged?.Invoke();
-        InventoryUI.Instance.UpdateEquipmentIcon(armorItem);
-        
+        InventoryUI.Instance.UpdateEquipmentIcon(armorSO);
+
     }
 
     // ���ݻ��������ҵ���Ӧ�Ĺ��ص�
@@ -105,7 +108,7 @@ public class ArmorEquipmentManager : MonoBehaviour
         {
             OnEquipmentChanged?.Invoke();
         }
-        
+
     }
     public void UnequipArmor(ArmorType armorType)//重载卸载武器，入参为武器类型
     {
@@ -116,52 +119,52 @@ public class ArmorEquipmentManager : MonoBehaviour
     }
 
     // װ������λ���ף�ͷ�����ؼ׵ȣ�
-    private void EquipSingleArmor(ItemSO armorItem, EquipmentSocket socket)
+    private void EquipSingleArmor(ArmorSO armorSO, EquipmentSocket socket)
     {
         UnequipArmor(socket);
 
         if (socket.socketTransform == null)
         {
-            Debug.LogError($"����λװ�� {armorItem.armorType} �Ĺ��ص�δ���ã�");
+            Debug.LogError($"����λװ�� {armorSO.armorType} �Ĺ��ص�δ���ã�");
             return;
         }
 
-        socket.currentEquipment = InstantiateArmorModel(armorItem, socket.socketTransform);
-        ApplyArmorProperties(armorItem);
-        
+        socket.currentEquipment = InstantiateArmorModel(armorSO, socket.socketTransform);
+        ApplyArmorProperties(armorSO);
+
     }
 
     // װ���ԳƲ�λ���ף����ۡ����ȡ�ѥ�ӵȣ�
-    private void EquipSymmetricArmor(ItemSO armorItem, EquipmentSocket socket)
+    private void EquipSymmetricArmor(ArmorSO armorSO, EquipmentSocket socket)
     {
         UnequipArmor(socket);
 
         if (socket.leftSocket == null || socket.rightSocket == null)
         {
-            Debug.LogError($"�Գ�װ�� {armorItem.armorType} �����ҹ��ص�δ����������");
+            Debug.LogError($"�Գ�װ�� {armorSO.armorType} �����ҹ��ص�δ����������");
             return;
         }
 
-        
-        socket.leftEquipment = InstantiateArmorModel(armorItem, socket.leftSocket);
-        socket.rightEquipment = InstantiateArmorModel(armorItem, socket.rightSocket);
 
-        ApplyArmorProperties(armorItem);
-        
+        socket.leftEquipment = InstantiateArmorModel(armorSO, socket.leftSocket);
+        socket.rightEquipment = InstantiateArmorModel(armorSO, socket.rightSocket);
+
+        ApplyArmorProperties(armorSO);
+
     }
 
 
     // ʵ��������ģ��
-    private GameObject InstantiateArmorModel(ItemSO armorItem, Transform socketTransform)
+    private GameObject InstantiateArmorModel(ArmorSO armorSO, Transform socketTransform)
     {
-        if (armorItem.weaponPrefab == null)
+        if (armorSO.equipmentPrefab == null)
         {
-            Debug.LogError($"���� {armorItem.name} ��Prefabδ���ã�");
+            Debug.LogError($"���� {armorSO.name} ��Prefabδ���ã�");
             return null;
         }
 
         GameObject equipment = Instantiate(
-            armorItem.weaponPrefab,
+            armorSO.equipmentPrefab,
             socketTransform.position,
             socketTransform.rotation,
             socketTransform
@@ -172,7 +175,7 @@ public class ArmorEquipmentManager : MonoBehaviour
         return equipment;
     }
 
-   
+
 
     // ж�µ���λװ��
     private void UnequipSingleArmor(EquipmentSocket socket)
@@ -182,7 +185,7 @@ public class ArmorEquipmentManager : MonoBehaviour
             RemoveArmorPropertiesFromInstance(socket.currentEquipment);
             Destroy(socket.currentEquipment);
             socket.currentEquipment = null;
-            
+
         }
     }
 
@@ -206,11 +209,11 @@ public class ArmorEquipmentManager : MonoBehaviour
         if (socket.rightEquipment != null)
         {
             // �Ҳ�װ������Ҫ�ٴ��Ƴ�����
-            
+
             Destroy(socket.rightEquipment);
             socket.rightEquipment = null;
         }
-        
+
     }
 
     // ��װ��ʵ����ȡItemSO���Ƴ�����
@@ -219,48 +222,26 @@ public class ArmorEquipmentManager : MonoBehaviour
         PickableObject po = equipmentInstance.GetComponent<PickableObject>();
         if (po != null && playerProperty != null)
         {
-            RemoveArmorProperties(po.itemSO);
+            ArmorSO armorSO = po.itemSO as ArmorSO;
+            if (armorSO != null)
+                RemoveArmorProperties(armorSO);
         }
     }
 
     // Ӧ�û�������
-    private void ApplyArmorProperties(ItemSO armorItem)
+    private void ApplyArmorProperties(ArmorSO armorSO)
     {
-        if (playerProperty == null) return;
-
-        foreach (Property p in armorItem.propertyList)
-        {
-            switch (p.propertyType)
-            {
-                case PropertyType.DefenseValue:
-                    playerProperty.AddArmorValue(p.value);
-                    break;
-                case PropertyType.HPValue:
-                case PropertyType.EnergyValue:
-                    playerProperty.AddProperty(p.propertyType, p.value);
-                    break;
-            }
-        }
+        if (playerProperty == null || armorSO.propertyList == null) return;
+        foreach (Property p in armorSO.propertyList)
+            playerProperty.AddProperty(p.statType, p.value);
     }
 
     // �Ƴ���������
-    private void RemoveArmorProperties(ItemSO armorItem)
+    private void RemoveArmorProperties(ArmorSO armorSO)
     {
-        if (playerProperty == null) return;
-
-        foreach (Property p in armorItem.propertyList)
-        {
-            switch (p.propertyType)
-            {
-                case PropertyType.DefenseValue:
-                    playerProperty.RemoveArmorValue(p.value);
-                    break;
-                case PropertyType.HPValue:
-                case PropertyType.EnergyValue:
-                    playerProperty.RemoveProperty(p.propertyType, p.value);
-                    break;
-            }
-        }
+        if (playerProperty == null || armorSO.propertyList == null) return;
+        foreach (Property p in armorSO.propertyList)
+            playerProperty.RemoveProperty(p.statType, p.value);
     }
 
     // ��ȡ��ǰװ����ItemSO�����ڴ浵�ȣ�

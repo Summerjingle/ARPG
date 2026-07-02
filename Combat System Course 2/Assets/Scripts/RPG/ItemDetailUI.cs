@@ -11,7 +11,7 @@ public class ItemDetailUI : MonoBehaviour
     public TextMeshProUGUI nameText;
     public TextMeshProUGUI typeText;
     public TextMeshProUGUI descriptionText;
-    public GameObject propertyGrid; 
+    public GameObject propertyGrid;
     public GameObject propertyTempate;
 
     public Button useButton;
@@ -64,7 +64,7 @@ public class ItemDetailUI : MonoBehaviour
     {
         this.gameObject.SetActive(false);
     }
-    public void UpdateDetailUI(ItemSO itemSO,ItemUI itemUI)
+    public void UpdateDetailUI(ItemSO itemSO, ItemUI itemUI)
     {
         this.itemSO = itemSO;
         this.itemUI = itemUI;
@@ -89,7 +89,7 @@ public class ItemDetailUI : MonoBehaviour
                 type = "任务道具";
                 buttonText.text="使用";
                 break;
-            
+
         }
         // 快捷槽按钮：只有 Weapon 和 Consumable 可用
         canQuickSlot = itemSO.itemType == ItemType.Consumable;
@@ -116,35 +116,56 @@ public class ItemDetailUI : MonoBehaviour
             }
         }
 
-        foreach (Property property in itemSO.propertyList)
+        // 获取属性列表：装备用 propertyList，消耗品用 effects
+        List<Property> propertiesToShow = null;
+        if (itemSO is EquipmentSO equipment)
+            propertiesToShow = equipment.propertyList;
+        else if (itemSO is ConsumableSO consumable)
+            propertiesToShow = consumable.effects;
+
+        if (propertiesToShow != null)
         {
-            string propertyStr = "";
-            string propertyName = "";
-            switch (property.propertyType)
+            foreach (Property property in propertiesToShow)
             {
-                case PropertyType.HPValue:
-                    propertyName = "生命值+";
-                    break;
-                case PropertyType.EnergyValue:
-                    propertyName = "精力值+";
-                    break;
-                case PropertyType.AttackValue:
-                    propertyName = "攻击力";
-                    break;
-                case PropertyType.DefenseValue:
-                    propertyName = "护甲值";
-                    break;
-                default:
-                    break;
+                string propertyName = GetStatDisplayName(property.statType);
+                string propertyStr = propertyName + property.value;
+
+                GameObject go = GameObject.Instantiate(propertyTempate);
+                go.SetActive(true);
+                go.transform.SetParent(propertyGrid.transform);
+                go.transform.Find("Property").GetComponent<TextMeshProUGUI>().text = propertyStr;
             }
-            propertyStr += propertyName;
-            propertyStr += property.value;
-            GameObject go= GameObject.Instantiate(propertyTempate);
-            go.SetActive(true);
-            go.transform.SetParent(propertyGrid.transform);
-            go.transform.Find("Property").GetComponent<TextMeshProUGUI>().text = propertyStr;
         }
-        
+
+        // 装备条件显示
+        if (itemSO is EquipmentSO eq && eq.equipConditions != null && eq.equipConditions.Count > 0)
+        {
+            foreach (EquipCondition cond in eq.equipConditions)
+            {
+                string condStr = $"需要 {GetStatDisplayName(cond.statType)} >= {cond.requiredValue}";
+                GameObject go = GameObject.Instantiate(propertyTempate);
+                go.SetActive(true);
+                go.transform.SetParent(propertyGrid.transform);
+                go.transform.Find("Property").GetComponent<TextMeshProUGUI>().text = condStr;
+            }
+        }
+    }
+
+    private string GetStatDisplayName(StatType statType)
+    {
+        return statType switch
+        {
+            StatType.MaxHP => "最大生命值+",
+            StatType.MaxEnergy => "最大精力值+",
+            StatType.Defense => "护甲值",
+            StatType.CritRate => "暴击率+",
+            StatType.CritDamage => "暴击伤害+",
+            StatType.CurrHP => "恢复生命值",
+            StatType.CurrEnergy => "恢复精力值",
+            StatType.Strength => "力量",
+            StatType.Luck => "幸运",
+            _ => statType.ToString()
+        };
     }
 
     public void OnCancelButtonClick()
@@ -158,7 +179,7 @@ public class ItemDetailUI : MonoBehaviour
 
     public void OnUseButtonClick()
     {
-        // �ȼ���Ƿ�Ϊ�������
+        // 先检查是否为任务道具
         if (itemSO.itemType == ItemType.QuestRelated)
         {
             MessageUI.Instance.Show("任务道具无法被使用");
@@ -166,7 +187,7 @@ public class ItemDetailUI : MonoBehaviour
             return;
         }
 
-        // ֻ�з�������߲�ִ��ʹ���߼�
+        // 只有符合条件的物品才执行使用逻辑
         InventoryUI.Instance.OnItemUse(itemSO, itemUI);
         this.gameObject.SetActive(false);
     }

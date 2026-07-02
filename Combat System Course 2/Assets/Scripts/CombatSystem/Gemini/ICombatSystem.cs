@@ -71,8 +71,9 @@ public interface ICombatSystem
     // 是否使用重型武器（大剑等），用于判断攻击能否被格挡
     bool IsUsingHeavyWeapon();
 
-    // 暴击率 0~100
+    // 暴击
     float CritRate { get; }
+    float CritDamage { get; }
 
     // 事件
     event System.Action<ICombatSystem> OnGotHit;

@@ -36,6 +36,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public GameObject blockObject;
     public bool InAction { get; set; } = false;
     public float CritRate => 0f;  // 敌人暴击率=0（静态，玩家可背板）
+    public float CritDamage=>1;// 敌人暴击效果=x1 相当于无暴击效果，纯实现一个接口
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
     public bool IsCounterable => Attackstate == AttackStates.Windup && comboCount == 0;
@@ -325,7 +326,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             // 格挡中不受伤害（重武器无视格挡）
             if (blockObject != null && blockObject.activeSelf && !attacker.IsUsingHeavyWeapon()) return;
             bool isCrit = Random.value < (attacker.CritRate / 100f);
-            TakeDamage(attackerDamage, isCrit);
+            float finalDamage=isCrit?attackerDamage*attacker.CritDamage:attackerDamage;
+            TakeDamage(finalDamage, isCrit);
 
             // 通知攻击方：成功造成伤害（用于命中转向等）
             attacker.NotifyDamageDealt(this.gameObject);

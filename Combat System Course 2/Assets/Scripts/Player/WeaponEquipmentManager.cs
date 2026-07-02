@@ -65,9 +65,12 @@ public class WeaponEquipmentManager : MonoBehaviour
 
     public void EquipWeapon(ItemSO weaponItem)
     {
+        WeaponSO weaponSO = weaponItem as WeaponSO;
+        if (weaponSO == null) return;
+
         UnequipWeapon();
 
-        if (weaponItem?.weaponPrefab == null)
+        if (weaponSO.equipmentPrefab == null)
         {
             Debug.LogError("武器物品的预制体为空");
             return;
@@ -75,7 +78,7 @@ public class WeaponEquipmentManager : MonoBehaviour
 
         // 先统一从腰间实例化，下面再根据武器配置移到正确的挂点
         GameObject weaponObj = Instantiate(
-            weaponItem.weaponPrefab,
+            weaponSO.equipmentPrefab,
             weaponHolder.position,
             weaponHolder.rotation,
             weaponHolder
@@ -84,7 +87,7 @@ public class WeaponEquipmentManager : MonoBehaviour
         currentWeapon = weaponObj.GetComponent<Weapon>();
         if (currentWeapon != null)
         {
-            currentWeapon.Initialize(weaponItem);
+            currentWeapon.Initialize(weaponSO);
 
             // 根据武器配置切换到正确的收纳挂点（如背部大剑）
             Transform holder = GetSheathHolder(currentWeapon);
@@ -97,7 +100,7 @@ public class WeaponEquipmentManager : MonoBehaviour
         }
 
         //UI更新暂时先留着，尽管武器并没有实例化到手上（真正拿起）
-        InventoryUI.Instance?.UpdateEquipmentIcon(weaponItem);
+        InventoryUI.Instance?.UpdateEquipmentIcon(weaponSO);
     }
 
     // 卸下武器

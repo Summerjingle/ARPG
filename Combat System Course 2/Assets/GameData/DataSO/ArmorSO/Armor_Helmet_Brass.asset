@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33a04e869e8706b4a91d2b51675002b5, type: 3}
+  m_Name: Armor_Helmet_Brass
+  m_EditorClassIdentifier: 
+  nameOfItem: "\u9EC4\u94DC\u5934\u76D4"
+  description: "\u4E00\u9876\u88C5\u9970\u6027\u7684\u5934\u76D4\uFF0C\u4E0D\u5EFA\u8BAE\u628A\u5B83\u5F53\u4F5C\u6218\u6597\u9632\u5177"
+  icon: {fileID: 21300000, guid: 0f87ef9641290f341acec6e9d6989e4b, type: 3}
+  interactablePrefab: {fileID: 6415083989135865735, guid: 3b844c8f5b0eb8145bf8747fdc6fd961,
+    type: 3}
+  maxStackSize: 1
+  amount: 1
+  rarity: 0
+  equipmentPrefab: {fileID: 6877522256516913485, guid: ce9ca420003839240b8d46007bd17cc9,
+    type: 3}
+  propertyList:
+  - propertyType: 0
+    statType: 2
+    value: 5
+  equipConditions: []
+  armorType: 0

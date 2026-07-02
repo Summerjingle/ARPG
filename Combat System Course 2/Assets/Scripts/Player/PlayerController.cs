@@ -75,10 +75,6 @@ public class PlayerController : MonoBehaviour
     public bool isMovementEnabled = true;
 
     [Header("Roll")]
-    [SerializeField] private string rollAnimFront = "Esc_Roll_Front_Root";
-    [SerializeField] private string rollAnimBack = "Esc_Roll_Back_Root";
-    [SerializeField] private string rollAnimLeft = "Esc_Roll_Left_Root";
-    [SerializeField] private string rollAnimRight = "Esc_Roll_Right_Root";
     [SerializeField] private float rollCooldown = 0.8f;
     [SerializeField] private int rollEnergyCost = 15;
     [SerializeField] private float rollSpeed = 8f;
@@ -407,10 +403,7 @@ public class PlayerController : MonoBehaviour
             AnimatorStateInfo state =
                 animator.GetCurrentAnimatorStateInfo(rollLayerIndex);
 
-            bool stateMatch = state.IsName(rollAnimFront) ||
-                state.IsName(rollAnimBack) ||
-                state.IsName(rollAnimLeft) ||
-                state.IsName(rollAnimRight);
+            bool stateMatch = state.IsName(GetRollAnimName());
 
             if (stateMatch)
             {
@@ -427,11 +420,16 @@ public class PlayerController : MonoBehaviour
             velocity = moveDir * currentPhysicalSpeed;
         }
 
-        if (!LockRotation && !isRolling)
+        if (!LockRotation)
         {
-            if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
+            if (isRolling)
             {
-                // 锁定状态：身体强制面向敌人 (EnemyLockSystem 已经在更新 lockedTargetDir)
+                // 翻滚时面朝翻滚方向
+                targetRotation = Quaternion.LookRotation(rollDirection);
+            }
+            else if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
+            {
+                // 锁定状态：身体强制面向敌人
                 targetRotation = Quaternion.LookRotation(lockedTargetDir);
             }
             else if (inputMagnitude > 0)
@@ -557,17 +555,28 @@ public class PlayerController : MonoBehaviour
         combatSystem.InAction = true;
         isCrouching = false;
 
-        // 记录翻滚方向
+        // 记录翻滚方向：有输入朝输入方向，无输入朝前方（锁定时朝锁定目标）
         if (moveInput.magnitude > 0.1f)
         {
-            Quaternion camRot = GetCameraPlanarRotation();
-            rollDirection = camRot * new Vector3(moveInput.x, 0, moveInput.y);
-            rollDirection.y = 0f;
-            rollDirection.Normalize();
+            if (isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f)
+            {
+                Vector3 refForward = lockedTargetDir.normalized;
+                Vector3 refRight = Vector3.Cross(Vector3.up, refForward).normalized;
+                rollDirection = (refRight * moveInput.x + refForward * moveInput.y).normalized;
+            }
+            else
+            {
+                Quaternion camRot = GetCameraPlanarRotation();
+                rollDirection = camRot * new Vector3(moveInput.x, 0, moveInput.y);
+                rollDirection.y = 0f;
+                rollDirection.Normalize();
+            }
         }
         else
         {
-            rollDirection = transform.forward;
+            rollDirection = isLockedOn && lockedTargetDir.sqrMagnitude > 0.001f
+                ? lockedTargetDir.normalized
+                : transform.forward;
         }
 
         if (fadeRollCoroutine != null)
@@ -575,24 +584,17 @@ public class PlayerController : MonoBehaviour
 
         animator.SetLayerWeight(rollLayerIndex, 1f);
 
-        string animName = GetRollDirection();
+        string animName = GetRollAnimName();
         Debug.Log($"[ROLL] StartRoll frame={Time.frameCount} anim={animName} dir={rollDirection} layerWeight={animator.GetLayerWeight(rollLayerIndex):F2}");
         animator.CrossFade(animName, 0.05f, rollLayerIndex, 0f);
 
         StartCoroutine(WaitForRollEnd(animName));
     }
 
-    private string GetRollDirection()
+    private string GetRollAnimName()
     {
-        Quaternion camRot = GetCameraPlanarRotation();
-        Vector3 worldDir = camRot * new Vector3(moveInput.x, 0, moveInput.y);
-        Vector3 localDir = transform.InverseTransformDirection(worldDir);
-
-        if (localDir.z > 0.3f) return rollAnimFront;
-        if (localDir.z < -0.3f) return rollAnimBack;
-        if (localDir.x < -0.3f) return rollAnimLeft;
-        if (localDir.x > 0.3f) return rollAnimRight;
-        return rollAnimFront;
+        var weapon = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
+        return weapon != null ? weapon.rollAnim : "Roll_Sword";
     }
 
     private IEnumerator WaitForRollEnd(string animName)

@@ -39,6 +39,7 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     public ICombatSystem currTarget { get; set; }
     public GameObject blockObject;
     public float CritRate => playerProperty?.TotalCritRate ?? 0f;
+    public float CritDamage=>playerProperty?.TotalCritDamage??1.5f;
     // 攻击数据 (若动画机中不依赖这些数据，后续也可移除)
     [SerializeField] private List<AttackData> attacks;
     [SerializeField] private List<AttackData> longRangeAttacks;
@@ -271,7 +272,7 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
             if (attacker == null || attacker.currTarget == null) return;
             if (attacker.currTarget.gameObject != this.gameObject) return;
 
-            var attackerDamage = attacker.GetWeaponDamage();
+            var attackerDamage = attacker.GetWeaponDamage();//拿到武器的伤害值
 
             // 防止同一刀命中同一目标多次
             if (!attacker.RegisterHit(this.gameObject)) return;
@@ -279,8 +280,10 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
             // 格挡中不受伤害（重武器无视格挡）
             if (blockObject != null && blockObject.activeSelf && !attacker.IsUsingHeavyWeapon()) return;
 
+            //暴击处理
             bool isCrit = Random.value < (attacker.CritRate / 100f);
-            TakeDamage(attackerDamage, isCrit);
+            float finalDamage=isCrit?attackerDamage*attacker.CritDamage:attackerDamage;
+            TakeDamage(finalDamage, isCrit);
 
             // 通知攻击方：成功造成伤害
             attacker.NotifyDamageDealt(this.gameObject);
@@ -359,20 +362,8 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
         }
     }
 
-    //该功能已经弃用，加入到上方的enable碰撞器方法中了
-    // public void AE_SetHitReaction(string animName)
-    // {
-    //     if (string.IsNullOrEmpty(animName))
-    //     {
-    //         CurrentSpecialHitReaction = null;
-    //     }
-    //     else
-    //     {
-    //         CurrentSpecialHitReaction = animName;
-    //     }
-    // }
 
-    // 建议在动画 Event 中调用此方法关闭碰撞
+    //动画 Event 中调用此方法关闭碰撞
     public void DisableHitboxes()
     {
         if (leftHandCollider != null) leftHandCollider.enabled = false;
@@ -404,7 +395,7 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     }
     private void DoBlock()
     {
-        if (weaponManager.GetCurrentWeapon() != null)
+        if (weaponManager.GetCurrentWeapon() != null && !InAction)
         {
             Debug.Log("已装备武器，触发DoBlock方法");
             

@@ -42,8 +42,8 @@ public class VillageToCave : MonoBehaviour
         {
             if (eTips != null)
                 eTips.SetActive(false);
-            Vector3 targetPosition = new Vector3(25.908f, 4.8f, -60.088f);  // Ä¿±êÎ»ÖÃ
-            Quaternion targetRotation = Quaternion.Euler(0, 128.346f, 0);  // Ä¿±êÐý×ª
+            Vector3 targetPosition = new Vector3(25.908f, 4.8f, -60.088f);  // Ä¿ï¿½ï¿½Î»ï¿½ï¿½
+            Quaternion targetRotation = Quaternion.Euler(0, 128.346f, 0);  // Ä¿ï¿½ï¿½ï¿½ï¿½×ª
             TeleportCam.Priority = 30;
             playerAnim.gameObject.transform.position = targetPosition;
             playerAnim.gameObject.transform.rotation = targetRotation;
@@ -53,7 +53,7 @@ public class VillageToCave : MonoBehaviour
 
     private void StartTeleportSequence()
     {
-        playerAnim.gameObject.GetComponent<PlayerFighter>().InAction = true;
+        playerAnim.gameObject.GetComponent<PlayerFighterNew>().InAction = true;
         UIStateManager.SetUIActive(true);
         if (playerAnim != null)
             playerAnim.CrossFade("TeleportEnter", 0.1f);
@@ -68,11 +68,11 @@ public class VillageToCave : MonoBehaviour
     //    if (isTeleporting) yield break;
     //    isTeleporting = true;
 
-    //    // µÈ´ý¶¯»­²¥·Å£¨Èç¹ûÓÐµÄ»°£©
+    //    // ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Å£ï¿½ï¿½ï¿½ï¿½ï¿½ÐµÄ»ï¿½ï¿½ï¿½
     //    if (playerAnim != null)
-    //        yield return new WaitForSeconds(5.0f); // µ÷ÕûÊ±¼äÎª¶¯»­³¤¶È
+    //        yield return new WaitForSeconds(5.0f); // ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
-    //    // ±£´æÓÎÏ·Êý¾Ý
+    //    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·ï¿½ï¿½ï¿½ï¿½
     //    if (SaveManager.Instance != null)
     //    {
     //        if (hasTriggered) yield break;
@@ -83,12 +83,12 @@ public class VillageToCave : MonoBehaviour
     //        SaveManager.isNewGame = false;
     //    }
 
-    //    // ÉèÖÃÄ¿±ê³¡¾°²¢¼ÓÔØ
+    //    // ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê³¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     //    PlayerPrefs.SetString("TargetScene", gameSceneName);
     //    SaveManager.shouldLoadFromSave = true;
     //    SaveManager.shouldLoadPosition = false;
 
-    //    // ¼ÓÔØ³¡¾°
+    //    // ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½
     //    SceneManager.LoadScene(loadingSceneName);
     }
 }

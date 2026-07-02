@@ -212,6 +212,99 @@ WhiteBox_Village 场景打包后出现白色/红色建筑形状的半透明物�
 
 ---
 
+## 2026-07-02 ItemSO 体系重构
+
+### 目标
+将 `ItemSO.cs` 从单体 God-object 重构为继承体系：抽象基类 `ItemSO` → `EquipmentSO`（装备中间层）→ `WeaponSO` / `ArmorSO`，以及 `ConsumableSO` / `QuestItemSO`。
+
+### 继承层次
+
+```
+ItemSO (abstract)
+├── EquipmentSO (abstract) — equipmentPrefab + propertyList + equipConditions + CanEquip()
+│   ├── WeaponSO — 武器动画/挂点/重武器/基础伤害
+│   └── ArmorSO — ArmorType 枚举
+├── ConsumableSO — effects 列表 + Use() 回血回蓝
+└── QuestItemSO — questID
+```
+
+### 新建文件
+
+```
++ Assets/Scripts/RPG/SO/StatType.cs       — 属性枚举（Bonus: MaxHP/MaxEnergy/Defense/CritRate/CritDamage/Strength/Luck | Curr: CurrHP/CurrEnergy）
++ Assets/Scripts/RPG/SO/EquipCondition.cs  — 装备条件结构体（StatType + requiredValue，纯 AND + >=）
++ Assets/Scripts/RPG/SO/EquipmentSO.cs     — 装备抽象中间层
++ Assets/Scripts/RPG/SO/WeaponSO.cs        — 武器 SO（含 SheathLocation/HandSocket 枚举）
++ Assets/Scripts/RPG/SO/ArmorSO.cs         — 护甲 SO
++ Assets/Scripts/RPG/SO/ConsumableSO.cs    — 消耗品 SO
++ Assets/Scripts/RPG/SO/QuestItemSO.cs     — 任务道具 SO
+```
+
+### 修改文件
+
+```
+M Assets/Scripts/RPG/SO/ItemSO.cs          — 改为 abstract，移除 PropertyType 枚举，itemType 改为 abstract 属性
+M Assets/Scripts/Player/PlayerProperty.cs  — base+bonus 双层属性体系，AddProperty/RemoveProperty 重写，新增 GetStatValue()
+M Assets/Scripts/Player/ArmorEquipmentManager.cs — weaponPrefab→equipmentPrefab，属性循环调用 AddProperty
+M Assets/Scripts/Player/WeaponEquipmentManager.cs — EquipWeapon 参数 ItemSO→WeaponSO
+M Assets/Scripts/RPG/Weapon/Weapon.cs      — 删除重复字段，改为 readonly 属性代理到 WeaponSO
+M Assets/Scripts/RPG/ItemUsageHandler.cs   — switch(itemType)→is 类型检查 + CanEquip() 条件判断
+M Assets/Scripts/RPG/ItemDetailUI.cs       — 属性显示读 EquipmentSO.propertyList / ConsumableSO.effects
+M Assets/Scripts/RPG/InventoryUI.cs        — item.armorType→(item is ArmorSO armor).armorType
+M Assets/Scripts/RPG/SO/ItemDBSO.cs        — 新增 ContextMenu 一键填充所有 ItemSO
+```
+
+### 关键设计决策
+
+1. **StatType 拆分 Bonus/Curr 两类**
+   - Bonus（装备加）：MaxHP, MaxEnergy, Defense, CritRate, CritDamage, Strength, Luck
+   - Curr（消耗品加）：CurrHP, CurrEnergy
+   - 装备不加 Curr 类属性，消耗品不加 Bonus 类属性
+
+2. **装备条件 EquipCondition**
+   - `StatType` + `requiredValue`，多个条件纯 AND 关系，全部 >= 判定
+   - `EquipmentSO.CanEquip(PlayerProperty)` 逐条检查，不满足则 ItemUsageHandler 显示提示
+
+3. **Weapon.cs 去重**
+   - 删除 `drawWeaponTriggerName`、`sheathLocation`、`isHeavy` 等 6 个重复字段
+   - 改为 `=> itemSO?.xxx` 只读属性，单一数据源为 WeaponSO
+   - `SheathLocation` / `HandSocket` 枚举从 Weapon.cs 移到 WeaponSO.cs
+
+4. **ItemSO.itemType 从字段改为 abstract 属性**
+   - 每个子类强制声明自己的 ItemType，编译期保证不遗漏
+
+5. **资产迁移**
+   - 15 个现有 .asset 文件通过 YAML 直接编辑从 ItemSO 改为对应子类
+   - 遇到 YAML 中文字符 `\uXXXX` 编码问题，从备份恢复并解码解决
+
+### 清理
+
+```
+- Assets/Editor/ItemSOMigration.cs + .meta
+- Assets/Editor/ItemTextRestore.cs + .meta
+- Assets/Editor/ItemTextFixer.cs + .meta
+- ItemSO.cs 中 PropertyType 枚举、propertyType 旧字段、MigrateStatType()、ClearLegacyField()
+```
+
+### SO 目录最终结构（11 个文件）
+
+```
+SO/
+├── ItemSO.cs          ← 抽象基类 + ItemType/ArmorType/Rarity/Property
+├── StatType.cs        ← 属性枚举
+├── EquipCondition.cs  ← 装备条件
+├── EquipmentSO.cs     ← 装备中间层 + CanEquip()
+├── WeaponSO.cs        ← 武器 + SheathLocation/HandSocket 枚举
+├── ArmorSO.cs         ← 护甲
+├── ConsumableSO.cs    ← 消耗品
+├── QuestItemSO.cs     ← 任务道具
+├── ItemDBSO.cs        ← 物品数据库（右键自动填充）
+├── ItemDBManager.cs
+└── StaticSceneItem.cs
+```
+
+---
+
 ## 待办
 - [ ] Scripts 目录整理（按之前列的方案）
 - [ ] EnemyHeathBar 拼写修正

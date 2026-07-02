@@ -165,7 +165,8 @@ public class InventoryUI : MonoBehaviour
 
             if (item.itemType == ItemType.Armor &&
                 slot.itemType == ItemType.Armor &&
-                slot.armorType == item.armorType)
+                item is ArmorSO armor &&
+                slot.armorType == armor.armorType)
             {
                 return slot;
             }

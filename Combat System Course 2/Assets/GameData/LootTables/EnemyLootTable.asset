@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: EnemyLootTable
   m_EditorClassIdentifier: 
   lootEntries:
-  - item: {fileID: 11400000, guid: c5d036cd28a45cd4e819d27a566fb2fb, type: 2}
+  - item: {fileID: 11400000, guid: 1d62c92e67fffef4f881a2c10d88e110, type: 2}
     probability: 1
     minCount: 1
     maxCount: 1

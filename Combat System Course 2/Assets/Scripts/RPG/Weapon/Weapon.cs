@@ -1,28 +1,21 @@
 using System;
 using UnityEngine;
 
-// ========== 挂点枚举 ==========
-// 新增步骤：1.枚举加一项  2.去 WeaponEquipmentManager 的 lookup 方法加一行
-public enum SheathLocation { Waist, Back }
-public enum HandSocket { Primary, Secondary }
-
 public abstract class Weapon : MonoBehaviour
 {
-    public ItemSO itemSO;
+    public WeaponSO itemSO;
 
-    [Header("动画触发器")]
-    public String drawWeaponTriggerName;
-    public String sheathWeaponTriggerName;
-    public string combatBlendTreeName = "Combat Blend Tree";
+    // 以下全部从 WeaponSO 读取，单一数据源
+    public string drawWeaponTriggerName => itemSO?.drawWeaponTriggerName;
+    public string sheathWeaponTriggerName => itemSO?.sheathWeaponTriggerName;
+    public string combatBlendTreeName => itemSO?.combatBlendTreeName ?? "Combat Blend Tree";
+    public SheathLocation sheathLocation => itemSO?.sheathLocation ?? SheathLocation.Waist;
+    public HandSocket handSocket => itemSO?.handSocket ?? HandSocket.Primary;
+    public bool isHeavy => itemSO != null && itemSO.isHeavy;
+    public string rollAnim => itemSO?.rollAnim ?? "Roll_Sword";
 
-    [Header("挂点选择")]
-    public SheathLocation sheathLocation = SheathLocation.Waist;
-    public HandSocket handSocket = HandSocket.Primary;
-
-    [Header("武器类型")]
-    public bool isHeavy = false; // 重型武器（大剑等），拔出时玩家减速
     public abstract float GetDamage();
-    public virtual void Initialize(ItemSO weaponItem)
+    public virtual void Initialize(WeaponSO weaponItem)
     {
         itemSO = weaponItem;
     }

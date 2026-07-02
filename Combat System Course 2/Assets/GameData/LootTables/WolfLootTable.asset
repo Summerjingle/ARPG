@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: WolfLootTable
   m_EditorClassIdentifier: 
   lootEntries:
-  - item: {fileID: 11400000, guid: 9aae080c939e8164d8a9e56dc8b2e78d, type: 2}
+  - item: {fileID: 11400000, guid: 655104d13efc73044b0e778be04d6e7c, type: 2}
     probability: 1
     minCount: 1
     maxCount: 1

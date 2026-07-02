@@ -1,0 +1,30 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 33a04e869e8706b4a91d2b51675002b5, type: 3}
+  m_Name: Armor_Boot_Leather
+  m_EditorClassIdentifier: 
+  nameOfItem: "\u76AE\u9774"
+  description: "\u4E00\u53CC\u9774\u5B50\uFF0C\u67D4\u8F6F\u4E14\u539A\u91CD\u7684\u978B\u5E95\u8BA9\u4F60\u514D\u53D7\u7532\u6C9F\u708E\u7684\u70E6\u607C"
+  icon: {fileID: 21300000, guid: 4d35740a23468f74292472237c2aca15, type: 3}
+  interactablePrefab: {fileID: 2995941515450188174, guid: b3b31a05f52607f4baeff1d8e1f1628e,
+    type: 3}
+  maxStackSize: 1
+  amount: 1
+  rarity: 0
+  equipmentPrefab: {fileID: 3116813766312549389, guid: 17de4b9b49818c14daf1645b56258574,
+    type: 3}
+  propertyList:
+  - propertyType: 0
+    statType: 2
+    value: 10
+  equipConditions: []
+  armorType: 4

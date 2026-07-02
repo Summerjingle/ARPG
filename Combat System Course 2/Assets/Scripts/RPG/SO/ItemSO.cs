@@ -1,75 +1,86 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu()]
-public class ItemSO :ScriptableObject
+/// <summary>
+/// æ‰€æœ‰ç‰©å“çš„æŠ½è±¡åŸºç±»ï¼ˆçº¯æ•°æ®å®¹å™¨ï¼‰
+/// </summary>
+public abstract class ItemSO : ScriptableObject
 {
+    [Header("åŸºç¡€ä¿¡æ¯")]
     public string nameOfItem;
-
-    public ItemType itemType;
-    public ArmorType armorType;
     public string description;
-    public List<Property> propertyList;
     public Sprite icon;
-    public GameObject interactablePrefab; // ÓÃÓÚµôÂäºÍÊ°È¡µÄÔ¤ÖÆÌå£¨ËùÓĞÎïÆ·£©
-    public GameObject weaponPrefab;
-    
+    public GameObject interactablePrefab; // åœºæ™¯ä¸­çš„æ‹¾å–é¢„åˆ¶ä½“
 
-    public int maxStackSize = 1; // ×î´ó¶ÑµşÊıÁ¿
-    public int amount = 1;       // µ±Ç°ÊıÁ¿
-    public bool IsStackable()
+    [Header("å †å ")]
+    public int maxStackSize = 1;
+    public int amount = 1;
+
+    [Header("ç¨€æœ‰åº¦")]
+    public Rarity rarity;
+
+    /// <summary> ç‰©å“åˆ†ç±»ï¼ˆå­ç±»å¼ºåˆ¶å®ç°ï¼‰</summary>
+    public abstract ItemType itemType { get; }
+
+    public virtual bool IsStackable()
     {
         return itemType == ItemType.Consumable && maxStackSize > 1;
     }
 
-    // ĞÂÔö·½·¨£º¼ì²éÊÇ·ñ¿ÉÒÔ¶Ñµş
-    public bool CanStackWith(ItemSO otherItem)
+    public virtual bool CanStackWith(ItemSO otherItem)
     {
         return this.nameOfItem == otherItem.nameOfItem &&
                this.itemType == otherItem.itemType &&
                this.IsStackable() && otherItem.IsStackable();
     }
+
+    /// <summary> ä½¿ç”¨ç‰©å“ï¼ˆå­ç±»é‡å†™ï¼‰</summary>
+    public virtual void Use(PlayerController user) { }
 }
+
+// ==================== æšä¸¾ ====================
+
 public enum ItemType
 {
     Weapon,
     Consumable,
     Armor,
     QuestRelated
-
 }
+
 public enum ArmorType
 {
-    Helmet,     // Í·¿ø
-    Chestplate, // ĞØ¼×
-    Gauntlets,  // »¤ÊÖ
-    Leggings,   // »¤ÍÈ
-    Boots,// Ñ¥×Ó
+    Helmet,
+    Chestplate,
+    Gauntlets,
+    Leggings,
+    Boots,
     NotArmor
 }
+
+public enum Rarity
+{
+    Common,
+    Uncommon,
+    Rare,
+    Epic,
+    Legendary
+}
+
+// ==================== Property ====================
 
 [Serializable]
 public class Property
 {
-    public PropertyType propertyType;
-    public int value;  
-    public Property()
-    {
+    public StatType statType;
+    public int value;
 
-    }
-    public Property(PropertyType propertyType, int value)
+    public Property() { }
+
+    public Property(StatType statType, int value)
     {
-        this.propertyType = propertyType;
+        this.statType = statType;
         this.value = value;
     }
 }
-public enum PropertyType
-{
-    HPValue,
-    EnergyValue,
-    AttackValue,
-    DefenseValue
-}
-

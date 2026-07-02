@@ -13,7 +13,7 @@ public class VisionSensor : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        var fighter = other.GetComponent<PlayerFighter>() ?? (ICombatSystem)other.GetComponent<PlayerFighterNew>();
+        var fighter = other.GetComponent<PlayerFighterNew>();
         if (fighter != null)
         {
             enemyController.TargetsInRange.Add(fighter);
@@ -23,7 +23,7 @@ public class VisionSensor : MonoBehaviour
 
     private void OnTriggerExit(Collider other)
     {
-        var fighter = other.GetComponent<PlayerFighter>() ?? (ICombatSystem)other.GetComponent<PlayerFighterNew>();
+        var fighter = other.GetComponent<PlayerFighterNew>();
         if (fighter != null)
         {
             enemyController.TargetsInRange.Remove(fighter);

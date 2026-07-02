@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3c9bd114a3c6b1a4889c2ebc46768e72, type: 3}
+  m_Name: Weapon_WitchKillerSword
+  m_EditorClassIdentifier: 
+  nameOfItem: "\u5973\u5DEB\u6740\u624B"
+  description: "\u4E00\u628A\u7EAF\u94F6\u7684\u957F\u5251\uFF0C\u5973\u5DEB\u730E\u4EBA\u7684\u6700\u7231\u3002"
+  icon: {fileID: 21300000, guid: 6aef91b81b5f14f4d93d7dc707999aef, type: 3}
+  interactablePrefab: {fileID: 6809175980981522585, guid: 59f47957d76ef8e4bb63f1865f74453b,
+    type: 3}
+  maxStackSize: 1
+  amount: 1
+  rarity: 0
+  equipmentPrefab: {fileID: 6456669574729195219, guid: 2616070783e50574c9f2511e21677107,
+    type: 3}
+  propertyList: []
+  equipConditions: []
+  drawWeaponTriggerName: drawWeapon
+  sheathWeaponTriggerName: sheathWeapon
+  combatBlendTreeName: Combat Blend Tree
+  sheathLocation: 0
+  handSocket: 0
+  isHeavy: 0
+  rollAnim: Roll_Sword
+  baseDamage: 45

@@ -13,7 +13,7 @@ public class WolfAttackState : State<WolfController>
         wolf.Animator.SetTrigger("Attack");
         wolf.NavAgent.isStopped = true;
 
-        // ÃæÏòÍæ¼Ò
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         if (wolf.Player != null)
         {
             Vector3 direction = (wolf.Player.position - wolf.transform.position).normalized;
@@ -23,45 +23,45 @@ public class WolfAttackState : State<WolfController>
                 wolf.transform.rotation = Quaternion.LookRotation(direction);
             }
 
-            // ¹Ø¼ü£ºÉèÖÃMeleeFighterµÄ¹¥»÷Ä¿±ê
-            var playerFighter = wolf.Player.GetComponent<PlayerFighter>();
+            // ï¿½Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½MeleeFighterï¿½Ä¹ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½
+            var playerFighter = wolf.Player.GetComponent<PlayerFighterNew>();
             if (playerFighter != null)
             {
                 wolf.Fighter.currTarget = playerFighter;
             }
         }
 
-        // ÉèÖÃ¹¥»÷ÀäÈ´
+        // ï¿½ï¿½ï¿½Ã¹ï¿½ï¿½ï¿½ï¿½ï¿½È´
         wolf.AttackTimer = wolf.attackCooldown;
 
-        // Æô¶¯Ð­³ÌµÈ´ý¹¥»÷Íê³É
+        // ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ÌµÈ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         wolf.StartCoroutine(WaitForAttackCompletion());
     }
 
     IEnumerator WaitForAttackCompletion()
     {
-        // µÈ´ý¹¥»÷¶¯»­Íê³É£¨ÕâÀïÐèÒª¸ù¾ÝÄãµÄÊµ¼Ê¶¯»­³¤¶Èµ÷Õû£©
-        yield return new WaitForSeconds(1f); // ¼ÙÉè¹¥»÷¶¯»­´óÔ¼1Ãë
+        // ï¿½È´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Êµï¿½Ê¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Èµï¿½ï¿½ï¿½ï¿½ï¿½
+        yield return new WaitForSeconds(1f); // ï¿½ï¿½ï¿½è¹¥ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼1ï¿½ï¿½
 
         isAttacking = false;
 
-        // ¹¥»÷Íê³Éºó¼ì²éÊÇ·ñÓ¦¸Ã¼ÌÐø×·»÷
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Éºï¿½ï¿½ï¿½ï¿½Ç·ï¿½Ó¦ï¿½Ã¼ï¿½ï¿½ï¿½×·ï¿½ï¿½
         if (wolf.Player != null && !wolf.IsDead)
         {
             float distanceToPlayer = Vector3.Distance(wolf.transform.position, wolf.Player.position);
 
             if (distanceToPlayer > wolf.attackDistance && distanceToPlayer <= wolf.giveUpDistance)
             {
-                // Íæ¼ÒÔÚ¹¥»÷·¶Î§Íâµ«ÈÔÔÚ·ÅÆú¾àÀëÄÚ£¬¼ÌÐø×·»÷
+                // ï¿½ï¿½ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½âµ«ï¿½ï¿½ï¿½Ú·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½×·ï¿½ï¿½
                 wolf.ChangeState(WolfStates.Run);
             }
             else if (distanceToPlayer > wolf.giveUpDistance)
             {
-                // Íæ¼Ò³¬³ö·ÅÆú¾àÀë£¬»Øµ½Ñ²ÂßÄ£Ê½
+                // ï¿½ï¿½Ò³ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ë£¬ï¿½Øµï¿½Ñ²ï¿½ï¿½Ä£Ê½
                 wolf.Mode = WolfMode.Patrol;
                 wolf.ChangeState(WolfStates.Idle);
 
-                // ´Ó EnemyManager ÒÆ³ý
+                // ï¿½ï¿½ EnemyManager ï¿½Æ³ï¿½
                 if (wolf.EnemyController != null)
                 {
                     EnemyManager.i.RemoveEnemyInRange(wolf.EnemyController);
@@ -69,7 +69,7 @@ public class WolfAttackState : State<WolfController>
             }
             else
             {
-                // Íæ¼ÒÈÔÔÚ¹¥»÷·¶Î§ÄÚ£¬¿ÉÒÔÔÙ´Î¹¥»÷»ò±£³Ö¾¯½ä
+                // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½ï¿½Î§ï¿½Ú£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ù´Î¹ï¿½ï¿½ï¿½ï¿½ò±£³Ö¾ï¿½ï¿½ï¿½
                 wolf.ChangeState(WolfStates.Idle);
             }
         }
@@ -81,20 +81,20 @@ public class WolfAttackState : State<WolfController>
 
     public override void Execute()
     {
-        // ¹¥»÷¹ý³ÌÖÐ²»Ö´ÐÐÆäËûÂß¼­£¬µÈ´ýÐ­³ÌÍê³É
+        // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð²ï¿½Ö´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ß¼ï¿½ï¿½ï¿½ï¿½È´ï¿½Ð­ï¿½ï¿½ï¿½ï¿½ï¿½
         if (!isAttacking && !wolf.IsDead)
         {
-            // Èç¹û¹¥»÷ÒâÍâ½áÊø£¬È·±£×´Ì¬ÕýÈ·
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½È·ï¿½ï¿½×´Ì¬ï¿½ï¿½È·
             wolf.ChangeState(WolfStates.Idle);
         }
     }
 
     public override void Exit()
     {
-        // È·±£¹¥»÷Åö×²Ìå±»½ûÓÃ
+        // È·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×²ï¿½å±»ï¿½ï¿½ï¿½ï¿½
         wolf.DisableAttackCollider();
 
-        // Í£Ö¹ËùÓÐÐ­³Ì
+        // Í£Ö¹ï¿½ï¿½ï¿½ï¿½Ð­ï¿½ï¿½
         wolf.StopAllCoroutines();
     }
 }

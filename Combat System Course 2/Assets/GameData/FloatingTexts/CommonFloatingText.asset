@@ -115,5 +115,5 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   duration: 1.2
-  heightOffset: 2.5
+  heightOffset: 1.25
   randomHorizontalRange: 0.5
