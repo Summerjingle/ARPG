@@ -12,7 +12,7 @@ public class AttackData : ScriptableObject
 	[field:SerializeField] public float ImpactStartTime {  get; private	 set; }
 	[field:SerializeField] public float ImpactEndTime {  get; private	 set; }
 
-	[field: Header("ÒÆ¶¯¹¥»÷ÉèÖÃ")]
+	[field: Header("ï¿½Æ¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½")]
 	[field:SerializeField] public bool MoveToTarget{  get; private	 set; }
 	[field: SerializeField] public float DistanceFromTarget { get; private set; } = 1f;
 	[field: SerializeField] public float MaxMoveDistance { get; private set; } = 3f;
@@ -21,5 +21,8 @@ public class AttackData : ScriptableObject
 	[field: SerializeField] public float MoveStartTime { get; private set; } = 0f;
 	[field: SerializeField] public float MoveEndTime { get; private set; } = 1f;
 
+	[field: Header("ç‰¹æ®Šæ ‡è®°")]
+	[field: SerializeField] public bool IsSpinAttack { get; private set; } = false;
+
 }
-public enum AttackHitbox { LeftHand,RightHand,LeftFoot,RightFoot,Sword}
+public enum AttackHitbox { LeftHand, RightHand, LeftFoot, RightFoot, Sword, BothHands, BothFeet, Body }

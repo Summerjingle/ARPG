@@ -45,8 +45,8 @@ public class PlayerAttack : MonoBehaviour
 
         if (dirToTarget.sqrMagnitude > 0.001f)
         {
-            Quaternion targetRot = Quaternion.LookRotation(dirToTarget);
-            transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, hitRotationStrength);
+           PlayerController.i?.ForceRotateTowards(dirToTarget, hitRotationStrength);
+           
         }
     }
     private void OnEnable()

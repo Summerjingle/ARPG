@@ -686,3 +686,60 @@ M Assets/GameData/Animator/P&E/PlayerController.controller
 + Assets/GameData/DataSO/Weapon_GreatSword.asset
 + Assets/Res/Prefabs/GreatSword.prefab
 ```
+
+---
+
+## 2026-07-03 Boss Golem 调试
+
+### 背景
+新建 Boss 系统，徒手巨人，位置检测选攻击（前/后/左/右），纯 root motion 驱动。
+删除旧 Boss/Wolf/Knight 代码，从头建 BossController + 5 个 State。
+
+### 攻击动画不播放（已解决）
+
+**现象**：Boss 进 Attack 状态，伤害打出来了，但动画不播放。
+
+**排查**：
+1. 怀疑 EnemyFighter.attacks 为空 → 排除，BossController 用 OverrideAttacks() 动态注入
+2. 加 `[DEBUG CrossFade]` 日志 → `层=0`，`Animator.GotoState: State could not be found`
+3. **根因**：Boss Animator Controller 攻击动画全在 layer 1 (Action Layer)，`EnemyFighter.ExecuteEnemyAttack` 的 `CrossFade(attack.AttackName, 0.2f)` 硬编码用 layer 0 (Base Layer)，永远找不到动画
+4. **修复**：`EnemyFighter.cs` 加 `[SerializeField] private int attackAnimLayer = 0;`，`CrossFade` 和 `GetNextAnimatorStateInfo` 改用该值。Boss Inspector 设 **Attack Anim Layer = 1**
+
+### 冷却期傻站（已解决）
+
+**现象**：攻击一次后 boss 站桩不动，日志显示 0.1s / 2s 冷却。
+
+**根因**：`BossAttackState.Execute()` 里 `CanAttack()==false` 时直接 return，boss 卡在 Attack 状态。攻击完 → Chase → 立刻又进 Attack（玩家还在攻击范围）→ 冷却没到 → 卡住。
+
+**修复**：`CanAttack()==false` 时 `ChangeState(chaseState)` 退回去，冷却期间保持追逐移动 + 面朝玩家。
+
+### Boss 不转向玩家（已解决）
+
+**现象**：Boss 永远朝一个方向，不面向玩家。
+
+**排查**：
+1. `Animator.m_ApplyRootMotion: 1` → 动画 root motion 跟 NavMeshAgent.updateRotation 抢 transform 控制权
+2. Idle 状态完全没有旋转代码
+
+**修复**：
+- `BossController.Start()`：`agent.updateRotation = false`、`anim.applyRootMotion = false`
+- 新增 `FacePlayer()` 方法，Idle / Chase / Attack 每帧调用
+- 攻击期间临时开 `applyRootMotion = true`，攻击结束关
+
+### Boss 侧面朝玩家（已解决）
+
+**原因**：Golem 模型 Blender 导出，本地前方 ≠ Unity Z+。
+
+**修复**：在编辑器里旋转模型子节点，使模型朝向与 Unity Z+ 对齐。不需要代码补偿。
+
+### 涉及文件
+```
+M Assets/Scripts/CombatSystem/Gemini/EnemyFighter.cs  — +attackAnimLayer
+M Assets/Scripts/Enemy/Boss/BossController.cs  — FacePlayer(), agent.updateRotation=false, applyRootMotion=false
+M Assets/Scripts/Enemy/Boss/BossIdleState.cs  — +FacePlayer()
+M Assets/Scripts/Enemy/Boss/BossChaseState.cs  — +FacePlayer(), 去掉 updateRotation=true
+M Assets/Scripts/Enemy/Boss/BossAttackState.cs  — DoAttack while循环 FacePlayer(), 冷却→Chase
+```
+
+### 待办
+- [ ] BossFighter — EnemyFighter 耦合了 EnemyController，应该给 Boss 单独写一个干净的

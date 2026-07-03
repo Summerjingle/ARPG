@@ -6,13 +6,6 @@ public class DeadState : State<EnemyController>
 {
     public override void Enter(EnemyController owner)
     {
-        // 如果是狼(Wolf)类型，跳过死亡处理（狼有自己的死亡逻辑）
-        if (owner.GetComponent<WolfController>() != null)
-        {
-            Debug.Log($"跳过 {owner.gameObject.name} 的普通死亡处理，使用狼专属死亡逻辑");
-            return;
-        }
-        
         // 1. 停止所有协程
         owner.StopAllCoroutines();
         if (owner.Fighter is MonoBehaviour fighterMb)

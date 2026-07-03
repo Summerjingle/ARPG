@@ -57,10 +57,10 @@ public interface ICombatSystem
     // 组件引用
     Animator animator { get; }
     BoxCollider WeaponCollider { get; }
-    SphereCollider leftHandCollider { get; }
-    SphereCollider rightHandCollider { get; }
-    SphereCollider leftFootCollider { get; }
-    SphereCollider rightFootCollider { get; }
+    Collider leftHandCollider { get; }
+    Collider rightHandCollider { get; }
+    Collider leftFootCollider { get; }
+    Collider rightFootCollider { get; }
 
     // 特殊受击动画（Animation Event 设置，null/空 = 使用默认受击动画）
     string CurrentSpecialHitReaction { get; set; }

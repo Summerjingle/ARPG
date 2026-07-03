@@ -84,10 +84,7 @@ public class EnemyController : MonoBehaviour
 
         StateMachine = new StateMachine<EnemyController>(this);
 
-        if (GetComponent<WolfController>() == null)
-        { 
-            StateMachine.ChangeState(stateDict[EnemyStates.Idle]); 
-        }
+        StateMachine.ChangeState(stateDict[EnemyStates.Idle]);
             
 
         Fighter.OnGotHit += (ICombatSystem attacker) =>
@@ -141,11 +138,7 @@ public class EnemyController : MonoBehaviour
         // ���ӿռ��
         if (StateMachine == null || stateDict == null || !stateDict.ContainsKey(state))
         {
-            // ������ǣ����� false�������Լ���״̬ϵͳ��
-            if (GetComponent<WolfController>() != null)
-                return false;
-
-            Debug.LogWarning($"{gameObject.name} ״̬��δ��ʼ�����޷����״̬ {state}");
+            Debug.LogWarning($"{gameObject.name} 状态机未初始化，无法判断状态 {state}");
             return false;
         }
 

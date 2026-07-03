@@ -60,7 +60,7 @@ ModelImporter:
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
       curves: []
       events:
-      - time: 0
+      - time: 0.08215962
         functionName: StartRotationLock
         data: 
         objectReferenceParameter: {fileID: 11500000, guid: 20c98bd8c4ed86f4c83b749ccbfa6ce3,

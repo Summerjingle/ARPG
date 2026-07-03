@@ -36,7 +36,7 @@ public class EnemyTest : MonoBehaviour
                 {
                     // 只有 RegisterHit 返回 true，才执行伤害逻辑
                     Debug.Log($"【命中生效】被 {other.name} 击中！");
-                     
+                    attacker.NotifyDamageDealt(this.gameObject);
                     if (attackerAnimator != null)
                         HitDelay.Instance.Stop(0.07f, attackerAnimator);
                     if (selfAnimator != null)

@@ -52,10 +52,10 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
     // 碰撞体引用
     public Animator animator { get; private set; }
     public BoxCollider WeaponCollider { get; private set; }
-    public SphereCollider leftHandCollider { get; private set; }
-    public SphereCollider rightHandCollider { get; private set; }
-    public SphereCollider leftFootCollider { get; private set; }
-    public SphereCollider rightFootCollider { get; private set; }
+    public Collider leftHandCollider { get; private set; }
+    public Collider rightHandCollider { get; private set; }
+    public Collider leftFootCollider { get; private set; }
+    public Collider rightFootCollider { get; private set; }
     
     // 事件
     public event System.Action<ICombatSystem> OnGotHit;
@@ -82,10 +82,10 @@ public class PlayerFighterNew : MonoBehaviour, ICombatSystem
 
     private void InitializeBodyColliders()
     {
-        leftHandCollider = animator.GetBoneTransform(HumanBodyBones.LeftHand)?.GetComponent<SphereCollider>();
-        leftFootCollider = animator.GetBoneTransform(HumanBodyBones.LeftFoot)?.GetComponent<SphereCollider>();
-        rightHandCollider = animator.GetBoneTransform(HumanBodyBones.RightHand)?.GetComponent<SphereCollider>();
-        rightFootCollider = animator.GetBoneTransform(HumanBodyBones.RightFoot)?.GetComponent<SphereCollider>();
+        leftHandCollider = animator.GetBoneTransform(HumanBodyBones.LeftHand)?.GetComponent<Collider>();
+        leftFootCollider = animator.GetBoneTransform(HumanBodyBones.LeftFoot)?.GetComponent<Collider>();
+        rightHandCollider = animator.GetBoneTransform(HumanBodyBones.RightHand)?.GetComponent<Collider>();
+        rightFootCollider = animator.GetBoneTransform(HumanBodyBones.RightFoot)?.GetComponent<Collider>();
 
         var currentWeapon = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
         if (currentWeapon != null)

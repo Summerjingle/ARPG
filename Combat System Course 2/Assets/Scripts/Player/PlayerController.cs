@@ -412,8 +412,7 @@ public class PlayerController : MonoBehaviour
 
             velocity = rollDirection * rollSpeed * curveValue;
 
-            if (Time.frameCount % 3 == 0) // 每3帧打一次，避免刷屏
-                Debug.Log($"[ROLL] frame={Time.frameCount} state={state.shortNameHash} stateMatch={stateMatch} normTime={state.normalizedTime:F3} curve={curveValue:F3} vel={velocity.magnitude:F2}");
+            
         }
         else
         {
@@ -579,6 +578,10 @@ public class PlayerController : MonoBehaviour
                 : transform.forward;
         }
 
+        
+        transform.rotation = Quaternion.LookRotation(rollDirection);
+        targetRotation = transform.rotation;
+
         if (fadeRollCoroutine != null)
             StopCoroutine(fadeRollCoroutine);
 
@@ -590,7 +593,13 @@ public class PlayerController : MonoBehaviour
 
         StartCoroutine(WaitForRollEnd(animName));
     }
-
+    public void ForceRotateTowards(Vector3 direction, float strength)
+    {
+        if (direction.sqrMagnitude < 0.001f) return;
+        Quaternion targetRot = Quaternion.LookRotation(direction.normalized);
+        transform.rotation = Quaternion.Slerp(transform.rotation, targetRot, strength);
+        targetRotation = transform.rotation;
+    }
     private string GetRollAnimName()
     {
         var weapon = WeaponEquipmentManager.Instance?.GetCurrentWeapon();

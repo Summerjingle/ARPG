@@ -44,14 +44,14 @@ ModelImporter:
       cycleOffset: 0
       loop: 0
       hasAdditiveReferencePose: 0
-      loopTime: 0
+      loopTime: 1
       loopBlend: 0
       loopBlendOrientation: 1
       loopBlendPositionY: 1
-      loopBlendPositionXZ: 0
+      loopBlendPositionXZ: 1
       keepOriginalOrientation: 1
       keepOriginalPositionY: 1
-      keepOriginalPositionXZ: 0
+      keepOriginalPositionXZ: 1
       heightFromFeet: 0
       mirror: 0
       bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
@@ -831,7 +831,8 @@ ModelImporter:
     - name: Bip001 R Finger42
       parentName: Bip001 R Finger41
       position: {x: -0.03260071, y: 0.00000015258789, z: 0}
-      rotation: {x: -0.000000011181809, y: -0.0000000018266462, z: -0.0032202618, w: 0.9999948}
+      rotation: {x: -0.000000011181809, y: -0.0000000018266462, z: -0.0032202618,
+        w: 0.9999948}
       scale: {x: 1, y: 1.0000001, z: 1.0000001}
     - name: Bip001 R ForeTwist
       parentName: Bip001 R UpperArm
@@ -855,7 +856,8 @@ ModelImporter:
     hasTranslationDoF: 1
     hasExtraRoot: 1
     skeletonHasParents: 1
-  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: e33ec2acca3cc1944be7b31f19d21403, type: 3}
+  lastHumanDescriptionAvatarSource: {fileID: 9000000, guid: e33ec2acca3cc1944be7b31f19d21403,
+    type: 3}
   autoGenerateAvatarMappingIfUnspecified: 1
   animationType: 3
   humanoidOversampling: 1

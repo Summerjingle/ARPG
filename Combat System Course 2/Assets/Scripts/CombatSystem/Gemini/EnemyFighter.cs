@@ -63,13 +63,21 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public List<AttackData> LongRangeAttacks => longRangeAttacks;
     public float LongRangeAttackThreshold => longRangeAttackThreshold;
 
+    /// <summary>Boss 用：动态替换攻击列表，运行时选择不同攻击</summary>
+    public void OverrideAttacks(List<AttackData> newAttacks) { attacks = newAttacks; }
+
+    [SerializeField] private int attackAnimLayer = 0; // Boss 动画在 Action Layer(1)，普通敌人在 Base Layer(0)
+
     // 组件引用
     public Animator animator { get; private set; }
     public BoxCollider WeaponCollider { get; protected set; }
-    public SphereCollider leftHandCollider { get; private set; }
-    public SphereCollider rightHandCollider { get; private set; }
-    public SphereCollider leftFootCollider { get; private set; }
-    public SphereCollider rightFootCollider { get; private set; }
+
+
+    [field: SerializeField] public Collider leftHandCollider { get; private set; }
+    [field: SerializeField] public Collider rightHandCollider { get; private set; }
+    [field: SerializeField] public Collider leftFootCollider { get; private set; }
+    [field: SerializeField] public Collider rightFootCollider { get; private set; }
+    [field: SerializeField] public Collider bodyCollider { get; private set; }
 
     // 事件
     public event System.Action<ICombatSystem> OnGotHit;
@@ -92,14 +100,25 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         // 初始化碰撞器
         InitializeEnemyBodyColliders();
     }
-    // 敌人专属的碰撞器初始化
+    // 碰撞器初始化：序列化字段优先（手动拖拽），为空时自动从骨骼查找
     protected virtual void InitializeEnemyBodyColliders()
     {
-        // 从 MeleeFighter 迁移过来的敌人碰撞器初始化逻辑
-        leftHandCollider = animator.GetBoneTransform(HumanBodyBones.LeftHand)?.GetComponent<SphereCollider>();
-        leftFootCollider = animator.GetBoneTransform(HumanBodyBones.LeftFoot)?.GetComponent<SphereCollider>();
-        rightHandCollider = animator.GetBoneTransform(HumanBodyBones.RightHand)?.GetComponent<SphereCollider>();
-        rightFootCollider = animator.GetBoneTransform(HumanBodyBones.RightFoot)?.GetComponent<SphereCollider>();
+        if (leftHandCollider  == null) leftHandCollider  = animator.GetBoneTransform(HumanBodyBones.LeftHand)?.GetComponent<Collider>();
+        if (rightHandCollider == null) rightHandCollider = animator.GetBoneTransform(HumanBodyBones.RightHand)?.GetComponent<Collider>();
+        if (leftFootCollider  == null) leftFootCollider  = animator.GetBoneTransform(HumanBodyBones.LeftFoot)?.GetComponent<Collider>();
+        if (rightFootCollider == null) rightFootCollider = animator.GetBoneTransform(HumanBodyBones.RightFoot)?.GetComponent<Collider>();
+
+        if (bodyCollider == null)
+            bodyCollider = animator.GetBoneTransform(HumanBodyBones.Spine)?.GetComponent<Collider>();
+        if (bodyCollider == null)
+            bodyCollider = animator.GetBoneTransform(HumanBodyBones.Hips)?.GetComponent<Collider>();
+
+        // 全部默认关闭
+        if (leftHandCollider)  leftHandCollider.enabled  = false;
+        if (rightHandCollider) rightHandCollider.enabled = false;
+        if (leftFootCollider)  leftFootCollider.enabled  = false;
+        if (rightFootCollider) rightFootCollider.enabled = false;
+        if (bodyCollider)      bodyCollider.enabled      = false;
 
         // 敌人使用自己的武器（默认关闭碰撞体，仅在 Impact 阶段由 EnableEnemyHitbox 打开）
         if (enemyWeapon != null)
@@ -110,9 +129,11 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         }
     }
 
+    [SerializeField] private float unarmedDamage = 25f;
+
     public float GetWeaponDamage()
     {
-        return enemyWeapon?.GetDamage() ?? 1f;
+        return enemyWeapon?.GetDamage() ?? unarmedDamage;
     }
 
     public virtual void TakeDamage(float damage, bool isCrit = false)
@@ -136,8 +157,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             return true;
         }
 
-        Debug.LogWarning($"{gameObject.name} 没有找到可用武器！");
-        return false;
+        // 无武器也可徒手攻击（Boss等），伤害取 unarmedDamage
+        return true;
     }
     public bool EnemyCanAttack()
     {
@@ -237,7 +258,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             if (navAgent != null) navAgent.isStopped = true;
         }
 
-        bool isHumanoid = GetComponent<WolfController>() == null;
+        bool isHumanoid = true;
 
         if (isHumanoid)
         {
@@ -457,6 +478,23 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                     Debug.LogWarning($"敌人({gameObject.name})武器为null，无法启用Hitbox");
                 }
                 break;
+            case AttackHitbox.BothHands:
+                if (leftHandCollider != null) leftHandCollider.enabled = true;
+                if (rightHandCollider != null) rightHandCollider.enabled = true;
+                Debug.Log($"启用敌人({gameObject.name})双手Hitbox");
+                break;
+            case AttackHitbox.BothFeet:
+                if (leftFootCollider != null) leftFootCollider.enabled = true;
+                if (rightFootCollider != null) rightFootCollider.enabled = true;
+                Debug.Log($"启用敌人({gameObject.name})双脚Hitbox");
+                break;
+            case AttackHitbox.Body:
+                if (bodyCollider != null)
+                {
+                    bodyCollider.enabled = true;
+                    Debug.Log($"启用敌人({gameObject.name})身体Hitbox");
+                }
+                break;
             default:
                 Debug.Log($"敌人使用未知Hitbox类型: {attack.HitboxToUse}");
                 break;
@@ -476,6 +514,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             leftFootCollider.enabled = false;
         if (rightFootCollider != null)
             rightFootCollider.enabled = false;
+        if (bodyCollider != null)
+            bodyCollider.enabled = false;
 
         // 禁用敌人武器Hitbox
         var enemyWeapon = GetComponentInChildren<Weapon>();
@@ -488,6 +528,19 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
         Debug.Log($"禁用所有敌人({gameObject.name})Hitbox");
     }
+
+    // ==========================================
+    // 动画事件可调用的单部位开关（复杂多段打击用）
+    // ==========================================
+    public void AnimEvent_ClearHitTargets() => hitTargets.Clear();
+
+    public void AnimEvent_EnableLeftHand()  { if (leftHandCollider  != null) leftHandCollider.enabled  = true; }
+    public void AnimEvent_EnableRightHand() { if (rightHandCollider != null) rightHandCollider.enabled = true; }
+    public void AnimEvent_EnableLeftFoot()  { if (leftFootCollider  != null) leftFootCollider.enabled  = true; }
+    public void AnimEvent_EnableRightFoot() { if (rightFootCollider != null) rightFootCollider.enabled = true; }
+    public void AnimEvent_EnableBody()      { if (bodyCollider      != null) bodyCollider.enabled      = true; }
+    public void AnimEvent_EnableBothHands() { AnimEvent_EnableLeftHand();  AnimEvent_EnableRightHand(); }
+    public void AnimEvent_EnableBothFeet()  { AnimEvent_EnableLeftFoot();  AnimEvent_EnableRightFoot(); }
 
     public bool IsUsingHeavyWeapon()
     {
@@ -639,9 +692,9 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             }
         }
 
-        animator.CrossFade(attack.AttackName, 0.2f);
+        animator.CrossFade(attack.AttackName, 0.2f, attackAnimLayer);
         yield return null;
-        var animstate = animator.GetNextAnimatorStateInfo(0);
+        var animstate = animator.GetNextAnimatorStateInfo(attackAnimLayer);
 
         float timer = 0f;
         while (timer <= animstate.length)
@@ -665,8 +718,9 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                 }
             }
 
-           
-            if (attackDir != null)
+
+            // 旋转攻击由动画 root motion 驱动旋转，不手动锁朝向
+            if (!attack.IsSpinAttack && attackDir != null)
             {
                 transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attackDir), 500f * Time.deltaTime);
             }
