@@ -10,7 +10,7 @@ public class PlayerAttack : MonoBehaviour
     [SerializeField] [Range(0f, 1f)] private float hitRotationStrength = 0.5f;
 
     private WeaponEquipmentManager weaponEquipmentManager;
-    private PlayerFighterNew fighter;
+    private PlayerFighter fighter;
     private bool canCombo = true;
     private Animator animator;
     void Start()
@@ -18,7 +18,7 @@ public class PlayerAttack : MonoBehaviour
         weaponEquipmentManager=GetComponent<WeaponEquipmentManager>();
         animator=GetComponent<Animator>();
 
-        fighter = GetComponent<PlayerFighterNew>();
+        fighter = GetComponent<PlayerFighter>();
         if (fighter != null)
         {
             fighter.OnDamageDealt += OnPlayerDealtDamage;
@@ -64,7 +64,7 @@ public class PlayerAttack : MonoBehaviour
         if (!canCombo) return;
 
         // 反弹期间禁止输入新攻击（canCombo 可能在正放阶段已变为 true）
-        var fighter = PlayerController.i?.combatSystem as PlayerFighterNew;
+        var fighter = PlayerController.i?.combatSystem as PlayerFighter;
         if (fighter != null && fighter.IsRebounding) return;
 
         if(weaponEquipmentManager.GetCurrentWeapon()!=null&& weaponEquipmentManager.isWeaponDrawn)

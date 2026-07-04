@@ -4,14 +4,12 @@ public class BossStunnedState : State<BossController>
 {
     public float stunDuration = 3f;
     private float timer;
-    private bool hasTriggeredEnd = false;
+    
 
     public override void Enter(BossController owner)
     {
         base.Enter(owner);
         timer = stunDuration;
-        hasTriggeredEnd = false;  
-
         if (owner.agent != null && owner.agent.isOnNavMesh)
             owner.agent.isStopped = true;
 
@@ -26,7 +24,7 @@ public class BossStunnedState : State<BossController>
     {
         timer -= Time.deltaTime;
         if (timer <= 0f)
-            owner.ChangeState(owner.idleState);
+            owner.anim.SetTrigger("StunEnd");
     }
 
     public override void Exit()

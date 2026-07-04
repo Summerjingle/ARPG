@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float lockWalkSpeed = 2.5f;
     [SerializeField] private float runSpeed = 6.0f;
     [SerializeField] private float sprintSpeed = 9.5f;
+
     [Header("Smooth Locomotion & Root Motion")]
     private float currentPhysicalSpeed; // 替代原本局部的 currentMoveSpeed
     private float speedSmoothVelocity;  
@@ -82,7 +83,7 @@ public class PlayerController : MonoBehaviour
     private Vector3 rollDirection;
     private bool isRolling = false;
     private float lastRollTime = -Mathf.Infinity;
-    private int rollLayerIndex;
+    private int ActionLayerIndex;
     private bool rollEndTriggered;
     private Coroutine fadeRollCoroutine;
 
@@ -110,7 +111,7 @@ public class PlayerController : MonoBehaviour
         speedHash = Animator.StringToHash("Speed");
         dirXHash = Animator.StringToHash("DirX");
         dirYHash = Animator.StringToHash("DirY");
-        rollLayerIndex = animator.GetLayerIndex("Roll");
+        ActionLayerIndex = animator.GetLayerIndex("ActionLayer");
     }
 
     private IEnumerator DelayedRegistration()
@@ -401,7 +402,7 @@ public class PlayerController : MonoBehaviour
             float curveValue = 1f;
 
             AnimatorStateInfo state =
-                animator.GetCurrentAnimatorStateInfo(rollLayerIndex);
+                animator.GetCurrentAnimatorStateInfo(ActionLayerIndex);
 
             bool stateMatch = state.IsName(GetRollAnimName());
 
@@ -541,7 +542,7 @@ public class PlayerController : MonoBehaviour
             return;
         }
 
-        if (rollLayerIndex < 0)
+        if (ActionLayerIndex < 0)
         {
             Debug.LogError("Roll layer not found in Animator.");
             return;
@@ -585,11 +586,9 @@ public class PlayerController : MonoBehaviour
         if (fadeRollCoroutine != null)
             StopCoroutine(fadeRollCoroutine);
 
-        animator.SetLayerWeight(rollLayerIndex, 1f);
-
         string animName = GetRollAnimName();
-        Debug.Log($"[ROLL] StartRoll frame={Time.frameCount} anim={animName} dir={rollDirection} layerWeight={animator.GetLayerWeight(rollLayerIndex):F2}");
-        animator.CrossFade(animName, 0.05f, rollLayerIndex, 0f);
+        Debug.Log($"[ROLL] StartRoll frame={Time.frameCount} anim={animName} dir={rollDirection} layerWeight={animator.GetLayerWeight(ActionLayerIndex):F2}");
+        animator.CrossFade(animName, 0.05f, ActionLayerIndex, 0f);
 
         StartCoroutine(WaitForRollEnd(animName));
     }
@@ -618,7 +617,6 @@ public class PlayerController : MonoBehaviour
 
         // OnRollEnd 已经做完清理的话直接退出
         if (!isRolling) yield break;
-        animator.SetLayerWeight(rollLayerIndex, 0f);
         combatSystem.InAction = false;
         isRolling = false;
         if (!UIStateManager.IsAnyUIActive) isMovementEnabled = true;
@@ -635,23 +633,6 @@ public class PlayerController : MonoBehaviour
         combatSystem.InAction = false;
         isRolling = false;
         if (!UIStateManager.IsAnyUIActive) isMovementEnabled = true;
-
-        fadeRollCoroutine = StartCoroutine(FadeRollLayerWeight());
-    }
-
-    private IEnumerator FadeRollLayerWeight()
-    {
-        float startWeight = animator.GetLayerWeight(rollLayerIndex);
-        float elapsed = 0f;
-        float duration = 0.2f;
-        while (elapsed < duration)
-        {
-            elapsed += Time.deltaTime;
-            animator.SetLayerWeight(rollLayerIndex, Mathf.Lerp(startWeight, 0f, elapsed / duration));
-            yield return null;
-        }
-        animator.SetLayerWeight(rollLayerIndex, 0f);
-        fadeRollCoroutine = null;
     }
 
     private void OnDestroy()

@@ -146,7 +146,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e907ebbd0b3b74089d81d1f5e1efc1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 7e6b9d89d5471bc418e33022d24d7a10, type: 2}
-  drawWeaponTriggerName: drawWeapon
-  sheathWeaponTriggerName: sheathWeapon
+  itemSO: {fileID: 11400000, guid: 1cb6a64c4571541458efef4682fc3f02, type: 2}
   damage: 15

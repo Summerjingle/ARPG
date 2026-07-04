@@ -19,6 +19,7 @@ public class WeaponSO : EquipmentSO
 
     [Header("武器类型")]
     public bool isHeavy = false;
+    public WeaponCategory weaponCategory = WeaponCategory.Sword;
 
     [Header("翻滚")]
     public string rollAnim = "Esc_Roll_Front_Root";
@@ -30,3 +31,4 @@ public class WeaponSO : EquipmentSO
 // 这些枚举供 Weapon MonoBehaviour 和 WeaponEquipmentManager 使用
 public enum SheathLocation { Waist, Back }
 public enum HandSocket { Primary, Secondary }
+public enum WeaponCategory { Sword, GreatSword }

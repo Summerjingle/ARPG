@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 8990196535322942755}
   - component: {fileID: 8370845676213829587}
   - component: {fileID: 6356157649790153620}
-  - component: {fileID: 9057602055944392035}
   m_Layer: 9
   m_Name: WitchKillerSword
   m_TagString: Hitbox
@@ -119,21 +118,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56adba1e05b73c74b952bc7e9e306c57, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 7e6b9d89d5471bc418e33022d24d7a10, type: 2}
-  drawWeaponTriggerName: drawWeapon
-  sheathWeaponTriggerName: sheathWeapon
+  itemSO: {fileID: 11400000, guid: 39caa47930b955a41a5f78a0d5c756d9, type: 2}
   damage: 25
---- !u!114 &9057602055944392035
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6456669574729195219}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 9aae080c939e8164d8a9e56dc8b2e78d, type: 2}
-  isActivated: 0

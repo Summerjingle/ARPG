@@ -21,4 +21,7 @@ MonoBehaviour:
   <MaxMoveDistance>k__BackingField: 3
   <MoveStartTime>k__BackingField: 0
   <MoveEndTime>k__BackingField: 1
+  <Damage>k__BackingField: 10
+  <SpecialHitReaction>k__BackingField: DownUp
+  <IsKnockdown>k__BackingField: 1
   <IsSpinAttack>k__BackingField: 0

@@ -5,62 +5,20 @@ using UnityEngine;
 public enum AttackStates { Idle, Windup, Impact, Cooldown }
 public interface ICombatSystem
 {
-    // 基础战斗属性
-    bool CanAttack();
-    void TryToAttack(ICombatSystem target = null);
+    // 核心战斗
     float GetWeaponDamage();
-    bool HasUsableWeapon();
-
-    // 状态管理
-    void UpdateAttackState(float normalizedTime, AttackData attack);
-    void ResetAttackState();
-
-    // Hitbox管理
-    void EnableHitbox(AttackData attack);
-    void DisableHitboxes();
-
-    // 攻击数据选择
-    AttackData SelectAttack(ICombatSystem target, int comboCount);
-    Vector3 CalculateAttackDirection(ICombatSystem target);
-    Vector3 CalculateAttackPosition(ICombatSystem target, AttackData attack, Vector3 attackDir, Vector3 startPos);
-
-    // 战斗流程控制
-    void PrepareAttack(ICombatSystem target);
-    void FinishAttack();
-
-    // 连击系统
-    bool CheckComboCondition();
-    IEnumerator ExecuteAttack(ICombatSystem target, int comboCount);
-
-    // 生命系统
     HealthSystem HealthSystem { get; }
 
     // 战斗状态
     bool InAction { get; set; }
     bool IsTakingHit { get; }
     bool InCounter { get; set; }
-    bool IsCounterable { get; }
-
-    // 攻击状态
-    AttackStates Attackstate { get; set; }
-    bool docombo { get; set; }
-    int comboCount { get; set; }
 
     // 目标管理
     ICombatSystem currTarget { get; set; }
 
-    // 攻击数据
-    List<AttackData> Attacks { get; }
-    List<AttackData> LongRangeAttacks { get; }
-    float LongRangeAttackThreshold { get; }
-
     // 组件引用
     Animator animator { get; }
-    BoxCollider WeaponCollider { get; }
-    Collider leftHandCollider { get; }
-    Collider rightHandCollider { get; }
-    Collider leftFootCollider { get; }
-    Collider rightFootCollider { get; }
 
     // 特殊受击动画（Animation Event 设置，null/空 = 使用默认受击动画）
     string CurrentSpecialHitReaction { get; set; }
@@ -68,7 +26,7 @@ public interface ICombatSystem
     // 命中记录（每刀清空，防止同一刀命中同一目标多次）
     bool RegisterHit(GameObject target);
 
-    // 是否使用重型武器（大剑等），用于判断攻击能否被格挡
+    // 重武器
     bool IsUsingHeavyWeapon();
 
     // 暴击
@@ -78,12 +36,13 @@ public interface ICombatSystem
     // 事件
     event System.Action<ICombatSystem> OnGotHit;
     event System.Action OnHitComplete;
-    event System.Action<GameObject> OnDamageDealt;  // 成功造成伤害时触发，参数为被命中的目标
-    void NotifyDamageDealt(GameObject target);      // 供外部安全触发 OnDamageDealt
+    event System.Action<GameObject> OnDamageDealt;
+    void NotifyDamageDealt(GameObject target);
+
     Transform transform { get; }
     GameObject gameObject { get; }
     void TakeDamage(float damage, bool isCrit = false);
 
-    IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null);
+    IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null, bool isKnockdown = false);
     void PlayDeathAnimation(ICombatSystem attacker);
 }

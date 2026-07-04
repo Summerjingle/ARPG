@@ -12,6 +12,8 @@ public abstract class Weapon : MonoBehaviour
     public SheathLocation sheathLocation => itemSO?.sheathLocation ?? SheathLocation.Waist;
     public HandSocket handSocket => itemSO?.handSocket ?? HandSocket.Primary;
     public bool isHeavy => itemSO != null && itemSO.isHeavy;
+    public WeaponCategory WeaponCategory => itemSO?.weaponCategory ?? WeaponCategory.Sword;
+    public string WeaponTypeSuffix => WeaponCategory.ToString(); // "Sword" / "GreatSword"
     public string rollAnim => itemSO?.rollAnim ?? "Roll_Sword";
 
     public abstract float GetDamage();
@@ -31,7 +33,7 @@ public abstract class Weapon : MonoBehaviour
 
         Vector3 hitPoint = other.ClosestPoint(transform.position);
 
-        var playerFighter = GetComponentInParent<PlayerFighterNew>();
+        var playerFighter = GetComponentInParent<PlayerFighter>();
         if (playerFighter != null)
         {
             playerFighter.OnWeaponRebound(hitPoint);

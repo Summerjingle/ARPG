@@ -13,7 +13,7 @@ public class DeadState : State<EnemyController>
 
         // 如果敌人在攻击 Impact 阶段死亡，StopAllCoroutines 会提前杀掉 ExecuteEnemyAttack，
         // 导致 DisableEnemyHitboxes() 来不及执行，武器碰撞器残留在尸体上。这里手动补关。
-        owner.Fighter?.DisableHitboxes();
+        (owner.Fighter as EnemyFighter)?.DisableHitboxes();
 
         // 3. 停止NavMeshAgent导航
         if (owner.NavAgent != null && owner.NavAgent.isActiveAndEnabled)

@@ -53,7 +53,7 @@ public class VillageToCave : MonoBehaviour
 
     private void StartTeleportSequence()
     {
-        playerAnim.gameObject.GetComponent<PlayerFighterNew>().InAction = true;
+        playerAnim.gameObject.GetComponent<PlayerFighter>().InAction = true;
         UIStateManager.SetUIActive(true);
         if (playerAnim != null)
             playerAnim.CrossFade("TeleportEnter", 0.1f);

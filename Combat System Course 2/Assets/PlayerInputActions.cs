@@ -207,6 +207,15 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""GetUp"",
+                    ""type"": ""Button"",
+                    ""id"": ""acfd0c11-6f9b-4899-bf29-730b2f34ab46"",
+                    ""expectedControlType"": """",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -548,6 +557,127 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""QuickItemUse"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""5cbcdb91-c673-4b37-bd23-2a7645f4586b"",
+                    ""path"": ""<Keyboard>/anyKey"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8583b950-edaf-4445-9f52-aae3b3728ac5"",
+                    ""path"": ""<Gamepad>/buttonSouth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""e134bcac-1061-4107-9af8-bb0ccddf33b4"",
+                    ""path"": ""<Gamepad>/buttonEast"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c0a3768a-556d-4c5b-87ca-ff79974fa7d0"",
+                    ""path"": ""<Gamepad>/buttonNorth"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""1e0c1981-629e-45c6-9ebe-15d0d18e1467"",
+                    ""path"": ""<Gamepad>/buttonWest"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""457bf5b2-7ccf-4a8c-b513-e9655b431026"",
+                    ""path"": ""<Gamepad>/rightShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""9300f175-eef3-48de-8c91-9ae8d52f9776"",
+                    ""path"": ""<Gamepad>/leftShoulder"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""cddfbc20-a88a-497a-bfe3-1490cf386006"",
+                    ""path"": ""<Gamepad>/leftTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""c4176069-e69a-422b-9e6e-9f12e7eee92b"",
+                    ""path"": ""<Gamepad>/rightTrigger"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""6fa10eb5-942b-460d-bea0-3176bfd10cfc"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""b7a2f980-7384-4abf-917e-307c1fe38b86"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""GetUp"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -2406,6 +2536,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         m_Player_QuickItemModifier = m_Player.FindAction("QuickItemModifier", throwIfNotFound: true);
         m_Player_QuickItemNavigate = m_Player.FindAction("QuickItemNavigate", throwIfNotFound: true);
         m_Player_QuickItemUse = m_Player.FindAction("QuickItemUse", throwIfNotFound: true);
+        m_Player_GetUp = m_Player.FindAction("GetUp", throwIfNotFound: true);
         // UI_MainMenu
         m_UI_MainMenu = asset.FindActionMap("UI_MainMenu", throwIfNotFound: true);
         m_UI_MainMenu_Navigate = m_UI_MainMenu.FindAction("Navigate", throwIfNotFound: true);
@@ -2558,6 +2689,7 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_QuickItemModifier;
     private readonly InputAction m_Player_QuickItemNavigate;
     private readonly InputAction m_Player_QuickItemUse;
+    private readonly InputAction m_Player_GetUp;
     /// <summary>
     /// Provides access to input actions defined in input action map "Player".
     /// </summary>
@@ -2621,6 +2753,10 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// Provides access to the underlying input action "Player/QuickItemUse".
         /// </summary>
         public InputAction @QuickItemUse => m_Wrapper.m_Player_QuickItemUse;
+        /// <summary>
+        /// Provides access to the underlying input action "Player/GetUp".
+        /// </summary>
+        public InputAction @GetUp => m_Wrapper.m_Player_GetUp;
         /// <summary>
         /// Provides access to the underlying input action map instance.
         /// </summary>
@@ -2686,6 +2822,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @QuickItemUse.started += instance.OnQuickItemUse;
             @QuickItemUse.performed += instance.OnQuickItemUse;
             @QuickItemUse.canceled += instance.OnQuickItemUse;
+            @GetUp.started += instance.OnGetUp;
+            @GetUp.performed += instance.OnGetUp;
+            @GetUp.canceled += instance.OnGetUp;
         }
 
         /// <summary>
@@ -2736,6 +2875,9 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
             @QuickItemUse.started -= instance.OnQuickItemUse;
             @QuickItemUse.performed -= instance.OnQuickItemUse;
             @QuickItemUse.canceled -= instance.OnQuickItemUse;
+            @GetUp.started -= instance.OnGetUp;
+            @GetUp.performed -= instance.OnGetUp;
+            @GetUp.canceled -= instance.OnGetUp;
         }
 
         /// <summary>
@@ -4036,6 +4178,13 @@ public partial class @PlayerInputActions: IInputActionCollection2, IDisposable
         /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
         /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
         void OnQuickItemUse(InputAction.CallbackContext context);
+        /// <summary>
+        /// Method invoked when associated input action "GetUp" is either <see cref="UnityEngine.InputSystem.InputAction.started" />, <see cref="UnityEngine.InputSystem.InputAction.performed" /> or <see cref="UnityEngine.InputSystem.InputAction.canceled" />.
+        /// </summary>
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.started" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.performed" />
+        /// <seealso cref="UnityEngine.InputSystem.InputAction.canceled" />
+        void OnGetUp(InputAction.CallbackContext context);
     }
     /// <summary>
     /// Interface to implement callback methods for all input action callbacks associated with input actions defined by "UI_MainMenu" which allows adding and removing callbacks.

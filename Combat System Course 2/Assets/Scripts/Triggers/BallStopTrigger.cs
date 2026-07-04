@@ -6,7 +6,7 @@ public class BallStopTrigger : MonoBehaviour
     public AudioSource audioSource;
     public AudioClip hitSound;
 
-    public PlayerFighterNew player;
+    public PlayerFighter player;
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<Rigidbody>() != ballRb) return;

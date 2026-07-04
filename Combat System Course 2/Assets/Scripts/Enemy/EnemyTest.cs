@@ -23,7 +23,7 @@ public class EnemyTest : MonoBehaviour
         if (other.CompareTag("Hitbox"))
         {
             // 获取攻击者的战斗系统组件
-            var attacker = other.GetComponentInParent<PlayerFighterNew>();
+            var attacker = other.GetComponentInParent<PlayerFighter>();
             
             if (attacker != null)
             {   

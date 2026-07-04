@@ -14,8 +14,8 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     private float decisionCooldown;
     private Vector3 lastKnownPlayerPosition;
 
-    [SerializeField] private AudioClip hitSound;         // 命中音效
-    [SerializeField] private GameObject hitFxPrefab;     // 飙血特效预制体
+    [SerializeField] protected AudioClip hitSound;         // 命中音效
+    [SerializeField] protected GameObject hitFxPrefab;     // 飙血特效预制体
     [SerializeField] private float knockbackDistance = 3f; // 特殊击退距离
 
     [Header("Rebound")]
@@ -41,8 +41,12 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public bool InCounter { get; set; } = false;
     public bool IsCounterable => Attackstate == AttackStates.Windup && comboCount == 0;
 
-    // 特殊受击动画（由攻击方的 Animation Event 设置，空字符串 = 使用默认）
+    // 特殊受击动画（攻击时从 AttackData 设置，空字符串 = 使用默认）
     public string CurrentSpecialHitReaction { get; set; }
+
+    // 当前正在执行的 AttackData（伤害 + 受击动画均从此读取）
+    private AttackData currentAttackData;
+    public bool IsCurrentAttackKnockdown => currentAttackData != null && currentAttackData.IsKnockdown;
 
     // 攻击状态
     public AttackStates Attackstate { get; set; }
@@ -66,7 +70,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     /// <summary>Boss 用：动态替换攻击列表，运行时选择不同攻击</summary>
     public void OverrideAttacks(List<AttackData> newAttacks) { attacks = newAttacks; }
 
-    [SerializeField] private int attackAnimLayer = 0; // Boss 动画在 Action Layer(1)，普通敌人在 Base Layer(0)
+    [SerializeField] protected int attackAnimLayer = 0; // Boss 动画在 Action Layer(1)，普通敌人在 Base Layer(0)
 
     // 组件引用
     public Animator animator { get; private set; }
@@ -133,7 +137,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
     public float GetWeaponDamage()
     {
-        return enemyWeapon?.GetDamage() ?? unarmedDamage;
+        return currentAttackData?.Damage ?? enemyWeapon?.GetDamage() ?? unarmedDamage;
     }
 
     public virtual void TakeDamage(float damage, bool isCrit = false)
@@ -233,7 +237,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             enemyController.NavAgent.isStopped = false;
         }
     }
-    public IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null)
+    public IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null, bool isKnockdown = false)
     {
         InAction = true;
         IsTakingHit = true;
@@ -362,22 +366,28 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
             if (selfAnimator != null)
                 HitDelay.Instance.Stop(0.04f, selfAnimator);
-             AudioSource.PlayClipAtPoint(hitSound, transform.position, 0.8f);
-            // 受击动画：读取攻击方的特殊动画名（Animation Event 设置），播放后清除
             string specialReaction = attacker.CurrentSpecialHitReaction;
             attacker.CurrentSpecialHitReaction = null;
-            if (!HealthSystem.IsDead)
-            {
-                StartCoroutine(PlayHitReaction(attacker, specialReaction));
-            }
-            else
-            {
-                PlayDeathAnimation(attacker);
-            }
+            OnHitReaction(attacker, specialReaction);
         }
     }
 
 
+
+    /// <summary>受击反应：默认播放 hitSound + 受击动画。Boss 子类重写跳过。</summary>
+    protected virtual void OnHitReaction(ICombatSystem attacker, string specialReaction)
+    {
+        AudioSource.PlayClipAtPoint(hitSound, transform.position, 0.8f);
+
+        if (!HealthSystem.IsDead)
+        {
+            StartCoroutine(PlayHitReaction(attacker, specialReaction));
+        }
+        else
+        {
+            PlayDeathAnimation(attacker);
+        }
+    }
 
     // 敌人专属状态管理
     public void UpdateEnemyAttackState(float normalizedTime, AttackData attack)
@@ -661,13 +671,14 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCount = 0)
     {
         Debug.Log($"[EnemyAttack] 开始执行敌人攻击，目标: {(target != null ? target.gameObject.name : "null")}");
-        float damage = GetWeaponDamage();
         InAction = true;
         currTarget = target;
         Debug.Log($"[EnemyAttack] 敌人攻击目标设置为: {currTarget?.gameObject?.name}");
         Attackstate = AttackStates.Windup;
 
         var attack = attacks[comboCount];
+        currentAttackData = attack;
+        CurrentSpecialHitReaction = attack.SpecialHitReaction;
 
         var attackDir = transform.forward;
         Vector3 startPos = transform.position;
@@ -760,6 +771,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             Attackstate = AttackStates.Idle;
             comboCount = 0;
             currTarget = null;
+            currentAttackData = null;
         }
         if (!IsTakingHit && !IsRebounding)
         {
@@ -789,32 +801,10 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
       
     }
 
-    #region ICombatSystem接口方法实现
-
-
-    public bool CanAttack() => EnemyCanAttack();//能否进行攻击
-    public void TryToAttack(ICombatSystem target = null) => EnemyTryToAttack(target);//尝试攻击
-    
-    public bool HasUsableWeapon() => EnemyHasUsableWeapon();//检查是否有武器
-    public AttackData SelectAttack(ICombatSystem target, int comboCount)
-        => SelectEnemyAttack(target, Attacks,  LongRangeAttacks, comboCount);//选择攻击数据
-    public Vector3 CalculateAttackDirection(ICombatSystem target) => CalculateEnemyAttackDirection(target);//计算攻击时的朝向
-    public Vector3 CalculateAttackPosition(ICombatSystem target, AttackData attack, Vector3 attackDir, Vector3 startPos)
-        => CalculateEnemyAttackPosition(target, attack, attackDir, startPos);//计算攻击时移动到的位置
-    public void UpdateAttackState(float normalizedTime, AttackData attack) => UpdateEnemyAttackState(normalizedTime, attack);//更新攻击数据
-    public void ResetAttackState() => ResetEnemyAttackState();//重置攻击数据
-    public void EnableHitbox(AttackData attack) => EnableEnemyHitbox(attack);//启用碰撞体
-    public void DisableHitboxes() => DisableEnemyHitboxes();//禁用碰撞体
-    public void PrepareAttack(ICombatSystem target) => PrepareEnemyAttack(target);//攻击
-    public void FinishAttack() => FinishEnemyAttack();//攻击完成
-    public bool CheckComboCondition() => CheckEnemyComboCondition();//查看连招状态
-
-    public IEnumerator ExecuteAttack(ICombatSystem target, int comboCount)
-    {
-        yield return ExecuteEnemyAttack(target, comboCount);
-    }
+    // 供 Enemy/Boss 状态机直接调用的公开方法（已从 ICombatSystem 移除）
+    public void TryToAttack(ICombatSystem target = null) => EnemyTryToAttack(target);
+    public void DisableHitboxes() => DisableEnemyHitboxes();
 
     Transform ICombatSystem.transform => this.transform;
     GameObject ICombatSystem.gameObject => this.gameObject;
-    #endregion
 }

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b9756b45a8a5ab4283ebb16c88ebacc, type: 3}
   m_Name: MeleeAttack03
   m_EditorClassIdentifier: 
-  <AttackName>k__BackingField: MeleeAttack01
+  <AttackName>k__BackingField: MeleeAttack03
   <HitboxToUse>k__BackingField: 5
   <ImpactStartTime>k__BackingField: 0.47
   <ImpactEndTime>k__BackingField: 0.52
@@ -21,4 +21,7 @@ MonoBehaviour:
   <MaxMoveDistance>k__BackingField: 3
   <MoveStartTime>k__BackingField: 0
   <MoveEndTime>k__BackingField: 1
+  <Damage>k__BackingField: 10
+  <SpecialHitReaction>k__BackingField: DownUp
+  <IsKnockdown>k__BackingField: 1
   <IsSpinAttack>k__BackingField: 0

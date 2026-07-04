@@ -98,13 +98,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a04358b9424952b49bc504e859c49351, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: f8dafbee3d8e2164f9a2e3478b223d77, type: 2}
-  drawWeaponTriggerName: drawGreatSword
-  sheathWeaponTriggerName: sheathGreatSword
-  combatBlendTreeName: Combat Blend Tree_GreatSword
-  sheathLocation: 1
-  handSocket: 1
-  isHeavy: 1
+  itemSO: {fileID: 11400000, guid: 230c5c143bf61ff43b53f2c4d13c7218, type: 2}
   damage: 100
 --- !u!65 &2183817630157772175
 BoxCollider:
