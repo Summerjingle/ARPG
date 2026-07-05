@@ -12,6 +12,7 @@ public class BossAttackState : State<BossController>
         if (owner.agent != null && owner.agent.isOnNavMesh)
             owner.agent.isStopped = true;
 
+        owner.anim?.SetFloat("Speed", 0);
         owner.fighter.InCounter = false;
         isAttacking = false;
     }

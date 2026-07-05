@@ -5,6 +5,7 @@ public class HitDelay : MonoBehaviour
 {
     public static HitDelay Instance;
     private bool isHitStopping = false;
+    [SerializeField] private AudioSource audioSource; // 拖入玩家的AudioSource
 
     private void Awake()
     {
@@ -28,5 +29,13 @@ public class HitDelay : MonoBehaviour
 
         animator.speed = originalSpeed;
         isHitStopping = false;
+    }
+    // 供动画事件调用的播放音效方法
+    public void PlaySwingSound(AudioClip clip)
+    {
+        if (audioSource != null && clip != null)
+        {
+            audioSource.PlayOneShot(clip);
+        }
     }
 }

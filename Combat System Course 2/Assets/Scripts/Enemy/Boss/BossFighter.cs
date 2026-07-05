@@ -11,14 +11,9 @@ public class BossFighter : EnemyFighter
         attackAnimLayer = 1; // Boss 攻击动画在 Action Layer
     }
 
-    /// <summary>Boss 不需要 PlayHitReaction（状态机自己管动画），但保留音效和特效。</summary>
+    /// <summary>Boss 不需要 PlayHitReaction（状态机自己管动画）。音效和血液特效已在基类 OnTriggerEnter 中处理。</summary>
     protected override void OnHitReaction(ICombatSystem attacker, string specialReaction)
     {
-        // 音效 + 特效照常
-        AudioSource.PlayClipAtPoint(hitSound, transform.position, 0.8f);
-        if (hitFxPrefab != null)
-            Instantiate(hitFxPrefab, transform.position, Quaternion.identity);
-
         if (HealthSystem.IsDead)
             PlayDeathAnimation(attacker);
         // Boss 不播受击动画，Stunned/Die 由 BossController 状态机管理

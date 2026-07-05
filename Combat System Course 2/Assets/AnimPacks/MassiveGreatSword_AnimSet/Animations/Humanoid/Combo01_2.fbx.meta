@@ -97,6 +97,14 @@ ModelImporter:
         floatParameter: 0
         intParameter: 0
         messageOptions: 0
+      - time: 0.32534245
+        functionName: PlaySwingSound
+        data: 
+        objectReferenceParameter: {fileID: 8300000, guid: 800dca0c1a0be7b4687adf1317069209,
+          type: 3}
+        floatParameter: 0
+        intParameter: 0
+        messageOptions: 0
       transformMask: []
       maskType: 3
       maskSource: {instanceID: 0}

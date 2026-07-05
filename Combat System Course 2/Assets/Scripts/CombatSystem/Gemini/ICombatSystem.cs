@@ -11,6 +11,7 @@ public interface ICombatSystem
 
     // 战斗状态
     bool InAction { get; set; }
+    bool IsInPassiveAction { get; }
     bool IsTakingHit { get; }
     bool InCounter { get; set; }
 

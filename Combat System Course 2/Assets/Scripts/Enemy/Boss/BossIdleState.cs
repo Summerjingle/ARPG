@@ -7,6 +7,7 @@ public class BossIdleState : State<BossController>
     public override void Enter(BossController owner)
     {
         base.Enter(owner);
+        owner.anim?.SetFloat("Speed", 0);
         if (owner.agent != null && owner.agent.isOnNavMesh)
             owner.agent.isStopped = true;
     }

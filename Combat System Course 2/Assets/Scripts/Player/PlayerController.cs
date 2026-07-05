@@ -165,7 +165,7 @@ public class PlayerController : MonoBehaviour
         animator.SetBool("CrouchMoving", isCrouching && moveInput.magnitude > 0.1f);
 
         // ─────────────── 攀爬与翻滚输入 ───────────────
-        if (inputActions.Player.Roll.WasPressedThisFrame() && !isDrinking && !UIStateManager.IsAnyUIActive && isGrounded && !isRolling)
+        if (!combatSystem.InAction &&inputActions.Player.Roll.WasPressedThisFrame() && !isDrinking && !UIStateManager.IsAnyUIActive && isGrounded && !isRolling)
         {
             if (parkourController != null && parkourController.TryClimb()) return;
             StartRoll();
@@ -438,7 +438,7 @@ public class PlayerController : MonoBehaviour
                 targetRotation = Quaternion.LookRotation(moveDir);
             }
         }
-        if (!LockRotation)
+        if (!LockRotation&&!combatSystem.IsInPassiveAction)
         {
             float activeRotSpeed = combatSystem.InAction ? rotationSpeed * 0.5f : rotationSpeed;
             transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, activeRotSpeed * Time.deltaTime);
@@ -592,6 +592,38 @@ public class PlayerController : MonoBehaviour
 
         StartCoroutine(WaitForRollEnd(animName));
     }
+
+    public void ForceStopRoll()
+    {
+        if (!isRolling) return;
+        
+        Debug.Log("[ROLL] ForceStopRoll called");
+        
+        // 1. 重置翻滚状态
+        isRolling = false;
+        rollEndTriggered = true;
+        
+        // 2. 恢复移动
+        if (!UIStateManager.IsAnyUIActive) 
+            isMovementEnabled = true;
+        
+        // 3. 重置动画速度（防止 animator.speed 被冻结）
+        animator.speed = 1f;
+        animator.SetFloat("AttackSpeed", 1f);
+        
+        // 4. 停止可能还在运行的协程
+        if (fadeRollCoroutine != null)
+        {
+            StopCoroutine(fadeRollCoroutine);
+            fadeRollCoroutine = null;
+        }
+        
+        // 5. 立即切换到待机动画（可选，取决于受击动画会覆盖）
+        // animator.Play("Idle", 0, 0);
+        
+        // 6. 如果当前在 ActionLayer，交给受击动画处理
+        // 不需要额外操作，因为 PlayHitReaction 会 CrossFade
+    }
     public void ForceRotateTowards(Vector3 direction, float strength)
     {
         if (direction.sqrMagnitude < 0.001f) return;
@@ -622,7 +654,7 @@ public class PlayerController : MonoBehaviour
         if (!UIStateManager.IsAnyUIActive) isMovementEnabled = true;
     }
 
-    /// <summary>翻滚结束：Animation Event 调用，或受击/死亡中断时由 PlayerFighter 调用</summary>
+   
     public void OnRollEnd()
     {
         Debug.Log($"[ROLL] OnRollEnd called frame={Time.frameCount} stackTrace: {new System.Diagnostics.StackTrace(1, false)}");
@@ -746,5 +778,6 @@ public class PlayerController : MonoBehaviour
     }
    
     public float RotationSpeed => rotationSpeed;
+    public bool IsRolling => isRolling;
 
 }

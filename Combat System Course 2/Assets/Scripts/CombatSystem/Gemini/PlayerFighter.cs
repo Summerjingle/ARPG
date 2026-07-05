@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -12,11 +13,36 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     public HealthSystem HealthSystem { get; private set; }
     private HashSet<int> hitTargets = new HashSet<int>();
     
-    // 状态标志 (PlayerAttack 会修改 InAction)
-    public bool InAction { get; set; } = false;
+    // 受击特效
+    [SerializeField] private AudioClip hitSound;
+    [SerializeField] private GameObject[] bloodSplashPrefabs;
+    [SerializeField] private GameObject[] bloodDecalPrefabs;
+
+    // 状态标志
+    private bool _inAction = false;
+    private string lockOwner = null;
+    
+    public bool InAction 
+    { 
+        get => _inAction;
+        set 
+        {
+            if (lockOwner != null && value == false)
+            {
+                Debug.Log($"[InAction] 被 {lockOwner} 锁定，无法设为 false");
+                return;
+            }
+            _inAction = value;
+        }
+    }
+    public bool IsKnockedDown { get; private set; } = false;
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
-
+    //被动InAction
+    public bool IsInPassiveAction
+    {
+        get => IsTakingHit || IsKnockedDown || IsRebounding;  
+    }
     // 反弹状态
     [Header("Rebound")]
     [SerializeField] [Range(0f, 0.5f)] private float reboundFreezeDuration = 0.02f;
@@ -51,7 +77,19 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
 
     void OnEnable()
     {
-        InputManager.Instance.OnBlock+=DoBlock;
+        InputManager.Instance.OnBlock += DoBlock;
+        InputManager.Instance.Actions.Player.GetUp.performed += OnGetUpPerformed;
+    }
+
+    void OnDisable()
+    {
+        InputManager.Instance.OnBlock -= DoBlock;
+        InputManager.Instance.Actions.Player.GetUp.performed -= OnGetUpPerformed;
+    }
+
+    private void OnGetUpPerformed(InputAction.CallbackContext ctx)
+    {
+        _getUpPressed = true;
     }
     private void Awake()
     {
@@ -130,55 +168,89 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         return playerProperty?.armorValue ?? 0;
     }
 
+    private static int _hitReactionSeq = 0; // debug: 协程序号
+    private bool _getUpPressed = false; // 提前记录起身按键，防止协程走到检测点前按键已被消耗
+
     public IEnumerator PlayHitReaction(ICombatSystem attacker, string specialHitReaction = null, bool isKnockdown = false)
     {
+        int seq = ++_hitReactionSeq;
+        Debug.Log($"[HR#{seq}] 协程启动, isKnockdown={isKnockdown}, 当前 IsKnockedDown={IsKnockedDown}, IsTakingHit={IsTakingHit}, InAction={InAction}, lockOwner={lockOwner}");
+
+        LockInAction("HitReaction");  //上锁
         InAction = true;
         IsTakingHit = true;
+        Debug.Log($"[HR#{seq}] 状态置位: InAction=true, IsTakingHit=true, lockOwner={lockOwner}");
+
+        if (PlayerController.i.IsRolling)
+        {
+            PlayerController.i.ForceStopRoll();
+        }
 
         string hitAnim = string.IsNullOrEmpty(specialHitReaction) ? "hit_light_B_body" : specialHitReaction;
         animator.CrossFade(hitAnim, 0.2f, ActionLayerIndex);
+        Debug.Log($"[HR#{seq}] CrossFade -> {hitAnim}");
 
-        if (isKnockdown)
+        if (isKnockdown)//受击倒地
         {
+            IsKnockedDown = true;
             if (PlayerController.i != null)
                 PlayerController.i.LockRotation = true;
+            Debug.Log($"[HR#{seq}] 进入击倒分支, IsKnockedDown=true, LockRotation=true");
 
             // 等待进入 Loop_DownUp（OnKnockdownLoopEnter 将 IsTakingHit 设为 false）
+            Debug.Log($"[HR#{seq}] 等待 OnKnockdownLoopEnter (IsTakingHit -> false)...");
             yield return new WaitUntil(() => !IsTakingHit);
+            Debug.Log($"[HR#{seq}] WaitUntil(① !IsTakingHit) 通过, 当前 ActionLayer state={animator.GetCurrentAnimatorStateInfo(ActionLayerIndex).shortNameHash}");
 
-            // 等待玩家按下起身键
+            // 等待玩家按下起身键（先检查是否在动画过渡期间已按下）
             var getUpAction = InputManager.Instance.Actions.Player.GetUp;
-            yield return new WaitUntil(() => getUpAction.WasPressedThisFrame());
+            Debug.Log($"[HR#{seq}] 等待 GetUp 按键... (_getUpPressed={_getUpPressed})");
+            yield return new WaitUntil(() =>
+            {
+                if (_getUpPressed) return true;
+                return getUpAction.WasPressedThisFrame();
+            });
+            _getUpPressed = false; // 消费标记
+            Debug.Log($"[HR#{seq}] WaitUntil(② GetUp按键) 通过, 设置 GetUp trigger");
 
             animator.SetTrigger("GetUp");
 
             // 等待起身动画完成（OnGetUpComplete 设置 IsTakingHit = false，并清理 InAction / LockRotation）
+            Debug.Log($"[HR#{seq}] 等待 OnGetUpComplete (IsTakingHit -> false)...");
             yield return new WaitUntil(() => !IsTakingHit);
+            Debug.Log($"[HR#{seq}] WaitUntil(③ !IsTakingHit) 通过, 协程结束");
         }
-        else
+        else//受击不倒地
         {
+            Debug.Log($"[HR#{seq}] 进入不倒地分支");
             yield return null;
             var animstate = animator.GetNextAnimatorStateInfo(ActionLayerIndex);
             yield return new WaitForSeconds(animstate.length * 0.8f);
 
+            Debug.Log($"[HR#{seq}] 不倒地分支结束: 调用 OnHitComplete, UnlockInAction, InAction=false, IsTakingHit=false");
             OnHitComplete?.Invoke();
+            UnlockInAction("HitReaction");
             InAction = false;
             IsTakingHit = false;
         }
+
     }
 
     /// <summary>进入击倒 Loop 阶段，由 Loop_DownUp 动画首帧 Animation Event 调用</summary>
     public void OnKnockdownLoopEnter()
     {
+        Debug.Log($"[OnKnockdownLoopEnter] 触发! IsTakingHit=false, 当前 ActionLayer state={animator.GetCurrentAnimatorStateInfo(ActionLayerIndex).shortNameHash}");
         IsTakingHit = false;
     }
 
     /// <summary>起身完成，由 Exit_GetUp 动画末帧 Animation Event 调用</summary>
     public void OnGetUpComplete()
     {
+        Debug.Log($"[OnGetUpComplete] 触发! 清理状态: IsTakingHit=false, InAction=false, IsKnockedDown=false, LockRotation=false");
+        UnlockInAction("HitReaction");
         IsTakingHit = false;
         InAction = false;
-
+        IsKnockedDown = false;
         if (PlayerController.i != null)
             PlayerController.i.LockRotation = false;
 
@@ -313,6 +385,12 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             // 通知攻击方：成功造成伤害
             attacker.NotifyDamageDealt(this.gameObject);
 
+            // 命中音效 + 血液特效
+            Vector3 hitPoint = other.ClosestPoint(transform.position);
+            if (hitSound != null)
+                AudioSource.PlayClipAtPoint(hitSound, hitPoint, 0.8f);
+            BloodEffectManager.SpawnBlood(hitPoint, bloodSplashPrefabs, bloodDecalPrefabs);
+
             if (!HealthSystem.IsDead)
             {
                 string specialReaction = attacker.CurrentSpecialHitReaction;
@@ -323,6 +401,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
                     specialReaction = specialReaction + "_" + suffix;
                 }
                 bool isKnockdown = (attacker as EnemyFighter)?.IsCurrentAttackKnockdown ?? false;
+                Debug.Log($"[OnTriggerEnter] 启动 PlayHitReaction, isKnockdown={isKnockdown}, 当前状态 IsKnockedDown={IsKnockedDown}, IsTakingHit={IsTakingHit}, InAction={InAction}");
                 StartCoroutine(PlayHitReaction(attacker, specialReaction, isKnockdown));
             }
             else
@@ -449,17 +528,44 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         blockObject.SetActive(false);
     }
 
-    public void DisableMove()//禁止移动
+    // 递归锁方法
+   public bool LockInAction(string owner)
     {
-        PlayerController.i.isMovementEnabled=false;
-        InAction=true;
+        // 同一个 owner，直接返回 true（不重复上锁）
+        if (lockOwner == owner)
+        {
+            Debug.Log($"[InAction] {owner} 已持有锁，重复调用忽略");
+            return true;
+        }
+        
+        // 已被其他 owner 锁定
+        if (lockOwner != null)
+        {
+            Debug.Log($"[InAction] 已被 {lockOwner} 锁定，{owner} 无法获取锁");
+            return false;
+        }
+        
+        // 首次获取
+        lockOwner = owner;
+        Debug.Log($"[InAction] {owner} 获取锁");
+        return true;
     }
-
-      public void EnableMove()//允许移动
+    
+    public bool UnlockInAction(string owner)
     {
-        PlayerController.i.isMovementEnabled=true;
-        InAction=false;
+        if (lockOwner != owner)
+        {
+            Debug.LogWarning($"[InAction] {owner} 不是锁的拥有者 ({lockOwner})");
+            return false;
+        }
+        
+        lockOwner = null;
+        Debug.Log($"[InAction] {owner} 释放锁");
+        return true;
     }
+    
+    public bool IsActionLocked => lockOwner != null;
+    public string LockOwner => lockOwner;
 
     Transform ICombatSystem.transform => this.transform;
     GameObject ICombatSystem.gameObject => this.gameObject;

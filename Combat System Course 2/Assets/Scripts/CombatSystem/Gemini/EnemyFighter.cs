@@ -15,7 +15,9 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     private Vector3 lastKnownPlayerPosition;
 
     [SerializeField] protected AudioClip hitSound;         // 命中音效
-    [SerializeField] protected GameObject hitFxPrefab;     // 飙血特效预制体
+    [SerializeField] protected GameObject hitFxPrefab;     // 飙血特效预制体（旧，保留兼容）
+    [SerializeField] protected GameObject[] bloodSplashPrefabs;  // BloodEffectsPack Splash
+    [SerializeField] protected GameObject[] bloodDecalPrefabs;   // BloodEffectsPack DecalProjector
     [SerializeField] private float knockbackDistance = 3f; // 特殊击退距离
 
     [Header("Rebound")]
@@ -35,6 +37,10 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     // 战斗状态
     public GameObject blockObject;
     public bool InAction { get; set; } = false;
+    public bool IsInPassiveAction
+    {
+        get => IsTakingHit || IsRebounding;  
+    }
     public float CritRate => 0f;  // 敌人暴击率=0（静态，玩家可背板）
     public float CritDamage=>1;// 敌人暴击效果=x1 相当于无暴击效果，纯实现一个接口
     public bool IsTakingHit { get; private set; } = false;
@@ -366,6 +372,13 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
             if (selfAnimator != null)
                 HitDelay.Instance.Stop(0.04f, selfAnimator);
+
+            // 命中音效 + 血液特效（在 OnHitReaction 之前，Boss 也能享受）
+            Vector3 hitPoint = other.ClosestPoint(transform.position);
+            if (hitSound != null)
+                AudioSource.PlayClipAtPoint(hitSound, hitPoint, 0.8f);
+            BloodEffectManager.SpawnBlood(hitPoint, bloodSplashPrefabs, bloodDecalPrefabs);
+
             string specialReaction = attacker.CurrentSpecialHitReaction;
             attacker.CurrentSpecialHitReaction = null;
             OnHitReaction(attacker, specialReaction);
@@ -374,11 +387,9 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
 
 
 
-    /// <summary>受击反应：默认播放 hitSound + 受击动画。Boss 子类重写跳过。</summary>
+    /// <summary>受击反应：默认播放受击动画。Boss 子类重写跳过。</summary>
     protected virtual void OnHitReaction(ICombatSystem attacker, string specialReaction)
     {
-        AudioSource.PlayClipAtPoint(hitSound, transform.position, 0.8f);
-
         if (!HealthSystem.IsDead)
         {
             StartCoroutine(PlayHitReaction(attacker, specialReaction));
@@ -568,6 +579,15 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     // ==========================================
     // 反弹系统 (由 Weapon.OnTriggerEnter 调用)
     // ==========================================
+
+    /// <summary>只播反弹 VFX + 音效，不倒放动画（Boss 用）</summary>
+    public void PlayReboundVfx(Vector3 hitPoint)
+    {
+        if (reboundVfxPrefab != null)
+            Instantiate(reboundVfxPrefab, hitPoint, Quaternion.identity);
+        if (reboundSfx != null)
+            AudioSource.PlayClipAtPoint(reboundSfx, hitPoint);
+    }
 
     public void OnWeaponRebound(Vector3 hitPoint)
     {

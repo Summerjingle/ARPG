@@ -65,7 +65,7 @@ public class PlayerAttack : MonoBehaviour
 
         // 反弹期间禁止输入新攻击（canCombo 可能在正放阶段已变为 true）
         var fighter = PlayerController.i?.combatSystem as PlayerFighter;
-        if (fighter != null && fighter.IsRebounding) return;
+        if (fighter != null && fighter.IsInPassiveAction) return;
 
         if(weaponEquipmentManager.GetCurrentWeapon()!=null&& weaponEquipmentManager.isWeaponDrawn)
         {
