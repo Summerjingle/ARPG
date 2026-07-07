@@ -700,6 +700,10 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         currentAttackData = attack;
         CurrentSpecialHitReaction = attack.SpecialHitReaction;
 
+        bool vfxSpawned = false;
+        bool shakeTriggered = false;
+        bool sfxPlayed = false;
+
         var attackDir = transform.forward;
         Vector3 startPos = transform.position;
         Vector3 targetPos = Vector3.zero;
@@ -778,10 +782,39 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
                 {
                     docombo = false;
                     int newComboCount = (comboCount + 1) % attacks.Count;  // 计算新的连击数
-                    StartCoroutine(ExecuteEnemyAttack(target, newComboCount));  // 
+                    StartCoroutine(ExecuteEnemyAttack(target, newComboCount));  //
                     yield break;
                 }
             }
+
+            // —— 摄像机震动 ——
+            if (!shakeTriggered && attack.EnableCameraShake && normalizedTime >= attack.CameraShakeTime)
+            {
+                shakeTriggered = true;
+                var camCtrl = FindObjectOfType<PlayerCameraController>();
+                if (camCtrl != null)
+                {
+                    camCtrl.ShakeCamera(attack.CameraShakeIntensity, attack.CameraShakeDuration, attack.CameraShakeFrequency);
+                }
+            }
+
+            // —— 攻击音效 ——
+            if (!sfxPlayed && attack.AttackSFX != null && normalizedTime >= attack.SFXSpawnTime)
+            {
+                sfxPlayed = true;
+                AudioSource.PlayClipAtPoint(attack.AttackSFX, transform.position);
+            }
+
+            // —— 攻击特效生成 ——
+            if (!vfxSpawned && attack.AttackVFXPrefab != null && normalizedTime >= attack.VFXSpawnTime)
+            {
+                vfxSpawned = true;
+                Vector3 spawnPos = transform.position + attack.VFXSpawnOffset;
+                GameObject vfx = Instantiate(attack.AttackVFXPrefab, spawnPos, Quaternion.identity);
+                if (attack.VFXFollowAttacker)
+                    vfx.transform.SetParent(transform);
+            }
+
             yield return null;
         }
         //�ȴ��������

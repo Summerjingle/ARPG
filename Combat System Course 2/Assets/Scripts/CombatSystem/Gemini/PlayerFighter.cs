@@ -6,9 +6,11 @@ using UnityEngine.InputSystem;
 
 public class PlayerFighter : MonoBehaviour, ICombatSystem
 {
-    private WeaponEquipmentManager weaponManager;
+    public WeaponEquipmentManager weaponManager;
     private PlayerProperty playerProperty;
-    private int ActionLayerIndex;
+    private int actionLayerIndex;
+    private int hitLayerIndex;
+    
     // 核心战斗系统属性
     public HealthSystem HealthSystem { get; private set; }
     private HashSet<int> hitTargets = new HashSet<int>();
@@ -61,6 +63,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     public GameObject blockObject;
     public float CritRate => playerProperty?.TotalCritRate ?? 0f;
     public float CritDamage=>playerProperty?.TotalCritDamage??1.5f;
+    public bool IsCurrentAttackKnockdown => false;
     // 碰撞体引用
     public Animator animator { get; private set; }
     public BoxCollider WeaponCollider { get; private set; }
@@ -100,7 +103,8 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             HealthSystem = gameObject.AddComponent<HealthSystem>();
         animator = GetComponent<Animator>();
         InitializeBodyColliders();
-        ActionLayerIndex = animator.GetLayerIndex("ActionLayer");
+        actionLayerIndex = animator.GetLayerIndex("ActionLayer");
+        hitLayerIndex = animator.GetLayerIndex("HitLayer");
     }
 
     private void InitializeBodyColliders()
@@ -187,8 +191,9 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         }
 
         string hitAnim = string.IsNullOrEmpty(specialHitReaction) ? "hit_light_B_body" : specialHitReaction;
-        animator.CrossFade(hitAnim, 0.2f, ActionLayerIndex);
-        Debug.Log($"[HR#{seq}] CrossFade -> {hitAnim}");
+        int targetLayer = isKnockdown ? actionLayerIndex : hitLayerIndex;
+        animator.CrossFade(hitAnim, 0.2f, targetLayer);
+        Debug.Log($"[HR#{seq}] CrossFade -> {hitAnim}, layer={targetLayer}");
 
         if (isKnockdown)//受击倒地
         {
@@ -200,7 +205,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             // 等待进入 Loop_DownUp（OnKnockdownLoopEnter 将 IsTakingHit 设为 false）
             Debug.Log($"[HR#{seq}] 等待 OnKnockdownLoopEnter (IsTakingHit -> false)...");
             yield return new WaitUntil(() => !IsTakingHit);
-            Debug.Log($"[HR#{seq}] WaitUntil(① !IsTakingHit) 通过, 当前 ActionLayer state={animator.GetCurrentAnimatorStateInfo(ActionLayerIndex).shortNameHash}");
+            Debug.Log($"[HR#{seq}] WaitUntil(① !IsTakingHit) 通过, 当前 ActionLayer state={animator.GetCurrentAnimatorStateInfo(actionLayerIndex).shortNameHash}");
 
             // 等待玩家按下起身键（先检查是否在动画过渡期间已按下）
             var getUpAction = InputManager.Instance.Actions.Player.GetUp;
@@ -224,7 +229,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
         {
             Debug.Log($"[HR#{seq}] 进入不倒地分支");
             yield return null;
-            var animstate = animator.GetNextAnimatorStateInfo(ActionLayerIndex);
+            var animstate = animator.GetNextAnimatorStateInfo(targetLayer);
             yield return new WaitForSeconds(animstate.length * 0.8f);
 
             Debug.Log($"[HR#{seq}] 不倒地分支结束: 调用 OnHitComplete, UnlockInAction, InAction=false, IsTakingHit=false");
@@ -239,7 +244,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     /// <summary>进入击倒 Loop 阶段，由 Loop_DownUp 动画首帧 Animation Event 调用</summary>
     public void OnKnockdownLoopEnter()
     {
-        Debug.Log($"[OnKnockdownLoopEnter] 触发! IsTakingHit=false, 当前 ActionLayer state={animator.GetCurrentAnimatorStateInfo(ActionLayerIndex).shortNameHash}");
+        Debug.Log($"[OnKnockdownLoopEnter] 触发! IsTakingHit=false, 当前 ActionLayer state={animator.GetCurrentAnimatorStateInfo(actionLayerIndex).shortNameHash}");
         IsTakingHit = false;
     }
 
@@ -400,7 +405,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
                     string suffix = weaponManager?.GetCurrentWeapon()?.WeaponTypeSuffix ?? "Sword";
                     specialReaction = specialReaction + "_" + suffix;
                 }
-                bool isKnockdown = (attacker as EnemyFighter)?.IsCurrentAttackKnockdown ?? false;
+                bool isKnockdown = attacker.IsCurrentAttackKnockdown;
                 Debug.Log($"[OnTriggerEnter] 启动 PlayHitReaction, isKnockdown={isKnockdown}, 当前状态 IsKnockedDown={IsKnockedDown}, IsTakingHit={IsTakingHit}, InAction={InAction}");
                 StartCoroutine(PlayHitReaction(attacker, specialReaction, isKnockdown));
             }
@@ -566,6 +571,8 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
     
     public bool IsActionLocked => lockOwner != null;
     public string LockOwner => lockOwner;
+    
+    public int ActionLayerIndex => actionLayerIndex;
 
     Transform ICombatSystem.transform => this.transform;
     GameObject ICombatSystem.gameObject => this.gameObject;

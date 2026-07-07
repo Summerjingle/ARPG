@@ -743,3 +743,83 @@ M Assets/Scripts/Enemy/Boss/BossAttackState.cs  — DoAttack while循环 FacePla
 
 ### 待办
 - [ ] BossFighter — EnemyFighter 耦合了 EnemyController，应该给 Boss 单独写一个干净的
+
+---
+
+## 2026-07-07 攻击模块扩展 + Boulder 弹射物 Hitbox 化
+
+### AttackData 三模块扩展
+
+**AttackData.cs** 新增三个可配置攻击模块，均在 `ExecuteEnemyAttack` 协程中独立计时触发：
+
+| 模块 | 字段 | 触发方式 |
+|---|---|---|
+| 摄像机震动 | `EnableCameraShake`, `Intensity`, `Duration`, `Frequency`, `CameraShakeTime` | `PlayerCameraController.ShakeCamera()` — Perlin Noise 偏移 CCT |
+| 攻击特效 | `AttackVFXPrefab`, `VFXSpawnTime`, `VFXFollowAttacker`, `VFXSpawnOffset` | `Instantiate` + 可选 `SetParent` 跟随 |
+| 攻击音效 | `AttackSFX`, `SFXSpawnTime` | `AudioSource.PlayClipAtPoint` 在攻击者位置 |
+
+**PlayerCameraController.cs** 新增：
+- `shakeOffset` + `shakeCoroutine` 字段
+- `ShakeCamera(intensity, duration, frequency)` 公开方法
+- `DoShake()` 协程：Perlin noise 驱动，线性衰减，X/Y 轴偏移
+- `SyncCameraTargetPosition()` 中 `pos += shakeOffset` 叠加
+
+三个模块各有一个 `bool` 守卫 flag + `normalizedTime` 阈值检查，确保每刀只触发一次。
+
+### Boulder 弹射物 Hitbox 管线化
+
+**问题**：Boss 远程攻击扔出的巨石绕过 Hitbox 管线，直接调 `TakeDamage` + `PlayHitReaction`。无去重 → 碰到玩家多个 Collider 造成二次伤害。无格挡/暴击/顿帧/血液特效。
+
+**方案**：Boulder 实现 `ICombatSystem`，Collider 打 "Hitbox" tag，走玩家已有的 `PlayerFighter.OnTriggerEnter` 完整受击管线。
+
+**ICombatSystem.cs** — 新增接口成员：
+- `bool IsCurrentAttackKnockdown { get; }` — 攻击是否击倒类型
+
+**BoulderProjectile.cs** — 完全重写：
+- 实现完整 `ICombatSystem`（17 个成员）
+- 核心属性代理到 `ownerFighter`（CritRate/CritDamage/HealthSystem），自己的值覆盖（`GetWeaponDamage()=>damage`, `IsCurrentAttackKnockdown=>true`, `IsUsingHeavyWeapon()=>false`）
+- `RegisterHit()` — 独立 HashSet 去重，解决二次伤害根因
+- `Awake()` 中设 `col.tag = "Hitbox"`
+- `OnTriggerEnter` 只负责 `Destroy(gameObject)`，伤害全由目标方管线处理
+- 无用的接口成员空实现（`PlayHitReaction/PlayDeathAnimation/TakeDamage`）
+
+**BossRangedAttackState.cs** — `AnimEvent_ThrowBoulder`：
+- 通过 `owner.playerTarget.GetComponent<PlayerFighter>()` 拿到玩家 `ICombatSystem`
+- 赋给 `projectile.currTarget`，让玩家端 `attacker.currTarget == this` 校验通过
+
+**PlayerFighter.cs** — 简化击倒判断：
+- 新增 `IsCurrentAttackKnockdown => false`（接口要求）
+- `OnTriggerEnter` 击倒判断从 `(attacker as EnemyFighter)?.IsCurrentAttackKnockdown ?? false` → `attacker.IsCurrentAttackKnockdown`（接口多态，零转型）
+
+**EnemyFighter.cs** — 已有 `IsCurrentAttackKnockdown`，自动满足接口。
+
+### 修复过程
+- CS0535 编译错误：BoulderProjectile 缺失 7 个接口成员（`InAction.set`, `animator`, 3 个 event, `PlayHitReaction`, `PlayDeathAnimation`）→ 补齐
+- CS1733 语法错误：PlayerFighter line 180 `IsKnockedDown={ }` 缺变量 → 补回 `IsKnockedDown={IsKnockedDown}`
+- Boulder 没碰到玩家就 Destroy → `OnTriggerEnter` 条件从"碰任何东西销毁"改回"只碰非 owner 的 ICombatSystem 才销毁"
+
+### 新的 Boulder 受击链路
+```
+Boulder (Hitbox tag, ICombatSystem)
+  → PlayerFighter.OnTriggerEnter
+    → RegisterHit 去重 ✓
+    → 格挡检测 (IsUsingHeavyWeapon=false, 可格挡) ✓
+    → 暴击计算 ✓
+    → TakeDamage ✓
+    → 顿帧 + 命中音效 + 血液特效 ✓
+    → PlayHitReaction(attacker, "RockHit_Sword", isKnockdown=true) ✓
+```
+
+### 涉及文件
+```
+M Assets/Scripts/CombatSystem/AttackData.cs
+M Assets/Scripts/Player/PlayerCameraController.cs
+M Assets/Scripts/CombatSystem/Gemini/EnemyFighter.cs
+M Assets/Scripts/CombatSystem/Gemini/ICombatSystem.cs
+M Assets/Scripts/CombatSystem/Gemini/PlayerFighter.cs
+M Assets/Scripts/Enemy/Boss/BoulderProjectile.cs
+M Assets/Scripts/Enemy/Boss/BossRangedAttackState.cs
+```
+
+### 待办
+- [ ] Boulder Prefab 的 Collider Tag 手动设为 "Hitbox"（代码 Awake 已设，Prefab 设了更保险）

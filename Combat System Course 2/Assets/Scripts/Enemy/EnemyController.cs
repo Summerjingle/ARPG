@@ -35,6 +35,8 @@ public class EnemyController : MonoBehaviour
     public VisionSensor VisionSensor { get; set; }
 
     public CapsuleCollider capsuleCollider;
+    public Transform lockOnPoint;
+    public float lockOnMinFreezeDistance = 1.5f;
     private void Start()
     {
         NavAgent = GetComponent<NavMeshAgent>();

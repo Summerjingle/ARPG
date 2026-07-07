@@ -5,6 +5,10 @@ using UnityEngine;
 /// </summary>
 public class BossFighter : EnemyFighter
 {
+    [Header("Spine Mask Hit Reaction")]
+    [SerializeField] string hitReactionAnim = "hit_light_front";
+    [SerializeField] int spineMaskLayer = 2;
+
     protected override void Awake()
     {
         base.Awake();
@@ -16,6 +20,7 @@ public class BossFighter : EnemyFighter
     {
         if (HealthSystem.IsDead)
             PlayDeathAnimation(attacker);
-        // Boss 不播受击动画，Stunned/Die 由 BossController 状态机管理
+        else
+            animator.Play(hitReactionAnim, spineMaskLayer, 0f);
     }
 }

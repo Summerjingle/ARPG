@@ -30,6 +30,9 @@ public interface ICombatSystem
     // 重武器
     bool IsUsingHeavyWeapon();
 
+    // 当前攻击是否击倒
+    bool IsCurrentAttackKnockdown { get; }
+
     // 暴击
     float CritRate { get; }
     float CritDamage { get; }

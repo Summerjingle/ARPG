@@ -1,3 +1,4 @@
+using System.Collections;
 using Cinemachine;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -20,6 +21,10 @@ public class PlayerCameraController : MonoBehaviour
     [Tooltip("Lock camera in place (e.g., during lock-on)")]
     public bool lockCameraPosition = false;
 
+    [Header("Lock-on Pitch")]
+    [Tooltip("锁定敌人时的俯仰角（正值=俯视）")]
+    [SerializeField] float lockOnPitch = 10f;
+
     private float yaw;
     private float pitch;
 
@@ -29,6 +34,10 @@ public class PlayerCameraController : MonoBehaviour
     private bool isLockingOn = false;
     private float lockYawVelocity;
     private float lockPitchVelocity;
+
+    // 摄像机震动
+    private Vector3 shakeOffset;
+    private Coroutine shakeCoroutine;
 
     private void Start()
     {
@@ -96,7 +105,7 @@ public class PlayerCameraController : MonoBehaviour
 
         float targetYaw = Quaternion.LookRotation(dir).eulerAngles.y;
         yaw   = Mathf.SmoothDampAngle(yaw, targetYaw, ref lockYawVelocity, 0.12f);
-        pitch = Mathf.SmoothDamp(pitch, 10f, ref lockPitchVelocity, 0.12f);
+        pitch = Mathf.SmoothDamp(pitch, lockOnPitch, ref lockPitchVelocity, 0.12f);
 
         cinemachineCameraTarget.transform.rotation =
             Quaternion.Euler(pitch + cameraAngleOverride, yaw, 0f);
@@ -116,6 +125,13 @@ public class PlayerCameraController : MonoBehaviour
         }
         if (lockCamBody == null) return;
 
+        // 读取敌人身上的近身冻结距离
+        var ec = lockedTarget.GetComponentInParent<EnemyController>();
+        var bc = lockedTarget.GetComponentInParent<BossController>();
+        float minFreeze = lockOnMinCameraDistance;
+        if (ec != null) minFreeze = ec.lockOnMinFreezeDistance;
+        else if (bc != null) minFreeze = bc.lockOnMinFreezeDistance;
+
         Vector3 toEnemy = lockedTarget.position - transform.position;
         toEnemy.y = 0f;
         float dist = toEnemy.magnitude;
@@ -124,7 +140,7 @@ public class PlayerCameraController : MonoBehaviour
         if (dist < lockOnMinDistance)
         {
             float t = Mathf.Clamp01(dist / lockOnMinDistance);
-            desiredDistance = Mathf.Lerp(lockOnMinCameraDistance, lockOnDefaultCameraDistance, t);
+            desiredDistance = Mathf.Lerp(minFreeze, lockOnDefaultCameraDistance, t);
         }
         else
         {
@@ -235,6 +251,9 @@ public class PlayerCameraController : MonoBehaviour
         else
             pos.y = targetY;
 
+        // 叠加上摄像机震动偏移
+        pos += shakeOffset;
+
         cinemachineCameraTarget.transform.position = pos;
     }
 
@@ -253,4 +272,30 @@ public class PlayerCameraController : MonoBehaviour
     }
     public float Yaw => yaw;
     public float Pitch => pitch;
+
+    /// <summary>触发摄像机震动（由 AttackData 驱动）</summary>
+    public void ShakeCamera(float intensity, float duration, float frequency)
+    {
+        if (shakeCoroutine != null)
+            StopCoroutine(shakeCoroutine);
+        shakeCoroutine = StartCoroutine(DoShake(intensity, duration, frequency));
+    }
+
+    private IEnumerator DoShake(float intensity, float duration, float frequency)
+    {
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.deltaTime;
+            float decay = 1f - (elapsed / duration);
+            float currentIntensity = intensity * decay;
+
+            float x = (Mathf.PerlinNoise(Time.time * frequency, 0f) * 2f - 1f) * currentIntensity;
+            float y = (Mathf.PerlinNoise(0f, Time.time * frequency) * 2f - 1f) * currentIntensity;
+
+            shakeOffset = new Vector3(x, y, 0f);
+            yield return null;
+        }
+        shakeOffset = Vector3.zero;
+    }
 }

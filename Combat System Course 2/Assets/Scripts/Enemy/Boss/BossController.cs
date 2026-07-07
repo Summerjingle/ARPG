@@ -14,11 +14,14 @@ public class BossController : MonoBehaviour
     public BossIdleState idleState;
     public BossChaseState chaseState;
     public BossAttackState attackState;
+    public BossRangedAttackState rangedAttackState;
     public BossStunnedState stunnedState;
     public BossDieState dieState;
 
     [Header("Targeting")]
     public Transform playerTarget;
+    public Transform lockOnPoint;
+    public float lockOnMinFreezeDistance = 1.5f;
     public float detectRange = 15f;
     public float attackRange = 3f;
 
@@ -30,6 +33,14 @@ public class BossController : MonoBehaviour
     [Header("Attack")]
     public float attackCD = 2f;
     [HideInInspector] public float lastAttackTime = -999f;
+
+    [Header("Ranged Attack")]
+    public float rangedAttackCD = 4f;
+    [HideInInspector] public float lastRangedAttackTime = -999f;
+    public float rangedChaseTimeThreshold = 6f;
+    public GameObject boulderPrefab;
+    public Transform boulderSpawnPoint;
+    public float boulderFlySpeed = 15f;
 
     [Header("Stun")]
     [Range(0f, 1f)] public float stunHealthThreshold = 0.5f;
@@ -180,5 +191,10 @@ public class BossController : MonoBehaviour
     public bool CanAttack()
     {
         return Time.time - lastAttackTime >= attackCD;
+    }
+
+    public bool CanRangedAttack()
+    {
+        return Time.time - lastRangedAttackTime >= rangedAttackCD;
     }
 }

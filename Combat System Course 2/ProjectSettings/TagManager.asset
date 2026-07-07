@@ -14,6 +14,7 @@ TagManager:
   - ChoiceButtons
   - SideMissionPanel
   - Obstacle
+  - FxTemporaire
   layers:
   - Default
   - TransparentFX
@@ -33,7 +34,7 @@ TagManager:
   - OB
   - PlayerBlocker
   - Interactor
-  - 
+  - UI_Model
   - 
   - 
   - 

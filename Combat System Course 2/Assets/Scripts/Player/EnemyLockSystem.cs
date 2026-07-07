@@ -11,7 +11,8 @@ public class EnemyLockSystem : MonoBehaviour
     [SerializeField] Transform enemyTarget_Locator;
 
     [Header("UI Indicator")]
-    [SerializeField] Transform lockUICanvas;
+    [SerializeField] RectTransform lockUICanvas;
+    [SerializeField] RectTransform lockOnIcon;
     [SerializeField] float uiScaleFactor = 0.1f;
 
     public CinemachineVirtualCamera followCam;
@@ -24,6 +25,9 @@ public class EnemyLockSystem : MonoBehaviour
     private PlayerController player;
     private Animator animator;
     private float yOffset = 1f;
+    private Vector3 locatorVelocity;
+    private Vector3 dirVelocity;
+    private Transform currentLockOnPoint;
 
     void OnEnable()
     {
@@ -75,6 +79,16 @@ public class EnemyLockSystem : MonoBehaviour
         currentTarget = target;
         IsLocked = true;
 
+        // 缓存敌人身上的 lockOnPoint 挂点
+        var ec = target.GetComponentInParent<EnemyController>();
+        var bc = target.GetComponentInParent<BossController>();
+        if (ec != null && ec.lockOnPoint != null)
+            currentLockOnPoint = ec.lockOnPoint;
+        else if (bc != null && bc.lockOnPoint != null)
+            currentLockOnPoint = bc.lockOnPoint;
+        else
+            currentLockOnPoint = null;
+
         if (lockUICanvas != null)
             lockUICanvas.gameObject.SetActive(true);
 
@@ -92,6 +106,7 @@ public class EnemyLockSystem : MonoBehaviour
     {
         IsLocked = false;
         currentTarget = null;
+        currentLockOnPoint = null;
 
         player.LockRotation = false;
         player.isLockedOn = false;
@@ -138,30 +153,46 @@ public class EnemyLockSystem : MonoBehaviour
         return best;
     }
 
+    Vector3 GetEnemyLockPosition()
+    {
+        if (currentLockOnPoint != null)
+            return currentLockOnPoint.position;
+        return currentTarget.position + Vector3.up * yOffset;
+    }
+
     void UpdateUI()
     {
-        if (currentTarget == null) return;
+        if (currentTarget == null || lockOnIcon == null || lockUICanvas == null) return;
 
-        Vector3 toCamera = (cam.position - currentTarget.position).normalized;
-        Vector3 pos = currentTarget.position + Vector3.up * yOffset + toCamera * 0.5f;
-        lockUICanvas.position = pos;
+        Vector3 worldPos = GetEnemyLockPosition();
+        Vector3 screenPos = Camera.main.WorldToScreenPoint(worldPos);
 
-        float dis = Vector3.Distance(cam.position, pos);
-        lockUICanvas.localScale = Vector3.one * (dis * uiScaleFactor);
+        if (screenPos.z <= 0) return;
+
+        RectTransformUtility.ScreenPointToLocalPointInRectangle(
+            lockUICanvas,
+            new Vector2(screenPos.x, screenPos.y),
+            null,
+            out Vector2 localPoint);
+        lockOnIcon.anchoredPosition = localPoint;
+
+        lockOnIcon.localScale = Vector3.one;
     }
 
     void RotatePlayer()
     {
         if (currentTarget == null) return;
 
-        Vector3 dir = currentTarget.position - player.transform.position;
+        Vector3 lockPos = GetEnemyLockPosition();
+        Vector3 dir = lockPos - player.transform.position;
         dir.y = 0;
         if (dir.sqrMagnitude > 0.001f)
-            player.lockedTargetDir = dir.normalized;
+            player.lockedTargetDir = Vector3.SmoothDamp(
+                player.lockedTargetDir, dir.normalized, ref dirVelocity, 0.08f);
 
-        Vector3 targetPos = currentTarget.position + Vector3.up * yOffset;
         if (enemyTarget_Locator != null)
-            enemyTarget_Locator.position = targetPos;
+            enemyTarget_Locator.position = Vector3.SmoothDamp(
+                enemyTarget_Locator.position, lockPos, ref locatorVelocity, 0.08f);
     }
 
     bool TargetStillValid()
