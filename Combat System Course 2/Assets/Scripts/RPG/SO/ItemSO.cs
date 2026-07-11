@@ -61,6 +61,7 @@ public enum ArmorType
 
 public enum Rarity
 {
+    Garbage,
     Common,
     Uncommon,
     Rare,

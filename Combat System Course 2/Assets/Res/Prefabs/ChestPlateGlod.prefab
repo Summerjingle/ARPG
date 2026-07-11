@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5434835891606949913}
   - component: {fileID: 8308829142019301700}
   - component: {fileID: 967887321067667343}
+  - component: {fileID: 6540097840363943489}
   m_Layer: 0
   m_Name: sd
   m_TagString: Untagged
@@ -61,7 +62,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: d360742df05fdc04caf59f3c97b59089, type: 2}
+  - {fileID: 2100000, guid: 1ed3aecf8ed57a34ab72bab7a8fea3c3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -83,6 +84,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &6540097840363943489
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6061165227896171074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &6278031300540911112
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,7 +145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c790562c55a436043a74dcb56c689026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 58e4c5d37c74b184f973eb451bd4b9ad, type: 2}
+  itemSO: {fileID: 11400000, guid: 4c66c8f5a5306614595808d9cdbf6f9d, type: 2}
+  isActivated: 0
 --- !u!114 &6117979737336151714
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,4 +159,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 58e4c5d37c74b184f973eb451bd4b9ad, type: 2}
+  itemSO: {fileID: 11400000, guid: 4c66c8f5a5306614595808d9cdbf6f9d, type: 2}
+  isActivated: 0

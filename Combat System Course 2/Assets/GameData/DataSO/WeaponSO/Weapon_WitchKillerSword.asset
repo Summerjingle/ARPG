@@ -13,22 +13,27 @@ MonoBehaviour:
   m_Name: Weapon_WitchKillerSword
   m_EditorClassIdentifier: 
   nameOfItem: "\u5973\u5DEB\u6740\u624B"
-  description: "\u4E00\u628A\u7EAF\u94F6\u7684\u957F\u5251\uFF0C\u5973\u5DEB\u730E\u4EBA\u7684\u6700\u7231\u3002"
+  description: "\u4E00\u628A\u7EAF\u94F6\u7684\u957F\u5251\uFF0C\u636E\u8BF4\u662F\u80FD\u591F\u9A71\u9010\u6076\u9B54\u7684\u6B66\u5668\u3002\u7531\u8D4F\u91D1\u730E\u4EBA\u6770\u7279\u59D4\u6258\u7687\u5BB6\u94C1\u5320\u534F\u4F1A\u6240\u94F8\uFF0C\u6700\u540E\u4E00\u6B21\u9732\u9762\u662F\u6709\u4EBA\u58F0\u79F0\u5176\u4E24\u5E74\u524D\u5728\u901A\u5F80\u5973\u5DEB\u6CBC\u6CFD\u65B9\u5411\u7684\u9152\u9986\u4E2D\u66FE\u89C1\u5230\uFF0C\u6B64\u540E\u518D\u65E0\u97F3\u8BAF\u3002  "
   icon: {fileID: 21300000, guid: 6aef91b81b5f14f4d93d7dc707999aef, type: 3}
   interactablePrefab: {fileID: 6809175980981522585, guid: 59f47957d76ef8e4bb63f1865f74453b,
     type: 3}
   maxStackSize: 1
   amount: 1
-  rarity: 0
+  rarity: 5
   equipmentPrefab: {fileID: 6456669574729195219, guid: 2616070783e50574c9f2511e21677107,
     type: 3}
-  propertyList: []
-  equipConditions: []
+  propertyList:
+  - statType: 3
+    value: 35
+  equipConditions:
+  - statType: 5
+    requiredValue: 30
   drawWeaponTriggerName: drawWeapon
   sheathWeaponTriggerName: sheathWeapon
   combatBlendTreeName: Combat Blend Tree
   sheathLocation: 0
   handSocket: 0
   isHeavy: 0
+  weaponCategory: 0
   rollAnim: Roll_Sword
   baseDamage: 45

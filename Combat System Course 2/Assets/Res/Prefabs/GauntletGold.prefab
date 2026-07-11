@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c790562c55a436043a74dcb56c689026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: fc032a2e0f1e0554986b842646d185a0, type: 2}
+  itemSO: {fileID: 11400000, guid: 655104d13efc73044b0e778be04d6e7c, type: 2}
+  isActivated: 0
 --- !u!114 &5508181990759264946
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +60,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: fc032a2e0f1e0554986b842646d185a0, type: 2}
+  itemSO: {fileID: 11400000, guid: 655104d13efc73044b0e778be04d6e7c, type: 2}
+  isActivated: 0
 --- !u!1 &7287029236245846128
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,6 +73,7 @@ GameObject:
   - component: {fileID: 1266761445136380093}
   - component: {fileID: 4652277465118078862}
   - component: {fileID: 1894344879756102925}
+  - component: {fileID: 8408584450942028891}
   m_Layer: 0
   m_Name: Skull_Pirate_Bracers_FBX
   m_TagString: Untagged
@@ -143,3 +146,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &8408584450942028891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7287029236245846128}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0

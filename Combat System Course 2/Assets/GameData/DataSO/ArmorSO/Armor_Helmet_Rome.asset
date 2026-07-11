@@ -23,8 +23,7 @@ MonoBehaviour:
   equipmentPrefab: {fileID: 4903560041895241647, guid: 18b30a8cdd39da24f9ae452c270377d3,
     type: 3}
   propertyList:
-  - propertyType: 0
-    statType: 2
+  - statType: 2
     value: 30
   equipConditions: []
   armorType: 0

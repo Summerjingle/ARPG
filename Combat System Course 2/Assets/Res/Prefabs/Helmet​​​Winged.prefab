@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 1639873674098769946}
   - component: {fileID: 4583810323065761406}
   - component: {fileID: 7952770137786686287}
+  - component: {fileID: 2416076355927187571}
   m_Layer: 0
   m_Name: Wings
   m_TagString: Untagged
@@ -83,6 +84,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2416076355927187571
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4296773210116872161}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &7152262360819607595
 GameObject:
   m_ObjectHideFlags: 0
@@ -130,7 +146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c790562c55a436043a74dcb56c689026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 9518aaa08da402f4b9ee827b12480533, type: 2}
+  itemSO: {fileID: 11400000, guid: 026e40f1e2982da4ea2023a6c37f5920, type: 2}
+  isActivated: 0
 --- !u!114 &5909713655158997366
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -143,7 +160,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 9518aaa08da402f4b9ee827b12480533, type: 2}
+  itemSO: {fileID: 11400000, guid: 026e40f1e2982da4ea2023a6c37f5920, type: 2}
+  isActivated: 0
 --- !u!1 &7474541755973458188
 GameObject:
   m_ObjectHideFlags: 0
@@ -155,6 +173,7 @@ GameObject:
   - component: {fileID: 4301404404551388732}
   - component: {fileID: 1215155951795922376}
   - component: {fileID: 6033720053848545230}
+  - component: {fileID: 7458691403711760938}
   m_Layer: 0
   m_Name: Helm
   m_TagString: Untagged
@@ -227,3 +246,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7458691403711760938
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7474541755973458188}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0

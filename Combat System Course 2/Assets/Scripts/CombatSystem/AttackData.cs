@@ -16,6 +16,8 @@ public class AttackData : ScriptableObject
 	[field:SerializeField] public bool MoveToTarget{  get; private	 set; }
 	[field: SerializeField] public float DistanceFromTarget { get; private set; } = 1f;
 	[field: SerializeField] public float MaxMoveDistance { get; private set; } = 3f;
+	
+	[field: SerializeField] public float MoveSpeed { get; private set; } = 5f;
 
 
 	[field: SerializeField] public float MoveStartTime { get; private set; } = 0f;

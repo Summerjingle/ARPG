@@ -32,9 +32,9 @@ public class InputManager : MonoBehaviour
     public event Action OnConfirmCancel;
     public event Action<bool> OnQuickItemModifierChanged;
     public event Action<int> OnQuickItemNavigate;
+    public event Action<int> OnItemDetailNavigate;
     public event Action OnItemDetailUse;
     public event Action OnItemDetailCancel;
-    public event Action OnItemDetailSetQuickSlot;
     public event Action OnQuickUseConfirm;
     public event Action OnQuickUseCancel;
     public event Action OnQuickItemUse;
@@ -68,9 +68,16 @@ public class InputManager : MonoBehaviour
         Actions.UI_Inventory.SwitchLeft.performed+=ctx =>OnUISwitchLeft?.Invoke();
         Actions.UI_Inventory.SwitchRight.performed+=ctx =>OnUISwitchRight?.Invoke();
 
+        Actions.UI_ItemDetail.Navigate.performed += ctx =>
+        {
+            var v = ctx.ReadValue<Vector2>();
+            int dir = 0;
+            if (v.y > 0.5f) dir = -1;       // 上
+            else if (v.y < -0.5f) dir = 1;   // 下
+            if (dir != 0) OnItemDetailNavigate?.Invoke(dir);
+        };
         Actions.UI_ItemDetail.Use.performed += _ => OnItemDetailUse?.Invoke();
         Actions.UI_ItemDetail.Cancel.performed += _ => OnItemDetailCancel?.Invoke();
-        Actions.UI_ItemDetail.SetQuickSlot.performed += _ => OnItemDetailSetQuickSlot?.Invoke();
 
         Actions.UI_QuickUseBar.Confirm.performed += _ => OnQuickUseConfirm?.Invoke();
         Actions.UI_QuickUseBar.Cancel.performed += _ => OnQuickUseCancel?.Invoke();

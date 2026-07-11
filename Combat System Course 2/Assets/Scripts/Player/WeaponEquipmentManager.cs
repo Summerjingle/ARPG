@@ -101,6 +101,7 @@ public class WeaponEquipmentManager : MonoBehaviour
 
         //UI更新暂时先留着，尽管武器并没有实例化到手上（真正拿起）
         InventoryUI.Instance?.UpdateEquipmentIcon(weaponSO);
+        BackpackCharacterDisplay.Instance?.EquipWeapon(weaponSO);
     }
 
     // 卸下武器
@@ -129,6 +130,7 @@ public class WeaponEquipmentManager : MonoBehaviour
 
         // UI更新
         InventoryUI.Instance?.ClearEquipmentIcon(ItemType.Weapon, ArmorType.NotArmor);
+        BackpackCharacterDisplay.Instance?.UnequipWeapon();
     }
     public void ToggleWeapon()
     {

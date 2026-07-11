@@ -63,7 +63,7 @@ public class ArmorEquipmentManager : MonoBehaviour
         }
         OnEquipmentChanged?.Invoke();
         InventoryUI.Instance.UpdateEquipmentIcon(armorSO);
-
+        BackpackCharacterDisplay.Instance?.EquipArmor(armorSO);
     }
 
     // ���ݻ��������ҵ���Ӧ�Ĺ��ص�
@@ -92,6 +92,9 @@ public class ArmorEquipmentManager : MonoBehaviour
         {
             UnequipSingleArmor(socket);
         }
+
+        // 同步背包模型
+        BackpackCharacterDisplay.Instance?.UnequipArmor(socket.armorType);
 
         // ���UIͼ�꣨�����Ƿ���װ����Ҫִ�У�
         if (InventoryUI.Instance != null)

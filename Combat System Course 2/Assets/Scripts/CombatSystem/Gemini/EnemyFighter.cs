@@ -688,149 +688,187 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         InAction = false;
     }
 
-    public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCount = 0)
+public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCount = 0)
+{
+    Debug.Log($"[EnemyAttack] 开始执行敌人攻击，目标: {(target != null ? target.gameObject.name : "null")}");
+    InAction = true;
+    currTarget = target;
+    Debug.Log($"[EnemyAttack] 敌人攻击目标设置为: {currTarget?.gameObject?.name}");
+    Attackstate = AttackStates.Windup;
+
+    var attack = attacks[comboCount];
+    currentAttackData = attack;
+    CurrentSpecialHitReaction = attack.SpecialHitReaction;
+
+    bool vfxSpawned = false;
+    bool shakeTriggered = false;
+    bool sfxPlayed = false;
+
+    var attackDir = transform.forward;
+    Vector3 startPos = transform.position;
+    Vector3 targetPos = Vector3.zero;
+    bool hasReachedTarget = false; // 标记是否已到达目标位置
+
+    if (target != null)
     {
-        Debug.Log($"[EnemyAttack] 开始执行敌人攻击，目标: {(target != null ? target.gameObject.name : "null")}");
-        InAction = true;
-        currTarget = target;
-        Debug.Log($"[EnemyAttack] 敌人攻击目标设置为: {currTarget?.gameObject?.name}");
-        Attackstate = AttackStates.Windup;
-
-        var attack = attacks[comboCount];
-        currentAttackData = attack;
-        CurrentSpecialHitReaction = attack.SpecialHitReaction;
-
-        bool vfxSpawned = false;
-        bool shakeTriggered = false;
-        bool sfxPlayed = false;
-
-        var attackDir = transform.forward;
-        Vector3 startPos = transform.position;
-        Vector3 targetPos = Vector3.zero;
-
-        if (target != null)
+        var vecToTarget = target.transform.position - transform.position;
+        vecToTarget.y = 0;
+        attackDir = vecToTarget.normalized;
+        float distance = vecToTarget.magnitude;
+        if (distance > LongRangeAttackThreshold && longRangeAttacks.Count > 0)
         {
-            var vecToTarget = target.transform.position - transform.position;
-            vecToTarget.y = 0;
-            attackDir = vecToTarget.normalized;
-            float distance = vecToTarget.magnitude;
-            if (distance > LongRangeAttackThreshold && longRangeAttacks.Count > 0)
-            {
-                attack = longRangeAttacks[0];
-            }
-            if (attack.MoveToTarget)
-            {
-                if (distance < attack.MaxMoveDistance)
-                    targetPos = target.transform.position - attackDir * attack.DistanceFromTarget;
-                else
-                    targetPos = startPos + attackDir * attack.MaxMoveDistance;
-            }
+            attack = longRangeAttacks[0];
         }
-
-        animator.CrossFade(attack.AttackName, 0.2f, attackAnimLayer);
-        yield return null;
-        var animstate = animator.GetNextAnimatorStateInfo(attackAnimLayer);
-
-        float timer = 0f;
-        while (timer <= animstate.length)
+        if (attack.MoveToTarget)
         {
-            if (IsTakingHit) break;
-            if (IsRebounding) break;
-            timer += Time.deltaTime;
-            float normalizedTime = timer / animstate.length;
-
-            
-            if (target != null && attack.MoveToTarget)
-            {
-                float percTime = (normalizedTime - attack.MoveStartTime) / (attack.MoveEndTime - attack.MoveStartTime);
-                Vector3 desiredPosition = Vector3.Lerp(startPos, targetPos, percTime);
-
-               
-                float currentDistance = Vector3.Distance(transform.position, target.transform.position);
-                if (currentDistance > 1.0f) 
-                {
-                    transform.position = desiredPosition;
-                }
-            }
-
-
-            // 旋转攻击由动画 root motion 驱动旋转，不手动锁朝向
-            if (!attack.IsSpinAttack && attackDir != null)
-            {
-                transform.rotation = Quaternion.RotateTowards(transform.rotation, Quaternion.LookRotation(attackDir), 500f * Time.deltaTime);
-            }
-            if (Attackstate == AttackStates.Windup)
-            {
-                if (InCounter) break;
-                if (normalizedTime >= attack.ImpactStartTime)
-                {
-                    Attackstate = AttackStates.Impact;
-                    EnableEnemyHitbox(attack);
-                }
-            }
-            else if (Attackstate == AttackStates.Impact)
-            {
-                if (normalizedTime >= attack.ImpactEndTime)
-                {
-                    Attackstate = AttackStates.Cooldown;
-                    DisableEnemyHitboxes();
-                }
-            }
-            else if (Attackstate == AttackStates.Cooldown)
-            {
-                if (docombo)
-                {
-                    docombo = false;
-                    int newComboCount = (comboCount + 1) % attacks.Count;  // 计算新的连击数
-                    StartCoroutine(ExecuteEnemyAttack(target, newComboCount));  //
-                    yield break;
-                }
-            }
-
-            // —— 摄像机震动 ——
-            if (!shakeTriggered && attack.EnableCameraShake && normalizedTime >= attack.CameraShakeTime)
-            {
-                shakeTriggered = true;
-                var camCtrl = FindObjectOfType<PlayerCameraController>();
-                if (camCtrl != null)
-                {
-                    camCtrl.ShakeCamera(attack.CameraShakeIntensity, attack.CameraShakeDuration, attack.CameraShakeFrequency);
-                }
-            }
-
-            // —— 攻击音效 ——
-            if (!sfxPlayed && attack.AttackSFX != null && normalizedTime >= attack.SFXSpawnTime)
-            {
-                sfxPlayed = true;
-                AudioSource.PlayClipAtPoint(attack.AttackSFX, transform.position);
-            }
-
-            // —— 攻击特效生成 ——
-            if (!vfxSpawned && attack.AttackVFXPrefab != null && normalizedTime >= attack.VFXSpawnTime)
-            {
-                vfxSpawned = true;
-                Vector3 spawnPos = transform.position + attack.VFXSpawnOffset;
-                GameObject vfx = Instantiate(attack.AttackVFXPrefab, spawnPos, Quaternion.identity);
-                if (attack.VFXFollowAttacker)
-                    vfx.transform.SetParent(transform);
-            }
-
-            yield return null;
-        }
-        //�ȴ��������
-        // 反弹期间不重置攻击状态，由 DoRebound 收尾时统一处理，避免 AttackState 提前切到 Retreat
-        if (!IsRebounding)
-        {
-            Attackstate = AttackStates.Idle;
-            comboCount = 0;
-            currTarget = null;
-            currentAttackData = null;
-        }
-        if (!IsTakingHit && !IsRebounding)
-        {
-            InAction = false;
+            if (distance < attack.MaxMoveDistance)
+                targetPos = target.transform.position - attackDir * attack.DistanceFromTarget;
+            else
+                targetPos = startPos + attackDir * attack.MaxMoveDistance;
+            targetPos.y = transform.position.y; // 保持Y轴
         }
     }
+
+    animator.CrossFade(attack.AttackName, 0.2f, attackAnimLayer);
+    yield return null;
+    var animstate = animator.GetNextAnimatorStateInfo(attackAnimLayer);
+
+    float timer = 0f;
+    while (timer <= animstate.length)
+    {
+        if (IsTakingHit) break;
+        if (IsRebounding) break;
+        timer += Time.deltaTime;
+        float normalizedTime = timer / animstate.length;
+
+        // ===== 移动逻辑 =====
+        if (target != null && attack.MoveToTarget && !hasReachedTarget)
+        {
+            if (normalizedTime >= attack.MoveStartTime && normalizedTime <= attack.MoveEndTime)
+            {
+                Vector3 vecToTarget = target.transform.position - transform.position;
+                vecToTarget.y = 0;
+                Vector3 currentDir = vecToTarget.normalized;
+                float currentDistance = vecToTarget.magnitude;
+
+                // 使用速度移动
+                Vector3 moveDelta = currentDir * attack.MoveSpeed * Time.deltaTime;
+
+                // 不超出目标位置
+                float stopDistance = attack.DistanceFromTarget;
+                if (currentDistance - moveDelta.magnitude <= stopDistance)
+                {
+                    Vector3 finalPos = target.transform.position - currentDir * stopDistance;
+                    finalPos.y = transform.position.y;
+                    transform.position = finalPos;
+                    hasReachedTarget = true;
+                }
+                else
+                {
+                    transform.position += moveDelta;
+                }
+
+                attackDir = currentDir;
+            }
+        }
+
+        // ===== 旋转逻辑 =====
+        if (!attack.IsSpinAttack && attackDir != Vector3.zero)
+        {
+            // 只在 Impact 阶段旋转，且移动结束后不再旋转（或极慢旋转）
+            if (Attackstate == AttackStates.Impact && !hasReachedTarget)
+            {
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation, 
+                    Quaternion.LookRotation(attackDir), 
+                    500f * Time.deltaTime
+                );
+            }
+            else if (Attackstate == AttackStates.Windup)
+            {
+                // 蓄力阶段缓慢转向，避免抽搐
+                transform.rotation = Quaternion.RotateTowards(
+                    transform.rotation, 
+                    Quaternion.LookRotation(attackDir), 
+                    150f * Time.deltaTime
+                );
+            }
+            // Cooldown 阶段不旋转，保持当前朝向
+        }
+
+        // ===== 攻击状态机 =====
+        if (Attackstate == AttackStates.Windup)
+        {
+            if (InCounter) break;
+            if (normalizedTime >= attack.ImpactStartTime)
+            {
+                Attackstate = AttackStates.Impact;
+                EnableEnemyHitbox(attack);
+            }
+        }
+        else if (Attackstate == AttackStates.Impact)
+        {
+            if (normalizedTime >= attack.ImpactEndTime)
+            {
+                Attackstate = AttackStates.Cooldown;
+                DisableEnemyHitboxes();
+            }
+        }
+        else if (Attackstate == AttackStates.Cooldown)
+        {
+            if (docombo)
+            {
+                docombo = false;
+                int newComboCount = (comboCount + 1) % attacks.Count;
+                StartCoroutine(ExecuteEnemyAttack(target, newComboCount));
+                yield break;
+            }
+        }
+
+        // ===== 摄像机震动 =====
+        if (!shakeTriggered && attack.EnableCameraShake && normalizedTime >= attack.CameraShakeTime)
+        {
+            shakeTriggered = true;
+            var camCtrl = FindObjectOfType<PlayerCameraController>();
+            if (camCtrl != null)
+            {
+                camCtrl.ShakeCamera(attack.CameraShakeIntensity, attack.CameraShakeDuration, attack.CameraShakeFrequency);
+            }
+        }
+
+        // ===== 攻击音效 =====
+        if (!sfxPlayed && attack.AttackSFX != null && normalizedTime >= attack.SFXSpawnTime)
+        {
+            sfxPlayed = true;
+            AudioSource.PlayClipAtPoint(attack.AttackSFX, transform.position);
+        }
+
+        // ===== 攻击特效生成 =====
+        if (!vfxSpawned && attack.AttackVFXPrefab != null && normalizedTime >= attack.VFXSpawnTime)
+        {
+            vfxSpawned = true;
+            Vector3 spawnPos = transform.position + attack.VFXSpawnOffset;
+            GameObject vfx = Instantiate(attack.AttackVFXPrefab, spawnPos, Quaternion.identity);
+            if (attack.VFXFollowAttacker)
+                vfx.transform.SetParent(transform);
+        }
+
+        yield return null;
+    }
+
+    // ===== 收尾清理 =====
+    if (!IsRebounding)
+    {
+        Attackstate = AttackStates.Idle;
+        comboCount = 0;
+        currTarget = null;
+        currentAttackData = null;
+    }
+    if (!IsTakingHit && !IsRebounding)
+    {
+        InAction = false;
+    }
+}
     public void UpdateEnemyAttackStateWithCombo(float normalizedTime, AttackData attack)
     {
         if (Attackstate == AttackStates.Windup)

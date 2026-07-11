@@ -46,7 +46,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 1707d1facee3e6242bcbb68bc1d6b75b, type: 2}
+  itemSO: {fileID: 11400000, guid: ab6bf77377449bf47b6a4d1e87d81e87, type: 2}
+  isActivated: 0
 --- !u!114 &8834841389530461460
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,7 +60,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c790562c55a436043a74dcb56c689026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 1707d1facee3e6242bcbb68bc1d6b75b, type: 2}
+  itemSO: {fileID: 11400000, guid: ab6bf77377449bf47b6a4d1e87d81e87, type: 2}
+  isActivated: 0
 --- !u!1 &439719624996867464
 GameObject:
   m_ObjectHideFlags: 0
@@ -71,6 +73,7 @@ GameObject:
   - component: {fileID: 3187612122557797329}
   - component: {fileID: 5343218557222096158}
   - component: {fileID: 5127008433659459320}
+  - component: {fileID: 5564071129100348520}
   m_Layer: 0
   m_Name: "\u73AF\u4F53.002"
   m_TagString: Untagged
@@ -143,6 +146,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5564071129100348520
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 439719624996867464}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &491539963099598321
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,6 +172,7 @@ GameObject:
   - component: {fileID: 3238508353051254779}
   - component: {fileID: 7713757813790233515}
   - component: {fileID: 3232148796212970810}
+  - component: {fileID: 4954828891424051617}
   m_Layer: 0
   m_Name: "\u73AF\u4F53"
   m_TagString: Untagged
@@ -226,6 +245,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4954828891424051617
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 491539963099598321}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &3401307693281086693
 GameObject:
   m_ObjectHideFlags: 0
@@ -316,6 +350,7 @@ GameObject:
   - component: {fileID: 3656620786576314124}
   - component: {fileID: 499043269827134689}
   - component: {fileID: 8095274949894890942}
+  - component: {fileID: 1777687870347941492}
   m_Layer: 0
   m_Name: "\u73AF\u4F53.001"
   m_TagString: Untagged
@@ -388,6 +423,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1777687870347941492
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4675198506140227614}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &7073952573570757552
 GameObject:
   m_ObjectHideFlags: 0
@@ -399,6 +449,7 @@ GameObject:
   - component: {fileID: 4196984367254474494}
   - component: {fileID: 5164420587116241263}
   - component: {fileID: 2675098432730031577}
+  - component: {fileID: 1660180918781132444}
   m_Layer: 0
   m_Name: "\u73AF\u4F53.003"
   m_TagString: Untagged
@@ -471,3 +522,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1660180918781132444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7073952573570757552}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0

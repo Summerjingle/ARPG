@@ -33,7 +33,7 @@ public class ItemUsageHandler : MonoBehaviour
 
 
 
-    public void UseItem(ItemSO itemSO)
+    public bool UseItem(ItemSO itemSO)
     {
         if (itemSO is EquipmentSO equipment)
         {
@@ -51,26 +51,30 @@ public class ItemUsageHandler : MonoBehaviour
                     }
                 }
                 MessageUI.Instance?.Show($"无法装备: {failReasons}");
-                return;
+                return false;
             }
 
             if (itemSO is WeaponSO)
                 weaponManager.EquipWeapon(itemSO);
             else if (itemSO is ArmorSO)
                 armorManager.EquipArmor(itemSO);
+            return true;
         }
         else if (itemSO is ConsumableSO)
         {
             playerProperty.UseDrag(itemSO);
             Debug.Log($"使用消耗品: {itemSO.nameOfItem}");
+            return true;
         }
         else if (itemSO.itemType == ItemType.QuestRelated)
         {
             Debug.Log("任务道具无法直接使用");
+            return false;
         }
         else
         {
             Debug.LogWarning($"未知物品类型: {itemSO.itemType}");
+            return false;
         }
     }
 }

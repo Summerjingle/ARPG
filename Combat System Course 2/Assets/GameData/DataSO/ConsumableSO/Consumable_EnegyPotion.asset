@@ -19,8 +19,7 @@ MonoBehaviour:
     type: 3}
   maxStackSize: 200
   amount: 1
-  rarity: 0
+  rarity: 2
   effects:
-  - propertyType: 0
-    statType: 8
+  - statType: 8
     value: 5

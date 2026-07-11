@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 470188920884910425}
   - component: {fileID: 2213805695722721786}
   - component: {fileID: 4245731839463274761}
+  - component: {fileID: 7725880517669409438}
   m_Layer: 0
   m_Name: HelmetBrass
   m_TagString: Untagged
@@ -83,6 +84,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &7725880517669409438
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 806255676354483284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &6877522256516913485
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,7 +145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c790562c55a436043a74dcb56c689026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: e91c94398ca2ead4d8b1aa01ef640529, type: 2}
+  itemSO: {fileID: 11400000, guid: 09ee8a0515210384d91c219a489332ed, type: 2}
+  isActivated: 0
 --- !u!114 &-5790645019765551580
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,4 +159,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: e91c94398ca2ead4d8b1aa01ef640529, type: 2}
+  itemSO: {fileID: 11400000, guid: 09ee8a0515210384d91c219a489332ed, type: 2}
+  isActivated: 0

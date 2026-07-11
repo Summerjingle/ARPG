@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 3349049984768796119}
   - component: {fileID: 336015679463491317}
   - component: {fileID: 1323591968006147360}
+  - component: {fileID: 1224365831658712222}
   m_Layer: 0
   m_Name: helmet_bot_low
   m_TagString: Untagged
@@ -166,6 +167,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1224365831658712222
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2780656833728159850}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &6724422253268473952
 GameObject:
   m_ObjectHideFlags: 0
@@ -177,6 +193,7 @@ GameObject:
   - component: {fileID: 2198684449041242953}
   - component: {fileID: 2654640336337485360}
   - component: {fileID: 2956883370649943737}
+  - component: {fileID: 2414783410190692357}
   m_Layer: 0
   m_Name: helmet_top_low
   m_TagString: Untagged
@@ -249,6 +266,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &2414783410190692357
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6724422253268473952}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &7042842764494015797
 GameObject:
   m_ObjectHideFlags: 0
@@ -297,7 +329,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c790562c55a436043a74dcb56c689026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: d16bd155212368d4e86312656a4e6d97, type: 2}
+  itemSO: {fileID: 11400000, guid: 2f0e8abf8459fd141909dac9f7dec1ae, type: 2}
+  isActivated: 0
 --- !u!114 &6417984687914614070
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -310,4 +343,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: d16bd155212368d4e86312656a4e6d97, type: 2}
+  itemSO: {fileID: 11400000, guid: 2f0e8abf8459fd141909dac9f7dec1ae, type: 2}
+  isActivated: 0

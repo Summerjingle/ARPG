@@ -20,7 +20,7 @@ MonoBehaviour:
   <DistanceFromTarget>k__BackingField: 1
   <MaxMoveDistance>k__BackingField: 3
   <MoveStartTime>k__BackingField: 0
-  <MoveEndTime>k__BackingField: 1
+  <MoveEndTime>k__BackingField: 0.64
   <Damage>k__BackingField: 10
   <SpecialHitReaction>k__BackingField: 
   <IsKnockdown>k__BackingField: 0

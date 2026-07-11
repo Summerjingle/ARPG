@@ -11,12 +11,14 @@ public class FootStepSoundPlayer : MonoBehaviour
     public AudioClip[] dirtClips;
     public Animator animator;
     private float _lastFootStep;
+    private AudioSource audioSource;
 
     public LayerMask Environment;
     private void OnValidate()
     {
         if (!animator)
             animator = GetComponent<Animator>();
+        audioSource=GetComponent<AudioSource>();
     }
 
     void Update()
@@ -31,7 +33,7 @@ public class FootStepSoundPlayer : MonoBehaviour
         if (_lastFootStep > 0 && footstep < 0 || _lastFootStep < 0 && footstep > 0)
         {
             var randomClips = clips[Random.Range(0, clips.Length - 1)];
-            AudioSource.PlayClipAtPoint(randomClips, transform.position);
+            audioSource.PlayOneShot(randomClips);
         }
         _lastFootStep = footstep;
     }

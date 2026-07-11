@@ -37,7 +37,8 @@ public class InventoryUI : MonoBehaviour
     [SerializeField] private List<EquipmentSlotUI> equipmentSlots = new List<EquipmentSlotUI>();
     public ItemUI currentSelectedItem;
     private ItemUI lastSelectedItem;   //记录上一次选中的物品，用于取消高亮
-    private GameObject lastSelectedGO;  
+    private GameObject lastSelectedGO;
+    private EquipmentSlotUI lastHighlightedSlot; // 上一次高亮模型的装备槽
 
     [Header("攻击提示")]
     public GameObject attackHintUI;
@@ -139,6 +140,7 @@ public class InventoryUI : MonoBehaviour
                 currentSelectedItem = null;
                 lastSelectedItem = null;
             }
+            ClearEquipmentModelHighlight();
             InputManager.Instance.SwitchToPlayer();
             CheckAndShowAttackHint();
         }
@@ -238,6 +240,7 @@ public class InventoryUI : MonoBehaviour
         if (equipmentCanvasGroup != null) equipmentCanvasGroup.interactable = false;
 
         SelectFirstItem();
+        ClearEquipmentModelHighlight();
     }
 private void ClearAllHighlights()
     {
@@ -249,6 +252,41 @@ private void ClearAllHighlights()
         
         // 如果装备槽也需要逻辑清除，可以在这里遍历清除
     }
+
+    private void UpdateEquipmentModelHighlight(EquipmentSlotUI slot)
+    {
+        if (slot == null) return;
+
+        // 先清除上一个槽位的模型高亮
+        ClearEquipmentModelHighlight();
+
+        // 设置新的模型高亮
+        var display = BackpackCharacterDisplay.Instance;
+        if (display == null) return;
+
+        if (slot.itemType == ItemType.Weapon)
+            display.HighlightWeapon();
+        else if (slot.itemType == ItemType.Armor)
+            display.HighlightEquippedArmor(slot.armorType);
+
+        lastHighlightedSlot = slot;
+    }
+
+    private void ClearEquipmentModelHighlight()
+    {
+        if (lastHighlightedSlot == null) return;
+
+        var display = BackpackCharacterDisplay.Instance;
+        if (display == null) return;
+
+        if (lastHighlightedSlot.itemType == ItemType.Weapon)
+            display.ClearWeaponHighlight();
+        else if (lastHighlightedSlot.itemType == ItemType.Armor)
+            display.ClearArmorHighlight(lastHighlightedSlot.armorType);
+
+        lastHighlightedSlot = null;
+    }
+
 private List<EquipmentSlotUI> GetSortedSlots()
     {
         var list = new List<EquipmentSlotUI>(equipmentSlots);
@@ -372,9 +410,11 @@ private List<EquipmentSlotUI> GetSortedSlots()
     {
         if (itemSO.IsStackable() && itemSO.amount > 1)
         {
+            if (!ItemUsageHandler.Instance.UseItem(itemSO))
+                return;
+
             itemSO.amount -= 1;
             itemUI.UpdateAmountDisplay();
-            ItemUsageHandler.Instance.UseItem(itemSO);
             currentSelectedItem = null;
 
             // 数量减少但物品仍存在，重新高亮当前物品
@@ -384,6 +424,9 @@ private List<EquipmentSlotUI> GetSortedSlots()
         }
         else
         {
+            if (!ItemUsageHandler.Instance.UseItem(itemSO))
+                return;
+
             GameObject destroyedItem = itemUI.gameObject;
 
             destroyedItem.transform.SetParent(null);
@@ -400,7 +443,6 @@ private List<EquipmentSlotUI> GetSortedSlots()
 
             SelectFirstItem();
 
-            ItemUsageHandler.Instance.UseItem(itemSO);
             Destroy(destroyedItem);
             Debug.Log("重新选中第一个物品（因为当前物品被销毁了）");
         }
@@ -556,6 +598,10 @@ private void DebugNavigation()
             else if (currentFocus == InventoryFocus.Equipment)
             {
                 Debug.Log($"[Navigation Debug] 当前选中装备槽: {selectedGO.name}");
+
+                EquipmentSlotUI slot = selectedGO.GetComponentInParent<EquipmentSlotUI>();
+                if (slot != null)
+                    UpdateEquipmentModelHighlight(slot);
             }
         }
         else

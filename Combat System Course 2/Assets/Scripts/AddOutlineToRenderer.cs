@@ -102,6 +102,7 @@ public class AddOutlineToRenderer : MonoBehaviour
         DestroyOutline();
 
         _outlineChild = new GameObject("Outline");
+        _outlineChild.layer = gameObject.layer;
         _outlineChild.transform.SetParent(transform);
         _outlineChild.transform.localPosition = Vector3.zero;
         _outlineChild.transform.localRotation = Quaternion.identity;

@@ -26,6 +26,7 @@ public class WeaponSO : EquipmentSO
 
     [Header("武器伤害")]
     public float baseDamage = 10f;
+    
 }
 
 // 这些枚举供 Weapon MonoBehaviour 和 WeaponEquipmentManager 使用

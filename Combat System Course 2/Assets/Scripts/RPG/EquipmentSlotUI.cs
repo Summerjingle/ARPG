@@ -96,6 +96,16 @@ public class EquipmentSlotUI : MonoBehaviour, ISelectHandler, IDeselectHandler, 
         if (unequippedItem != null)
         {
             UpdateIcon(null);
+
+            // 清除背包角色模型的描边高亮
+            if (BackpackCharacterDisplay.Instance != null)
+            {
+                if (itemType == ItemType.Weapon)
+                    BackpackCharacterDisplay.Instance.ClearWeaponHighlight();
+                else if (itemType == ItemType.Armor)
+                    BackpackCharacterDisplay.Instance.ClearArmorHighlight(armorType);
+            }
+
             // ReAddItem 内部已做增量 UI（AddItem / UpdateItemAmountDisplay），无需再刷新
         }
     }

@@ -56,6 +56,11 @@ providers = {
 		priority = 210
 		defaultAction = null
 	}
+	static_methods = {
+		active = true
+		priority = 85
+		defaultAction = null
+	}
 }
 objectSelectors = {
 }

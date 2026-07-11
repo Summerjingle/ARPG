@@ -132,7 +132,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c790562c55a436043a74dcb56c689026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 9eb81564ebbcad8429a8ebff944d942a, type: 2}
+  itemSO: {fileID: 11400000, guid: 390ccfb823f167e4d904ff0d0657c78e, type: 2}
+  isActivated: 0
 --- !u!114 &-2127683415585826645
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -145,7 +146,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: 9eb81564ebbcad8429a8ebff944d942a, type: 2}
+  itemSO: {fileID: 11400000, guid: 390ccfb823f167e4d904ff0d0657c78e, type: 2}
+  isActivated: 0
 --- !u!1 &5431267181619177309
 GameObject:
   m_ObjectHideFlags: 0
@@ -157,6 +159,7 @@ GameObject:
   - component: {fileID: 6587026529872598667}
   - component: {fileID: 120909593304698565}
   - component: {fileID: 8911751360186442325}
+  - component: {fileID: 4437796670463340748}
   m_Layer: 0
   m_Name: HelmetPiece2_low
   m_TagString: Untagged
@@ -229,6 +232,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &4437796670463340748
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5431267181619177309}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &6019769638795809580
 GameObject:
   m_ObjectHideFlags: 0
@@ -323,6 +341,7 @@ GameObject:
   - component: {fileID: 433800975071123450}
   - component: {fileID: 6443610294343717692}
   - component: {fileID: 7394814975474374884}
+  - component: {fileID: 1408080464004117840}
   m_Layer: 0
   m_Name: HelmetPiece1_low
   m_TagString: Untagged
@@ -395,3 +414,18 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &1408080464004117840
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7205895602827948524}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0

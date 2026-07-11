@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8100102804831482904}
   - component: {fileID: 8684938036931631660}
   - component: {fileID: 108579226587145447}
+  - component: {fileID: 5670015191513946074}
   m_Layer: 0
   m_Name: SOURCE
   m_TagString: Untagged
@@ -83,6 +84,21 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &5670015191513946074
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844612052283610707}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dbcabbf2f0d713e4e98c91d267ce7bbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _outlineMaterial: {fileID: 2100000, guid: 0a5cab46e3bc1ac4b89b415202d71692, type: 2}
+  _createOnAwake: 0
+  _removeAfterInteract: 0
 --- !u!1 &6837280484381785072
 GameObject:
   m_ObjectHideFlags: 0
@@ -129,7 +145,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c790562c55a436043a74dcb56c689026, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: efe83aba240ac754e9c9068ffbc2d180, type: 2}
+  itemSO: {fileID: 11400000, guid: 220504d4820a4434390e1a3937c3eeda, type: 2}
+  isActivated: 0
 --- !u!114 &-4910233099110846536
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -142,4 +159,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ca2b050ae6edc67498deb475100f0bfc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  itemSO: {fileID: 11400000, guid: efe83aba240ac754e9c9068ffbc2d180, type: 2}
+  itemSO: {fileID: 11400000, guid: 220504d4820a4434390e1a3937c3eeda, type: 2}
+  isActivated: 0
