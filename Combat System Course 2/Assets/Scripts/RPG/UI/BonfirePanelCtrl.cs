@@ -99,6 +99,7 @@ public class BonfirePanelCtrl : MonoBehaviour
         }
     }
 
+
     private void OnExitPressed()
     {
         StartCoroutine(CloseSequence());

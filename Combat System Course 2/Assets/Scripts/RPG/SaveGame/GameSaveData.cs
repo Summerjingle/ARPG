@@ -15,15 +15,20 @@ public class GameSaveData
     public SerializableVector3 playerPosition;
     public SerializableQuaternion playerRotation;
 
-    // �������
-    public int level;
-    public int currEXP;
+    // 属性等级
+    public int vitalityLevel = 1;
+    public int enduranceLevel = 1;
+    public int strengthLevel = 1;
+    public int agilityLevel = 1;
+    public int defenseLevel = 1;
+    public int luckLevel = 1;
+
+    public int level;  // 总等级（由属性等级计算，冗余存储便于兼容）
     public int currSoulAmount;
     public int hpValue;
     public int maxHealth;
     public float energyValue;
     public int armorValue;
-    public int currCoins;
 
 
     // װ����Ϣ

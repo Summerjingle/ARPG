@@ -94,7 +94,6 @@ public class SaveManager : MonoBehaviour
         QuestManager.Instance?.ResetAllQuests();
         WeaponEquipmentManager.Instance?.UnequipWeapon();
         ArmorEquipmentManager.Instance?.UnequipAll();
-        CurrencySystem.Instance?.SetCurrentCoins(0);
 
         Debug.Log("SaveManager ״̬�����е�������������");
     }
@@ -277,15 +276,19 @@ public class SaveManager : MonoBehaviour
             currentSaveData.playerRotation = player.transform.rotation;
         }
 
-        currentSaveData.level = playerProperty.level;//等级
-        currentSaveData.currEXP = playerProperty.currEXP;//经验值（即将弃用）
+        currentSaveData.level = playerProperty.Level;//等级
+        currentSaveData.vitalityLevel = playerProperty.VitalityLevel;
+        currentSaveData.enduranceLevel = playerProperty.EnduranceLevel;
+        currentSaveData.strengthLevel = playerProperty.StrengthLevel;
+        currentSaveData.agilityLevel = playerProperty.AgilityLevel;
+        currentSaveData.defenseLevel = playerProperty.DefenseLevel;
+        currentSaveData.luckLevel = playerProperty.LuckLevel;
         currentSaveData.currSoulAmount=playerProperty.currSoulAmount;//灵魂值
         currentSaveData.hpValue = Mathf.RoundToInt(healthSystem.Health);//当前血量
         currentSaveData.maxHealth = Mathf.RoundToInt(healthSystem.MaxHealth);//最大血量
         currentSaveData.energyValue = playerProperty.energyValue;//当前精力
         currentSaveData.armorValue = playerProperty.GetBaseArmor();//当前护甲
-        currentSaveData.currCoins=CurrencySystem.Instance?.GetCurrentCoins() ?? 0;//当前钱币
-        currentSaveData.saveTime = System.DateTime.Now;//保存事件
+        currentSaveData.saveTime = System.DateTime.Now;//保存时间
 
         currentSaveData.inventoryItems.Clear();
         currentSaveData.questProgress.Clear();
@@ -514,7 +517,7 @@ public class SaveManager : MonoBehaviour
         ApplyQuests();
         ApplyEquipment();
 
-        Debug.Log($"Applied save - Level: {currentSaveData.level}, EXP: {currentSaveData.currEXP}, HP: {currentSaveData.hpValue}");
+        Debug.Log($"Applied save - Level: {currentSaveData.level}, HP: {currentSaveData.hpValue}, Souls: {currentSaveData.currSoulAmount}");
         RefreshHUDUI();
     }
 
@@ -544,18 +547,21 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
-        Debug.Log($"Ӧ��ǰ���� - �ȼ�: {playerProperty.level} -> {currentSaveData.level}, ����: {playerProperty.currEXP} -> {currentSaveData.currEXP}");
+        Debug.Log($"应用前对比 - 灵魂: {playerProperty.currSoulAmount} -> {currentSaveData.currSoulAmount}");
 
-        playerProperty.level = currentSaveData.level;
-        playerProperty.currEXP = currentSaveData.currEXP;
-        playerProperty.currSoulAmount=currentSaveData.currSoulAmount;
+        // 恢复属性等级
+        playerProperty.SetAttributeLevel(AttributeType.Vitality,  currentSaveData.vitalityLevel);
+        playerProperty.SetAttributeLevel(AttributeType.Endurance, currentSaveData.enduranceLevel);
+        playerProperty.SetAttributeLevel(AttributeType.Strength,  currentSaveData.strengthLevel);
+        playerProperty.SetAttributeLevel(AttributeType.Agility,   currentSaveData.agilityLevel);
+        playerProperty.SetAttributeLevel(AttributeType.Defense,   currentSaveData.defenseLevel);
+        playerProperty.SetAttributeLevel(AttributeType.Luck,      currentSaveData.luckLevel);
+
+        playerProperty.currSoulAmount = currentSaveData.currSoulAmount;
         playerProperty.energyValue = currentSaveData.energyValue;
-        playerProperty.SetBaseArmor(currentSaveData.armorValue);
-        
         healthSystem.MaxHealth = currentSaveData.maxHealth;
         healthSystem.Health = currentSaveData.hpValue;
-        CurrencySystem.Instance.SetCurrentCoins(currentSaveData.currCoins);
-        Debug.Log($"Ӧ�ú����� - �ȼ�: {playerProperty.level}, ����: {playerProperty.currEXP}, Ѫ��: {healthSystem.Health}");
+        Debug.Log($"应用后 - Lv.{playerProperty.Level}, HP: {healthSystem.Health}, Souls: {playerProperty.currSoulAmount}");
         RefreshHUDUI();
     }
 
@@ -738,6 +744,9 @@ public class SaveManager : MonoBehaviour
                 anim.SetTrigger("drawWeapon");
             Debug.Log("已触发武器拔出动画恢复");
         }
+
+        InventoryUI.Instance?.RefreshAllQuickLights();
+
         Debug.Log("=== װ�����̽��� ===");
     }
 

@@ -116,12 +116,6 @@ public class WeaponEquipmentManager : MonoBehaviour
                 playerAnim.SetTrigger(currentWeapon.sheathWeaponTriggerName);
                 Debug.Log("收回武器");
             }
-            // 将装备放回背包
-            if (InventoryManager.Instance != null && currentWeapon.itemSO != null)
-            {
-                InventoryManager.Instance.ReAddItem(currentWeapon.itemSO);
-            }
-
             Destroy(currentWeapon.gameObject);
             currentWeapon = null;
         }

@@ -91,7 +91,12 @@ public class ItemDetailUI : MonoBehaviour
                 if (itemSO is WeaponSO weapon)
                     category = weapon.weaponCategory.ToString();
                 type = $"武器[{category}]";
-                buttonText.text = "装备";
+                {
+                    var cur = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
+                    bool isEquipped = cur != null && cur.itemSO != null
+                        && cur.itemSO.nameOfItem == itemSO.nameOfItem;
+                    buttonText.text = isEquipped ? "卸载" : "装备";
+                }
                 break;
             case ItemType.Consumable:
                 type = "消耗品";
@@ -99,7 +104,15 @@ public class ItemDetailUI : MonoBehaviour
                 break;
             case ItemType.Armor:
                 type = "防具";
-                buttonText.text = "装备";
+                {
+                    bool armorEquipped = false;
+                    if (itemSO is ArmorSO armor)
+                    {
+                        var equipped = ArmorEquipmentManager.Instance?.GetEquippedItem(armor.armorType);
+                        armorEquipped = equipped != null && equipped.nameOfItem == itemSO.nameOfItem;
+                    }
+                    buttonText.text = armorEquipped ? "卸载" : "装备";
+                }
                 break;
             case ItemType.QuestRelated:
                 type = "任务道具";
@@ -167,17 +180,16 @@ public class ItemDetailUI : MonoBehaviour
         this.gameObject.SetActive(true);
     }
 
-    /// <summary> 阻止/恢复背后面板（物品栏+装备区）的交互，防止导航穿透 </summary>
+    /// <summary> 阻止/恢复物品区交互，防止导航穿透 </summary>
     private void SetBackgroundInteractable(bool interactable)
     {
         if (InventoryUI.Instance != null)
         {
             if (InventoryUI.Instance.itemsCanvasGroup != null)
                 InventoryUI.Instance.itemsCanvasGroup.interactable = interactable;
-            if (InventoryUI.Instance.equipmentCanvasGroup != null)
-                InventoryUI.Instance.equipmentCanvasGroup.interactable = interactable;
         }
     }
+
 
     /// <summary> 根据 itemType 构建按钮列表并交给 navigator </summary>
     private void BuildButtonList()
@@ -296,8 +308,49 @@ public class ItemDetailUI : MonoBehaviour
             return;
         }
 
+        // 已装备的武器/防具 → 卸载
+        if (itemSO.itemType == ItemType.Weapon || itemSO.itemType == ItemType.Armor)
+        {
+            if (TryUnequip())
+            {
+                this.gameObject.SetActive(false);
+                return;
+            }
+        }
+
         InventoryUI.Instance.OnItemUse(itemSO, itemUI);
         this.gameObject.SetActive(false);
+    }
+
+    private bool TryUnequip()
+    {
+        if (itemSO.itemType == ItemType.Weapon)
+        {
+            var cur = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
+            if (cur != null && cur.itemSO != null && cur.itemSO.nameOfItem == itemSO.nameOfItem)
+            {
+                WeaponEquipmentManager.Instance.UnequipWeapon();
+                itemUI?.UpdateQuickLight();
+                BackpackCharacterDisplay.Instance?.ClearWeaponHighlight();
+                InventoryUI.Instance?.RefreshQuickLightForItem(itemSO);
+                InventoryUI.Instance?.RefreshStatusPanel();
+                return true;
+            }
+        }
+        else if (itemSO.itemType == ItemType.Armor && itemSO is ArmorSO armor)
+        {
+            var equipped = ArmorEquipmentManager.Instance?.GetEquippedItem(armor.armorType);
+            if (equipped != null && equipped.nameOfItem == itemSO.nameOfItem)
+            {
+                ArmorEquipmentManager.Instance.UnequipArmor(armor.armorType);
+                itemUI?.UpdateQuickLight();
+                BackpackCharacterDisplay.Instance?.ClearArmorHighlight(armor.armorType);
+                InventoryUI.Instance?.RefreshQuickLightForItem(itemSO);
+                InventoryUI.Instance?.RefreshStatusPanel();
+                return true;
+            }
+        }
+        return false;
     }
 
     /// <summary> SetQuickUseUI 关闭时回调，刷新按钮状态 </summary>

@@ -188,7 +188,7 @@ public class PlayerHUDUI : MonoBehaviour
     {
         if (playerProperty != null && armorText != null)
         {
-            armorText.text = playerProperty.armorValue.ToString();
+            armorText.text = playerProperty.ArmorValue.ToString();
         }
     }
 

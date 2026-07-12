@@ -42,7 +42,27 @@ public class ItemUI : MonoBehaviour
     public void UpdateQuickLight()
     {
         if (quickLightObject != null && itemSO != null)
-            quickLightObject.SetActive(QuickItemBar.Instance?.HasItem(itemSO) ?? false);
+        {
+            bool isQuickSlotted = QuickItemBar.Instance?.HasItem(itemSO) ?? false;
+            bool isEquipped = IsItemEquipped();
+            quickLightObject.SetActive(isQuickSlotted || isEquipped);
+        }
+    }
+
+    private bool IsItemEquipped()
+    {
+        if (itemSO == null) return false;
+        if (itemSO.itemType == ItemType.Weapon)
+        {
+            var cur = WeaponEquipmentManager.Instance?.GetCurrentWeapon();
+            return cur != null && cur.itemSO != null && cur.itemSO.nameOfItem == itemSO.nameOfItem;
+        }
+        if (itemSO.itemType == ItemType.Armor && itemSO is ArmorSO armor)
+        {
+            var equipped = ArmorEquipmentManager.Instance?.GetEquippedItem(armor.armorType);
+            return equipped != null && equipped.nameOfItem == itemSO.nameOfItem;
+        }
+        return false;
     }
 
     // ����������ʾ

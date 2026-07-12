@@ -169,7 +169,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
 
     public int GetPlayerArmor()
     {
-        return playerProperty?.armorValue ?? 0;
+        return playerProperty?.ArmorValue ?? 0;
     }
 
     private static int _hitReactionSeq = 0; // debug: 协程序号

@@ -370,12 +370,11 @@ public class ArchiveManager : MonoBehaviour
             var data = new GameSaveData(i);
             data.currentScene = "WhiteBox_Village";
             data.level = 10 + i * 5;
-            data.currEXP = 1000 * (i + 1);
+            data.currSoulAmount = 1000 * (i + 1);
             data.hpValue = 100;
             data.maxHealth = 100;
             data.energyValue = 50;
             data.armorValue = 20;
-            data.currCoins = 500 * (i + 1);
             data.saveName = $"存档 {i + 1}";
             data.saveSlot = i;
             data.saveTime = System.DateTime.Now.AddMinutes(-i * 30);

@@ -61,8 +61,6 @@ public class SetQuickUseUI : MonoBehaviour
         {
             if (InventoryUI.Instance.itemsCanvasGroup != null)
                 InventoryUI.Instance.itemsCanvasGroup.interactable = interactable;
-            if (InventoryUI.Instance.equipmentCanvasGroup != null)
-                InventoryUI.Instance.equipmentCanvasGroup.interactable = interactable;
         }
     }
 

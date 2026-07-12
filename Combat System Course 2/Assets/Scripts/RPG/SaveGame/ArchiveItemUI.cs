@@ -33,7 +33,7 @@ public class ArchiveItemUI : MonoBehaviour
         levelText.text = $"Lv. {saveData.level}";
         sceneText.text = saveData.currentScene;
         healthText.text = $"{saveData.hpValue}/{saveData.maxHealth}";
-        expText.text = saveData.currEXP.ToString();
+        expText.text = saveData.currSoulAmount.ToString();
 
         button.image.color = Color.white;
     }

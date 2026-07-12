@@ -102,11 +102,6 @@ public class ArmorEquipmentManager : MonoBehaviour
             InventoryUI.Instance.ClearEquipmentIcon(ItemType.Armor, socket.armorType);
         }
 
-        // ֻ��ȷʵ��װ��ʱ�����ӻر���
-        if (equippedItem != null && InventoryManager.Instance != null)
-        {
-            InventoryManager.Instance.ReAddItem(equippedItem);
-        }
         if (sendNotification)
         {
             OnEquipmentChanged?.Invoke();
