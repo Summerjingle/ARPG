@@ -52,10 +52,12 @@ public class BossAttackState : State<BossController>
         var target = owner.playerTarget?.GetComponent<ICombatSystem>();
         owner.fighter.TryToAttack(target);
 
-        // 攻击全程追踪玩家朝向（非旋转攻击时）
+        // 仅在 ImpactStartTime 之前追踪玩家朝向，进入 impact 后停止旋转
+        int layer = owner.fighter.AttackAnimLayer;
         while (owner.fighter.Attackstate != AttackStates.Idle)
         {
-            if (!attack.IsSpinAttack)
+            float normalizedTime = owner.anim.GetCurrentAnimatorStateInfo(layer).normalizedTime;
+            if (!attack.IsSpinAttack && normalizedTime < attack.ImpactStartTime)
                 owner.FacePlayer();
             yield return null;
         }

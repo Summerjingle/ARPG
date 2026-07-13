@@ -17,7 +17,6 @@ public class QuickItemBar : MonoBehaviour
     {
         public GameObject root;
         public Image icon;
-        public TMP_Text countText;
         [HideInInspector] public CanvasGroup canvasGroup;
     }
 
@@ -31,26 +30,18 @@ public class QuickItemBar : MonoBehaviour
     [SerializeField] private SlotView centerSlot;
     [SerializeField] private SlotView rightSlot;
     [SerializeField] private GameObject background;
-    [SerializeField] private Animator indicatorAnimator;
+    [SerializeField] private GameObject collapsedBackground;
     [SerializeField] private TMP_Text itemNameText;
     [SerializeField] private GameObject itemNameParent;
-    private CanvasGroup backgroundCG;
+    [SerializeField] private TMP_Text centerCountText; 
 
-    [Header("缩放")]
-    [SerializeField] private float expandedCenterScale = 1.2f;
-
-    [Header("透明度")]
-    [SerializeField] private float dimAlpha = 0.3f;
-    [SerializeField] private float brightAlpha = 0.8f;
-    [SerializeField] private float sideCollapsedAlpha = 0.5f;
-    [SerializeField] private float sideExpandedAlpha = 1f;
-
-    private int selectedIndex = 0;
-    private bool isExpanded;
 
     [Header("滑动动效")]
     [SerializeField] private float slideDuration = 0.2f;
     [SerializeField] private AnimationCurve slideCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+
+    private int selectedIndex = 0;
+    private bool isExpanded;
 
     private Coroutine slideCoroutine;
     private float slotSpacing;
@@ -67,9 +58,6 @@ public class QuickItemBar : MonoBehaviour
 
     private void Start()
     {
-        if (background != null)
-            background.TryGetComponent(out backgroundCG);
-
         leftSlot.canvasGroup = leftSlot.root?.GetComponent<CanvasGroup>();
         centerSlot.canvasGroup = centerSlot.root?.GetComponent<CanvasGroup>();
         rightSlot.canvasGroup = rightSlot.root?.GetComponent<CanvasGroup>();
@@ -117,9 +105,6 @@ public class QuickItemBar : MonoBehaviour
     {
         SetExpanded(held);
 
-        if (indicatorAnimator != null)
-            indicatorAnimator.SetTrigger(held ? "Enter" : "Exit");
-
         if (itemNameParent != null)
             itemNameParent.SetActive(held);
     }
@@ -140,17 +125,42 @@ public class QuickItemBar : MonoBehaviour
     {
         isExpanded = expanded;
 
-        if (backgroundCG != null)
-            backgroundCG.alpha = expanded ? brightAlpha : dimAlpha;
+        // 背景：只在展开时显示
+        if (background != null)
+            background.SetActive(expanded);
+
+        // 收起时的背景：只在收起时显示
+        if (collapsedBackground != null)
+            collapsedBackground.SetActive(!expanded);
+
+        // 左右槽位：只在展开时显示
+        if (leftSlot.root != null)
+            leftSlot.root.SetActive(expanded);
+        if (rightSlot.root != null)
+            rightSlot.root.SetActive(expanded);
 
         RefreshView();
     }
 
     public void RefreshView()
     {
-        // 中间始终显示
-        float centerS = isExpanded ? expandedCenterScale : 1.1f;//这个是常态
-        ApplySlot(centerSlot, selectedIndex, centerS);
+        // 中间
+        ApplySlot(centerSlot, selectedIndex);
+
+        // 中间数量
+        if (centerCountText != null)
+        {
+            var centerData = slots[selectedIndex];
+            if (centerData.item != null)
+            {
+                int displayCount = centerData.item.IsStackable() ? centerData.item.amount : centerData.count;
+                centerCountText.text = displayCount > 0 ? displayCount.ToString() : "";
+            }
+            else
+            {
+                centerCountText.text = "";
+            }
+        }
 
         // 道具名
         if (itemNameText != null)
@@ -159,23 +169,22 @@ public class QuickItemBar : MonoBehaviour
             itemNameText.text = centerData.item != null ? centerData.item.nameOfItem : "";
         }
 
-        // 左边：始终显示，alpha 控制显眼程度
-        bool hasLeft = selectedIndex > 0;
-        ApplySlot(leftSlot, hasLeft ? selectedIndex - 1 : selectedIndex, 1f);
-        if (hasLeft)
-            SetSlotAlpha(leftSlot, isExpanded ? sideExpandedAlpha : sideCollapsedAlpha);
-        else
-            SetSlotAlpha(leftSlot, 0f);
+        // 左边
+        if (leftSlot.root != null && leftSlot.root.activeSelf)
+        {
+            bool hasLeft = selectedIndex > 0;
+            ApplySlot(leftSlot, hasLeft ? selectedIndex - 1 : selectedIndex);
+            SetSlotAlpha(leftSlot, hasLeft ? 1f : 0f);
+        }
 
-        // 右边：始终显示，alpha 控制显眼程度
-        bool hasRight = selectedIndex < slots.Length - 1;
-        ApplySlot(rightSlot, hasRight ? selectedIndex + 1 : selectedIndex, 1f);
-        if (hasRight)
-            SetSlotAlpha(rightSlot, isExpanded ? sideExpandedAlpha : sideCollapsedAlpha);
-        else
-            SetSlotAlpha(rightSlot, 0f);
+        // 右边
+        if (rightSlot.root != null && rightSlot.root.activeSelf)
+        {
+            bool hasRight = selectedIndex < slots.Length - 1;
+            ApplySlot(rightSlot, hasRight ? selectedIndex + 1 : selectedIndex);
+            SetSlotAlpha(rightSlot, hasRight ? 1f : 0f);
+        }
     }
-
     private IEnumerator SlideCoroutine(int direction, int newIndex)
     {
         isSliding = true;
@@ -214,26 +223,20 @@ public class QuickItemBar : MonoBehaviour
         slideCoroutine = null;
     }
 
-    private void ApplySlot(SlotView view, int dataIndex, float scale)
+    private void ApplySlot(SlotView view, int dataIndex)
     {
         QuickSlot data = slots[dataIndex];
         if (data.item != null)
         {
             view.icon.sprite = data.item.icon;
             view.icon.enabled = true;
-            int displayCount = data.item.IsStackable() ? data.item.amount : data.count;
-            view.countText.text = displayCount > 1 ? displayCount.ToString() : "";
         }
         else
         {
             view.icon.sprite = null;
             view.icon.enabled = false;
-            view.countText.text = "";
         }
-
-        view.root.transform.localScale = Vector3.one * scale;
     }
-
     private void SetSlotAlpha(SlotView view, float alpha)
     {
         if (view.canvasGroup != null)

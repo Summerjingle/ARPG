@@ -77,6 +77,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public void OverrideAttacks(List<AttackData> newAttacks) { attacks = newAttacks; }
 
     [SerializeField] protected int attackAnimLayer = 0; // Boss 动画在 Action Layer(1)，普通敌人在 Base Layer(0)
+    public int AttackAnimLayer => attackAnimLayer;
 
     // 组件引用
     public Animator animator { get; private set; }
