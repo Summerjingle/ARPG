@@ -39,7 +39,7 @@ public class LockedMachine : MonoBehaviour, IInteractable
         MessageUI.Instance.Show(warnningMessage);
         // 播放无法打开的音效
         if (LockSound != null)
-            AudioSource.PlayClipAtPoint(LockSound, transform.position);
+            AudioManager.Instance.PlaySFX(LockSound, transform.position);
 
     }
     public void OpenMachine() {
@@ -47,7 +47,7 @@ public class LockedMachine : MonoBehaviour, IInteractable
     machineAnim.SetTrigger("Open");
         // 播放机器打开的音效
         if (UnlockSound != null)
-        AudioSource.PlayClipAtPoint(UnlockSound, transform.position);
+        AudioManager.Instance.PlaySFX(UnlockSound, transform.position);
         // 禁用机器碰撞体
         if (machineCollider != null)
             machineCollider.enabled = false;

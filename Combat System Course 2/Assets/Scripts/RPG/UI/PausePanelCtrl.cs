@@ -30,7 +30,7 @@ public class PausePanelCtrl : MonoBehaviour
     {   
          
         if (pauseSound != null)
-            AudioSource.PlayClipAtPoint(pauseSound, Camera.main.transform.position);
+            AudioManager.Instance.PlayUI(pauseSound);
         
         isGamePaused = !isGamePaused;
         pausePanel.SetActive(isGamePaused);

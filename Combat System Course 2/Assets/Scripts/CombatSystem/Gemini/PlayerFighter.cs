@@ -300,7 +300,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             Instantiate(reboundVfxPrefab, lastReboundHitPoint, Quaternion.identity);
 
         if (reboundSfx != null)
-            AudioSource.PlayClipAtPoint(reboundSfx, lastReboundHitPoint);
+            AudioManager.Instance.PlaySFX(reboundSfx, lastReboundHitPoint);
 
         yield return new WaitForSeconds(reboundFreezeDuration);
 
@@ -393,7 +393,7 @@ public class PlayerFighter : MonoBehaviour, ICombatSystem
             // 命中音效 + 血液特效
             Vector3 hitPoint = other.ClosestPoint(transform.position);
             if (hitSound != null)
-                AudioSource.PlayClipAtPoint(hitSound, hitPoint, 0.8f);
+                AudioManager.Instance.PlaySFX(hitSound, hitPoint, 0.8f);
             BloodEffectManager.SpawnBlood(hitPoint, bloodSplashPrefabs, bloodDecalPrefabs);
 
             if (!HealthSystem.IsDead)

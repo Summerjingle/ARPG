@@ -63,6 +63,7 @@ public class MenuListController : MonoBehaviour
     {
         if (audioSource == null)
             audioSource = GetComponent<AudioSource>();
+        AudioManager.RouteToUI(audioSource);
     }
 
     private void OnNavigate(InputAction.CallbackContext ctx)
@@ -78,7 +79,7 @@ public class MenuListController : MonoBehaviour
             index = (index > 0) ? index - 1 : maxIndex;
 
         if (audioSource != null)
-            audioSource.Play();
+            AudioManager.Instance.PlayUI(audioSource.clip);
 
         inputLocked = true;
         OnSelectionChanged?.Invoke(index);

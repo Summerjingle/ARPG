@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
@@ -33,7 +34,8 @@ public class QuickItemBar : MonoBehaviour
     [SerializeField] private GameObject collapsedBackground;
     [SerializeField] private TMP_Text itemNameText;
     [SerializeField] private GameObject itemNameParent;
-    [SerializeField] private TMP_Text centerCountText; 
+    [SerializeField] private TMP_Text centerCountText;
+    [SerializeField] private GameObject useInform;   // 中间槽为空时隐藏的使用提示
 
 
     [Header("滑动动效")]
@@ -42,6 +44,7 @@ public class QuickItemBar : MonoBehaviour
 
     private int selectedIndex = 0;
     private bool isExpanded;
+    private readonly List<int> visibleIndices = new List<int>(); // 展开时可见的非空槽位索引
 
     private Coroutine slideCoroutine;
     private float slotSpacing;
@@ -62,8 +65,6 @@ public class QuickItemBar : MonoBehaviour
         centerSlot.canvasGroup = centerSlot.root?.GetComponent<CanvasGroup>();
         rightSlot.canvasGroup = rightSlot.root?.GetComponent<CanvasGroup>();
 
-        if (itemNameParent != null)
-            itemNameParent.SetActive(false);
 
         InputManager.Instance.OnQuickItemModifierChanged += OnModifierChanged;
         InputManager.Instance.OnQuickItemNavigate += OnNavigate;
@@ -105,15 +106,17 @@ public class QuickItemBar : MonoBehaviour
     {
         SetExpanded(held);
 
-        if (itemNameParent != null)
-            itemNameParent.SetActive(held);
     }
 
     private void OnNavigate(int direction)
     {
-        if (!isExpanded || isSliding) return;
+        if (!isExpanded || isSliding || visibleIndices.Count == 0) return;
 
-        int newIndex = Mathf.Clamp(selectedIndex + direction, 0, slots.Length - 1);
+        int vi = visibleIndices.IndexOf(selectedIndex);
+        if (vi < 0) return;
+
+        int nextVi = Mathf.Clamp(vi + direction, 0, visibleIndices.Count - 1);
+        int newIndex = visibleIndices[nextVi];
         if (newIndex != selectedIndex)
         {
             if (slideCoroutine != null) StopCoroutine(slideCoroutine);
@@ -133,6 +136,14 @@ public class QuickItemBar : MonoBehaviour
         if (collapsedBackground != null)
             collapsedBackground.SetActive(!expanded);
 
+        if (isExpanded)
+        {
+            RebuildVisibleIndices();
+            // 展开时如果当前选中槽位为空，跳到第一个有东西的槽位
+            if (visibleIndices.Count > 0 && visibleIndices.IndexOf(selectedIndex) < 0)
+                selectedIndex = visibleIndices[0];
+        }
+
         // 左右槽位：只在展开时显示
         if (leftSlot.root != null)
             leftSlot.root.SetActive(expanded);
@@ -142,10 +153,27 @@ public class QuickItemBar : MonoBehaviour
         RefreshView();
     }
 
+    /// <summary> 重建展开时可见的槽位列表：只留有东西的；全空则默认只留 1 号槽 </summary>
+    private void RebuildVisibleIndices()
+    {
+        visibleIndices.Clear();
+        for (int i = 0; i < slots.Length; i++)
+        {
+            if (slots[i].item != null)
+                visibleIndices.Add(i);
+        }
+        if (visibleIndices.Count == 0)
+            visibleIndices.Add(0);
+    }
+
     public void RefreshView()
     {
         // 中间
         ApplySlot(centerSlot, selectedIndex);
+
+        // midslot 没东西时隐藏使用提示
+        if (useInform != null)
+            useInform.SetActive(slots[selectedIndex].item != null);
 
         // 中间数量
         if (centerCountText != null)
@@ -169,19 +197,22 @@ public class QuickItemBar : MonoBehaviour
             itemNameText.text = centerData.item != null ? centerData.item.nameOfItem : "";
         }
 
+        // 左右邻居从 visibleIndices 里取，跳过空槽
+        int vi = visibleIndices.IndexOf(selectedIndex);
+
         // 左边
         if (leftSlot.root != null && leftSlot.root.activeSelf)
         {
-            bool hasLeft = selectedIndex > 0;
-            ApplySlot(leftSlot, hasLeft ? selectedIndex - 1 : selectedIndex);
+            bool hasLeft = vi > 0;
+            ApplySlot(leftSlot, hasLeft ? visibleIndices[vi - 1] : selectedIndex);
             SetSlotAlpha(leftSlot, hasLeft ? 1f : 0f);
         }
 
         // 右边
         if (rightSlot.root != null && rightSlot.root.activeSelf)
         {
-            bool hasRight = selectedIndex < slots.Length - 1;
-            ApplySlot(rightSlot, hasRight ? selectedIndex + 1 : selectedIndex);
+            bool hasRight = vi >= 0 && vi < visibleIndices.Count - 1;
+            ApplySlot(rightSlot, hasRight ? visibleIndices[vi + 1] : selectedIndex);
             SetSlotAlpha(rightSlot, hasRight ? 1f : 0f);
         }
     }
@@ -259,6 +290,8 @@ public class QuickItemBar : MonoBehaviour
         if (index < 0 || index >= slots.Length) return;
         slots[index].item = item;
         slots[index].count = count;
+        if (isExpanded)
+            RebuildVisibleIndices();
         RefreshView();
     }
 
@@ -274,7 +307,7 @@ public class QuickItemBar : MonoBehaviour
         return false;
     }
 
-    /// <summary> 清除指定物品所在的快捷槽位 </summary>
+    /// <summary> 清除指定物品所在的快捷槽位（物品用光时自动跳到下一个有东西的槽）</summary>
     public void ClearSlotByItem(ItemSO item)
     {
         if (item == null) return;
@@ -284,10 +317,27 @@ public class QuickItemBar : MonoBehaviour
             {
                 slots[i].item = null;
                 slots[i].count = 0;
+                RebuildVisibleIndices();
+                if (selectedIndex == i)
+                    SnapToNextValid(i);
                 RefreshView();
                 return;
             }
         }
+    }
+
+    /// <summary> 跳到 fromIndex 之后第一个有东西的槽；后面没有就取第一个可见槽（全空时回到 1 号槽）</summary>
+    private void SnapToNextValid(int fromIndex)
+    {
+        foreach (int idx in visibleIndices)
+        {
+            if (idx > fromIndex && slots[idx].item != null)
+            {
+                selectedIndex = idx;
+                return;
+            }
+        }
+        selectedIndex = visibleIndices[0];
     }
 
     private void OnItemRemovedFromInventory(ItemSO item)

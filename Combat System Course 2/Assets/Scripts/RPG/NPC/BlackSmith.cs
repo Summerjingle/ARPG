@@ -42,7 +42,7 @@ public class BlackSmith : MonoBehaviour
         if (isInTrigger && Input.GetKeyDown(KeyCode.E))
         {
             ratManAnim.SetTrigger("Welcom");
-            AudioSource.PlayClipAtPoint(wellcom, transform.position);
+            AudioManager.Instance.PlaySFX(wellcom, transform.position);
             Debug.Log("wellcom");
             tips.SetActive(false);
             blacksmithDialogue.SetActive(true);
@@ -54,7 +54,7 @@ public class BlackSmith : MonoBehaviour
     
     public void hideDialogue()
     {
-        AudioSource.PlayClipAtPoint(end, transform.position);
+        AudioManager.Instance.PlaySFX(end, transform.position);
         blacksmithDialogue.SetActive(false);
         UIStateManager.SetUIActive(false);
         blacksmithCam.Priority = 10;

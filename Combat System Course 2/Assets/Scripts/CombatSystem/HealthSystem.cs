@@ -41,6 +41,10 @@ public class HealthSystem : MonoBehaviour
         float previousHealth = Health;
         Health = Mathf.Clamp(Health - reducedDamage, 0, MaxHealth);
 
+        Debug.Log($"[HealthSystem] {gameObject.name} 受伤: rawDamage={damage}, armor={armor}, " +
+                  $"reducedDamage={reducedDamage:F1}, MaxHealth={MaxHealth}, " +
+                  $"Health: {previousHealth} → {Health}, delta={Health - previousHealth}, isCrit={isCrit}");
+
         var info = new HealthChangeInfo
         {
             delta = Health - previousHealth,
@@ -80,6 +84,28 @@ public class HealthSystem : MonoBehaviour
         {
             Health = MaxHealth;
         }
+        else
+        {
+            // 上限缩小或Health超限时，clamp血量到新上限
+            Health = Mathf.Min(Health, MaxHealth);
+        }
+
+        var info = new HealthChangeInfo
+        {
+            delta = Health - previousHealth,
+            isCrit = false
+        };
+        OnHealthChanged?.Invoke(this, info);
+    }
+
+    /// <summary>增减最大生命值（用于体力加成/装备加成等），自动clamp当前血量</summary>
+    public void AddMaxHealth(float delta)
+    {
+        if (Mathf.Approximately(delta, 0f)) return;
+
+        float previousHealth = Health;
+        MaxHealth += delta;
+        Health = Mathf.Min(Health, MaxHealth);
 
         var info = new HealthChangeInfo
         {

@@ -98,17 +98,24 @@ public class PlayerCameraController : MonoBehaviour
 
     // Smooth follow during lock-on; avoids jitter from per-frame position changes.
     // CameraDistance is shrunk separately by UpdateLockCameraDistance at close range.
+    [Header("Debug")]
+    [SerializeField] private bool debugLog = true;
+
+    private int _lastDebugFrame;
+
     private void HandleLockOnCamera()
     {
         Vector3 dir = lockedTarget.position - transform.position;
         dir.y = 0f;
 
         float targetYaw = Quaternion.LookRotation(dir).eulerAngles.y;
+        float prevYaw = yaw;
         yaw   = Mathf.SmoothDampAngle(yaw, targetYaw, ref lockYawVelocity, 0.12f);
         pitch = Mathf.SmoothDamp(pitch, lockOnPitch, ref lockPitchVelocity, 0.12f);
 
         cinemachineCameraTarget.transform.rotation =
             Quaternion.Euler(pitch + cameraAngleOverride, yaw, 0f);
+
     }
 
     // Called from PlayerController.LateUpdate — adjusts lock cam distance when close to enemy
@@ -255,6 +262,8 @@ public class PlayerCameraController : MonoBehaviour
         pos += shakeOffset;
 
         cinemachineCameraTarget.transform.position = pos;
+
+       
     }
 
     public void SetCameraHeight(float height, bool smooth = true)

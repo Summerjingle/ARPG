@@ -43,28 +43,48 @@ public class BossAttackState : State<BossController>
         StartCoroutine(DoAttack(selected));
     }
 
-    private IEnumerator DoAttack(AttackData attack)
+    private IEnumerator DoAttack(AttackData firstAttack)
     {
         isAttacking = true;
+        AttackData currentAttack = firstAttack;
 
-        owner.anim.applyRootMotion = true;
-
-        var target = owner.playerTarget?.GetComponent<ICombatSystem>();
-        owner.fighter.TryToAttack(target);
-
-        // 仅在 ImpactStartTime 之前追踪玩家朝向，进入 impact 后停止旋转
-        int layer = owner.fighter.AttackAnimLayer;
-        while (owner.fighter.Attackstate != AttackStates.Idle)
+        while (true)
         {
-            float normalizedTime = owner.anim.GetCurrentAnimatorStateInfo(layer).normalizedTime;
-            if (!attack.IsSpinAttack && normalizedTime < attack.ImpactStartTime)
-                owner.FacePlayer();
-            yield return null;
+            owner.anim.applyRootMotion = false;
+
+            var target = owner.playerTarget?.GetComponent<ICombatSystem>();
+            owner.fighter.TryToAttack(target);
+
+            int layer = owner.fighter.AttackAnimLayer;
+            while (owner.fighter.Attackstate != AttackStates.Idle)
+            {
+                float normalizedTime = owner.anim.GetCurrentAnimatorStateInfo(layer).normalizedTime;
+                if (!currentAttack.IsSpinAttack && normalizedTime < currentAttack.ImpactStartTime)
+                    owner.FacePlayer();
+                yield return null;
+            }
+
+            // 连击判定：概率触发 + 玩家仍在攻击范围内
+            if (Random.value < owner.comboChance && owner.playerTarget != null
+                && owner.GetFlatDistanceToPlayer() <= owner.attackRange)
+            {
+                BossPositionZone zone = owner.DetectPlayerZone();
+                var group = owner.GetAttackGroup(zone);
+                if (group != null && group.Count > 0)
+                {
+                    currentAttack = group[Random.Range(0, group.Count)];
+                    owner.fighter.OverrideAttacks(
+                        new System.Collections.Generic.List<AttackData> { currentAttack });
+                    owner.lastAttackTime = Time.time;
+                    continue;
+                }
+            }
+
+            break;
         }
 
-        owner.anim.applyRootMotion = false;
         isAttacking = false;
-        owner.ChangeState(owner.chaseState);
+        owner.ChangeState(owner.GetNextStateAfterAttack());
     }
 
     public override void Exit()

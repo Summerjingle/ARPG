@@ -7,6 +7,11 @@ public class AnimatorFunctions : MonoBehaviour
     [SerializeField] private ArchiveManager archiveManager;
     [SerializeField] private AudioSource audioSource;
 
+    void Start()
+    {
+        AudioManager.RouteToUI(audioSource);
+    }
+
 
     [Header("��������")]
     [SerializeField] private string gameSceneName = "WhiteBox_Village";
@@ -19,14 +24,10 @@ public class AnimatorFunctions : MonoBehaviour
     // ��Ч
     public void PlaySound(AudioClip clip)
     {
-        if (!disableOnce && audioSource != null)
-        {
-            audioSource.PlayOneShot(clip);
-        }
+        if (!disableOnce && clip != null)
+            AudioManager.Instance.PlayUI(clip);
         else
-        {
             disableOnce = false;
-        }
     }
 
     [SerializeField] MenuListController menuListController;

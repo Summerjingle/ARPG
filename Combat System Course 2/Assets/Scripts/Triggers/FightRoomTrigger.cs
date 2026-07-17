@@ -23,9 +23,9 @@ public class FightRoomTrigger : MonoBehaviour
             doorAnim.SetTrigger("Close");
             
             enemyHealthBar.SetActive(true);
-            AudioSource.PlayClipAtPoint(doorSound,transform.position);
+            AudioManager.Instance.PlaySFX(doorSound,transform.position);
             BossBloodBarAnim.SetTrigger("ShowBar");
-            Debug.Log("Íæ¼Ò½øÈë·¿¼ä");
+            Debug.Log("ï¿½ï¿½Ò½ï¿½ï¿½ë·¿ï¿½ï¿½");
         }
     }
 }

@@ -9,20 +9,20 @@ public class HitEffect : MonoBehaviour
         Instance = this;
     }
 
-    // ²¥·ÅÒôÐ§
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§
     public void PlaySound(AudioClip clip, Vector3 pos)
     {
         if (clip == null) return;
 
-        AudioSource.PlayClipAtPoint(clip, pos, 1f);
+        AudioManager.Instance.PlaySFX(clip, pos, 1f);
     }
 
-    // ²¥·ÅÁ£×Ó FX
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ FX
     public void PlayFX(GameObject prefab, Vector3 pos, Quaternion rot)
     {
         if (prefab == null) return;
 
         GameObject fx = GameObject.Instantiate(prefab, pos, rot);
-        GameObject.Destroy(fx, 2f);    // ×Ô¶¯Ïú»Ù
+        GameObject.Destroy(fx, 2f);    // ï¿½Ô¶ï¿½ï¿½ï¿½ï¿½ï¿½
     }
 }

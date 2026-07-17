@@ -16,7 +16,10 @@ public abstract class Weapon : MonoBehaviour
     public string WeaponTypeSuffix => WeaponCategory.ToString(); // "Sword" / "GreatSword"
     public string rollAnim => itemSO?.rollAnim ?? "Roll_Sword";
 
-    public abstract float GetDamage();
+    public virtual float GetDamage()
+    {
+        return itemSO?.baseDamage ?? 10f;
+    }
     public virtual void Initialize(WeaponSO weaponItem)
     {
         itemSO = weaponItem;

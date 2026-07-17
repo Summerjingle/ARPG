@@ -29,14 +29,21 @@ public class BossChaseState : State<BossController>
         // 自己控制转向，不用 NavAgent 的 updateRotation
         owner.FacePlayer();
 
-        // 追太久且距离够远 → 远程攻击
+        // 追太久且距离够远 → 等概率随机选远程/跳跃/龙车
         if (chaseTimer >= owner.rangedChaseTimeThreshold
             && dist > owner.attackRange
             && owner.CanRangedAttack())
         {
             owner.agent.isStopped = true;
-            owner.ChangeState(owner.rangedAttackState);
-            return;
+            // float rand = Random.value;
+            // if (rand < 0.33f)
+            //     owner.ChangeState(owner.rangedAttackState);
+            // else if (rand < 0.66f)
+            //     owner.ChangeState(owner.jumpAttackState);
+            // else
+            //     owner.ChangeState(owner.chargeAttackState);
+            // return;
+            owner.ChangeState(owner.chargeAttackState);
         }
 
         if (dist <= owner.attackRange)

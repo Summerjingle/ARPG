@@ -94,7 +94,7 @@ public class PlayerProperty : MonoBehaviour
         level = Mathf.Clamp(level, 1, 99);
         switch (type)
         {
-            case AttributeType.Vitality:  vitalityLevel  = level; break;
+            case AttributeType.Vitality:  vitalityLevel  = level; lastAppliedVitalityLevel = level; break;
             case AttributeType.Endurance: enduranceLevel = level; break;
             case AttributeType.Strength:  strengthLevel  = level; break;
             case AttributeType.Agility:   agilityLevel   = level; break;
@@ -227,6 +227,7 @@ public class PlayerProperty : MonoBehaviour
     private HealthSystem healthSystem;
     private Animator anim;
     private ItemSO pendingItem;
+    private int lastAppliedVitalityLevel;  // 上次同步到HealthSystem的体力等级
 
     [Header("Potion Models")]
     [SerializeField] private GameObject hpPotionModel;
@@ -256,10 +257,8 @@ public class PlayerProperty : MonoBehaviour
 
         HideAllDrugModels();
         healthSystem = GetComponent<HealthSystem>();
-
-        // 初始化 HealthSystem 的 MaxHealth 为体力公式值
-        if (healthSystem != null)
-            healthSystem.SetMaxHealth(MaxHealth);
+        lastAppliedVitalityLevel = vitalityLevel;
+        // MaxHealth 由 Inspector 上的 HealthSystem 决定，PlayerProperty 只提供体力加成
 
         SubscribeToAllEnemies();
     }
@@ -267,14 +266,25 @@ public class PlayerProperty : MonoBehaviour
     /// <summary> 属性升级后同步到 HealthSystem / UI </summary>
     private void ApplyBaseStatsToSystems()
     {
-        if (healthSystem != null)
-            healthSystem.SetMaxHealth(MaxHealth);
+        // 体力等级变化 → delta 方式增减 MaxHealth，不覆盖 Inspector 基础值
+        if (healthSystem != null && vitalityLevel != lastAppliedVitalityLevel)
+        {
+            int oldHP = GetMaxHPForLevel(lastAppliedVitalityLevel);
+            int newHP = GetMaxHPForLevel(vitalityLevel);
+            healthSystem.AddMaxHealth(newHP - oldHP);
+            lastAppliedVitalityLevel = vitalityLevel;
+        }
 
         // Clamp 当前能量到新上限
         energyValue = Mathf.Clamp(energyValue, 0, MaxEnergy);
 
         OnArmorChanged?.Invoke();
         OnEnergyChanged?.Invoke(EnergyNormalized);
+    }
+
+    private int GetMaxHPForLevel(int level)
+    {
+        return Mathf.RoundToInt(100f + 1900f * (1f - Mathf.Exp(-0.05f * (level - 1))));
     }
 
     #region ==================== 敌人击杀 → 获得灵魂 ====================
@@ -327,7 +337,7 @@ public class PlayerProperty : MonoBehaviour
                 equipmentMaxHPBonus += value;
                 if (healthSystem != null)
                 {
-                    healthSystem.SetMaxHealth(MaxHealth);
+                    healthSystem.AddMaxHealth(value);
                     healthSystem.RestoreHealth(value);
                 }
                 break;
@@ -367,7 +377,7 @@ public class PlayerProperty : MonoBehaviour
                 equipmentMaxHPBonus -= value;
                 if (healthSystem != null)
                 {
-                    healthSystem.SetMaxHealth(MaxHealth);
+                    healthSystem.AddMaxHealth(-value);
                     healthSystem.RestoreHealth(0);
                 }
                 break;
@@ -396,7 +406,7 @@ public class PlayerProperty : MonoBehaviour
     {
         return statType switch
         {
-            StatType.MaxHP      => MaxHealth,
+            StatType.MaxHP      => healthSystem != null ? (int)healthSystem.MaxHealth : 0,
             StatType.MaxEnergy  => MaxEnergy,
             StatType.Defense    => ArmorValue,
             StatType.CritRate   => (int)TotalCritRate,
@@ -493,7 +503,7 @@ public class PlayerProperty : MonoBehaviour
         ConsumableSO consumable = pendingItem as ConsumableSO;
         if (consumable == null || consumable.effects == null) return;
 
-        AudioSource.PlayClipAtPoint(DrinkSound, transform.position);
+        AudioManager.Instance.PlaySFX(DrinkSound, transform.position);
         foreach (Property p in consumable.effects)
             AddProperty(p.statType, p.value);
 

@@ -1,0 +1,39 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3b9756b45a8a5ab4283ebb16c88ebacc, type: 3}
+  m_Name: ChargeAttack
+  m_EditorClassIdentifier: 
+  <AttackName>k__BackingField: ChargeAttack
+  <HitboxToUse>k__BackingField: 7
+  <ImpactStartTime>k__BackingField: 0.27
+  <ImpactEndTime>k__BackingField: 0.71
+  <MoveToTarget>k__BackingField: 0
+  <DistanceFromTarget>k__BackingField: 1
+  <MaxMoveDistance>k__BackingField: 20
+  <MoveSpeed>k__BackingField: 6
+  <MoveStartTime>k__BackingField: 0.3
+  <MoveEndTime>k__BackingField: 0.73
+  <Damage>k__BackingField: 50
+  <SpecialHitReaction>k__BackingField: 
+  <IsKnockdown>k__BackingField: 0
+  <IsSpinAttack>k__BackingField: 0
+  <EnableCameraShake>k__BackingField: 0
+  <CameraShakeIntensity>k__BackingField: 0.5
+  <CameraShakeDuration>k__BackingField: 0.2
+  <CameraShakeFrequency>k__BackingField: 10
+  <CameraShakeTime>k__BackingField: 0
+  <AttackVFXPrefab>k__BackingField: {fileID: 0}
+  <VFXSpawnTime>k__BackingField: 0.3
+  <VFXFollowAttacker>k__BackingField: 0
+  <VFXSpawnOffset>k__BackingField: {x: 0, y: 0, z: 0}
+  <AttackSFX>k__BackingField: {fileID: 0}
+  <SFXSpawnTime>k__BackingField: 0

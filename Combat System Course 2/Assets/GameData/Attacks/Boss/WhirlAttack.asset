@@ -31,9 +31,10 @@ MonoBehaviour:
   <CameraShakeDuration>k__BackingField: 0.2
   <CameraShakeFrequency>k__BackingField: 10
   <CameraShakeTime>k__BackingField: 0
-  <AttackVFXPrefab>k__BackingField: {fileID: 0}
-  <VFXSpawnTime>k__BackingField: 0
-  <VFXFollowAttacker>k__BackingField: 0
+  <AttackVFXPrefab>k__BackingField: {fileID: 7518861878842990761, guid: 188de3e31e70c0e48a652ec7b982d896,
+    type: 3}
+  <VFXSpawnTime>k__BackingField: 0.3
+  <VFXFollowAttacker>k__BackingField: 1
   <VFXSpawnOffset>k__BackingField: {x: 0, y: 0, z: 0}
   <AttackSFX>k__BackingField: {fileID: 0}
   <SFXSpawnTime>k__BackingField: 0

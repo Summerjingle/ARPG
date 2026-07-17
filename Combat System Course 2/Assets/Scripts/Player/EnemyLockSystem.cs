@@ -87,12 +87,14 @@ public class EnemyLockSystem : MonoBehaviour
         else if (bc != null && bc.lockOnPoint != null)
             currentLockOnPoint = bc.lockOnPoint;
         else
-            currentLockOnPoint = null;
+            currentLockOnPoint = null; // TODO: 给所有小怪配 lockOnPoint！为 null 时相机回退锁骨骼碰撞体，会跟着动画摆
 
         if (lockUICanvas != null)
             lockUICanvas.gameObject.SetActive(true);
 
-        player.cameraController.LockOnTarget(target);
+        // 相机锁定用稳定的 lockOnPoint（根节点子物体），不能用骨骼碰撞体，
+        // 否则 HandleLockOnCamera 每帧算 yaw 会跟着骨骼动画摆动
+        player.cameraController.LockOnTarget(currentLockOnPoint != null ? currentLockOnPoint : target);
         player.ResetMovementBase();
 
         followCam.Priority = 10;

@@ -31,4 +31,4 @@ MonoBehaviour:
   isHeavy: 1
   weaponCategory: 1
   rollAnim: Roll_GreatSword
-  baseDamage: 85
+  baseDamage: 249

@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.AI;
 
 public enum BossPositionZone { Front, Back, Left, Right }
+public enum BossPhase { Normal, Agility, Strength }
 
 public class BossController : MonoBehaviour
 {
@@ -15,8 +16,14 @@ public class BossController : MonoBehaviour
     public BossChaseState chaseState;
     public BossAttackState attackState;
     public BossRangedAttackState rangedAttackState;
+    public BossJumpAttackState jumpAttackState;
+    public BossChargeAttackState chargeAttackState;
+    public BossUltimateState ultimateState;
     public BossStunnedState stunnedState;
     public BossDieState dieState;
+
+    [Header("Boss Phase")]
+    public BossPhase bossPhase = BossPhase.Normal;
 
     [Header("Targeting")]
     public Transform playerTarget;
@@ -33,9 +40,10 @@ public class BossController : MonoBehaviour
     [Header("Attack")]
     public float attackCD = 2f;
     [HideInInspector] public float lastAttackTime = -999f;
+    [Range(0f, 1f)] public float comboChance = 0.3f;
 
     [Header("Ranged Attack")]
-    public float rangedAttackCD = 4f;
+    public float rangedAttackCD = 2f;
     [HideInInspector] public float lastRangedAttackTime = -999f;
     public float rangedChaseTimeThreshold = 6f;
     public GameObject boulderPrefab;
@@ -45,6 +53,11 @@ public class BossController : MonoBehaviour
     [Header("Stun")]
     [Range(0f, 1f)] public float stunHealthThreshold = 0.5f;
     [HideInInspector] public bool hasTriggeredStun = false;
+
+    [Header("Ultimate")]
+    [HideInInspector] public bool pendingUltimate = false;
+    private bool ultimateTriggered66 = false;
+    private bool ultimateTriggered33 = false;
 
     [Header("Attack Groups (按方位)")]
     public List<AttackData> frontAttacks;
@@ -93,10 +106,33 @@ public class BossController : MonoBehaviour
 
     private void OnGotHit(ICombatSystem attacker)
     {
+        // Ultimate 蓄力中：累计伤害用于打断判定
+        if (ultimateState != null && ultimateState.IsCharging)
+        {
+            float dmg = attacker != null ? attacker.GetWeaponDamage() : 0f;
+            ultimateState.AddDamage(dmg);
+        }
+
         if (hasTriggeredStun) return;
         if (healthSystem == null) return;
 
         float hpPercent = healthSystem.HealthPercent;
+
+        // Ultimate 触发检测（血量阈值，等当前攻击结束再进）
+        if (!ultimateTriggered66 && hpPercent <= 0.66f && hpPercent > 0f)
+        {
+            ultimateTriggered66 = true;
+            if (currentState != ultimateState)
+                pendingUltimate = true;
+        }
+        if (!ultimateTriggered33 && hpPercent <= 0.33f && hpPercent > 0f)
+        {
+            ultimateTriggered33 = true;
+            if (currentState != ultimateState)
+                pendingUltimate = true;
+        }
+
+        // Stun 触发
         if (hpPercent <= stunHealthThreshold && hpPercent > 0f)
         {
             hasTriggeredStun = true;
@@ -196,5 +232,23 @@ public class BossController : MonoBehaviour
     public bool CanRangedAttack()
     {
         return Time.time - lastRangedAttackTime >= rangedAttackCD;
+    }
+
+    public bool CanJumpAttack()
+    {
+        return Time.time - lastRangedAttackTime >= rangedAttackCD;
+    }
+
+    public bool CanChargeAttack()
+    {
+        return Time.time - lastRangedAttackTime >= rangedAttackCD;
+    }
+
+    /// <summary>攻击结束后，若有 pending ultimate 则优先进 ultimate，否则 chase</summary>
+    public State<BossController> GetNextStateAfterAttack()
+    {
+        if (pendingUltimate && ultimateState != null)
+            return ultimateState;
+        return chaseState;
     }
 }

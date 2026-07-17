@@ -15,13 +15,27 @@ MonoBehaviour:
   <AttackName>k__BackingField: JumpAttack
   <HitboxToUse>k__BackingField: 6
   <ImpactStartTime>k__BackingField: 0.57
-  <ImpactEndTime>k__BackingField: 0.6
+  <ImpactEndTime>k__BackingField: 0.596
   <MoveToTarget>k__BackingField: 0
   <DistanceFromTarget>k__BackingField: 1
   <MaxMoveDistance>k__BackingField: 3
+  <MoveSpeed>k__BackingField: 5
   <MoveStartTime>k__BackingField: 0
   <MoveEndTime>k__BackingField: 1
   <Damage>k__BackingField: 10
   <SpecialHitReaction>k__BackingField: DownUp
   <IsKnockdown>k__BackingField: 1
   <IsSpinAttack>k__BackingField: 0
+  <EnableCameraShake>k__BackingField: 1
+  <CameraShakeIntensity>k__BackingField: 0.5
+  <CameraShakeDuration>k__BackingField: 0.2
+  <CameraShakeFrequency>k__BackingField: 10
+  <CameraShakeTime>k__BackingField: 0.596
+  <AttackVFXPrefab>k__BackingField: {fileID: 6364461875894569145, guid: 6a2477a634cccc542bd1815e5d248654,
+    type: 3}
+  <VFXSpawnTime>k__BackingField: 0.6
+  <VFXFollowAttacker>k__BackingField: 0
+  <VFXSpawnOffset>k__BackingField: {x: 0, y: 0, z: 0}
+  <AttackSFX>k__BackingField: {fileID: 8300000, guid: 86732690b2b307848b3e2c387270a789,
+    type: 3}
+  <SFXSpawnTime>k__BackingField: 0.596

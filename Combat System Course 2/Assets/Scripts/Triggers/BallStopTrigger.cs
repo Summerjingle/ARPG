@@ -7,13 +7,19 @@ public class BallStopTrigger : MonoBehaviour
     public AudioClip hitSound;
 
     public PlayerFighter player;
+
+    void Start()
+    {
+        AudioManager.RouteToSFX(audioSource);
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.GetComponent<Rigidbody>() != ballRb) return;
 
         // 播放音效
-        if (audioSource != null && hitSound != null)
-            audioSource.PlayOneShot(hitSound);
+        if (hitSound != null)
+            AudioManager.Instance.PlaySFX(hitSound, transform.position);
 
         // 停止球
         ballRb.isKinematic = true;

@@ -22,6 +22,8 @@ public class TieRod : MonoBehaviour
     {
         tieRod = GetComponentInParent<Animator>();
         fire_R.SetActive(false);
+        AudioManager.RouteToSFX(stoneSound);
+        AudioManager.RouteToSFX(fireUpSound);
     }
 
 
@@ -57,7 +59,7 @@ public class TieRod : MonoBehaviour
         closeUpCam.Priority = 30;
         closeUpCam2.Priority = 25;
         snakePillar_R_Anim.SetTrigger("Turn");
-        stoneSound.Play();
+        AudioManager.Instance.PlaySFX(stoneSound.clip, transform.position);
         yield return new WaitForSeconds(7.0f);
         StartCoroutine(FireUp());
     }
@@ -66,7 +68,7 @@ public class TieRod : MonoBehaviour
         closeUpCam.Priority = 10;
         yield return new WaitForSeconds(1.5f);
         fire_R.SetActive(true);
-        fireUpSound.Play();
+        AudioManager.Instance.PlaySFX(fireUpSound.clip, transform.position);
         yield return new WaitForSeconds(3f);
         closeUpCam2.Priority = 10;
     }

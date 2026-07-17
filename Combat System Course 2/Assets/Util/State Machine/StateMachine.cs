@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class StateMachine<T>
@@ -13,15 +11,15 @@ public class StateMachine<T>
 	}
 	public void ChangeState(State<T> newState)
 	{
-        Debug.Log($"StateMachine.ChangeState ±»µ÷ÓÃ£¬newState: {newState?.GetType().Name ?? "NULL"}");
+        Debug.Log($"StateMachine.ChangeState ï¿½ï¿½ï¿½ï¿½ï¿½Ã£ï¿½newState: {newState?.GetType().Name ?? "NULL"}");
         if (CurrentState != null)
         {
-            Debug.Log($"ÍË³öµ±Ç°×´Ì¬: {CurrentState.GetType().Name}");
+            Debug.Log($"ï¿½Ë³ï¿½ï¿½ï¿½Ç°×´Ì¬: {CurrentState.GetType().Name}");
             CurrentState.Exit();
         }
         else
         {
-            Debug.Log("µ±Ç°×´Ì¬Îªnull£¬ÎÞÐèÍË³ö");
+            Debug.Log("ï¿½ï¿½Ç°×´Ì¬Îªnullï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë³ï¿½");
         }
         CurrentState = newState;
 		CurrentState.Enter(_owner);

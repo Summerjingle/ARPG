@@ -32,8 +32,8 @@ public class CaveToMountain : MonoBehaviour
     {
         if (isPlayerInTrigger && Input.GetKeyDown(KeyCode.E))
         {
-            AudioSource.PlayClipAtPoint(doorOpenSound, transform.position);
-            // ±£´æÓÎÏ·×´Ì¬
+            AudioManager.Instance.PlaySFX(doorOpenSound, transform.position);
+            // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï·×´Ì¬
             if (SaveManager.Instance != null)
             {
                 SaveManager.Instance.SaveGame();
@@ -41,7 +41,7 @@ public class CaveToMountain : MonoBehaviour
                 SaveManager.isNewGame = false;
             }
 
-            // ÉèÖÃÄ¿±ê³¡¾°²¢¼ÓÔØ
+            // ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ê³¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
             PlayerPrefs.SetString("TargetScene", gameSceneName);
             SaveManager.shouldLoadFromSave = true;
             SaveManager.shouldLoadPosition = false;

@@ -15,6 +15,7 @@ public class WarningTrigger : MonoBehaviour
     {
         audioSource=GetComponent<AudioSource>();
         boxCollider=GetComponent<BoxCollider>();
+        AudioManager.RouteToSFX(audioSource);
     }
 
     // Update is called once per frame
@@ -22,7 +23,7 @@ public class WarningTrigger : MonoBehaviour
         private void OnTriggerEnter(Collider other) {
         if (other.CompareTag("Player"))
         {
-            audioSource.PlayOneShot(warningSentence);
+            AudioManager.Instance.PlaySFX(warningSentence, transform.position);
             boxCollider.enabled=false;
         }
         }

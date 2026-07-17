@@ -31,6 +31,7 @@ public class MenuButtonController : MonoBehaviour
     void Start()
     {
         audioSource = GetComponent<AudioSource>();
+        AudioManager.RouteToUI(audioSource);
     }
 
     void OnNavigate(InputAction.CallbackContext ctx)
@@ -50,7 +51,7 @@ public class MenuButtonController : MonoBehaviour
             index = (index > 0) ? index - 1 : maxIndex;
         }
 
-        audioSource?.Play();
+        AudioManager.Instance.PlayUI(audioSource?.clip);
         inputLocked = true;
     }
 

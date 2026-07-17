@@ -377,7 +377,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             // 命中音效 + 血液特效（在 OnHitReaction 之前，Boss 也能享受）
             Vector3 hitPoint = other.ClosestPoint(transform.position);
             if (hitSound != null)
-                AudioSource.PlayClipAtPoint(hitSound, hitPoint, 0.8f);
+                AudioManager.Instance.PlaySFX(hitSound, hitPoint, 0.8f);
             BloodEffectManager.SpawnBlood(hitPoint, bloodSplashPrefabs, bloodDecalPrefabs);
 
             string specialReaction = attacker.CurrentSpecialHitReaction;
@@ -587,7 +587,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
         if (reboundVfxPrefab != null)
             Instantiate(reboundVfxPrefab, hitPoint, Quaternion.identity);
         if (reboundSfx != null)
-            AudioSource.PlayClipAtPoint(reboundSfx, hitPoint);
+            AudioManager.Instance.PlaySFX(reboundSfx, hitPoint);
     }
 
     public void OnWeaponRebound(Vector3 hitPoint)
@@ -616,7 +616,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
             Instantiate(reboundVfxPrefab, lastReboundHitPoint, Quaternion.identity);
 
         if (reboundSfx != null)
-            AudioSource.PlayClipAtPoint(reboundSfx, lastReboundHitPoint);
+            AudioManager.Instance.PlaySFX(reboundSfx, lastReboundHitPoint);
 
         yield return new WaitForSeconds(reboundFreezeDuration);
 
@@ -739,7 +739,7 @@ public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCoun
     {
         if (IsTakingHit) break;
         if (IsRebounding) break;
-        timer += Time.deltaTime;
+        timer += Time.deltaTime * animator.speed;
         float normalizedTime = timer / animstate.length;
 
         // ===== 移动逻辑 =====
@@ -841,7 +841,7 @@ public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCoun
         if (!sfxPlayed && attack.AttackSFX != null && normalizedTime >= attack.SFXSpawnTime)
         {
             sfxPlayed = true;
-            AudioSource.PlayClipAtPoint(attack.AttackSFX, transform.position);
+            AudioManager.Instance.PlaySFX(attack.AttackSFX, transform.position);
         }
 
         // ===== 攻击特效生成 =====
