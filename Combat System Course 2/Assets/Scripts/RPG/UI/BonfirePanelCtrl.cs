@@ -13,6 +13,12 @@ public class BonfirePanelCtrl : MonoBehaviour
     [SerializeField] private MenuListController menuListController;
     [SerializeField] private int optionCount = 3;
 
+    [Header("Upgrade")]
+    [SerializeField] private AbilityUpgradePanelCtrl upgradePanel;
+
+    [Header("Bonfire Canvas")]
+    [SerializeField] private CanvasGroup canvasToHideDuringBonfire;
+
     private Bonfire currentBonfire;
 
     private void Awake()
@@ -42,6 +48,10 @@ public class BonfirePanelCtrl : MonoBehaviour
     {
         currentBonfire = bonfire;
         bonfireCollider.enabled = false;
+
+        // Bonfire 打开时隐藏指定 Canvas
+        if (canvasToHideDuringBonfire != null)
+            canvasToHideDuringBonfire.alpha = 0f;
 
         if (menuListController != null)
         {
@@ -74,7 +84,7 @@ public class BonfirePanelCtrl : MonoBehaviour
                 Rest();
                 break;
             case 1:
-                Debug.Log("Bonfire option 1: reserved for future feature");
+                OpenUpgradePanel();
                 break;
             case 2:
                 StartCoroutine(CloseSequence());
@@ -100,6 +110,30 @@ public class BonfirePanelCtrl : MonoBehaviour
     }
 
 
+    private void OpenUpgradePanel()
+    {
+        Debug.Log($"[BonfirePanelCtrl] OpenUpgradePanel called, upgradePanel={upgradePanel}", upgradePanel);
+
+        if (upgradePanel == null)
+        {
+            Debug.LogWarning("[BonfirePanelCtrl] upgradePanel is not assigned!");
+            return;
+        }
+
+        // 隐藏篝火面板、显示升级面板
+        if (bonfirePanel != null)
+            bonfirePanel.SetActive(false);
+
+        upgradePanel.ShowFromBonfire();
+    }
+
+    /// <summary> 升级面板关闭后重新显示篝火面板 </summary>
+    public void ReopenPanel()
+    {
+        if (bonfirePanel != null)
+            bonfirePanel.SetActive(true);
+    }
+
     private void OnExitPressed()
     {
         StartCoroutine(CloseSequence());
@@ -123,6 +157,10 @@ public class BonfirePanelCtrl : MonoBehaviour
 
         InputManager.Instance?.SwitchToPlayer();
         bonfireCollider.enabled = true;
+
+        // 完全退出 Bonfire，恢复 Canvas
+        if (canvasToHideDuringBonfire != null)
+            canvasToHideDuringBonfire.alpha = 1f;
 
         if (currentBonfire != null)
         {

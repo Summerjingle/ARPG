@@ -233,6 +233,9 @@ public class PlayerProperty : MonoBehaviour
     [SerializeField] private GameObject hpPotionModel;
     [SerializeField] private GameObject eyPotionModel;
     public AudioClip DrinkSound;
+
+    [Header("Low HP UI")]
+    [SerializeField] private GameObject activeLowHPUI;
     #endregion
 
     private void Awake()
@@ -260,6 +263,12 @@ public class PlayerProperty : MonoBehaviour
         lastAppliedVitalityLevel = vitalityLevel;
         // MaxHealth 由 Inspector 上的 HealthSystem 决定，PlayerProperty 只提供体力加成
 
+        if (healthSystem != null)
+        {
+            healthSystem.OnHealthChanged += OnPlayerHealthChanged;
+            UpdateLowHPUI(); // 初始同步
+        }
+
         SubscribeToAllEnemies();
     }
 
@@ -286,6 +295,19 @@ public class PlayerProperty : MonoBehaviour
     {
         return Mathf.RoundToInt(100f + 1900f * (1f - Mathf.Exp(-0.05f * (level - 1))));
     }
+
+    #region ==================== Low HP UI ====================
+    private void OnPlayerHealthChanged(HealthSystem hs, HealthChangeInfo info)
+    {
+        UpdateLowHPUI();
+    }
+
+    private void UpdateLowHPUI()
+    {
+        if (activeLowHPUI == null || healthSystem == null) return;
+        activeLowHPUI.SetActive(healthSystem.HealthPercent < 0.2f && !healthSystem.IsDead);
+    }
+    #endregion
 
     #region ==================== 敌人击杀 → 获得灵魂 ====================
     private void SubscribeToAllEnemies()
@@ -519,6 +541,9 @@ public class PlayerProperty : MonoBehaviour
 
     private void OnDestroy()
     {
+        if (healthSystem != null)
+            healthSystem.OnHealthChanged -= OnPlayerHealthChanged;
+
         OnArmorChanged = null;
         EnemyController[] allEnemies = FindObjectsOfType<EnemyController>();
         foreach (EnemyController enemy in allEnemies)

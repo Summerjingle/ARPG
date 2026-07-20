@@ -149,6 +149,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_QuickUseBar.Disable();
         Actions.UI_ArchiveMenu.Disable();
         Actions.UI_Confirm.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
 
         EnableExclusive(Actions.UI_MainMenu);
@@ -165,6 +166,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_ArchiveMenu.Disable();
         Actions.UI_Confirm.Disable();
         Actions.UI_BonfireMenu.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
 
         EnableExclusive(Actions.Player);
@@ -179,6 +181,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_BonfireMenu.Disable();
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
         Actions.UI_Confirm.Disable();
 
@@ -196,6 +199,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_Inventory.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
 
         EnableExclusive(Actions.UI_Confirm);
@@ -211,6 +215,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_BonfireMenu.Disable();
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
         Actions.Global.Disable();
 
@@ -228,6 +233,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_Confirm.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_BonfireMenu.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
         Actions.Global.Disable();
 
@@ -244,6 +250,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_Confirm.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_BonfireMenu.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
         Actions.Global.Disable();
 
@@ -261,11 +268,30 @@ public class InputManager : MonoBehaviour
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
         Actions.UI_BonfireMenu.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
 
         EnableExclusive(Actions.UI_PauseMenu);
         UIStateManager.SetUIActive(true);
         Debug.Log("switched to Pause Menu input mode.");
+    }
+
+    public void SwitchToAbilityUpgrade()
+    {
+        Actions.Player.Disable();
+        Actions.Global.Disable();
+        Actions.UI_MainMenu.Disable();
+        Actions.UI_ArchiveMenu.Disable();
+        Actions.UI_Confirm.Disable();
+        Actions.UI_Inventory.Disable();
+        Actions.UI_ItemDetail.Disable();
+        Actions.UI_QuickUseBar.Disable();
+        Actions.UI_PauseMenu.Disable();
+        Actions.UI_BonfireMenu.Disable();
+        Actions.Empty.Disable();
+
+        EnableExclusive(Actions.UI_AbilityUpgrade);
+        UIStateManager.SetUIActive(true);
     }
 
     public void SwitchToBonfireMenu()
@@ -279,6 +305,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_ItemDetail.Disable();
         Actions.UI_QuickUseBar.Disable();
         Actions.UI_PauseMenu.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
         Actions.Empty.Disable();
 
         EnableExclusive(Actions.UI_BonfireMenu);
@@ -297,6 +324,7 @@ public class InputManager : MonoBehaviour
         Actions.UI_QuickUseBar.Disable();
         Actions.UI_PauseMenu.Disable();
         Actions.UI_BonfireMenu.Disable();
+        Actions.UI_AbilityUpgrade.Disable();
 
         EnableExclusive(Actions.Empty);
         UIStateManager.SetUIActive(true);

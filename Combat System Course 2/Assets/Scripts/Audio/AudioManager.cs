@@ -25,6 +25,16 @@ public class AudioManager : MonoBehaviour
     [Range(0f, 1f)] public float defaultSFXVolume = 0.8f;
     [Range(0f, 1f)] public float defaultUIVolume  = 1f;
 
+    // ===== BGM =====
+    [Header("BGM")]
+    [SerializeField] private AudioMixerGroup bgmGroup;
+    [Range(0f, 1f)] public float defaultBGMVolume = 1f;
+
+    private AudioSource bgmSource;
+    private Coroutine bgmFadeRoutine;
+
+    public static AudioMixerGroup BGMGroup => Instance?.bgmGroup;
+
     // ===== 对象池 =====
     [Header("Pool")]
     [SerializeField] private int poolSize = 20;
@@ -40,6 +50,15 @@ public class AudioManager : MonoBehaviour
 
         poolRoot = new GameObject("AudioPool");
         poolRoot.transform.SetParent(transform);
+
+        // 专用 BGM AudioSource，不走对象池
+        var bgmGo = new GameObject("BGM");
+        bgmGo.transform.SetParent(transform);
+        bgmSource = bgmGo.AddComponent<AudioSource>();
+        bgmSource.playOnAwake = false;
+        bgmSource.loop = true;
+        bgmSource.spatialBlend = 0f;    // 2D
+        bgmSource.outputAudioMixerGroup = bgmGroup;
 
         for (int i = 0; i < poolSize; i++)
             CreatePooledSource();
@@ -141,5 +160,66 @@ public class AudioManager : MonoBehaviour
     {
         if (src != null && UIGroup != null)
             src.outputAudioMixerGroup = UIGroup;
+    }
+
+    // ===== BGM API =====
+
+    /// <summary>播放 BGM，可设置淡入和是否循环</summary>
+    public void PlayBGM(AudioClip clip, float fadeInDuration = 0f, bool loop = true)
+    {
+        Debug.Log($"[AudioManager] PlayBGM clip={clip.name}, loop={loop}, fadeIn={fadeInDuration}");
+        if (clip == null || bgmSource == null) return;
+        if (bgmFadeRoutine != null) StopCoroutine(bgmFadeRoutine);
+
+        bgmSource.clip = clip;
+        bgmSource.loop = loop;
+        bgmSource.Play();
+
+        if (fadeInDuration > 0f)
+        {
+            bgmSource.volume = 0f;
+            bgmFadeRoutine = StartCoroutine(FadeBGM(1f, fadeInDuration));
+        }
+        else
+        {
+            bgmSource.volume = defaultBGMVolume;
+        }
+    }
+
+    /// <summary>停止 BGM，可设置淡出</summary>
+    public void StopBGM(float fadeOutDuration = 0f)
+    {
+        if (bgmSource == null || !bgmSource.isPlaying) return;
+        if (bgmFadeRoutine != null) StopCoroutine(bgmFadeRoutine);
+
+        if (fadeOutDuration > 0f)
+        {
+            bgmFadeRoutine = StartCoroutine(FadeOutAndStop(fadeOutDuration));
+        }
+        else
+        {
+            bgmSource.Stop();
+            bgmSource.clip = null;
+        }
+    }
+
+    private IEnumerator FadeBGM(float targetVolume, float duration)
+    {
+        float start = bgmSource.volume;
+        float elapsed = 0f;
+        while (elapsed < duration)
+        {
+            elapsed += Time.unscaledDeltaTime;
+            bgmSource.volume = Mathf.Lerp(start, targetVolume, elapsed / duration);
+            yield return null;
+        }
+        bgmSource.volume = targetVolume;
+    }
+
+    private IEnumerator FadeOutAndStop(float duration)
+    {
+        yield return FadeBGM(0f, duration);
+        bgmSource.Stop();
+        bgmSource.clip = null;
     }
 }

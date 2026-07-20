@@ -15,6 +15,10 @@ public class EnemyLockSystem : MonoBehaviour
     [SerializeField] RectTransform lockOnIcon;
     [SerializeField] float uiScaleFactor = 0.1f;
 
+    [Header("Scale")]
+    [SerializeField] float lockScale = 0.8f;
+    [SerializeField] float scaleLerpDuration = 0.15f;
+
     public CinemachineVirtualCamera followCam;
     public CinemachineVirtualCamera lockCam;
 
@@ -28,6 +32,7 @@ public class EnemyLockSystem : MonoBehaviour
     private Vector3 locatorVelocity;
     private Vector3 dirVelocity;
     private Transform currentLockOnPoint;
+    private Coroutine scaleCoroutine;
 
     void OnEnable()
     {
@@ -102,6 +107,7 @@ public class EnemyLockSystem : MonoBehaviour
 
         player.isLockedOn = true;
         animator.SetBool("IsLocked", true);
+        StartScaleTo(lockScale);
     }
 
     public void Unlock()
@@ -115,12 +121,39 @@ public class EnemyLockSystem : MonoBehaviour
         player.lockedTargetDir = Vector3.zero;
         player.cameraController.UnlockCamera();
         animator.SetBool("IsLocked", false);
+        StartScaleTo(1.25f);
 
         if (lockUICanvas != null)
             lockUICanvas.gameObject.SetActive(false);
 
         followCam.Priority = 20;
         lockCam.Priority = 10;
+    }
+
+    void StartScaleTo(float targetScale)
+    {
+        if (scaleCoroutine != null)
+            StopCoroutine(scaleCoroutine);
+        scaleCoroutine = StartCoroutine(ScaleTo(targetScale));
+    }
+
+    System.Collections.IEnumerator ScaleTo(float target)
+    {
+        if (lockOnIcon == null) yield break;
+
+        Vector3 start = lockOnIcon.localScale;
+        Vector3 end = Vector3.one * target;
+        float elapsed = 0f;
+
+        while (elapsed < scaleLerpDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / scaleLerpDuration;
+            lockOnIcon.localScale = Vector3.Lerp(start, end, t);
+            yield return null;
+        }
+
+        lockOnIcon.localScale = end;
     }
 
     Transform ScanForTargets()
@@ -177,8 +210,6 @@ public class EnemyLockSystem : MonoBehaviour
             null,
             out Vector2 localPoint);
         lockOnIcon.anchoredPosition = localPoint;
-
-        lockOnIcon.localScale = Vector3.one;
     }
 
     void RotatePlayer()

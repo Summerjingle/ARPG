@@ -23,7 +23,7 @@ MonoBehaviour:
   <MoveStartTime>k__BackingField: 0.3
   <MoveEndTime>k__BackingField: 0.73
   <Damage>k__BackingField: 50
-  <SpecialHitReaction>k__BackingField: 
+  <SpecialHitReaction>k__BackingField: SideDownUp
   <IsKnockdown>k__BackingField: 0
   <IsSpinAttack>k__BackingField: 0
   <EnableCameraShake>k__BackingField: 0
@@ -31,9 +31,11 @@ MonoBehaviour:
   <CameraShakeDuration>k__BackingField: 0.2
   <CameraShakeFrequency>k__BackingField: 10
   <CameraShakeTime>k__BackingField: 0
-  <AttackVFXPrefab>k__BackingField: {fileID: 0}
+  <AttackVFXPrefab>k__BackingField: {fileID: 1743792375605396232, guid: 87f4a642b6140fb40927bc32c07dc6f2,
+    type: 3}
   <VFXSpawnTime>k__BackingField: 0.3
-  <VFXFollowAttacker>k__BackingField: 0
-  <VFXSpawnOffset>k__BackingField: {x: 0, y: 0, z: 0}
+  <VFXFollowAttacker>k__BackingField: 1
+  <VFXSpawnOffset_Pos>k__BackingField: {x: 0, y: 3, z: 0}
+  <VFXSpawnOffset_Rot>k__BackingField: {x: 0, y: 0, z: 0}
   <AttackSFX>k__BackingField: {fileID: 0}
   <SFXSpawnTime>k__BackingField: 0

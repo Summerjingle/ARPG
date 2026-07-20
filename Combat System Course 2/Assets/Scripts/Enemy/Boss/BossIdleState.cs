@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class BossIdleState : State<BossController>
 {
-    
+
 
     public override void Enter(BossController owner)
     {

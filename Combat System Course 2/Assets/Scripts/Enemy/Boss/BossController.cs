@@ -51,7 +51,6 @@ public class BossController : MonoBehaviour
     public float boulderFlySpeed = 15f;
 
     [Header("Stun")]
-    [Range(0f, 1f)] public float stunHealthThreshold = 0.5f;
     [HideInInspector] public bool hasTriggeredStun = false;
 
     [Header("Ultimate")]
@@ -132,12 +131,6 @@ public class BossController : MonoBehaviour
                 pendingUltimate = true;
         }
 
-        // Stun 触发
-        if (hpPercent <= stunHealthThreshold && hpPercent > 0f)
-        {
-            hasTriggeredStun = true;
-            ChangeState(stunnedState);
-        }
     }
 
     private void OnDeath(HealthSystem hs)
@@ -161,7 +154,10 @@ public class BossController : MonoBehaviour
         if (newState == null || newState == currentState) return;
         currentState?.Exit();
         if(currentState is BossIdleState && !hasStarted)
+        {
+            hasStarted = true;
             OnBossFightEnter?.Invoke();
+        }
         currentState = newState;
         currentState.Enter(this);
         if(currentState is BossDieState)
@@ -220,7 +216,7 @@ public class BossController : MonoBehaviour
     {
         if (currentState is BossStunnedState)
         {
-            ChangeState(idleState);
+            ChangeState(chaseState);
         }
     }
 
@@ -251,4 +247,5 @@ public class BossController : MonoBehaviour
             return ultimateState;
         return chaseState;
     }
+
 }

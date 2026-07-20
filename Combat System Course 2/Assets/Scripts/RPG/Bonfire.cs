@@ -24,16 +24,6 @@ public class Bonfire : MonoBehaviour, IInteractable
     }
     public void OnCheckpointReached()//给动画事件末尾调用（书打开）
 {
-        GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player == null) return;
-        var health = player.GetComponent<HealthSystem>();
-        if (health != null)
-            health.RestoreHealth(health.MaxHealth);
-
-        var prop = player.GetComponent<PlayerProperty>();
-        if (prop != null)
-            prop.SetEnergy(prop.MaxEnergy);
-
         Vector3 pos = respawnPoint != null ? respawnPoint.position : transform.position;
         Quaternion rot = respawnPoint != null ? respawnPoint.rotation : transform.rotation;
         SaveManager.Instance?.SetCheckpoint(pos, rot);

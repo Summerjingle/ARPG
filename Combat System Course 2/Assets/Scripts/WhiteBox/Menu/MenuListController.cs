@@ -69,7 +69,7 @@ public class MenuListController : MonoBehaviour
     private void OnNavigate(InputAction.CallbackContext ctx)
     {
         if (inputLocked) return;
-
+ 
         Vector2 dir = ctx.ReadValue<Vector2>();
         if (Mathf.Abs(dir.y) < deadZone) return;
 

@@ -40,47 +40,26 @@ public class BossAttackState : State<BossController>
         owner.fighter.OverrideAttacks(new System.Collections.Generic.List<AttackData> { selected });
         owner.lastAttackTime = Time.time;
 
-        StartCoroutine(DoAttack(selected));
+        StartCoroutine(DoAttack(selected, zone));
     }
 
-    private IEnumerator DoAttack(AttackData firstAttack)
+    private IEnumerator DoAttack(AttackData currentAttack, BossPositionZone zone)
     {
         isAttacking = true;
-        AttackData currentAttack = firstAttack;
+        owner.anim.applyRootMotion = false;
 
-        while (true)
+        var target = owner.playerTarget?.GetComponent<ICombatSystem>();
+        owner.fighter.TryToAttack(target);
+
+        bool isBackAttack = (zone == BossPositionZone.Back);
+
+        int layer = owner.fighter.AttackAnimLayer;
+        while (owner.fighter.Attackstate != AttackStates.Idle)
         {
-            owner.anim.applyRootMotion = false;
-
-            var target = owner.playerTarget?.GetComponent<ICombatSystem>();
-            owner.fighter.TryToAttack(target);
-
-            int layer = owner.fighter.AttackAnimLayer;
-            while (owner.fighter.Attackstate != AttackStates.Idle)
-            {
-                float normalizedTime = owner.anim.GetCurrentAnimatorStateInfo(layer).normalizedTime;
-                if (!currentAttack.IsSpinAttack && normalizedTime < currentAttack.ImpactStartTime)
-                    owner.FacePlayer();
-                yield return null;
-            }
-
-            // 连击判定：概率触发 + 玩家仍在攻击范围内
-            if (Random.value < owner.comboChance && owner.playerTarget != null
-                && owner.GetFlatDistanceToPlayer() <= owner.attackRange)
-            {
-                BossPositionZone zone = owner.DetectPlayerZone();
-                var group = owner.GetAttackGroup(zone);
-                if (group != null && group.Count > 0)
-                {
-                    currentAttack = group[Random.Range(0, group.Count)];
-                    owner.fighter.OverrideAttacks(
-                        new System.Collections.Generic.List<AttackData> { currentAttack });
-                    owner.lastAttackTime = Time.time;
-                    continue;
-                }
-            }
-
-            break;
+            float normalizedTime = owner.anim.GetCurrentAnimatorStateInfo(layer).normalizedTime;
+            if (!isBackAttack && !currentAttack.IsSpinAttack && normalizedTime < currentAttack.ImpactStartTime)
+                owner.FacePlayer();
+            yield return null;
         }
 
         isAttacking = false;

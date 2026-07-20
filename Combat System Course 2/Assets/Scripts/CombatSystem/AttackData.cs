@@ -44,7 +44,9 @@ public class AttackData : ScriptableObject
 	[field: SerializeField] public GameObject AttackVFXPrefab { get; private set; }
 	[field: SerializeField] public float VFXSpawnTime { get; private set; } = 0f;
 	[field: SerializeField] public bool VFXFollowAttacker { get; private set; } = false;
-	[field: SerializeField] public Vector3 VFXSpawnOffset { get; private set; } = Vector3.zero;
+	[field: SerializeField] public Vector3 VFXSpawnOffset_Pos { get; private set; } = Vector3.zero;
+	
+	[field: SerializeField] public Vector3 VFXSpawnOffset_Rot { get; private set; } = Vector3.zero;
 
 	[field: Header("攻击音效")]
 	[field: SerializeField] public AudioClip AttackSFX { get; private set; }

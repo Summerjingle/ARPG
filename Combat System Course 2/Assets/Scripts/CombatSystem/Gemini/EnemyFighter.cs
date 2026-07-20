@@ -76,6 +76,9 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     /// <summary>Boss 用：动态替换攻击列表，运行时选择不同攻击</summary>
     public void OverrideAttacks(List<AttackData> newAttacks) { attacks = newAttacks; }
 
+    /// <summary>Boss 用：覆盖攻击 VFX，非 null 时优先用此 prefab 代替 AttackData 里的 VFX</summary>
+    public GameObject AttackVfxOverride { get; set; }
+
     [SerializeField] protected int attackAnimLayer = 0; // Boss 动画在 Action Layer(1)，普通敌人在 Base Layer(0)
     public int AttackAnimLayer => attackAnimLayer;
 
@@ -845,13 +848,17 @@ public IEnumerator ExecuteEnemyAttack(ICombatSystem target = null, int comboCoun
         }
 
         // ===== 攻击特效生成 =====
-        if (!vfxSpawned && attack.AttackVFXPrefab != null && normalizedTime >= attack.VFXSpawnTime)
         {
-            vfxSpawned = true;
-            Vector3 spawnPos = transform.position + attack.VFXSpawnOffset;
-            GameObject vfx = Instantiate(attack.AttackVFXPrefab, spawnPos, Quaternion.identity);
-            if (attack.VFXFollowAttacker)
-                vfx.transform.SetParent(transform);
+            GameObject vfxPrefab = AttackVfxOverride != null ? AttackVfxOverride : attack.AttackVFXPrefab;
+            if (!vfxSpawned && vfxPrefab != null && normalizedTime >= attack.VFXSpawnTime)
+            {
+                vfxSpawned = true;
+                Vector3 spawnPos = transform.position + attack.VFXSpawnOffset_Pos;
+                Quaternion spawnRot = transform.rotation * Quaternion.Euler(attack.VFXSpawnOffset_Rot);
+                GameObject vfx = Instantiate(vfxPrefab, spawnPos, spawnRot);
+                if (attack.VFXFollowAttacker)
+                    vfx.transform.SetParent(transform);
+            }
         }
 
         yield return null;

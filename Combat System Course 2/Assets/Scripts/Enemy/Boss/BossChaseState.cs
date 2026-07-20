@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BossChaseState : State<BossController>
@@ -35,15 +36,18 @@ public class BossChaseState : State<BossController>
             && owner.CanRangedAttack())
         {
             owner.agent.isStopped = true;
-            // float rand = Random.value;
-            // if (rand < 0.33f)
-            //     owner.ChangeState(owner.rangedAttackState);
-            // else if (rand < 0.66f)
-            //     owner.ChangeState(owner.jumpAttackState);
-            // else
-            //     owner.ChangeState(owner.chargeAttackState);
-            // return;
-            owner.ChangeState(owner.chargeAttackState);
+            switch (owner.bossPhase)
+            {
+                case BossPhase.Agility:
+                    owner.ChangeState(owner.jumpAttackState);
+                    break;
+                case BossPhase.Strength:
+                    owner.ChangeState(owner.chargeAttackState);
+                    break;
+                default:
+                    owner.ChangeState(owner.rangedAttackState);
+                    break;
+            }
         }
 
         if (dist <= owner.attackRange)
@@ -60,7 +64,7 @@ public class BossChaseState : State<BossController>
         if (dist > owner.detectRange * 1.5f)
         {
             owner.agent.isStopped = true;
-            owner.ChangeState(owner.idleState);
+            owner.ChangeState(owner.chaseState);
             return;
         }
 

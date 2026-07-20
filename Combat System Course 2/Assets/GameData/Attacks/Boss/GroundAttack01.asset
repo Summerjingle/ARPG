@@ -19,6 +19,7 @@ MonoBehaviour:
   <MoveToTarget>k__BackingField: 0
   <DistanceFromTarget>k__BackingField: 1
   <MaxMoveDistance>k__BackingField: 3
+  <MoveSpeed>k__BackingField: 5
   <MoveStartTime>k__BackingField: 0
   <MoveEndTime>k__BackingField: 1
   <Damage>k__BackingField: 10
@@ -32,7 +33,7 @@ MonoBehaviour:
   <CameraShakeTime>k__BackingField: 0.4
   <AttackVFXPrefab>k__BackingField: {fileID: 6364461875894569145, guid: 6a2477a634cccc542bd1815e5d248654,
     type: 3}
-  <VFXSpawnTime>k__BackingField: 0.4
+  <VFXSpawnTime>k__BackingField: 0.385
   <VFXFollowAttacker>k__BackingField: 0
   <VFXSpawnOffset>k__BackingField: {x: 0, y: 0, z: 0}
   <AttackSFX>k__BackingField: {fileID: 8300000, guid: 86732690b2b307848b3e2c387270a789,

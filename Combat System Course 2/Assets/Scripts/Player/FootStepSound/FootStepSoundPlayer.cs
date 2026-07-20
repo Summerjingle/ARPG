@@ -1,39 +1,31 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class FootStepSoundPlayer : MonoBehaviour
 {
-    
     public AudioClip[] defaultClips;
     public AudioClip[] woodClips;
     public AudioClip[] rockClips;
     public AudioClip[] dirtClips;
-    public Animator animator;
-    private float _lastFootStep;
 
     public LayerMask Environment;
-    private void OnValidate()
-    {
-        if (!animator)
-            animator = GetComponent<Animator>();
-    }
 
-    void LateUpdate()
+    private float _lastPlayTime;
+
+    /// <summary>
+    /// 播放一次脚步声。由 Animation Event 调用（走/跑/攻击/技能等所有动画）。
+    /// </summary>
+    public void PlayFootstep(AnimationEvent evt)
     {
-        var footstep = animator.GetFloat("FootStep");
+        // BlendTree 混合时 walk/run 的 Event 都会来，只响权重过半的那个
+        if (evt.animatorClipInfo.weight < 0.5f) return;
+
+        // 保险：0.5 附近两边交替过线时，避免连响
+        if (Time.time - _lastPlayTime < 0.15f) return;
+        _lastPlayTime = Time.time;
 
         var clips = GetClipsForSurface();
-
-
-        if (Mathf.Abs(footstep) < 0.0001f) footstep = 0f;
-
-        if (_lastFootStep > 0 && footstep < 0 || _lastFootStep < 0 && footstep > 0)
-        {
-            var randomClip = clips[Random.Range(0, clips.Length)];
-            AudioManager.Instance.PlaySFX(randomClip, transform.position);
-        }
-        _lastFootStep = footstep;
+        var randomClip = clips[Random.Range(0, clips.Length)];
+        AudioManager.Instance.PlaySFX(randomClip, transform.position);
     }
 
     private AudioClip[] GetClipsForSurface()

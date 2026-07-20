@@ -5,6 +5,8 @@ public class BossUltimateState : State<BossController>
 {
     [Header("Attack Data")]
     public AttackData ultimateAttackData;
+    [Tooltip("大招 VFX 覆盖，拖了就用这个，不拖则走 AttackData 里的默认 VFX")]
+    public GameObject ultimateVfxPrefab;
 
     [Header("矫正跳跃")]
     [Tooltip("先跳到这个位置再开大，null则跳过矫正")]
@@ -21,6 +23,12 @@ public class BossUltimateState : State<BossController>
     public float chargeDuration1 = 1.5f;
     [Tooltip("累计受到该伤害量则打断进 stun")]
     public float interruptDamageThreshold = 300f;
+
+    [Header("Charge VFX")]
+    [Tooltip("蓄力期间生成的 VFX prefab")]
+    public GameObject chargeVfxPrefab;
+    [Tooltip("VFX 挂载的父物体，null = Boss 自身")]
+    public Transform chargeVfxSpawnParent;
     [Tooltip("最终阶段激活的碰撞器 GameObject")]
     public GameObject ultimateColliderObject;
 
@@ -53,6 +61,7 @@ public class BossUltimateState : State<BossController>
     private float accumulatedDamage;
     private bool interrupted;
     private Material appliedPhaseMat;   // 当前挂在身上的形态材质，下次切换时先移除
+    private GameObject chargeVfxInstance;
 
     public float AccumulatedDamage => accumulatedDamage;
     public bool IsCharging => isCharging;
@@ -110,6 +119,7 @@ public class BossUltimateState : State<BossController>
         owner.anim.applyRootMotion = false;
 
         var target = owner.playerTarget?.GetComponent<ICombatSystem>();
+        owner.fighter.AttackVfxOverride = ultimateVfxPrefab;
         Debug.Log($"[Ultimate] Calling TryToAttack | target={target} | fighter.AttackState before={owner.fighter.Attackstate}");
         owner.fighter.TryToAttack(target);
         Debug.Log($"[Ultimate] TryToAttack done | fighter.AttackState after={owner.fighter.Attackstate}");
@@ -145,6 +155,7 @@ public class BossUltimateState : State<BossController>
 
         // 卡住，第一段蓄力
         owner.anim.speed = 0f;
+        SpawnChargeVfx();
         Debug.Log($"[Ultimate] Charge 0→1 | duration={chargeDuration0}s | anim.speed=0");
         chargeTimer = 0f;
         while (chargeTimer < chargeDuration0)
@@ -158,7 +169,7 @@ public class BossUltimateState : State<BossController>
             }
             yield return null;
         }
-        if (interrupted) { owner.anim.speed = 1f; isCharging = false; owner.ChangeState(owner.stunnedState); yield break; }
+        if (interrupted) { owner.anim.speed = 1f; isCharging = false; owner.fighter.AttackVfxOverride = null; DestroyChargeVfx(); owner.ChangeState(owner.stunnedState); yield break; }
         Debug.Log($"[Ultimate] Charge 0→1 complete");
 
         // ===== 阶段1→2：播放到第二个卡点 =====
@@ -170,6 +181,7 @@ public class BossUltimateState : State<BossController>
         {
             Debug.LogError("[Ultimate] FAILED: AttackState became Idle before second pause point!");
             isCharging = false;
+            DestroyChargeVfx();
             yield break;
         }
 
@@ -188,38 +200,44 @@ public class BossUltimateState : State<BossController>
             }
             yield return null;
         }
-        if (interrupted) { owner.anim.speed = 1f; isCharging = false; owner.ChangeState(owner.stunnedState); yield break; }
+        if (interrupted) { owner.anim.speed = 1f; isCharging = false; owner.fighter.AttackVfxOverride = null; DestroyChargeVfx(); owner.ChangeState(owner.stunnedState); yield break; }
         Debug.Log($"[Ultimate] Charge 1→2 complete");
 
-        // ===== 阶段2→3：播放剩下的，碰撞器激活 =====
-        Debug.Log($"[Ultimate] Phase 2→3 | playing rest of animation, activating collider");
-        if (ultimateColliderObject != null)
-            ultimateColliderObject.SetActive(true);
+        // ===== 阶段2→3：播放剩下的，碰撞器跟随 AttackData 动画时间 =====
+        Debug.Log($"[Ultimate] Phase 2→3 | playing rest of animation, collider follows AttackState");
         owner.anim.speed = 1f;
 
         while (owner.fighter.Attackstate != AttackStates.Idle)
         {
+            if (ultimateColliderObject != null)
+            {
+                bool shouldBeActive = owner.fighter.Attackstate == AttackStates.Impact;
+                if (ultimateColliderObject.activeSelf != shouldBeActive)
+                    ultimateColliderObject.SetActive(shouldBeActive);
+            }
             yield return null;
         }
 
-        // 关闭碰撞器
+        // 兜底关闭
         if (ultimateColliderObject != null)
             ultimateColliderObject.SetActive(false);
 
         Debug.Log($"[Ultimate] DONE | final attackState={owner.fighter.Attackstate}");
 
+        DestroyChargeVfx();
+
         // ===== 释放完毕：随机切形态（Agility / Strength），播动画 + 对应 VFX =====
         yield return DoPhaseSwitch();
 
         isCharging = false;
+        owner.fighter.AttackVfxOverride = null;
         owner.ChangeState(owner.chaseState);
     }
 
-    /// <summary>大招结束后：随机切到 Agility/Strength，生成对应 VFX 并播共用的切换动画，动画中途按卡点追加形态材质，播完返回</summary>
+    ///大招结束后：随机切到 Agility/Strength，生成对应 VFX 并播共用的切换动画，动画中途按卡点追加形态材质，播完返回
     private IEnumerator DoPhaseSwitch()
     {
-        // BossPhase newPhase = Random.value < 0.5f ? BossPhase.Agility : BossPhase.Strength;
-        BossPhase newPhase = BossPhase.Agility ;
+        BossPhase newPhase = Random.value < 0.5f ? BossPhase.Agility : BossPhase.Strength;
         owner.bossPhase = newPhase;
 
         GameObject vfxPrefab = newPhase == BossPhase.Agility ? agilityPhaseVfx : strengthPhaseVfx;
@@ -304,7 +322,7 @@ public class BossUltimateState : State<BossController>
     }
 
     /// <summary>移除当前挂在身上的形态材质</summary>
-    private void RemovePhaseMaterial()
+    public void RemovePhaseMaterial()
     {
         if (appliedPhaseMat == null || phaseMatRenderers == null) return;
 
@@ -512,11 +530,29 @@ public class BossUltimateState : State<BossController>
         accumulatedDamage += damage;
     }
 
+    private void SpawnChargeVfx()
+    {
+        if (chargeVfxPrefab == null) return;
+        Transform parent = chargeVfxSpawnParent != null ? chargeVfxSpawnParent : owner.transform;
+        chargeVfxInstance = Instantiate(chargeVfxPrefab, parent.position, parent.rotation, parent);
+    }
+
+    private void DestroyChargeVfx()
+    {
+        if (chargeVfxInstance != null)
+        {
+            Destroy(chargeVfxInstance);
+            chargeVfxInstance = null;
+        }
+    }
+
     public override void Exit()
     {
         StopAllCoroutines();
         isCharging = false;
+        DestroyChargeVfx();
         owner.anim.speed = 1f;
+        owner.fighter.AttackVfxOverride = null;
         owner.fighter.DisableHitboxes();
         if (ultimateColliderObject != null)
             ultimateColliderObject.SetActive(false);

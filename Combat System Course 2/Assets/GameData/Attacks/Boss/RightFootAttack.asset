@@ -34,6 +34,8 @@ MonoBehaviour:
   <AttackVFXPrefab>k__BackingField: {fileID: 0}
   <VFXSpawnTime>k__BackingField: 0
   <VFXFollowAttacker>k__BackingField: 0
-  <VFXSpawnOffset>k__BackingField: {x: 0, y: 0, z: 0}
-  <AttackSFX>k__BackingField: {fileID: 0}
-  <SFXSpawnTime>k__BackingField: 0
+  <VFXSpawnOffset_Pos>k__BackingField: {x: 0, y: 0, z: 0}
+  <VFXSpawnOffset_Rot>k__BackingField: {x: 0, y: 0, z: 0}
+  <AttackSFX>k__BackingField: {fileID: 8300000, guid: 86732690b2b307848b3e2c387270a789,
+    type: 3}
+  <SFXSpawnTime>k__BackingField: 0.49

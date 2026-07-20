@@ -33,7 +33,7 @@ public class BossRangedAttackState : State<BossController>
 
         if (!owner.CanRangedAttack())
         {
-            owner.ChangeState(owner.idleState);
+            owner.ChangeState(owner.chaseState);
             return;
         }
 
@@ -71,7 +71,7 @@ public class BossRangedAttackState : State<BossController>
         }
 
         isAttacking = false;
-        owner.ChangeState(owner.idleState);
+        owner.ChangeState(owner.chaseState);
     }
 
     /// <summary>动画事件：在手中生成巨石</summary>
