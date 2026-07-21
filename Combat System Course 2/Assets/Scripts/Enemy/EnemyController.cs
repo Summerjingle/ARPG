@@ -146,6 +146,14 @@ public class EnemyController : MonoBehaviour
 
         return StateMachine.CurrentState == stateDict[state];
     }
+
+    /// <summary>锁定/解锁敌人旋转（处决时防止敌人转身）</summary>
+    public void LockRotation(bool locked)
+    {
+        if (NavAgent != null && NavAgent.isActiveAndEnabled)
+            NavAgent.updateRotation = !locked;
+    }
+
     Vector3 prePos;
     private void Update()
     {

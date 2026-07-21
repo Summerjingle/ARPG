@@ -488,20 +488,10 @@ public class PlayerController : MonoBehaviour
             animator != null &&
             animator.applyRootMotion)
         {
-            // 获取本帧动画自带的位移
             Vector3 rootMotionDeltaPosition = animator.deltaPosition;
-
-            // 将系统计算的重力/下压力叠加进去，防止播放攻击动画时角色浮空
             rootMotionDeltaPosition.y = ySpeed * Time.deltaTime;
-
-            // 使用 CharacterController 移动，确保攻击突进会吃物理碰撞（不会穿墙）
             charactercontroller.Move(rootMotionDeltaPosition);
         }
-    }
-
-    public Vector3 GetIntentDirection()
-    {
-        return InputDir != Vector3.zero ? InputDir : transform.forward;
     }
 
    

@@ -34,6 +34,10 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     // 健康系统
     public HealthSystem HealthSystem { get; private set; }
 
+    // UI 指示器
+    [Header("UI")]
+    [SerializeField] private GameObject executableImage;
+
     // 战斗状态
     public GameObject blockObject;
     public bool InAction { get; set; } = false;
@@ -46,6 +50,7 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public bool IsTakingHit { get; private set; } = false;
     public bool InCounter { get; set; } = false;
     public bool IsCounterable => Attackstate == AttackStates.Windup && comboCount == 0;
+    public virtual bool CanBeExecuted => true;
 
     // 特殊受击动画（攻击时从 AttackData 设置，空字符串 = 使用默认）
     public string CurrentSpecialHitReaction { get; set; }
@@ -341,6 +346,47 @@ public class EnemyFighter : MonoBehaviour, ICombatSystem
     public void PlayDeathAnimation(ICombatSystem attacker)
     {
         animator.CrossFade("Death", 0.2f);
+    }
+
+    /// <summary>播放被处决动画（root motion，layer 1 ActionLayer），由 PlayerAttack 调用</summary>
+    public virtual void PlayExecutionReaction()
+    {
+        InAction = true;
+
+        // 关闭所有碰撞器，处决期间不受物理干扰
+        DisableEnemyHitboxes();
+        if (enemyController != null && enemyController.capsuleCollider != null)
+            enemyController.capsuleCollider.enabled = false;
+
+        if (animator != null)
+        {
+            Debug.Log($"[Execution] Enemy.PlayExecutionReaction: CrossFade Executed on layer 1, animator={animator.name}");
+            animator.CrossFade("Executed", 0.1f, 1);
+            var nextState = animator.GetNextAnimatorStateInfo(1);
+            Debug.Log($"[Execution] Enemy nextState on layer 1: nameHash={nextState.fullPathHash}, length={nextState.length}");
+        }
+        else
+        {
+            Debug.LogError($"[Execution] Enemy.PlayExecutionReaction: animator is null on {gameObject.name}!");
+        }
+    }
+
+    /// <summary>处决结束后恢复（已死亡则跳过，一切由 DeadState 处理）</summary>
+    public virtual void OnExecutionEnd()
+    {
+        if (HealthSystem.IsDead) return;
+
+        if (enemyController != null && enemyController.capsuleCollider != null)
+            enemyController.capsuleCollider.enabled = true;
+        InAction = false;
+        Debug.Log($"[Execution] {gameObject.name} 处决结束，恢复正常状态");
+    }
+
+    /// <summary>显示/隐藏处决提示图标</summary>
+    public void SetExecutableIndicator(bool visible)
+    {
+        if (executableImage != null && executableImage.activeSelf != visible)
+            executableImage.SetActive(visible);
     }
     protected void OnTriggerEnter(Collider other)
     {

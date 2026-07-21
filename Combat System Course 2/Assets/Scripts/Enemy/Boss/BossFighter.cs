@@ -9,6 +9,8 @@ public class BossFighter : EnemyFighter
     [SerializeField] string hitReactionAnim = "hit_light_front";
     [SerializeField] int spineMaskLayer = 2;
 
+    public override bool CanBeExecuted => false;
+
     protected override void Awake()
     {
         base.Awake();
