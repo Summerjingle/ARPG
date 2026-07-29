@@ -90,7 +90,7 @@ public class PlayerController : MonoBehaviour
     [HideInInspector] public bool isLockedOn = false;
     [HideInInspector] public Vector3 lockedTargetDir;
     private bool wasLockedOnLastFrame;
-    public ItemSO testHealthPotion;
+
 
     private void Awake()
     {
