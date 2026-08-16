@@ -19,6 +19,8 @@ public class BonfirePanelCtrl : MonoBehaviour
     [Header("Bonfire Canvas")]
     [SerializeField] private CanvasGroup canvasToHideDuringBonfire;
 
+    public Animator cloudAnimator;
+
     private Bonfire currentBonfire;
 
     private void Awake()
@@ -84,7 +86,7 @@ public class BonfirePanelCtrl : MonoBehaviour
                 Rest();
                 break;
             case 1:
-                OpenUpgradePanel();
+                OnUpgradePanelOpen();
                 break;
             case 2:
                 StartCoroutine(CloseSequence());
@@ -109,8 +111,12 @@ public class BonfirePanelCtrl : MonoBehaviour
         }
     }
 
+    private void OnUpgradePanelOpen(){
 
-    private void OpenUpgradePanel()
+        cloudAnimator.SetTrigger("CloudClose");
+    }
+
+    private void OpenUpgradePanel()//云朵动画末尾播放
     {
         Debug.Log($"[BonfirePanelCtrl] OpenUpgradePanel called, upgradePanel={upgradePanel}", upgradePanel);
 
@@ -125,6 +131,7 @@ public class BonfirePanelCtrl : MonoBehaviour
             bonfirePanel.SetActive(false);
 
         upgradePanel.ShowFromBonfire();
+        cloudAnimator.SetTrigger("CloudOpen");
     }
 
     /// <summary> 升级面板关闭后重新显示篝火面板 </summary>
